@@ -16,6 +16,9 @@ interface Window {
     splt: import('@senswap/sen-js').SPLT
     swap: import('@senswap/sen-js').Swap
   }
+  app: {
+    balancer: import('@senswap/sen-js').default
+  }
   // IPFS
   ipfs?: ReturnType<import('ipfs-core').create>
   // Utility
