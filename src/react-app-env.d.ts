@@ -17,7 +17,7 @@ interface Window {
     swap: import('@senswap/sen-js').Swap
   }
   app: {
-    balancer: import('@senswap/sen-js').default
+    balancer: import('@senswap/balancer').default
   }
   // IPFS
   ipfs?: ReturnType<import('ipfs-core').create>
