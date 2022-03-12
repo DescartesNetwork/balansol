@@ -1,6 +1,5 @@
-import React from 'react'
+import { Col, Row } from 'antd'
 
-import { Card, Col, Row } from 'antd'
 import InfoCard from './InfoCard'
 import New from './new'
 import Search from './search'

@@ -1,11 +1,8 @@
 import { useCallback, useState } from 'react'
-import { useSelector } from 'react-redux'
 
 import { Row, Col, Space, Typography, Modal, Card, Checkbox } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
 import { MintAvatar, MintSymbol } from 'shared/antd/mint'
-
-import { AppState } from 'app/model'
 
 const ConfirmSwap = ({
   visible = false,
