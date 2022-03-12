@@ -9,7 +9,7 @@ import { AppDispatch, AppState } from 'app/model'
 import { increaseCounter } from 'app/model/main.controller'
 import configs from 'app/configs'
 import { createPDB } from 'shared/pdb'
-import { AppLoader } from 'app/components/appLoader'
+import { AppWatcher } from 'app/components/watcher'
 
 const {
   manifest: { appId },
@@ -29,7 +29,7 @@ const Page = () => {
   }, [pdb, counter])
 
   return (
-    <AppLoader>
+    <AppWatcher>
       <Row gutter={[24, 24]} align="middle">
         <Col span={24}>
           <Space align="center">
@@ -47,7 +47,7 @@ const Page = () => {
           <Button onClick={increase}>Increase</Button>
         </Col>
       </Row>
-    </AppLoader>
+    </AppWatcher>
   )
 }
 

@@ -1,4 +1,3 @@
-import Balancer from '@senswap/balancer'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { Lamports, SPLT, Swap, WalletInterface } from '@senswap/sen-js'
 
