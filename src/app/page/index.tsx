@@ -1,50 +1,49 @@
-import { useCallback, useEffect, useMemo } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useWallet } from '@senhub/providers'
+import { useState } from 'react'
 
-import { Row, Col, Typography, Button, Space } from 'antd'
-import IonIcon from 'shared/antd/ionicon'
+import { Row, Col, Radio, Tabs } from 'antd'
 
-import { AppDispatch, AppState } from 'app/model'
-import { increaseCounter } from 'app/model/main.controller'
-import configs from 'app/configs'
-import { createPDB } from 'shared/pdb'
+import { WrapTabs } from 'app/constant'
+import Pools from './pools'
+import Swap from './swap'
+
+import './index.less'
 import { AppWatcher } from 'app/components/watcher'
 
-const {
-  manifest: { appId },
-} = configs
-
 const Page = () => {
-  const {
-    wallet: { address },
-  } = useWallet()
-  const dispatch = useDispatch<AppDispatch>()
-  const { counter } = useSelector((state: AppState) => state.main)
-
-  const pdb = useMemo(() => createPDB(address, appId), [address])
-  const increase = useCallback(() => dispatch(increaseCounter()), [dispatch])
-  useEffect(() => {
-    if (pdb) pdb.setItem('counter', counter)
-  }, [pdb, counter])
+  const [wrapTab, setWrapTab] = useState(WrapTabs.Wrap)
 
   return (
     <AppWatcher>
-      <Row gutter={[24, 24]} align="middle">
-        <Col span={24}>
-          <Space align="center">
-            <IonIcon name="newspaper-outline" />
-            <Typography.Title level={4}>Page</Typography.Title>
-          </Space>
-        </Col>
-        <Col span={24}>
-          <Typography.Text>Address: {address}</Typography.Text>
-        </Col>
-        <Col>
-          <Typography.Text>Counter: {counter}</Typography.Text>
-        </Col>
-        <Col>
-          <Button onClick={increase}>Increase</Button>
+      <Row
+        gutter={[24, 24]}
+        align="middle"
+        className="balancer"
+        justify="center"
+      >
+        <Col xs={24} md={12} lg={8}>
+          <Row gutter={[24, 24]}>
+            <Col span={24}>
+              <Radio.Group
+                onChange={(val) => setWrapTab(val.target.value)}
+                className="pool-option"
+                disabled={false}
+                value={wrapTab}
+              >
+                <Radio.Button value={WrapTabs.Wrap}>Swap</Radio.Button>
+                <Radio.Button value={WrapTabs.Pools}>Pools</Radio.Button>
+              </Radio.Group>
+            </Col>
+            <Col span={24}>
+              <Tabs activeKey={wrapTab} centered>
+                <Tabs.TabPane key={WrapTabs.Wrap}>
+                  <Swap />
+                </Tabs.TabPane>
+                <Tabs.TabPane key={WrapTabs.Pools}>
+                  <Pools />
+                </Tabs.TabPane>
+              </Tabs>
+            </Col>
+          </Row>
         </Col>
       </Row>
     </AppWatcher>

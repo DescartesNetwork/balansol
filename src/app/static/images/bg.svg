@@ -1,0 +1,23 @@
+<svg width="1440" height="1024" viewBox="0 0 1440 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="1440" height="1024" fill="#081438"/>
+<mask id="mask0_5818_87890" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="1440" height="1024">
+<rect width="1440" height="1024" fill="#081438"/>
+</mask>
+<g mask="url(#mask0_5818_87890)">
+<g style="mix-blend-mode:lighten" filter="url(#filter0_f_5818_87890)">
+<ellipse cx="720" cy="119.5" rx="542" ry="230.5" fill="url(#paint0_radial_5818_87890)" fill-opacity="0.2"/>
+</g>
+</g>
+<defs>
+<filter id="filter0_f_5818_87890" x="28" y="-261" width="1384" height="761" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="75" result="effect1_foregroundBlur_5818_87890"/>
+</filter>
+<radialGradient id="paint0_radial_5818_87890" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(720 119.5) rotate(90) scale(230.5 542)">
+<stop offset="0.0416667" stop-color="#E970FF"/>
+<stop offset="0.5" stop-color="#739AFF" stop-opacity="0.8"/>
+<stop offset="1" stop-color="#6978FF" stop-opacity="0"/>
+</radialGradient>
+</defs>
+</svg>
