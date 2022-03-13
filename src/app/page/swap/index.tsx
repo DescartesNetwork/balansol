@@ -4,11 +4,11 @@ import { Button, Card, Col, Row } from 'antd'
 import AskInput from './askInput'
 import BidInput from './bidInput'
 import Review from './review'
-
-import './index.less'
 import SettingArea from './settingArea'
 import IonIcon from 'shared/antd/ionicon'
 import PreviewSwap from 'app/components/previewSwap'
+
+import './index.less'
 
 export default function Swap() {
   const onSwitch = () => {

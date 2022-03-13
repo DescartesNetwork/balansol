@@ -1,5 +1,4 @@
 import { useCallback, useState } from 'react'
-import { useSelector } from 'react-redux'
 
 import {
   Row,
@@ -13,8 +12,6 @@ import {
 } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
 import { MintAvatar, MintSymbol } from 'shared/antd/mint'
-
-import { AppState } from 'app/model'
 import PreviewSwap from 'app/components/previewSwap'
 
 import './index.less'

@@ -1,14 +1,11 @@
 import { ReactNode, CSSProperties } from 'react'
-import { useSelector } from 'react-redux'
 import { PoolData } from '@senswap/sen-js'
 
 import { Col, Row, Skeleton, Typography } from 'antd'
 import RouteAvatar from './routeAvatar'
-
-import { AppState } from 'app/model'
-import { numeric } from 'shared/util'
 import Price from './price'
-// import { priceImpactColor } from 'app/helper/utils'
+
+import { numeric } from 'shared/util'
 
 export type LiteMintInfo = {
   address: string

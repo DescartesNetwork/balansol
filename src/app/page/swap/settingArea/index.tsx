@@ -1,5 +1,6 @@
-import { Button, Col, Divider, Popover, Row, Typography } from 'antd'
 import React from 'react'
+
+import { Button, Col, Divider, Popover, Row, Typography } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
 import PoweredBySentre from './poweredBySentre'
 
