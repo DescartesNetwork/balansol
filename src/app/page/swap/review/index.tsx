@@ -1,5 +1,5 @@
-import { Button, Card, Col, Row, Typography } from 'antd'
-import React, { useState } from 'react'
+import { Button, Card, Col, Row } from 'antd'
+import { useState } from 'react'
 import ConfirmSwap from './confirmSwap'
 
 import './index.less'
