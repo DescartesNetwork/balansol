@@ -1,9 +1,11 @@
-import { Button, Col, Modal, Row, Space, Typography } from 'antd'
+import { Button, Col, Modal, Row, Space, Steps, Typography } from 'antd'
 import React, { Fragment, useState } from 'react'
 import IonIcon from 'shared/antd/ionicon'
 
 export default function New() {
   const [visible, setVisible] = useState(false)
+  const { Step } = Steps
+
   return (
     <Fragment>
       <Button
@@ -28,12 +30,17 @@ export default function New() {
             <Typography.Title level={4}>New Pool</Typography.Title>
           </Col>
           <Col span={24}>
-            <Typography.Text type="secondary">
-              <strong className="content">Liquidity Provider Incentive.</strong>{' '}
-              Liquidity providers earn a 0.25% fee on all trades proportional to
-              their share of the pool. Fees are accrued into the pool and can be
-              claimed by withdrawing your liquidity.
-            </Typography.Text>
+            <Steps size="small" current={0}>
+              <Step title="Select tokens and weights" />
+              <Step title="Set liquidity" />
+              <Step title="Confirm" />
+            </Steps>
+          </Col>
+          <Col span={24}>
+            <Row>
+              <Col flex="auto">Token</Col>
+              <Col>Weight</Col>
+            </Row>
           </Col>
           {[1, 2].map(() => {
             return <Col span={24}>Token Input</Col>
