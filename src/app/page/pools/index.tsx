@@ -6,10 +6,10 @@ import Search from './search'
 
 export default function Pools() {
   return (
-    <Row gutter={[24, 24]}>
-      <Col span={24}>
-        <Row>
-          <Col>
+    <Row gutter={[24, 24]} justify="center" align="middle">
+      <Col span={16}>
+        <Row justify="center" gutter={12}>
+          <Col flex="auto">
             <Search />
           </Col>
           <Col>
@@ -18,8 +18,8 @@ export default function Pools() {
         </Row>
       </Col>
 
-      <Col span={24}>
-        <Row>
+      <Col span={16}>
+        <Row gutter={[24, 24]}>
           {[1, 2, 3].map((value) => {
             return (
               <Col span={12}>

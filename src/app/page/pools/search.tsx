@@ -2,10 +2,12 @@ import { Button, Card, Input } from 'antd'
 import React, { useState } from 'react'
 import IonIcon from 'shared/antd/ionicon'
 
+import './search.less'
+
 export default function Search() {
   const [search, setSearch] = useState('')
   return (
-    <Card bodyStyle={{ padding: 8 }} bordered={false} className="lp-card">
+    <Card bodyStyle={{ padding: 4, borderRadius: 40 }} className="lp-card">
       <Input
         placeholder="Search"
         value={search}
