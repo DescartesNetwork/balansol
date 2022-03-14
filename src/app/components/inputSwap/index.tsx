@@ -8,15 +8,27 @@ import Selection from '../selection'
 import { numeric } from 'shared/util'
 
 import './index.less'
+import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
 
 const enum Proportion {
   Half = 'half',
   Full = 'full',
 }
 
-export default function InputSwap() {
-  const [amount, setAmount] = useState(0)
+export default function InputSwap({
+  amount,
+  onChangeAmount = () => {},
+  selectedMint,
+  onSelect,
+}: {
+  amount: string
+  onChangeAmount?: (val: string) => void
+  selectedMint: string
+  onSelect: (mint: string) => void
+}) {
   const [proportion, setPropotion] = useState(Proportion.Half)
+  const { balance } = useAccountBalanceByMintAddress(selectedMint)
+
   return (
     <Row
       gutter={[0, 10]}
@@ -31,7 +43,7 @@ export default function InputSwap() {
       <Col span={24}>
         <Row style={{ width: '100%' }}>
           <Col flex="auto" style={{ justifyContent: 'left' }}>
-            <Selection value={{ poolAddresses: [] }} onChange={() => {}} />
+            <Selection selectedMint={selectedMint} onChange={onSelect} />
           </Col>
           <Col style={{ maxWidth: '50%' }}>
             <NumericInput
@@ -45,7 +57,7 @@ export default function InputSwap() {
               }}
               placeholder="0"
               value={amount}
-              onValue={(value) => setAmount(Number(value))}
+              onValue={onChangeAmount}
             />
           </Col>
         </Row>
@@ -60,7 +72,7 @@ export default function InputSwap() {
                 style={{ cursor: 'pointer' }}
                 onClick={() => {}}
               >
-                {numeric(0).format('0,0.[00]')}
+                {numeric(balance).format('0,0.[00]')}
               </Typography.Text>
               <Typography.Text type="secondary">
                 <MintSymbol mintAddress={''} />

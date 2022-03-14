@@ -1,45 +1,37 @@
 import { useState, Fragment, useEffect } from 'react'
-import { useHistory, useLocation } from 'react-router-dom'
 import { forceCheck } from '@senswap/react-lazyload'
 
 import { Row, Col, Typography, Modal, Space } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
 import { MintAvatar, MintSymbol } from 'shared/antd/mint'
-import MintSelection, { SelectionInfo } from './mintSelection'
+import MintSelection from './mintSelection'
 
 import './index.less'
 
 const Selection = ({
-  value,
+  selectedMint,
   onChange,
 }: {
-  value: SelectionInfo
-  onChange: (value: SelectionInfo) => void
+  selectedMint: string
+  onChange: (mint: string) => void
 }) => {
   const [visible, setVisible] = useState(false)
-  const history = useHistory()
-  // const { state } = useLocation<SenLpState>()
+
   useEffect(() => {
     if (visible) setTimeout(forceCheck, 500)
   }, [visible])
 
-  const onSelection = (selectionInfo: SelectionInfo) => {
+  const onSelection = (selectedMint: string) => {
     setVisible(false)
-
-    // Clear state of senlp come to
-    // if (state) history.replace({ ...history.location, state: {} })
-
-    return onChange(selectionInfo)
+    return onChange(selectedMint)
   }
-
-  const mintAddress = value?.mintInfo?.address || ''
 
   return (
     <Fragment>
       <Space className="mint-select" onClick={() => setVisible(true)}>
-        <MintAvatar mintAddress={mintAddress} />
+        <MintAvatar mintAddress={selectedMint} />
         <Typography.Text type="secondary">
-          <MintSymbol mintAddress={mintAddress} />
+          <MintSymbol mintAddress={selectedMint} />
         </Typography.Text>
         <Typography.Text type="secondary">
           <IonIcon name="chevron-down-outline" />
@@ -56,7 +48,7 @@ const Selection = ({
         <Row gutter={[16, 16]}>
           <Col span={24} />
           <Col span={24}>
-            <MintSelection value={value} onChange={onSelection} />
+            <MintSelection selectedMint={selectedMint} onChange={onSelection} />
           </Col>
         </Row>
       </Modal>

@@ -3,6 +3,7 @@ import { devTools } from 'shared/devTools'
 
 import main from 'app/model/main.controller'
 import pools from 'app/model/pools.controller'
+import swap from 'app/model/swap.controller'
 
 /**
  * Isolated store
@@ -16,6 +17,7 @@ const model = configureStore({
   reducer: {
     main,
     pools,
+    swap,
   },
 })
 

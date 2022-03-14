@@ -87,10 +87,7 @@ const NewPool = () => {
               <Col span={24}>
                 <Row>
                   <Col flex="auto">
-                    <Selection
-                      value={{ poolAddresses: [] }}
-                      onChange={() => {}}
-                    />
+                    <Selection selectedMint="" onChange={() => {}} />
                   </Col>
                   <Col style={{ display: 'flex', alignContent: 'center' }}>
                     <WeightControl />
