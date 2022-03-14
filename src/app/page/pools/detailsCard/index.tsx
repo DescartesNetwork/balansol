@@ -1,10 +1,13 @@
 import { Button, Card, Col, Row, Typography } from 'antd'
 import { PoolAvatar } from 'app/components/pools/poolAvatar'
+import { useAppRouter } from 'app/hooks/useAppRoute'
 import React from 'react'
 import { MintAvatar } from 'shared/antd/mint'
 import WalletAddress from './walletAddress'
 
 export default function DetailsCard({ poolAddress }: { poolAddress: string }) {
+  const { pushHistory } = useAppRouter()
+
   return (
     <Card style={{ boxShadow: 'unset', background: '#212C4C' }}>
       <Row>
@@ -36,7 +39,10 @@ export default function DetailsCard({ poolAddress }: { poolAddress: string }) {
           </Row>
         </Col>
         <Col>
-          <Button type="primary" onClick={() => console.log('Go to overview')}>
+          <Button
+            type="primary"
+            onClick={() => pushHistory(`/details?pool=${poolAddress}`)}
+          >
             Overview
           </Button>
         </Col>

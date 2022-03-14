@@ -7,7 +7,7 @@ export enum PoolTabs {
 
 export const HOMEPAGE_TABS: Record<string, string> = {
   Swap: 'swap',
-  Pools: 'Pools',
+  Pools: 'pools',
 }
 
 export enum QueryParams {
