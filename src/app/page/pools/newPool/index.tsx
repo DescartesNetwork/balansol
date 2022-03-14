@@ -1,10 +1,10 @@
 import { Button, Col, Modal, Row, Space, Steps, Typography } from 'antd'
 import Selection from 'app/components/selection'
-import React, { Fragment, useState } from 'react'
+import { Fragment, useState } from 'react'
 import IonIcon from 'shared/antd/ionicon'
 import WeightControl from './weightControl'
 
-export default function New() {
+const NewPool = () => {
   const [visible, setVisible] = useState(false)
   const { Step } = Steps
 
@@ -95,3 +95,5 @@ export default function New() {
     </Fragment>
   )
 }
+
+export default NewPool

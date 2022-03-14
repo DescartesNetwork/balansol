@@ -1,7 +1,7 @@
 import { Col, Row } from 'antd'
 
 import DetailsCard from './detailsCard'
-import New from './new'
+import New from './newPool'
 import Search from './search'
 
 export default function Pools() {
