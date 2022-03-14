@@ -5,9 +5,9 @@ import { Row, Col, Radio, Tabs } from 'antd'
 import { WrapTabs } from 'app/constant'
 import Pools from './pools'
 import Swap from './swap'
+import { AppWatcher } from 'app/components/watcher'
 
 import './index.less'
-import { AppWatcher } from 'app/components/watcher'
 
 const Page = () => {
   const [wrapTab, setWrapTab] = useState(WrapTabs.Wrap)
@@ -34,7 +34,16 @@ const Page = () => {
               </Radio.Group>
             </Col>
             <Col span={24}>
-              <Tabs activeKey={wrapTab} centered>
+              <Tabs
+                activeKey={wrapTab}
+                centered
+                style={{
+                  boxShadow:
+                    wrapTab !== WrapTabs.Pools
+                      ? '0px 4px 44px rgba(0, 0, 0, 0.42)'
+                      : 'unset',
+                }}
+              >
                 <Tabs.TabPane key={WrapTabs.Wrap}>
                   <Swap />
                 </Tabs.TabPane>
