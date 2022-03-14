@@ -6,12 +6,7 @@ import PoweredBySentre from './poweredBySentre'
 
 export default function SettingArea() {
   return (
-    <Row
-      justify="end"
-      align="middle"
-      wrap={false}
-      style={{ marginBottom: '18px' }}
-    >
+    <Row justify="end" align="middle" wrap={false}>
       <Col>
         <PoweredBySentre />
       </Col>

@@ -18,42 +18,45 @@ export default function Swap() {
     <Row justify="center">
       <Col lg={8}>
         <Card style={{ boxShadow: 'unset' }}>
-          <Row gutter={[0, 4]} justify="end">
+          <Row gutter={[0, 16]} justify="end">
             <Col>
               <SettingArea />
             </Col>
             <Col span={24}>
-              <Card
-                bordered={false}
-                className="card-swap"
-                bodyStyle={{ padding: 0 }}
-              >
-                <AskInput />
-              </Card>
-            </Col>
-            <Col span={24}>
-              <Row justify="center">
-                <Button
-                  className="btn-switch-type"
-                  size="small"
-                  icon={<IonIcon name="git-compare-outline" />}
-                  onClick={onSwitch}
-                />
+              <Row gutter={[0, 4]}>
+                <Col span={24}>
+                  <Card
+                    bordered={false}
+                    className="card-swap"
+                    bodyStyle={{ padding: 0 }}
+                  >
+                    <AskInput />
+                  </Card>
+                </Col>
+                <Col span={24}>
+                  <Button
+                    className="btn-switch-type"
+                    size="small"
+                    icon={<IonIcon name="git-compare-outline" />}
+                    onClick={onSwitch}
+                  />
+                </Col>
+                <Col span={24}>
+                  <Card
+                    bordered={false}
+                    className="card-swap"
+                    bodyStyle={{ padding: 0 }}
+                  >
+                    <BidInput />
+                  </Card>
+                </Col>
               </Row>
-            </Col>
-            <Col span={24}>
-              <Card
-                bordered={false}
-                className="card-swap"
-                bodyStyle={{ padding: 0 }}
-              >
-                <BidInput />
-              </Card>
             </Col>
             <Col span={24}>
               <PreviewSwap />
             </Col>
-            <Col span={24} style={{ top: '32px' }}>
+            <Col span={24} />
+            <Col span={24}>
               <Review />
             </Col>
           </Row>
