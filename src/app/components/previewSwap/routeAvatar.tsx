@@ -1,4 +1,4 @@
-import { Fragment, useMemo } from 'react'
+import { Fragment } from 'react'
 
 import { Space } from 'antd'
 import IonIcon from 'shared/antd/ionicon'

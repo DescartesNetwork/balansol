@@ -1,4 +1,4 @@
-import { Button, Card, Col, Row } from 'antd'
+import { Button, Col, Row } from 'antd'
 import { useState } from 'react'
 import ConfirmSwap from './confirmSwap'
 

@@ -53,7 +53,7 @@ const NewPool = () => {
         onClick={() => setVisible(!visible)}
         style={{ borderRadius: 40 }}
       >
-        New
+        New pool
       </Button>
       <Modal
         visible={visible}

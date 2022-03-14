@@ -1,5 +1,5 @@
 import { useState, Fragment, useEffect } from 'react'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import { forceCheck } from '@senswap/react-lazyload'
 
 import { Row, Col, Typography, Modal, Space } from 'antd'
@@ -17,7 +17,7 @@ const Selection = ({
   onChange: (value: SelectionInfo) => void
 }) => {
   const [visible, setVisible] = useState(false)
-  const history = useHistory()
+  // const history = useHistory()
   // const { state } = useLocation<SenLpState>()
   useEffect(() => {
     if (visible) setTimeout(forceCheck, 500)

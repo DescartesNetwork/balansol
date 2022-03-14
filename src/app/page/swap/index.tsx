@@ -31,15 +31,7 @@ export default function Swap() {
                 <AskInput />
               </Card>
             </Col>
-            <Col
-              span={24}
-              style={{
-                top: -10,
-                justifyContent: 'center',
-                zIndex: 1,
-                display: 'flex',
-              }}
-            >
+            <Col span={24}>
               <Button
                 className="btn-switch-type"
                 size="small"
@@ -47,7 +39,7 @@ export default function Swap() {
                 onClick={onSwitch}
               />
             </Col>
-            <Col span={24} style={{ top: -18 }}>
+            <Col span={24}>
               <Card
                 bordered={false}
                 className="card-swap"
