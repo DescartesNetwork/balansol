@@ -1,12 +1,50 @@
+import { BN, web3 } from '@project-serum/anchor'
+import { Fragment, useState } from 'react'
+
 import { Button, Col, Modal, Row, Space, Steps, Typography } from 'antd'
 import Selection from 'app/components/selection'
-import { Fragment, useState } from 'react'
 import IonIcon from 'shared/antd/ionicon'
 import WeightControl from './weightControl'
+import { MintActionStates } from '@senswap/balancer'
+import { notifyError, notifySuccess } from 'app/helper'
 
 const NewPool = () => {
   const [visible, setVisible] = useState(false)
   const { Step } = Steps
+
+  const onCreate = async () => {
+    try {
+      const fee = new BN(500_000_000)
+      const mintsConfig = [
+        '5YwUkPdXLoujGkZuo9B4LsLKj3hdkDcfP4derpspifSJ',
+        '8jk4eJymMfNZV9mkRNxJEt2VJ3pRvdJvD5FE94GXGBPM',
+        '27hdcZv7RtuMp75vupThR3T4KLsL61t476eosMdoec4c',
+        '2z6Ci38Cx6PyL3tFrT95vbEeB3izqpoLdxxBkJk2euyj',
+      ].map((e) => {
+        return {
+          publicKey: new web3.PublicKey(e),
+          action: MintActionStates.Active,
+          amountIn: new BN(500_000_000),
+          weight: new BN(50),
+        }
+      })
+      const { txId, poolAddress } = await window.sen_balancer.initializePool(
+        fee,
+        mintsConfig,
+      )
+
+      for (const mintConfig of mintsConfig) {
+        await window.sen_balancer.initializeJoin(
+          poolAddress,
+          mintConfig.publicKey,
+          mintConfig.amountIn,
+        )
+      }
+      notifySuccess('Create pool', txId)
+    } catch (error) {
+      notifyError(error)
+    }
+  }
 
   return (
     <Fragment>
@@ -67,7 +105,7 @@ const NewPool = () => {
               <Col span={24}>
                 <Button
                   type="primary"
-                  onClick={() => {}}
+                  onClick={onCreate}
                   disabled={false}
                   block
                 >
