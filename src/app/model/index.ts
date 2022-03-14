@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
-import { devTools, bigintSerializationMiddleware } from 'shared/devTools'
+import { devTools } from 'shared/devTools'
 
 import main from 'app/model/main.controller'
 import pools from 'app/model/pools.controller'
@@ -9,7 +9,9 @@ import pools from 'app/model/pools.controller'
  */
 const model = configureStore({
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware(bigintSerializationMiddleware),
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
   devTools: devTools(process.env.REACT_APP_ID as string),
   reducer: {
     main,

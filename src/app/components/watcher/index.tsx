@@ -2,8 +2,6 @@ import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import { useWallet } from '@senhub/providers'
 import Balancer, { getAnchorProvider } from '@senswap/balancer'
 
-import { Spin } from 'antd'
-
 import configs from 'app/configs'
 import PoolWatcher from './pool.watcher'
 
@@ -31,10 +29,5 @@ export const AppWatcher: FunctionComponent = (props) => {
   }, [watchWallet])
 
   if (loading) return null
-  return (
-    <Spin tip="Loading..." spinning={loading}>
-      {props.children}
-      <PoolWatcher />
-    </Spin>
-  )
+  return <PoolWatcher>{props.children}</PoolWatcher>
 }

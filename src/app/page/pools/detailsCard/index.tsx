@@ -1,8 +1,8 @@
 import { Button, Card, Col, Row, Typography } from 'antd'
+
 import { PoolAvatar } from 'app/components/pools/poolAvatar'
 import { useAppRouter } from 'app/hooks/useAppRoute'
-import React from 'react'
-import { MintAvatar } from 'shared/antd/mint'
+
 import WalletAddress from './walletAddress'
 
 export default function DetailsCard({ poolAddress }: { poolAddress: string }) {

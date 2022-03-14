@@ -1,4 +1,10 @@
-import { Fragment, useCallback, useEffect } from 'react'
+import {
+  Fragment,
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react'
 import { useDispatch } from 'react-redux'
 
 import { getPools, upsetPool } from 'app/model/pools.controller'
@@ -7,13 +13,15 @@ import { AppDispatch } from 'app/model'
 // Watch id
 let watchId = 0
 
-const PoolWatcher = () => {
+const PoolWatcher: FunctionComponent = (props) => {
   const dispatch = useDispatch<AppDispatch>()
+  const [loading, setLoading] = useState(true)
 
   // First-time fetching
   const fetchData = useCallback(async () => {
     try {
       await dispatch(getPools()).unwrap()
+      setLoading(false)
     } catch (er) {
       return window.notify({
         type: 'error',
@@ -45,7 +53,8 @@ const PoolWatcher = () => {
     }
   }, [fetchData, watchData])
 
-  return <Fragment />
+  if (loading) return null
+  return <Fragment>{props.children}</Fragment>
 }
 
 export default PoolWatcher
