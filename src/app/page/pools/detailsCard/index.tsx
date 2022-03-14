@@ -1,18 +1,16 @@
-import { Button, Card, Col, Row, Space, Typography } from 'antd'
-import MintPool from 'app/components/mintPool'
 import React from 'react'
-import { MintAvatar } from 'shared/antd/mint'
+
+import MintPool from 'app/components/mintPool'
+import { Button, Card, Col, Row, Space, Typography } from 'antd'
+import { PoolAvatar } from 'app/components/pools/poolAvatar'
 import WalletAddress from './walletAddress'
 
-export default function DetailsCard() {
+export default function DetailsCard({ poolAddress }: { poolAddress: string }) {
   return (
     <Card style={{ boxShadow: 'unset', background: '#212C4C' }}>
-      <Row>
+      <Row style={{ marginBottom: '16px' }}>
         <Col flex="auto">
-          <MintAvatar
-            mintAddress={'6Nr4FTUjiGECAuazTHpYVpeH5WpNLjvCbTo7S8dnbS1G'}
-            size={24}
-          />
+          <PoolAvatar poolAddress={poolAddress} />
         </Col>
         <Col>
           <WalletAddress />

@@ -1,10 +1,14 @@
 import { Col, Row } from 'antd'
+import { AppState } from 'app/model'
+import { useSelector } from 'react-redux'
 
 import DetailsCard from './detailsCard'
 import New from './newPool'
 import Search from './search'
 
 export default function Pools() {
+  const { pools } = useSelector((state: AppState) => state)
+
   return (
     <Row gutter={[24, 24]} justify="center" align="middle">
       <Col span={16}>
@@ -20,10 +24,10 @@ export default function Pools() {
 
       <Col span={16}>
         <Row gutter={[24, 24]}>
-          {[1, 2, 3].map((value) => {
+          {Object.keys(pools).map((poolAddress) => {
             return (
               <Col span={12}>
-                <DetailsCard />
+                <DetailsCard poolAddress={poolAddress} />
               </Col>
             )
           })}

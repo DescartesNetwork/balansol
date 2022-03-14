@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 
-import { getPools, upsetPool } from 'app/model/pool.controller'
+import { getPools, upsetPool } from 'app/model/pools.controller'
 import { AppDispatch } from 'app/model'
 
 // Watch id
@@ -25,8 +25,7 @@ const PoolWatcher = () => {
   // Watch account changes
   const watchData = useCallback(async () => {
     if (watchId) return console.warn('Already watched')
-    const { balancer } = window.app || {}
-    watchId = balancer.watch((er: string | null, re) => {
+    watchId = window.sen_balancer.watch((er: string | null, re) => {
       if (er) return console.error(er)
       if (re) return dispatch(upsetPool({ address: re.address, data: re.data }))
     }, [])
@@ -39,7 +38,7 @@ const PoolWatcher = () => {
     return () => {
       ;(async () => {
         try {
-          await window.app.balancer.unwatch(watchId)
+          await window.sen_balancer.unwatch(watchId)
         } catch (er) {}
       })()
       watchId = 0
