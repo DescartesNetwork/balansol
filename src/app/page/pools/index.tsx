@@ -1,6 +1,6 @@
 import { Col, Row } from 'antd'
 
-import InfoCard from './InfoCard'
+import InfoCard from './infoCard'
 import New from './new'
 import Search from './search'
 

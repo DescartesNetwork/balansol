@@ -1,6 +1,8 @@
 import { Button, Col, Modal, Row, Space, Steps, Typography } from 'antd'
+import Selection from 'app/components/selection'
 import React, { Fragment, useState } from 'react'
 import IonIcon from 'shared/antd/ionicon'
+import WeightControl from './weightControl'
 
 export default function New() {
   const [visible, setVisible] = useState(false)
@@ -43,7 +45,21 @@ export default function New() {
             </Row>
           </Col>
           {[1, 2].map(() => {
-            return <Col span={24}>Token Input</Col>
+            return (
+              <Col span={24}>
+                <Row>
+                  <Col flex="auto">
+                    <Selection
+                      value={{ poolAddresses: [] }}
+                      onChange={() => {}}
+                    />
+                  </Col>
+                  <Col style={{ display: 'flex', alignContent: 'center' }}>
+                    <WeightControl />
+                  </Col>
+                </Row>
+              </Col>
+            )
           })}
 
           <Col span={24}>
