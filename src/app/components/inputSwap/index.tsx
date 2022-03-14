@@ -21,7 +21,12 @@ export default function InputSwap() {
     <Row
       gutter={[0, 10]}
       align="middle"
-      style={{ background: '#142042', borderRadius: 20, padding: 16 }}
+      style={{
+        background: '#142042',
+        borderRadius: 20,
+        padding: 16,
+        width: '100%',
+      }}
     >
       <Col span={24}>
         <Row style={{ width: '100%' }}>
