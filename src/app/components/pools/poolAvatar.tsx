@@ -1,10 +1,11 @@
-import { useMint } from '@senhub/providers'
-import { TokenInfo } from '@solana/spl-token-registry'
-import { Avatar } from 'antd'
-import { AppState } from 'app/model'
-import { ReactNode, useCallback, useEffect, useState } from 'react'
+import { ReactNode } from 'react'
 import { useSelector } from 'react-redux'
+
+import { Avatar } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
+import { MintAvatar } from 'shared/antd/mint'
+
+import { AppState } from 'app/model'
 
 export const PoolAvatar = ({
   poolAddress,
@@ -15,36 +16,14 @@ export const PoolAvatar = ({
   size?: number
   icon?: ReactNode
 }) => {
-  const [tokensInfo, setTokensInfo] = useState<(TokenInfo | undefined)[]>([])
   const {
     pools: { [poolAddress]: poolData },
   } = useSelector((state: AppState) => state)
-  const { tokenProvider } = useMint()
-
-  const getTokenInfos = useCallback(async () => {
-    const newTokensInfo = await Promise.all(
-      poolData.mints.map((mint) =>
-        tokenProvider.findByAddress(mint.toBase58()),
-      ),
-    )
-    setTokensInfo(newTokensInfo)
-  }, [poolData.mints, tokenProvider])
-
-  useEffect(() => {
-    getTokenInfos()
-  }, [getTokenInfos])
 
   return (
     <Avatar.Group style={{ display: 'block', whiteSpace: 'nowrap' }}>
-      {tokensInfo.map((token, i) => (
-        <Avatar
-          key={token?.address || i}
-          src={token?.logoURI}
-          size={size}
-          style={{ backgroundColor: '#2D3355', border: 'none' }}
-        >
-          {icon}
-        </Avatar>
+      {poolData.mints.map((mint) => (
+        <MintAvatar mintAddress={mint.toBase58()} size={size} icon={icon} />
       ))}
     </Avatar.Group>
   )

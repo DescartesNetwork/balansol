@@ -4,6 +4,7 @@ import {
   UIProvider,
   MintProvider,
   AccountProvider,
+  PoolProvider,
 } from '@senhub/providers'
 
 import PageView from 'app/page'
@@ -22,9 +23,11 @@ export const Page = () => {
       <WalletProvider>
         <AccountProvider>
           <MintProvider>
-            <Provider store={model}>
-              <PageView />
-            </Provider>
+            <PoolProvider>
+              <Provider store={model}>
+                <PageView />
+              </Provider>
+            </PoolProvider>
           </MintProvider>
         </AccountProvider>
       </WalletProvider>
@@ -43,9 +46,11 @@ export const Widget = () => {
       <WalletProvider>
         <AccountProvider>
           <MintProvider>
-            <Provider store={model}>
-              <WidgetView />
-            </Provider>
+            <PoolProvider>
+              <Provider store={model}>
+                <WidgetView />
+              </Provider>
+            </PoolProvider>
           </MintProvider>
         </AccountProvider>
       </WalletProvider>
