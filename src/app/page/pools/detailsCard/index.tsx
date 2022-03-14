@@ -3,9 +3,9 @@ import React from 'react'
 import MintPool from 'app/components/mintPool'
 import { Button, Card, Col, Row, Space, Typography } from 'antd'
 import { PoolAvatar } from 'app/components/pools/poolAvatar'
-import WalletAddress from './walletAddress'
-
 import { useAppRouter } from 'app/hooks/useAppRoute'
+
+import WalletAddress from './walletAddress'
 
 export default function DetailsCard({ poolAddress }: { poolAddress: string }) {
   const { pushHistory } = useAppRouter()

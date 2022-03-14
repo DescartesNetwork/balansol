@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 import { Col, Radio, Row, Space, Typography } from 'antd'
 import NumericInput from 'shared/antd/numericInput'
