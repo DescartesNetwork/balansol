@@ -14,6 +14,7 @@ const NewPool = () => {
         type="primary"
         icon={<IonIcon name="add-outline" />}
         onClick={() => setVisible(!visible)}
+        style={{ borderRadius: 40 }}
       >
         New
       </Button>

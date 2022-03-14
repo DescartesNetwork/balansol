@@ -5,7 +5,7 @@ import WalletAddress from './walletAddress'
 
 export default function DetailsCard() {
   return (
-    <Card>
+    <Card style={{ boxShadow: 'unset', background: '#212C4C' }}>
       <Row>
         <Col flex="auto">
           <MintAvatar
@@ -18,16 +18,20 @@ export default function DetailsCard() {
         </Col>
       </Row>
       <Row>
-        <Col span={24}></Col>
+        <Col span={24}>
+          {[1, 2, 3, 4].map((idx) => (
+            <Typography.Text>30 Usdt </Typography.Text>
+          ))}
+        </Col>
       </Row>
       <Row>
-        <Col>
+        <Col flex="auto">
           <Row>
-            <Col>
+            <Col span={24}>
               <Typography.Text>TVL</Typography.Text>
               <Typography.Text> $299.11$</Typography.Text>
             </Col>
-            <Col>
+            <Col span={24}>
               <Typography.Text>APY</Typography.Text>
               <Typography.Text> 9%</Typography.Text>
             </Col>
