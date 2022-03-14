@@ -16,9 +16,8 @@ const NewPool = () => {
     try {
       const fee = new BN(500_000_000)
       const mintsConfig = [
-        '5YwUkPdXLoujGkZuo9B4LsLKj3hdkDcfP4derpspifSJ',
-        '8jk4eJymMfNZV9mkRNxJEt2VJ3pRvdJvD5FE94GXGBPM',
-        '27hdcZv7RtuMp75vupThR3T4KLsL61t476eosMdoec4c',
+        'FVZFSXu3yn17YdcxLD72TFDUqkdE5xZvcW18EUpRQEbe',
+        '3aMbgP7aGsP1sVcFKc6j65zu7UiziP57SMFzf6ptiCSX',
         '2z6Ci38Cx6PyL3tFrT95vbEeB3izqpoLdxxBkJk2euyj',
       ].map((e) => {
         return {

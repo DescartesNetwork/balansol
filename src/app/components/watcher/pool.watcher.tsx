@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 
-import { getPools, upsetPool } from 'app/model/pool.controller'
+import { getPools, upsetPool } from 'app/model/pools.controller'
 import { AppDispatch } from 'app/model'
 
 // Watch id
