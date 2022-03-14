@@ -5,7 +5,11 @@ import { Button, Card, Col, Row, Space, Typography } from 'antd'
 import { PoolAvatar } from 'app/components/pools/poolAvatar'
 import WalletAddress from './walletAddress'
 
+import { useAppRouter } from 'app/hooks/useAppRoute'
+
 export default function DetailsCard({ poolAddress }: { poolAddress: string }) {
+  const { pushHistory } = useAppRouter()
+
   return (
     <Card style={{ boxShadow: 'unset', background: '#212C4C' }}>
       <Row style={{ marginBottom: '16px' }}>
@@ -47,6 +51,14 @@ export default function DetailsCard({ poolAddress }: { poolAddress: string }) {
               </Button>
             </Col>
           </Row>
+        </Col>
+        <Col>
+          <Button
+            type="primary"
+            onClick={() => pushHistory(`/details?pool=${poolAddress}`)}
+          >
+            Overview
+          </Button>
         </Col>
       </Row>
     </Card>
