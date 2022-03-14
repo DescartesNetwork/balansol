@@ -5,9 +5,9 @@ export enum PoolTabs {
   Community = 'community-pools',
 }
 
-export enum WrapTabs {
-  Wrap = 'wrap',
-  Pools = 'pools',
+export const HOMEPAGE_TABS: Record<string, string> = {
+  Swap: 'swap',
+  Pools: 'Pools',
 }
 
 export enum QueryParams {

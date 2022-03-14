@@ -1,42 +1,68 @@
-import { useState } from 'react'
+import { Fragment, useCallback, useEffect } from 'react'
+import { Route, Switch } from 'react-router-dom'
 
 import { Row, Col, Radio, Tabs } from 'antd'
-
-import { WrapTabs } from 'app/constant'
+import PoolDetails from './poolDetails'
 import Pools from './pools'
 import Swap from './swap'
-import { AppWatcher } from 'app/components/watcher'
-
 import './index.less'
 
-const Page = () => {
-  const [wrapTab, setWrapTab] = useState(WrapTabs.Wrap)
+import { AppWatcher } from 'app/components/watcher'
+import { QueryParams, HOMEPAGE_TABS } from 'app/constant'
+import { useAppRouter } from 'app/hooks/useAppRoute'
 
+const SwapAndPools = () => {
+  const { getQuery, pushHistory } = useAppRouter()
+
+  const selectedTab = getQuery(QueryParams.wrapTab)
+
+  const onChange = useCallback(
+    (tabId: string) => pushHistory(`/?tab=${tabId}`),
+    [pushHistory],
+  )
+
+  useEffect(() => {
+    if (!selectedTab) onChange(HOMEPAGE_TABS.Swap)
+  }, [onChange, selectedTab])
+
+  if (!selectedTab) return null
   return (
-    <AppWatcher>
-      <Row gutter={[24, 24]}>
-        <Col span={24} style={{ display: 'flex', justifyContent: 'center' }}>
+    <Fragment>
+      <Row gutter={[24, 24]} justify="center">
+        <Col>
           <Radio.Group
-            onChange={(val) => setWrapTab(val.target.value)}
+            onChange={(val) => onChange(val.target.value)}
             className="pool-option"
-            disabled={false}
-            value={wrapTab}
+            value={selectedTab}
           >
-            <Radio.Button value={WrapTabs.Wrap}>Swap</Radio.Button>
-            <Radio.Button value={WrapTabs.Pools}>Pools</Radio.Button>
+            {Object.keys(HOMEPAGE_TABS).map((key) => (
+              <Radio.Button value={HOMEPAGE_TABS[key]}>{key}</Radio.Button>
+            ))}
           </Radio.Group>
         </Col>
         <Col span={24}>
-          <Tabs activeKey={wrapTab} centered className="swap-tab">
-            <Tabs.TabPane key={WrapTabs.Wrap}>
+          <Tabs activeKey={selectedTab} centered className="swap-tab">
+            <Tabs.TabPane key={HOMEPAGE_TABS.Swap}>
               <Swap />
             </Tabs.TabPane>
-            <Tabs.TabPane key={WrapTabs.Pools}>
+            <Tabs.TabPane key={HOMEPAGE_TABS.Pools}>
               <Pools />
             </Tabs.TabPane>
           </Tabs>
         </Col>
       </Row>
+    </Fragment>
+  )
+}
+
+const Page = () => {
+  const { appRoute } = useAppRouter()
+  return (
+    <AppWatcher>
+      <Switch>
+        <Route exact path={appRoute} component={SwapAndPools} />
+        <Route path={`${appRoute}/details`} component={PoolDetails} />
+      </Switch>
     </AppWatcher>
   )
 }
