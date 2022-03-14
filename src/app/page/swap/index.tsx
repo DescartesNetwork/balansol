@@ -15,33 +15,55 @@ export default function Swap() {
     console.log('Switch input')
   }
   return (
-    <Row gutter={[0, 0]} style={{ padding: '24px' }}>
-      <Col span={24} style={{ justifyContent: 'right' }}>
-        <SettingArea />
-      </Col>
-      <Col span={24}>
-        <Card bordered={false} className="card-swap" bodyStyle={{ padding: 0 }}>
-          <AskInput />
+    <Row justify="center">
+      <Col lg={8}>
+        <Card style={{ boxShadow: 'unset' }}>
+          <Row gutter={[0, 0]} justify="end">
+            <Col>
+              <SettingArea />
+            </Col>
+            <Col span={24}>
+              <Card
+                bordered={false}
+                className="card-swap"
+                bodyStyle={{ padding: 0 }}
+              >
+                <AskInput />
+              </Card>
+            </Col>
+            <Col
+              span={24}
+              style={{
+                top: -10,
+                justifyContent: 'center',
+                zIndex: 1,
+                display: 'flex',
+              }}
+            >
+              <Button
+                className="btn-switch-type"
+                size="small"
+                icon={<IonIcon name="git-compare-outline" />}
+                onClick={onSwitch}
+              />
+            </Col>
+            <Col span={24} style={{ top: -18 }}>
+              <Card
+                bordered={false}
+                className="card-swap"
+                bodyStyle={{ padding: 0 }}
+              >
+                <BidInput />
+              </Card>
+            </Col>
+            <Col span={24}>
+              <PreviewSwap />
+            </Col>
+            <Col span={24} style={{ top: '32px' }}>
+              <Review />
+            </Col>
+          </Row>
         </Card>
-      </Col>
-      <Col span={24} style={{ top: -10, justifyContent: 'center', zIndex: 1 }}>
-        <Button
-          className="btn-switch-type"
-          size="small"
-          icon={<IonIcon name="git-compare-outline" />}
-          onClick={onSwitch}
-        />
-      </Col>
-      <Col span={24} style={{ top: -18 }}>
-        <Card bordered={false} className="card-swap" bodyStyle={{ padding: 0 }}>
-          <BidInput />
-        </Card>
-      </Col>
-      <Col span={24}>
-        <PreviewSwap />
-      </Col>
-      <Col span={24} style={{ top: '32px' }}>
-        <Review />
       </Col>
     </Row>
   )
