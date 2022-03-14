@@ -18,7 +18,7 @@ export default function Swap() {
     <Row justify="center">
       <Col lg={8}>
         <Card style={{ boxShadow: 'unset' }}>
-          <Row gutter={[0, 0]} justify="end">
+          <Row gutter={[0, 4]} justify="end">
             <Col>
               <SettingArea />
             </Col>
@@ -32,12 +32,14 @@ export default function Swap() {
               </Card>
             </Col>
             <Col span={24}>
-              <Button
-                className="btn-switch-type"
-                size="small"
-                icon={<IonIcon name="git-compare-outline" />}
-                onClick={onSwitch}
-              />
+              <Row justify="center">
+                <Button
+                  className="btn-switch-type"
+                  size="small"
+                  icon={<IonIcon name="git-compare-outline" />}
+                  onClick={onSwitch}
+                />
+              </Row>
             </Col>
             <Col span={24}>
               <Card
