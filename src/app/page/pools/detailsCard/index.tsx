@@ -3,7 +3,7 @@ import React from 'react'
 import { MintAvatar } from 'shared/antd/mint'
 import WalletAddress from './walletAddress'
 
-export default function InfoCard() {
+export default function DetailsCard() {
   return (
     <Card>
       <Row>

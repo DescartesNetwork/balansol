@@ -1,6 +1,6 @@
 import { Col, Row } from 'antd'
 
-import InfoCard from './infoCard'
+import DetailsCard from './detailsCard'
 import New from './new'
 import Search from './search'
 
@@ -23,7 +23,7 @@ export default function Pools() {
           {[1, 2, 3].map((value) => {
             return (
               <Col span={12}>
-                <InfoCard />
+                <DetailsCard />
               </Col>
             )
           })}
