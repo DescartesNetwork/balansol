@@ -28,7 +28,7 @@ export default function Swap() {
                 className="card-swap"
                 bodyStyle={{ padding: 0 }}
               >
-                <AskInput />
+                <BidInput />
               </Card>
             </Col>
             <Col
@@ -53,7 +53,7 @@ export default function Swap() {
                 className="card-swap"
                 bodyStyle={{ padding: 0 }}
               >
-                <BidInput />
+                <AskInput />
               </Card>
             </Col>
             <Col span={24}>

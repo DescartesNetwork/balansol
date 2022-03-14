@@ -17,7 +17,7 @@ const enum Proportion {
 
 export default function InputSwap({
   amount,
-  onChangeAmount = () => {},
+  onChangeAmount,
   selectedMint,
   onSelect,
 }: {
