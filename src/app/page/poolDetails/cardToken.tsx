@@ -4,7 +4,6 @@ import { MintAvatar, MintSymbol } from 'shared/antd/mint'
 import NumericInput from 'shared/antd/numericInput'
 
 const CardToken = ({ mintAddress }: { mintAddress?: string }) => {
-  console.log('mintAdress: ', mintAddress)
   return (
     <Card
       style={{
