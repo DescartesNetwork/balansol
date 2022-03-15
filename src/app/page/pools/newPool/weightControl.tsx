@@ -1,6 +1,6 @@
-import React, { Fragment, useState } from 'react'
+import React, { useState } from 'react'
 
-import { Button, Col, Input, Row, Typography } from 'antd'
+import { Button, Col, Input, Row } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
 
 export default function WeightControl({
@@ -16,7 +16,6 @@ export default function WeightControl({
     <Row justify="end">
       <Col span={24}>
         <Input
-          placeholder="Search"
           value={weight}
           size="small"
           bordered={false}

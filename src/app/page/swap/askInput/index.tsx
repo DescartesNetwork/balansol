@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { Row } from 'antd'

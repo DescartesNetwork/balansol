@@ -2,12 +2,9 @@ import { BN, web3 } from '@project-serum/anchor'
 import { Fragment, useState } from 'react'
 
 import { Button, Col, Modal, Row, Space, Steps, Typography } from 'antd'
-import Selection from 'app/components/selection'
 import IonIcon from 'shared/antd/ionicon'
-import WeightControl from './weightControl'
 import { MintActionStates } from '@senswap/balancer'
 import { notifyError, notifySuccess } from 'app/helper'
-import { PoolCreatingStep } from 'app/constant'
 import TokenSetup from './tokenSetup'
 
 const { Step } = Steps
@@ -63,17 +60,19 @@ const NewPool = () => {
   }
 
   const onChangeTokenInfo = (value: TokenInfo, index: number) => {
+    if (tokenList[index].weight !== value.weight) {
+      const portionWeight =
+        (100 - Number(value.weight)) / (tokenList.length - 1)
+      const newTokenList: TokenInfo[] = tokenList.map((token, ind) => {
+        if (index !== ind) {
+          return { ...token, weight: String(portionWeight) }
+        }
+        return value
+      })
+      return setTokenList(newTokenList)
+    }
     const newTokenList = tokenList.map((token, idx) => {
       if (idx === index) {
-        if (token.weight !== value.weight) {
-          const portionWeight =
-            (100 - Number(value.weight)) / (tokenList.length - 1)
-          tokenList.map((value, ind) => {
-            if (index !== ind) {
-              return { ...value, weight: portionWeight }
-            }
-          })
-        }
         return value
       }
       return token
