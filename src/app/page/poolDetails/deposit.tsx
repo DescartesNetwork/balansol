@@ -92,15 +92,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
             </Row>
           </Col>
           <Col span={24}>
-            <Button
-              style={{
-                background: '#63E0B3',
-                color: '#081438',
-                borderRadius: '24px',
-              }}
-              type="primary"
-              block
-            >
+            <Button className="balansol-btn" type="primary" block>
               Deposit
             </Button>
           </Col>
