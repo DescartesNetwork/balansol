@@ -2,8 +2,11 @@ import { Card, Row, Col, Space, Typography, Radio } from 'antd'
 
 import { MintAvatar, MintSymbol } from 'shared/antd/mint'
 import NumericInput from 'shared/antd/numericInput'
+import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
 
-const CardToken = ({ mintAddress }: { mintAddress?: string }) => {
+const CardToken = ({ mintAddress }: { mintAddress: string }) => {
+    const { balance } = useAccountBalanceByMintAddress(mintAddress)
+    
   return (
     <Card
       style={{
@@ -39,7 +42,7 @@ const CardToken = ({ mintAddress }: { mintAddress?: string }) => {
               <Space className="caption">
                 <Typography.Text type="secondary">Available:</Typography.Text>
                 <Typography.Text type="secondary" style={{ cursor: 'pointer' }}>
-                  18.5
+                  {balance}
                 </Typography.Text>
               </Space>
             </Col>
