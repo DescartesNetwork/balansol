@@ -1,4 +1,6 @@
 import { useCallback, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { BN } from '@project-serum/anchor'
 
 import {
   Row,
@@ -15,6 +17,9 @@ import { MintAvatar, MintSymbol } from 'shared/antd/mint'
 import PreviewSwap from 'app/components/previewSwap'
 
 import './index.less'
+import { AppState } from 'app/model'
+import { useAskAmount } from 'app/hooks/useAskAmount'
+import { notifyError, notifySuccess } from 'app/helper'
 
 const ConfirmSwap = ({
   visible = false,
@@ -25,11 +30,30 @@ const ConfirmSwap = ({
 }) => {
   const [checked, setChecked] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const {
+    swap: { bidAmount, bidMint, askMint },
+    pools,
+  } = useSelector((state: AppState) => state)
+  const askAmount = useAskAmount()
 
   const onCloseModal = useCallback(() => {
     onCancel(false)
     setChecked(false)
   }, [onCancel])
+
+  const onSwap = async () => {
+    try {
+      const { txId } = await window.sen_balancer.swap(
+        new BN(bidAmount),
+        bidMint,
+        askMint,
+        '8XvNYDCnwGriirSXv2QiYZPuxnmK87PFTNRC52hQMTZc',
+      )
+      notifySuccess('Swap', txId)
+    } catch (error) {
+      notifyError(error)
+    }
+  }
 
   return (
     <Modal
@@ -91,12 +115,7 @@ const ConfirmSwap = ({
         <Col span={24}>
           <Button
             type="primary"
-            onClick={() => {
-              setIsLoading(true)
-              setTimeout(() => {
-                setIsLoading(false)
-              }, 2000)
-            }}
+            onClick={onSwap}
             disabled={isLoading}
             loading={isLoading}
             block
