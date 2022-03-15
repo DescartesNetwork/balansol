@@ -1,8 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { useAccount, useMint, usePool } from '@senhub/providers'
+import { useMint } from '@senhub/providers'
 
 import { Card, Input, Button } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
+import { useSelector } from 'react-redux'
+import { AppState } from 'app/model'
 
 const KEYSIZE = 3
 
@@ -16,36 +18,20 @@ const Search = ({
   const [mintAddresses, setMintAddresses] = useState<string[]>([])
   const [keyword, setKeyword] = useState('')
   const { tokenProvider } = useMint()
-  const { pools } = usePool()
-  const { accounts } = useAccount()
+  const { pools } = useSelector((state: AppState) => state)
 
   const sortMintAddresses = useCallback(async () => {
-    let sortedMint: Record<string, boolean> = {}
     // Get all mints in token provider
     const allMintAddress: Record<string, boolean> = {}
-    const allTokens = await tokenProvider.all()
-    for (const token of allTokens) allMintAddress[token.address] = true
 
-    // get all single token in accounts
-    for (const addr in accounts) {
-      const { mint, amount } = accounts[addr]
-      if (allMintAddress[mint] && amount) sortedMint[mint] = true
+    for (const pool of Object.values(pools)) {
+      for (const mint of pool.mints) {
+        allMintAddress[mint.toBase58()] = true
+      }
     }
-    sortedMint = { ...sortedMint, ...allMintAddress }
-
-    // Get all mints in pools
-    const inPoolMintAddresses = Object.values(pools)
-      .map(({ mint_a, mint_b }) => [mint_a, mint_b])
-      .flat()
-      .filter((item, pos, self) => self.indexOf(item) === pos)
-    // Check mint addresses (token info, mint lp)
-    inPoolMintAddresses.forEach((mintAddress) => {
-      if (!sortedMint[mintAddress]) sortedMint[mintAddress] = true
-    })
-
     // Return
-    return setMintAddresses(Object.keys(sortedMint))
-  }, [tokenProvider, pools, accounts])
+    return setMintAddresses(Object.keys(allMintAddress))
+  }, [pools])
 
   useEffect(() => {
     sortMintAddresses()

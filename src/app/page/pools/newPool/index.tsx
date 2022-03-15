@@ -9,12 +9,11 @@ import { MintActionStates } from '@senswap/balancer'
 import { notifyError, notifySuccess } from 'app/helper'
 import { PoolCreatingStep } from 'app/constant'
 import TokenSetup from './tokenSetup'
-import { SelectionInfo } from 'app/components/selection/mintSelection'
 
 const { Step } = Steps
 
 export type TokenInfo = {
-  mintInfo: SelectionInfo
+  addressToken: string
   weight: string
 }
 
@@ -22,8 +21,8 @@ const NewPool = () => {
   const [visible, setVisible] = useState(false)
   const [currentStep, setCurrentStep] = useState(0)
   const [tokenList, setTokenList] = useState<TokenInfo[]>([
-    { mintInfo: { poolAddresses: [] }, weight: '50' },
-    { mintInfo: { poolAddresses: [] }, weight: '50' },
+    { addressToken: '', weight: '50' },
+    { addressToken: '', weight: '50' },
   ])
 
   const onCreate = async () => {

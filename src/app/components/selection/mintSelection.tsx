@@ -1,63 +1,20 @@
-import { useState, useCallback } from 'react'
-import { account } from '@senswap/sen-js'
+import { useState } from 'react'
 import LazyLoad from '@senswap/react-lazyload'
-import { useMint, usePool } from '@senhub/providers'
 
 import { Row, Col, Typography, Divider } from 'antd'
 import Search from './search'
 import Mint from './mint'
 
-export type LiteMintInfo = {
-  address: string
-  decimals: number
-}
-
 const LIMITATION = 100
 
-export type SelectionInfo = {
-  mintInfo?: LiteMintInfo
-  poolAddresses: string[]
-}
-
 const MintSelection = ({
-  value,
+  selectedMint,
   onChange,
 }: {
-  value: SelectionInfo
-  onChange: (value: SelectionInfo) => void
+  selectedMint: string
+  onChange: (mint: string) => void
 }) => {
   const [mintAddresses, setMintAddresses] = useState<string[]>([])
-  const { address: currentMintAddress } = value.mintInfo || {}
-  const { pools } = usePool()
-  const { getDecimals } = useMint()
-
-  // Compute available pools
-  const getAvailablePoolAddresses = useCallback(
-    (mintAddress: string) => {
-      if (!account.isAddress(mintAddress)) return []
-      return Object.keys(pools).filter((poolAddress) => {
-        const { mint_a, mint_b } = pools[poolAddress]
-        return [mint_a, mint_b].includes(mintAddress)
-      })
-    },
-    [pools],
-  )
-
-  // Return data to parent
-  const onMint = useCallback(
-    async (mintAddress: string) => {
-      const poolAddresses = getAvailablePoolAddresses(mintAddress)
-      const decimals = await getDecimals(mintAddress)
-      return onChange({
-        mintInfo: {
-          address: mintAddress,
-          decimals,
-        },
-        poolAddresses,
-      })
-    },
-    [getAvailablePoolAddresses, onChange, getDecimals],
-  )
 
   return (
     <Row gutter={[16, 16]}>
@@ -79,8 +36,8 @@ const MintSelection = ({
                   <LazyLoad height={48} overflow>
                     <Mint
                       mintAddress={mintAddress}
-                      onClick={() => onMint(mintAddress)}
-                      active={currentMintAddress === mintAddress}
+                      onClick={() => onChange(mintAddress)}
+                      active={selectedMint === mintAddress}
                     />
                   </LazyLoad>
                 </Col>
