@@ -45,20 +45,12 @@ export default function DetailsCard({ poolAddress }: { poolAddress: string }) {
             <Col>
               <Button
                 type="primary"
-                onClick={() => console.log('Go to overview')}
+                onClick={() => pushHistory(`/details?pool=${poolAddress}`)}
               >
                 Overview
               </Button>
             </Col>
           </Row>
-        </Col>
-        <Col>
-          <Button
-            type="primary"
-            onClick={() => pushHistory(`/details?pool=${poolAddress}`)}
-          >
-            Overview
-          </Button>
         </Col>
       </Row>
     </Card>
