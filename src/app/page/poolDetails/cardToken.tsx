@@ -5,7 +5,15 @@ import NumericInput from 'shared/antd/numericInput'
 
 import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
 
-const CardToken = ({ mintAddress }: { mintAddress: string }) => {
+const CardToken = ({
+  mintAddress,
+  onChange,
+  amountValue,
+}: {
+  mintAddress: string
+  onChange: (mintAddress: string, value: string) => void
+  amountValue: number
+}) => {
   const { balance } = useAccountBalanceByMintAddress(mintAddress)
 
   return (
@@ -35,6 +43,8 @@ const CardToken = ({ mintAddress }: { mintAddress: string }) => {
               fontSize: 24,
             }}
             placeholder="0"
+            value={amountValue}
+            onChange={(event) => onChange(mintAddress, event.target.value)}
           />
         </Col>
         <Col span={24}>

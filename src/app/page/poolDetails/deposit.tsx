@@ -3,15 +3,16 @@ import { useSelector } from 'react-redux'
 import { BN } from '@project-serum/anchor'
 
 import { Button, Col, Modal, Row, Typography } from 'antd'
+import IonIcon from 'shared/antd/ionicon'
+import CardToken from './cardToken'
 
 import { notifyError, notifySuccess } from 'app/helper'
 import { AppState } from 'app/model'
-import IonIcon from 'shared/antd/ionicon'
-import CardToken from './cardToken'
 
 const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   const [visible, setVisible] = useState(false)
   const [mintsAmount, setMintAmount] = useState<Record<string, number>>({})
+  const [loading, setLoading] = useState(false)
   const {
     pools: { [poolAddress]: poolData },
   } = useSelector((state: AppState) => state)
@@ -23,6 +24,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   }
 
   const onSubmit = async () => {
+    setLoading(true)
     try {
       const amountsIn = poolData.mints.map(
         (mint) => new BN(mintsAmount[mint.toBase58()]),
@@ -34,6 +36,8 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
       notifySuccess('Deposit', txId)
     } catch (error) {
       notifyError(error)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -54,10 +58,15 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
         <Row gutter={[0, 16]}>
           <Col span={24}>
             <Row gutter={[24, 8]}>
-              {poolData.mints.map((mint) => {
+              {poolData.mints.map((mint, index) => {
+                let mintAddress: string = mint.toBase58()
                 return (
-                  <Col span={24}>
-                    <CardToken mintAddress={mint.toBase58()}></CardToken>
+                  <Col span={24} key={index}>
+                    <CardToken
+                      mintAddress={mintAddress}
+                      onChange={onChange}
+                      amountValue={mintsAmount[mintAddress]}
+                    ></CardToken>
                   </Col>
                 )
               })}
@@ -92,7 +101,13 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
             </Row>
           </Col>
           <Col span={24}>
-            <Button className="balansol-btn" type="primary" block>
+            <Button
+              className="balansol-btn"
+              type="primary"
+              block
+              onClick={onSubmit}
+              loading={loading}
+            >
               Deposit
             </Button>
           </Col>
