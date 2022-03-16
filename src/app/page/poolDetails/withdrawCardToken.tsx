@@ -1,21 +1,9 @@
-import { Card, Row, Col, Space, Typography, Radio } from 'antd'
+import { Card, Row, Col, Space, Avatar, Typography, Radio } from 'antd'
 
-import { MintAvatar, MintSymbol } from 'shared/antd/mint'
+import { MintAvatar } from 'shared/antd/mint'
 import NumericInput from 'shared/antd/numericInput'
-import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
-import { numeric } from 'shared/util'
 
-const CardToken = ({
-  mintAddress,
-  onChangeAmount,
-  amountValue,
-}: {
-  mintAddress: string
-  onChangeAmount: (mintAddress: string, value: string) => void
-  amountValue: string
-}) => {
-  const { balance } = useAccountBalanceByMintAddress(mintAddress)
-
+const WithdrawCardToken = () => {
   return (
     <Card
       style={{
@@ -26,16 +14,19 @@ const CardToken = ({
       bodyStyle={{ padding: 16 }}
     >
       <Row align="middle">
-        <Col>
+        <Col span={16}>
           <Space className="mint-select">
-            <MintAvatar mintAddress={mintAddress || ''} />
-            <Typography.Text type="secondary">
-              <MintSymbol mintAddress={mintAddress || ''} />
+            <Avatar.Group style={{ display: 'table-cell' }}>
+              <MintAvatar mintAddress="" />
+              <MintAvatar mintAddress="" />
+              <MintAvatar mintAddress="" />
+            </Avatar.Group>
+            <Typography.Text type="secondary" style={{ color: '#F3F3F5' }}>
+              50USDC-25SNTR-25KUSD
             </Typography.Text>
-            <Typography.Text type="secondary">50%</Typography.Text>
           </Space>
         </Col>
-        <Col flex="auto">
+        <Col span={8}>
           <NumericInput
             bordered={false}
             style={{
@@ -43,8 +34,6 @@ const CardToken = ({
               fontSize: 24,
             }}
             placeholder="0"
-            value={amountValue}
-            onValue={(value) => onChangeAmount(mintAddress, value)}
           />
         </Col>
         <Col span={24}>
@@ -53,7 +42,7 @@ const CardToken = ({
               <Space className="caption">
                 <Typography.Text type="secondary">Available:</Typography.Text>
                 <Typography.Text type="secondary" style={{ cursor: 'pointer' }}>
-                  {numeric(balance).format('0,0.[00]')}
+                  <span style={{ color: '#F3F3F5' }}>98.5</span> LP
                 </Typography.Text>
               </Space>
             </Col>
@@ -82,4 +71,4 @@ const CardToken = ({
   )
 }
 
-export default CardToken
+export default WithdrawCardToken

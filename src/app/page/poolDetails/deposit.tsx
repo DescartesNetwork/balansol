@@ -1,6 +1,7 @@
 import { Fragment, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { BN } from '@project-serum/anchor'
+import { utils } from '@senswap/sen-js'
 
 import { Button, Col, Modal, Row, Typography } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
@@ -8,6 +9,8 @@ import CardToken from './cardToken'
 
 import { notifyError, notifySuccess } from 'app/helper'
 import { AppState } from 'app/model'
+import { useMint } from '@senhub/providers'
+
 
 const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   const [visible, setVisible] = useState(false)
@@ -16,6 +19,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   const {
     pools: { [poolAddress]: poolData },
   } = useSelector((state: AppState) => state)
+  const { getDecimals } = useMint()
 
   const onChange = (mint: string, value: string) => {
     const newMintsAmount = { ...mintsAmount }
@@ -26,13 +30,13 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   const onSubmit = async () => {
     setLoading(true)
     try {
-      const amountsIn = poolData.mints.map(
-        (mint) => new BN(mintsAmount[mint.toBase58()]),
-      )
-      const { txId } = await window.sen_balancer.addLiquidity(
-        poolAddress,
-        amountsIn,
-      )
+      const amountsIn = await Promise.all(poolData.mints.map(async (mint) => {
+        let mintAddress = mint.toBase58()
+        let decimals = await getDecimals(mintAddress)
+        let mintAmmount = utils.decimalize(mintsAmount[mintAddress], decimals)
+        return new BN(String(mintAmmount))
+      }))
+      const { txId } = await window.sen_balancer.addLiquidity(poolAddress, amountsIn)
       notifySuccess('Deposit', txId)
     } catch (error) {
       notifyError(error)
