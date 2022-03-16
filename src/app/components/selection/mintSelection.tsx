@@ -4,6 +4,7 @@ import { Row, Col, Typography, Modal } from 'antd'
 import Search from './search'
 import Mint from './mint'
 import IonIcon from 'shared/antd/ionicon'
+import { useState } from 'react'
 
 const LIMITATION = 100
 
@@ -20,6 +21,8 @@ const MintSelection = ({
   mints: string[]
   onClose: () => void
 }) => {
+  const [mintsSearched, setMintsSearched] = useState(mints)
+
   return (
     <Modal
       title={<Typography.Title level={4}>Select token</Typography.Title>}
@@ -34,13 +37,13 @@ const MintSelection = ({
     >
       <Row gutter={[16, 16]}>
         <Col span={24}>
-          <Search onChange={(mint: string[]) => {}} />
+          <Search mints={mints} onChange={setMintsSearched} />
         </Col>
         <Col span={24}>
           <Row gutter={[16, 16]} style={{ height: 300 }} className="scrollbar">
             <Col span={24}>
               <Row gutter={[16, 16]}>
-                {mints.slice(0, LIMITATION).map((mintAddress, i) => (
+                {mintsSearched.slice(0, LIMITATION).map((mintAddress, i) => (
                   <Col span={24} key={i}>
                     <LazyLoad height={48} overflow>
                       <Mint

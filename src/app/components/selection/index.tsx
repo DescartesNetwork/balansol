@@ -1,7 +1,6 @@
-import { useState, Fragment, useEffect, ReactNode } from 'react'
-import LazyLoad, { forceCheck } from '@senswap/react-lazyload'
+import { useState, Fragment, ReactNode } from 'react'
 
-import { Row, Col, Typography, Modal, Space, Divider } from 'antd'
+import { Typography, Space } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
 import { MintAvatar, MintSymbol } from 'shared/antd/mint'
 import MintSelection from './mintSelection'
@@ -29,19 +28,22 @@ const Selection = ({
   return (
     <Fragment>
       {/* Mint selected */}
-      {mintLabel || (
-        <Space className="mint-select" onClick={() => setVisible(true)}>
-          <MintAvatar mintAddress={selectedMint} />
-          <Typography.Text type="secondary">
-            <MintSymbol mintAddress={selectedMint} />
-          </Typography.Text>
-          {mints.length && (
+
+      <Space className="mint-select" onClick={() => setVisible(true)}>
+        <MintAvatar mintAddress={selectedMint} />
+        {mintLabel || (
+          <Fragment>
             <Typography.Text type="secondary">
-              <IonIcon name="chevron-down-outline" />
+              <MintSymbol mintAddress={selectedMint} />
             </Typography.Text>
-          )}
-        </Space>
-      )}
+            {mints.length && (
+              <Typography.Text type="secondary">
+                <IonIcon name="chevron-down-outline" />
+              </Typography.Text>
+            )}
+          </Fragment>
+        )}
+      </Space>
 
       {/* Modal select tokens */}
       {visible && (

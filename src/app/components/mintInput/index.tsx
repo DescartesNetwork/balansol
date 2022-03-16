@@ -89,14 +89,14 @@ export default function MintInput({
             <Space>
               {PROPORTIONS.map((val) => {
                 const minValue = (balance * val) / 100
+                const isActive = balance && Number(amount) >= minValue
                 return (
                   <Space size={4} direction="vertical">
                     <Radio.Button
                       className="proportion-btn"
                       onClick={() => onChangeAmount(String(minValue))}
                       style={{
-                        background:
-                          Number(amount) >= minValue ? '#f148fb' : undefined,
+                        background: isActive ? '#f148fb' : undefined,
                       }}
                     />
                     <Typography.Text type="secondary" className="caption">
