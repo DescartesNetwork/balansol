@@ -2,7 +2,6 @@ import { Card, Row, Col, Space, Typography, Radio } from 'antd'
 
 import { MintAvatar, MintSymbol } from 'shared/antd/mint'
 import NumericInput from 'shared/antd/numericInput'
-
 import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
 import { numeric } from 'shared/util'
 
