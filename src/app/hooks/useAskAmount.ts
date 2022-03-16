@@ -6,5 +6,5 @@ export const useAskAmount = () => {
     swap: { bidAmount },
   } = useSelector((state: AppState) => state)
 
-  return String(Number(bidAmount) / 2)
+  return String(Number(bidAmount) / 4)
 }
