@@ -4,6 +4,7 @@ import { MintAvatar, MintSymbol } from 'shared/antd/mint'
 import NumericInput from 'shared/antd/numericInput'
 
 import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
+import { numeric } from 'shared/util'
 
 const CardToken = ({
   mintAddress,
@@ -53,7 +54,7 @@ const CardToken = ({
               <Space className="caption">
                 <Typography.Text type="secondary">Available:</Typography.Text>
                 <Typography.Text type="secondary" style={{ cursor: 'pointer' }}>
-                  {balance}
+                  {numeric(balance).format('0,0.[00]')}
                 </Typography.Text>
               </Space>
             </Col>
