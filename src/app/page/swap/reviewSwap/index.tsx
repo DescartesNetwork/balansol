@@ -4,18 +4,16 @@ import ConfirmSwap from './confirmSwap'
 
 import './index.less'
 
-export default function Review() {
+const ReviewSwap = () => {
   const [visible, setVisivle] = useState(false)
   return (
-    <Row gutter={[24, 24]} style={{ width: '100%' }}>
-      <Col span={24} style={{ padding: 0 }}>
+    <Row gutter={[24, 24]}>
+      <Col span={24}>
         <Button
           type="primary"
           onClick={() => setVisivle(true)}
           disabled={false}
           style={{
-            width: '100%',
-            background: 'linear-gradient(81.55deg, #F148FB 0%, #4E6ABE 100%)',
             borderRadius: 40,
             borderColor: 'transparent',
           }}
@@ -33,3 +31,5 @@ export default function Review() {
     </Row>
   )
 }
+
+export default ReviewSwap

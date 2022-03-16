@@ -11,7 +11,7 @@ export default function DetailsCard({ poolAddress }: { poolAddress: string }) {
   const { pushHistory } = useAppRouter()
 
   return (
-    <Card style={{ boxShadow: 'unset', background: '#212C4C' }}>
+    <Card style={{ boxShadow: 'unset' }}>
       <Row style={{ marginBottom: '16px' }}>
         <Col flex="auto">
           <PoolAvatar poolAddress={poolAddress} />

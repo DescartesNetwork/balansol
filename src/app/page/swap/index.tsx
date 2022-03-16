@@ -3,10 +3,10 @@ import React from 'react'
 import { Button, Card, Col, Row } from 'antd'
 import AskInput from './askInput'
 import BidInput from './bidInput'
-import Review from './review'
+import ActionReview from './reviewSwap'
 import SettingArea from './settingArea'
 import IonIcon from 'shared/antd/ionicon'
-import PreviewSwap from 'app/components/previewSwap'
+import SwapInfo from 'app/components/swapInfo'
 
 import './index.less'
 
@@ -25,13 +25,7 @@ export default function Swap() {
             <Col span={24}>
               <Row gutter={[0, 4]}>
                 <Col span={24}>
-                  <Card
-                    bordered={false}
-                    className="card-swap"
-                    bodyStyle={{ padding: 0 }}
-                  >
-                    <AskInput />
-                  </Card>
+                  <BidInput />
                 </Col>
                 <Col span={24}>
                   <Button
@@ -42,22 +36,16 @@ export default function Swap() {
                   />
                 </Col>
                 <Col span={24}>
-                  <Card
-                    bordered={false}
-                    className="card-swap"
-                    bodyStyle={{ padding: 0 }}
-                  >
-                    <BidInput />
-                  </Card>
+                  <AskInput />
                 </Col>
               </Row>
             </Col>
             <Col span={24}>
-              <PreviewSwap />
+              <SwapInfo />
             </Col>
             <Col span={24} />
             <Col span={24}>
-              <Review />
+              <ActionReview />
             </Col>
           </Row>
         </Card>
