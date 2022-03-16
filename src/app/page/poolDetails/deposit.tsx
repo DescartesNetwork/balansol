@@ -11,7 +11,7 @@ import { AppState } from 'app/model'
 
 const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   const [visible, setVisible] = useState(false)
-  const [mintsAmount, setMintAmount] = useState<Record<string, number>>({})
+  const [mintsAmount, setMintAmount] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(false)
   const {
     pools: { [poolAddress]: poolData },
@@ -19,7 +19,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
 
   const onChange = (mint: string, value: string) => {
     const newMintsAmount = { ...mintsAmount }
-    newMintsAmount[mint] = Number(value)
+    newMintsAmount[mint] = value
     setMintAmount(newMintsAmount)
   }
 
@@ -64,7 +64,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
                   <Col span={24} key={index}>
                     <CardToken
                       mintAddress={mintAddress}
-                      onChange={onChange}
+                      onChangeAmount={onChange}
                       amountValue={mintsAmount[mintAddress]}
                     ></CardToken>
                   </Col>

@@ -7,12 +7,12 @@ import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
 
 const CardToken = ({
   mintAddress,
-  onChange,
+  onChangeAmount,
   amountValue,
 }: {
   mintAddress: string
-  onChange: (mintAddress: string, value: string) => void
-  amountValue: number
+  onChangeAmount: (mintAddress: string, value: string) => void
+  amountValue: string
 }) => {
   const { balance } = useAccountBalanceByMintAddress(mintAddress)
 
@@ -44,7 +44,7 @@ const CardToken = ({
             }}
             placeholder="0"
             value={amountValue}
-            onChange={(event) => onChange(mintAddress, event.target.value)}
+            onValue={(value) => onChangeAmount(mintAddress, value)}
           />
         </Col>
         <Col span={24}>
