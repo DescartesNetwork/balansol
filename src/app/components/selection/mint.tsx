@@ -15,7 +15,7 @@ const Mint = ({
       bodyStyle={{
         padding: 0,
       }}
-      className="card-child-balansol color-80 mint-select"
+      className="card-child-balansol color-80 mint-select-item"
       bordered={active}
       onClick={onClick}
       hoverable
