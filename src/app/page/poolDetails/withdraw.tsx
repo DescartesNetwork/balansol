@@ -1,19 +1,19 @@
 import { Fragment, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { BN, utils, web3 } from '@project-serum/anchor'
+import { utils as utilsSenJS } from '@senswap/sen-js'
 
 import { Button, Col, Modal, Row, Typography } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
 import TokenWillReceive from './tokenWillReceive'
-import { utils as utilsSenJS } from '@senswap/sen-js'
 
 import { notifyError, notifySuccess } from 'app/helper'
 import { AppState } from 'app/model'
 import MintInput from 'app/components/mintInput'
 import { PoolAvatar } from 'app/components/pools/poolAvatar'
+import { lptDecimals } from 'app/constant/index'
 import { useAccount, useWallet } from '@senhub/providers'
 import { MintSymbol } from 'shared/antd/mint'
-import { lptDecimals } from 'app/constant/index'
 
 const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
   const [visible, setVisible] = useState(false)
@@ -29,7 +29,6 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
   const { accounts } = useAccount()
 
   const onSubmit = async () => {
-    console.log('onSubmit: ', [poolAddress], poolData, lptAmount)
     try {
       await checkInitializedAccount()
       let amount = utilsSenJS.decimalize(lptAmount, lptDecimals)
@@ -138,7 +137,6 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
           </Col>
 
           <Col span={24}>
-            {/* <WithdrawCardToken /> */}
             <MintInput
               selectedMint={poolData.mintLpt.toBase58()}
               amount={lptAmount}
@@ -178,8 +176,6 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
             </Button>
           </Col>
         </Row>
-        {/* <Input onChange={(e) => setLptAmount(Number(e.target.value))} />
-        <Button onClick={onSubmit}>Submit</Button> */}
       </Modal>
     </Fragment>
   )
