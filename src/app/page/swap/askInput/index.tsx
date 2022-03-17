@@ -1,7 +1,6 @@
-import { useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { Row } from 'antd'
+import { Card } from 'antd'
 import InputSwap from 'app/components/inputSwap'
 
 import { AppState } from 'app/model'
@@ -20,13 +19,13 @@ export default function AskInput() {
     dispatch(setSwapState({ bidAmount: String(Number(val) * 2) }))
   }
   return (
-    <Row>
+    <Card bordered={false} className="card-swap" bodyStyle={{ padding: 0 }}>
       <InputSwap
         amount={askAmount}
         selectedMint={askMint}
         onSelect={(mint) => dispatch(setSwapState({ askMint: mint }))}
         onChangeAmount={onChange}
       />
-    </Row>
+    </Card>
   )
 }

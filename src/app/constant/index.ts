@@ -22,3 +22,9 @@ export enum PoolStatus {
   Frozen = 2,
   Active = 1,
 }
+
+export enum PoolCreatingStep {
+  setGradient = 'set-gradient',
+  addLiquidity = 'fund',
+  confirmCreatePool = 'confirm-create-pool',
+}

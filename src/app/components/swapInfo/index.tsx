@@ -43,7 +43,7 @@ const ExtraTypography = ({
   )
 }
 
-const PreviewSwap = ({ extraStyle }: { extraStyle?: CSSProperties }) => {
+const SwapInfo = ({ extraStyle }: { extraStyle?: CSSProperties }) => {
   return (
     <Row gutter={[12, 12]} style={{ ...extraStyle }}>
       <Col span={24}>
@@ -78,4 +78,4 @@ const PreviewSwap = ({ extraStyle }: { extraStyle?: CSSProperties }) => {
   )
 }
 
-export default PreviewSwap
+export default SwapInfo

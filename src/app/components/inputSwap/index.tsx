@@ -37,15 +37,14 @@ export default function InputSwap({
         background: '#142042',
         borderRadius: 20,
         padding: 16,
-        width: '100%',
       }}
     >
       <Col span={24}>
-        <Row style={{ width: '100%' }}>
-          <Col flex="auto" style={{ justifyContent: 'left' }}>
+        <Row>
+          <Col flex="auto">
             <Selection selectedMint={selectedMint} onChange={onSelect} />
           </Col>
-          <Col style={{ maxWidth: '50%' }}>
+          <Col>
             <NumericInput
               bordered={false}
               style={{
@@ -54,6 +53,7 @@ export default function InputSwap({
                 maxWidth: 150,
                 padding: 0,
                 color: '#9CA1AF',
+                minWidth: '140px',
               }}
               placeholder="0"
               value={amount}
@@ -63,8 +63,8 @@ export default function InputSwap({
         </Row>
       </Col>
       <Col span={24}>
-        <Row align="middle" style={{ width: '100%' }}>
-          <Col flex="auto" style={{ justifyContent: 'left' }}>
+        <Row align="middle">
+          <Col flex="auto">
             <Space className="caption">
               <Typography.Text type="secondary">Available:</Typography.Text>
               <Typography.Text

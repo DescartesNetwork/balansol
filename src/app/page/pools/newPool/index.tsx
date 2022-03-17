@@ -2,15 +2,25 @@ import { BN, web3 } from '@project-serum/anchor'
 import { Fragment, useState } from 'react'
 
 import { Button, Col, Modal, Row, Space, Steps, Typography } from 'antd'
-import Selection from 'app/components/selection'
 import IonIcon from 'shared/antd/ionicon'
-import WeightControl from './weightControl'
 import { MintActionStates } from '@senswap/balancer'
 import { notifyError, notifySuccess } from 'app/helper'
+import TokenSetup from './tokenSetup'
+
+const { Step } = Steps
+
+export type TokenInfo = {
+  addressToken: string
+  weight: string
+}
 
 const NewPool = () => {
   const [visible, setVisible] = useState(false)
-  const { Step } = Steps
+  const [currentStep, setCurrentStep] = useState(0)
+  const [tokenList, setTokenList] = useState<TokenInfo[]>([
+    { addressToken: '', weight: '50' },
+    { addressToken: '', weight: '50' },
+  ])
 
   const onCreate = async () => {
     try {
@@ -45,6 +55,28 @@ const NewPool = () => {
     }
   }
 
+  const onChange = (value: number) => {
+    setCurrentStep(value)
+  }
+
+  const onChangeTokenInfo = (value: TokenInfo, index: number) => {
+    if (tokenList[index].weight !== value.weight) {
+      const portionWeight =
+        (100 - Number(value.weight)) / (tokenList.length - 1)
+      const newTokenList: TokenInfo[] = tokenList.map((token, idx) => {
+        if (index !== idx) return { ...token, weight: String(portionWeight) }
+        return value
+      })
+      return setTokenList(newTokenList)
+    }
+    const newTokenList = tokenList.map((token, idx) => {
+      if (idx === index) return value
+      return token
+    })
+
+    setTokenList(newTokenList)
+  }
+
   return (
     <Fragment>
       <Button
@@ -53,7 +85,7 @@ const NewPool = () => {
         onClick={() => setVisible(!visible)}
         style={{ borderRadius: 40 }}
       >
-        New
+        New pool
       </Button>
       <Modal
         visible={visible}
@@ -70,7 +102,7 @@ const NewPool = () => {
             <Typography.Title level={4}>New Pool</Typography.Title>
           </Col>
           <Col span={24}>
-            <Steps size="small" current={0}>
+            <Steps size="small" current={currentStep} onChange={onChange}>
               <Step title="Select tokens and weights" />
               <Step title="Set liquidity" />
               <Step title="Confirm" />
@@ -82,20 +114,15 @@ const NewPool = () => {
               <Col>Weight</Col>
             </Row>
           </Col>
-          {[1, 2].map(() => {
-            return (
-              <Col span={24}>
-                <Row>
-                  <Col flex="auto">
-                    <Selection selectedMint="" onChange={() => {}} />
-                  </Col>
-                  <Col style={{ display: 'flex', alignContent: 'center' }}>
-                    <WeightControl />
-                  </Col>
-                </Row>
-              </Col>
-            )
-          })}
+          {tokenList.map((value, index) => (
+            <Col span={24}>
+              <TokenSetup
+                tokenInfo={value}
+                onChangeTokenInfo={onChangeTokenInfo}
+                index={index}
+              />
+            </Col>
+          ))}
 
           <Col span={24}>
             <Row gutter={[16, 16]}>

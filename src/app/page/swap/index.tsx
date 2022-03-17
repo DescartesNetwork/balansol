@@ -3,10 +3,10 @@ import React from 'react'
 import { Button, Card, Col, Row } from 'antd'
 import AskInput from './askInput'
 import BidInput from './bidInput'
-import Review from './review'
+import ActionReview from './reviewSwap'
 import SettingArea from './settingArea'
 import IonIcon from 'shared/antd/ionicon'
-import PreviewSwap from 'app/components/previewSwap'
+import SwapInfo from 'app/components/swapInfo'
 
 import './index.less'
 
@@ -18,49 +18,34 @@ export default function Swap() {
     <Row justify="center">
       <Col lg={8}>
         <Card style={{ boxShadow: 'unset' }}>
-          <Row gutter={[0, 0]} justify="end">
+          <Row gutter={[0, 16]} justify="end">
             <Col>
               <SettingArea />
             </Col>
             <Col span={24}>
-              {/* <Card
-                bordered={false}
-                className="card-swap"
-                bodyStyle={{ padding: 0 }}
-              > */}
-              <BidInput />
-              {/* </Card> */}
-            </Col>
-            <Col
-              span={24}
-              style={{
-                top: -10,
-                justifyContent: 'center',
-                zIndex: 1,
-                display: 'flex',
-              }}
-            >
-              <Button
-                className="btn-switch-type"
-                size="small"
-                icon={<IonIcon name="git-compare-outline" />}
-                onClick={onSwitch}
-              />
-            </Col>
-            <Col span={24} style={{ top: -18 }}>
-              <Card
-                bordered={false}
-                className="card-swap"
-                bodyStyle={{ padding: 0 }}
-              >
-                <AskInput />
-              </Card>
+              <Row gutter={[0, 4]}>
+                <Col span={24}>
+                  <BidInput />
+                </Col>
+                <Col span={24}>
+                  <Button
+                    className="btn-switch-type"
+                    size="small"
+                    icon={<IonIcon name="git-compare-outline" />}
+                    onClick={onSwitch}
+                  />
+                </Col>
+                <Col span={24}>
+                  <AskInput />
+                </Col>
+              </Row>
             </Col>
             <Col span={24}>
-              <PreviewSwap />
+              <SwapInfo />
             </Col>
-            <Col span={24} style={{ top: '32px' }}>
-              <Review />
+            <Col span={24} />
+            <Col span={24}>
+              <ActionReview />
             </Col>
           </Row>
         </Card>
