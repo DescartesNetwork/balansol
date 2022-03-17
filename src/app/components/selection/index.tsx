@@ -13,7 +13,7 @@ const Selection = ({
   onChange,
 }: {
   selectedMint: string
-  onChange: (mint: string) => void
+  onChange?: (mint: string) => void
 }) => {
   const [visible, setVisible] = useState(false)
   useEffect(() => {
@@ -22,12 +22,19 @@ const Selection = ({
 
   const onSelection = (selectedMint: string) => {
     setVisible(false)
-    return onChange(selectedMint)
+    if (!!onChange) return onChange(selectedMint)
   }
 
   return (
     <Fragment>
-      <Space className="mint-select" onClick={() => setVisible(true)}>
+      <Space
+        className="mint-select"
+        onClick={() => {
+          if (!!onChange) {
+            setVisible(true)
+          }
+        }}
+      >
         <MintAvatar mintAddress={selectedMint} />
         <Typography.Text type="secondary">
           <MintSymbol mintAddress={selectedMint} />

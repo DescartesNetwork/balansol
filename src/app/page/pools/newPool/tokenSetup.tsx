@@ -8,18 +8,21 @@ import { TokenInfo } from '.'
 const TokenSetup = ({
   tokenInfo,
   onChangeTokenInfo,
+  onRemoveToken,
   index,
 }: {
   tokenInfo: TokenInfo
   onChangeTokenInfo: (value: TokenInfo, index: number) => void
+  onRemoveToken: (index: number) => void
   index: number
 }) => {
-  const { addressToken, weight } = tokenInfo
+  const { addressToken, weight, isLocked } = tokenInfo
   const onChangeToken = (value: string) => {
     onChangeTokenInfo(
       {
         addressToken: value,
         weight,
+        isLocked,
       },
       index,
     )
@@ -29,9 +32,24 @@ const TokenSetup = ({
       {
         addressToken,
         weight: value,
+        isLocked,
       },
       index,
     )
+  }
+
+  const onChangeLock = (value: boolean) => {
+    onChangeTokenInfo(
+      {
+        addressToken,
+        weight,
+        isLocked: value,
+      },
+      index,
+    )
+  }
+  const onRemove = () => {
+    onRemoveToken(index)
   }
   return (
     <Row>
@@ -39,7 +57,12 @@ const TokenSetup = ({
         <Selection selectedMint={addressToken} onChange={onChangeToken} />
       </Col>
       <Col>
-        <WeightControl weight={weight} onChange={onChangeWeight} />
+        <WeightControl
+          tokenInfo={tokenInfo}
+          onChangeWeight={onChangeWeight}
+          onChangeLock={onChangeLock}
+          onRemoveToken={onRemove}
+        />
       </Col>
     </Row>
   )

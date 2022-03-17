@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Col, Radio, Row, Space, Typography } from 'antd'
 import NumericInput from 'shared/antd/numericInput'
@@ -11,6 +11,7 @@ import './index.less'
 import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
 
 const enum Proportion {
+  Zero = 'zero',
   Half = 'half',
   Full = 'full',
 }
@@ -24,10 +25,14 @@ export default function InputSwap({
   amount: string
   onChangeAmount?: (val: string) => void
   selectedMint: string
-  onSelect: (mint: string) => void
+  onSelect?: (mint: string) => void
 }) {
-  const [proportion, setPropotion] = useState(Proportion.Half)
+  const [runTimeBalance, setRunTimeBalance] = useState(0)
+  const [proportion, setProportion] = useState(Proportion.Zero)
   const { balance } = useAccountBalanceByMintAddress(selectedMint)
+  useEffect(() => {
+    setRunTimeBalance(balance)
+  }, [balance])
 
   return (
     <Row
@@ -57,7 +62,15 @@ export default function InputSwap({
               }}
               placeholder="0"
               value={amount}
-              onValue={onChangeAmount}
+              onValue={(e) => {
+                console.log(e, 'sssss')
+                if (!!onChangeAmount) {
+                  onChangeAmount(e)
+                }
+                const balanceTemp = balance - Number(amount)
+                if (balanceTemp > 0) return setRunTimeBalance(balanceTemp)
+                return setRunTimeBalance(0)
+              }}
             />
           </Col>
         </Row>
@@ -72,7 +85,7 @@ export default function InputSwap({
                 style={{ cursor: 'pointer' }}
                 onClick={() => {}}
               >
-                {numeric(balance).format('0,0.[00]')}
+                {numeric(runTimeBalance).format('0,0.[00]')}
               </Typography.Text>
               <Typography.Text type="secondary">
                 <MintSymbol mintAddress={''} />
@@ -81,17 +94,30 @@ export default function InputSwap({
           </Col>
           <Col>
             <Radio.Group
-              value={1}
+              value={0}
               buttonStyle="solid"
               className="proportion-wrap"
+              disabled={!onChangeAmount}
             >
               <Space>
                 <Space size={4} direction="vertical">
                   <Radio.Button
                     className="proportion-btn"
-                    onClick={() => {}}
+                    onClick={() => {
+                      if (!!onChangeAmount) {
+                        onChangeAmount(String(balance / 2))
+                        setRunTimeBalance(balance / 2)
+                        setProportion(Proportion.Half)
+                      }
+                    }}
                     value={1}
-                    style={{ background: proportion && '#f148fb' }}
+                    style={{
+                      background: [Proportion.Half, Proportion.Full].includes(
+                        proportion,
+                      )
+                        ? '#f148fb'
+                        : '',
+                    }}
                   />
                   <Typography.Text type="secondary" className="caption">
                     50%
@@ -100,8 +126,18 @@ export default function InputSwap({
                 <Space size={4} direction="vertical">
                   <Radio.Button
                     className="proportion-btn"
-                    onClick={() => {}}
                     value={2}
+                    style={{
+                      background:
+                        proportion === Proportion.Full ? '#f148fb' : '',
+                    }}
+                    onClick={() => {
+                      if (!!onChangeAmount) {
+                        onChangeAmount(String(balance))
+                        setRunTimeBalance(0)
+                        setProportion(Proportion.Full)
+                      }
+                    }}
                   />
                   <Typography.Text type="secondary" className="caption">
                     100%

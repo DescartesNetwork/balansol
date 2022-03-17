@@ -1,16 +1,22 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 import { Button, Col, Input, Row } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
+import { allowedKeyCode } from 'app/constant'
+import { TokenInfo } from '.'
 
 export default function WeightControl({
-  weight,
-  onChange,
+  tokenInfo,
+  onChangeWeight,
+  onChangeLock,
+  onRemoveToken,
 }: {
-  weight: string
-  onChange: (value: string) => void
+  tokenInfo: TokenInfo
+  onChangeWeight: (value: string) => void
+  onChangeLock: (value: boolean) => void
+  onRemoveToken: () => void
 }) {
-  const [lock, setLock] = useState(false)
+  const { weight, isLocked } = tokenInfo
 
   return (
     <Row justify="end">
@@ -19,28 +25,32 @@ export default function WeightControl({
           value={weight}
           size="small"
           bordered={false}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            onChange(e.target.value)
-          }
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            if (allowedKeyCode.includes((e.nativeEvent as any).data)) {
+              onChangeWeight(e.target.value)
+            }
+          }}
           suffix={'%'}
-          disabled={lock}
+          disabled={isLocked}
           style={{ width: '52px' }}
         />
         <Button
           type="text"
           onClick={() => {
-            setLock(!lock)
+            onChangeLock(!isLocked)
           }}
           shape="circle"
           icon={
             <IonIcon
-              name={lock ? 'lock-closed-outline' : 'lock-open-outline'}
+              name={isLocked ? 'lock-closed-outline' : 'lock-open-outline'}
             />
           }
         />
         <Button
           type="text"
-          onClick={() => {}}
+          onClick={() => {
+            onRemoveToken()
+          }}
           shape="circle"
           icon={<IonIcon name="trash-outline" />}
         />
