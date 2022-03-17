@@ -40,7 +40,7 @@ const ConfirmSwap = ({
 
   const onSwap = async () => {
     try {
-      const { txId } = await window.sen_balancer.swap(
+      const { txId } = await window.balansol.swap(
         new BN(bidAmount),
         bidMint,
         askMint,

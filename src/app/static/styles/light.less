@@ -1,0 +1,80 @@
+/**
+ * Available vars: https://github.com/ant-design/ant-design/blob/master/components/style/themes/default.less
+ */
+
+@import '~antd/dist/antd.less';
+@import './common/vars.less';
+@import './index.less';
+
+// Colors
+@primary-color: @PRIMARY;
+@info-color: @INFO;
+@success-color: @SUCCESS;
+@warning-color: @WARNING;
+@error-color: @ERROR;
+@popover-background: @NEUTRAL100;
+@body-background: @NEUTRAL05;
+@component-background: @NEUTRAL05;
+@disabled-bg: @NEUTRAL10;
+
+// Typography
+@font-family: 'Nunito', sans-serif;
+@text-color: @NEUTRAL05;
+@text-color-secondary: @NEUTRAL40;
+@heading-color: @NEUTRAL05;
+@disabled-color: @NEUTRAL40;
+@typography-title-margin-top: 0px;
+@typography-title-margin-bottom: 0px;
+
+// Border
+@border-radius-base: 8px;
+@border-color-base: @NEUTRAL20;
+@border-width-base: 1px;
+@popover-customize-border-color: @border-color-base;
+@border-color-split: @border-color-base;
+
+// Card
+@card-radius: @border-radius-base * 2;
+@card-actions-background: @NEUTRAL90;
+@card-background: @NEUTRAL90;
+@card-shadow: @LIGHT_SHADOW2;
+
+// Modal
+@modal-header-bg: @NEUTRAL90;
+@modal-content-bg: @NEUTRAL90;
+@modal-footer-bg: @NEUTRAL90;
+@modal-footer-padding-horizontal: 24px;
+
+// Drawer
+@drawer-bg: @NEUTRAL05;
+
+// Button
+@btn-font-weight: 700;
+@btn-shadow: unset;
+@btn-primary-shadow: unset;
+@btn-text-shadow: unset;
+@btn-default-border: @NEUTRAL20;
+@btn-default-ghost-color: @NEUTRAL100;
+@btn-default-ghost-border: @NEUTRAL100;
+
+// Input
+@input-placeholder-color: @NEUTRAL60;
+
+// Divider
+@divider-color: @NEUTRAL10;
+@divider-orientation-margin: 0;
+
+// Checkbox
+@checkbox-border-radius: @border-radius-base - 4;
+
+// Patch
+.@{ant-prefix}-layout {
+  background: unset;
+}
+.@{ant-prefix}-card {
+  box-shadow: @LIGHT_SHADOW1;
+  .glass {
+    background-color: color(~`('@{card-background}99') `);
+    backdrop-filter: blur(4px);
+  }
+}

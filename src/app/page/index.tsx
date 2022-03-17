@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useEffect } from 'react'
 import { Route, Switch } from 'react-router-dom'
 
-import { Row, Col, Radio, Tabs } from 'antd'
+import { Row, Col, Radio, Tabs, Space } from 'antd'
 import PoolDetails from './poolDetails'
 import Pools from './pools'
 import Swap from './swap'
@@ -36,7 +36,9 @@ const SwapAndPools = () => {
             value={selectedTab}
           >
             {Object.keys(HOMEPAGE_TABS).map((key) => (
-              <Radio.Button value={HOMEPAGE_TABS[key]}>{key}</Radio.Button>
+              <Radio.Button style={{ minWidth: 90 }} value={HOMEPAGE_TABS[key]}>
+                {key}
+              </Radio.Button>
             ))}
           </Radio.Group>
         </Col>

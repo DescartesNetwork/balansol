@@ -20,7 +20,7 @@ const initialState: PoolsState = {}
  */
 
 export const getPools = createAsyncThunk(`${NAME}/getPools`, async () => {
-  const pools = await window.sen_balancer.getAllPoolData()
+  const pools = await window.balansol.getAllPoolData()
   let bulk: PoolsState = {}
   for (const pool of pools) {
     bulk[pool.publicKey.toBase58()] = pool.account
@@ -40,7 +40,7 @@ export const getPool = createAsyncThunk<
   } = getState()
   if (data) return { [address]: data }
 
-  const poolData = await window.sen_balancer.getPoolData(address)
+  const poolData = await window.balansol.getPoolData(address)
   return { [address]: poolData }
 })
 

@@ -12,15 +12,17 @@ const Mint = ({
 }) => {
   return (
     <Card
-      className={`card-child${active ? ' active' : ''}`}
-      bodyStyle={{ padding: `8px 16px`, cursor: 'pointer' }}
+      bodyStyle={{
+        padding: 0,
+      }}
+      className="card-child-balansol color-80 mint-select-item"
       bordered={active}
       onClick={onClick}
       hoverable
     >
       <Row gutter={[16, 16]}>
         <Col span={24}>
-          <Space size={12} style={{ marginLeft: -4 }}>
+          <Space size={12}>
             <MintAvatar mintAddress={mintAddress} size={32} />
             <Typography.Text style={{ margin: 0 }}>
               <MintSymbol mintAddress={mintAddress} />
