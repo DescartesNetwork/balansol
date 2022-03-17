@@ -5,6 +5,7 @@ import { BN, utils, web3 } from '@project-serum/anchor'
 import { Button, Col, Modal, Row, Typography } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
 import TokenWillReceive from './tokenWillReceive'
+import { utils as utilsSenJS } from '@senswap/sen-js'
 
 import { notifyError, notifySuccess } from 'app/helper'
 import { AppState } from 'app/model'
@@ -12,6 +13,7 @@ import MintInput from 'app/components/mintInput'
 import { PoolAvatar } from 'app/components/pools/poolAvatar'
 import { useAccount, useWallet } from '@senhub/providers'
 import { MintSymbol } from 'shared/antd/mint'
+import { lptDecimals } from 'app/constant/index'
 
 const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
   const [visible, setVisible] = useState(false)
@@ -27,12 +29,13 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
   const { accounts } = useAccount()
 
   const onSubmit = async () => {
-    console.log('onSubmit: ', [poolAddress], poolData)
+    console.log('onSubmit: ', [poolAddress], poolData, lptAmount)
     try {
       await checkInitializedAccount()
+      let amount = utilsSenJS.decimalize(lptAmount, lptDecimals)
       const { txId } = await window.balansol.removeLiquidity(
         poolAddress,
-        new BN(lptAmount),
+        new BN(String(amount)),
       )
       notifySuccess('Withdraw', txId)
     } catch (error) {
@@ -150,12 +153,16 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
             <Row gutter={[0, 14]} style={{ width: '100%' }}>
               <Col span={24}>
                 <Typography.Text type="secondary" style={{ fontSize: '12px' }}>
-                  You will reveice
+                  You will receive
                 </Typography.Text>
               </Col>
               {Object.keys(mintsSelected).map((mint) => {
                 return mintsSelected[mint] ? (
-                  <TokenWillReceive key={mint} mintAddress={mint} />
+                  <TokenWillReceive
+                    key={mint}
+                    mintAddress={mint}
+                    amount={lptAmount}
+                  />
                 ) : null
               })}
             </Row>

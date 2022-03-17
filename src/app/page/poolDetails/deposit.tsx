@@ -34,8 +34,8 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
         poolData.mints.map(async (mint) => {
           let mintAddress = mint.toBase58()
           let decimals = await getDecimals(mintAddress)
-          let mintAmmount = utils.decimalize(mintsAmount[mintAddress], decimals)
-          return new BN(String(mintAmmount))
+          let mintAmount = utils.decimalize(mintsAmount[mintAddress], decimals)
+          return new BN(String(mintAmount))
         }),
       )
       const { txId } = await window.balansol.addLiquidity(
