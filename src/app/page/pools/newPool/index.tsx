@@ -63,18 +63,14 @@ const NewPool = () => {
     if (tokenList[index].weight !== value.weight) {
       const portionWeight =
         (100 - Number(value.weight)) / (tokenList.length - 1)
-      const newTokenList: TokenInfo[] = tokenList.map((token, ind) => {
-        if (index !== ind) {
-          return { ...token, weight: String(portionWeight) }
-        }
+      const newTokenList: TokenInfo[] = tokenList.map((token, idx) => {
+        if (index !== idx) return { ...token, weight: String(portionWeight) }
         return value
       })
       return setTokenList(newTokenList)
     }
     const newTokenList = tokenList.map((token, idx) => {
-      if (idx === index) {
-        return value
-      }
+      if (idx === index) return value
       return token
     })
 
