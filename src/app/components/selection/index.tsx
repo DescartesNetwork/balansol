@@ -31,18 +31,21 @@ const Selection = ({
     <Fragment>
       {/* Mint selected */}
 
-      <Space className="mint-select" onClick={() => setVisible(true)}>
+      <Space
+        className="mint-select"
+        onClick={() => setVisible(mints.length > 0)}
+      >
         {mintAvatar || <MintAvatar mintAddress={selectedMint} />}
         {mintLabel || (
           <Fragment>
             <Typography.Text type="secondary">
               <MintSymbol mintAddress={selectedMint} />
             </Typography.Text>
-            {mints.length && (
+            {mints.length ? (
               <Typography.Text type="secondary">
                 <IonIcon name="chevron-down-outline" />
               </Typography.Text>
-            )}
+            ) : null}
           </Fragment>
         )}
       </Space>

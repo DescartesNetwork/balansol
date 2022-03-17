@@ -14,7 +14,7 @@ export default function MintInput({
   amount,
   onChangeAmount = () => {},
   selectedMint,
-  mints,
+  mints = [],
   onSelect = () => {},
   mintLabel,
   mintAvatar,
@@ -23,7 +23,7 @@ export default function MintInput({
   onChangeAmount?: (val: string) => void
   selectedMint: string
   onSelect?: (mint: string) => void
-  mints: string[]
+  mints?: string[]
   mintLabel?: ReactNode
   mintAvatar?: ReactNode
 }) {

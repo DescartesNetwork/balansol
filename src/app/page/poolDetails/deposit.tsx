@@ -4,8 +4,9 @@ import { BN } from '@project-serum/anchor'
 import { utils } from '@senswap/sen-js'
 
 import { Button, Col, Modal, Row, Typography } from 'antd'
+import MintInput from 'app/components/mintInput'
 import IonIcon from 'shared/antd/ionicon'
-import CardToken from './cardToken'
+import { MintSymbol } from 'shared/antd/mint'
 
 import { notifyError, notifySuccess } from 'app/helper'
 import { AppState } from 'app/model'
@@ -70,11 +71,21 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
                 let mintAddress: string = mint.toBase58()
                 return (
                   <Col span={24} key={index}>
-                    <CardToken
-                      mintAddress={mintAddress}
-                      onChangeAmount={onChange}
-                      amountValue={mintsAmount[mintAddress]}
-                    ></CardToken>
+                    <MintInput
+                      selectedMint={mintAddress}
+                      amount={mintsAmount[mintAddress]}
+                      onChangeAmount={(amount) => onChange(mintAddress, amount)}
+                      mintLabel={
+                        <Fragment>
+                          <Typography.Text type="secondary">
+                            <MintSymbol mintAddress={mintAddress || ''} />
+                          </Typography.Text>
+                          <Typography.Text type="secondary">
+                            50%
+                          </Typography.Text>
+                        </Fragment>
+                      }
+                    />
                   </Col>
                 )
               })}
