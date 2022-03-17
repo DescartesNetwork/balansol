@@ -5,15 +5,15 @@ import { useAccount, useWallet } from '@senhub/providers'
 import { utils as utilsSenJS } from '@senswap/sen-js'
 
 import { Button, Col, Modal, Row, Typography } from 'antd'
-import IonIcon from 'shared/antd/ionicon'
 import TokenWillReceive from './tokenWillReceive'
+import MintInput from 'app/components/mintInput'
+import { PoolAvatar } from 'app/components/pools/poolAvatar'
+import { MintSymbol } from 'shared/antd/mint'
+import IonIcon from 'shared/antd/ionicon'
 
 import { notifyError, notifySuccess } from 'app/helper'
 import { AppState } from 'app/model'
-import MintInput from 'app/components/mintInput'
-import { PoolAvatar } from 'app/components/pools/poolAvatar'
 import { LPTDECIMALS } from 'app/constant/index'
-import { MintSymbol } from 'shared/antd/mint'
 
 const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
   const [visible, setVisible] = useState(false)
