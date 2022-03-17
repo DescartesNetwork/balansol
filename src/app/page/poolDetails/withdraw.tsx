@@ -5,15 +5,19 @@ import { BN, utils, web3 } from '@project-serum/anchor'
 import { Button, Col, Modal, Row, Typography } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
 import TokenWillReceive from './tokenWillReceive'
-import WithdrawCardToken from './withdrawCardToken'
 
 import { notifyError, notifySuccess } from 'app/helper'
 import { AppState } from 'app/model'
+import MintInput from 'app/components/mintInput'
+import { PoolAvatar } from 'app/components/pools/poolAvatar'
 import { useAccount, useWallet } from '@senhub/providers'
+import { MintSymbol } from 'shared/antd/mint'
 
 const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
   const [visible, setVisible] = useState(false)
-  const [lptAmount, setLptAmount] = useState(0)
+  const [lptAmount, setLptAmount] = useState('')
+  const [mintsSelected, setMinsSelected] = useState<Record<string, boolean>>({})
+  const [isSelectedAll, setIsSelectedAll] = useState(false)
   const {
     pools: { [poolAddress]: poolData },
   } = useSelector((state: AppState) => state)
@@ -23,6 +27,7 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
   const { accounts } = useAccount()
 
   const onSubmit = async () => {
+    console.log('onSubmit: ', [poolAddress], poolData)
     try {
       await checkInitializedAccount()
       const { txId } = await window.balansol.removeLiquidity(
@@ -49,6 +54,30 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
     }
   }
 
+  const selectMint = (mint: string) => {
+    if (isSelectedAll && mintsSelected[mint]) {
+      setIsSelectedAll(false)
+      setMinsSelected({ [`${mint}`]: true })
+      return
+    }
+    if (mintsSelected[mint]) {
+      setMinsSelected({ [`${mint}`]: !mintsSelected[mint] })
+    } else setMinsSelected({ [`${mint}`]: true })
+  }
+
+  const selectAllMint = () => {
+    let allMintsSelected: any = {}
+    poolData.mints.map(
+      (mint) =>
+        (allMintsSelected = {
+          ...allMintsSelected,
+          [`${mint.toBase58()}`]: !isSelectedAll,
+        }),
+    )
+    setIsSelectedAll(!isSelectedAll)
+    setMinsSelected(allMintsSelected)
+  }
+
   return (
     <Fragment>
       <Button onClick={() => setVisible(true)}>Withdraw</Button>
@@ -73,19 +102,31 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
               </Col>
               <Col span={24}>
                 <Row gutter={[12, 12]}>
+                  {poolData.mints.map((mint, index) => {
+                    let mintAddress: string = mint.toBase58()
+                    return (
+                      <Col key={index}>
+                        <Button
+                          className={`btn-toke-name ${
+                            mintsSelected[mintAddress] ? 'selected' : ''
+                          }`}
+                          onClick={() => selectMint(mintAddress)}
+                        >
+                          <span className="title">
+                            <MintSymbol mintAddress={mintAddress || ''} />
+                          </span>
+                        </Button>
+                      </Col>
+                    )
+                  })}
                   <Col>
-                    <Button className="btn-toke-name">
-                      <span className="title">USDC</span>
-                    </Button>
-                  </Col>
-                  <Col>
-                    <Button className="btn-toke-name">
-                      <span className="title">USDC</span>
-                    </Button>
-                  </Col>
-                  <Col>
-                    <Button className="btn-toke-name">
-                      <span className="title">USDC</span>
+                    <Button
+                      className={`btn-toke-name ${
+                        isSelectedAll ? 'selected' : ''
+                      }`}
+                      onClick={() => selectAllMint()}
+                    >
+                      <span className="title">All</span>
                     </Button>
                   </Col>
                 </Row>
@@ -94,7 +135,16 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
           </Col>
 
           <Col span={24}>
-            <WithdrawCardToken />
+            {/* <WithdrawCardToken /> */}
+            <MintInput
+              selectedMint={poolData.mintLpt.toBase58()}
+              amount={lptAmount}
+              onChangeAmount={(amount) => setLptAmount(amount)}
+              mintLabel={
+                <Typography.Text type="secondary">Balansol LP</Typography.Text>
+              }
+              mintAvatar={<PoolAvatar poolAddress={poolAddress} />}
+            />
           </Col>
           <Col span={24}>
             <Row gutter={[0, 14]} style={{ width: '100%' }}>
@@ -103,11 +153,20 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
                   You will reveice
                 </Typography.Text>
               </Col>
-              <TokenWillReceive />
+              {Object.keys(mintsSelected).map((mint) => {
+                return mintsSelected[mint] ? (
+                  <TokenWillReceive key={mint} mintAddress={mint} />
+                ) : null
+              })}
             </Row>
           </Col>
           <Col span={24}>
-            <Button className="balansol-btn" type="primary" block>
+            <Button
+              className="balansol-btn"
+              type="primary"
+              block
+              onClick={onSubmit}
+            >
               Withdraw
             </Button>
           </Col>

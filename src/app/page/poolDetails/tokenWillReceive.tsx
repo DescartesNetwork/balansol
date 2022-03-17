@@ -1,15 +1,15 @@
 import { Col, Row, Space, Typography } from 'antd'
 import { MintAvatar, MintSymbol } from 'shared/antd/mint'
 
-const TokenWillReceive = () => {
+const TokenWillReceive = ({ mintAddress }: { mintAddress: string }) => {
   return (
     <Col span={24}>
       <Row>
         <Col flex="auto">
           <Space>
-            <MintAvatar mintAddress="" />
+            <MintAvatar mintAddress={mintAddress} />
             <Typography.Text type="secondary">
-              <MintSymbol mintAddress={''} />
+              <MintSymbol mintAddress={mintAddress} />
             </Typography.Text>
           </Space>
         </Col>
