@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useEffect } from 'react'
 import { Route, Switch } from 'react-router-dom'
 
-import { Row, Col, Radio, Tabs, Space } from 'antd'
+import { Row, Col, Radio, Tabs } from 'antd'
 import PoolDetails from './poolDetails'
 import Pools from './pools'
 import Swap from './swap'

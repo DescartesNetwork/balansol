@@ -1,6 +1,7 @@
 import { Fragment, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { BN, utils, web3 } from '@project-serum/anchor'
+import { useAccount, useWallet } from '@senhub/providers'
 
 import { Button, Col, Modal, Row, Typography } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
@@ -9,7 +10,6 @@ import WithdrawCardToken from './withdrawCardToken'
 
 import { notifyError, notifySuccess } from 'app/helper'
 import { AppState } from 'app/model'
-import { useAccount, useWallet } from '@senhub/providers'
 
 const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
   const [visible, setVisible] = useState(false)

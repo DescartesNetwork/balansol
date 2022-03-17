@@ -3,7 +3,8 @@ import React from 'react'
 import { Col, Row } from 'antd'
 import WeightControl from './weightControl'
 import Selection from 'app/components/selection'
-import { TokenInfo } from '.'
+
+import { TokenInfo } from './index'
 import { useMintsSwap } from 'app/hooks/useMintsSwap'
 
 const TokenSetup = ({
