@@ -82,7 +82,9 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
 
   return (
     <Fragment>
-      <Button onClick={() => setVisible(true)}>Withdraw</Button>
+      <Button onClick={() => setVisible(true)} block>
+        Withdraw
+      </Button>
       {/* Modal withdraw */}
       <Modal
         title={<Typography.Title level={4}>Withdraw</Typography.Title>}

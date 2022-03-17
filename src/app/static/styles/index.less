@@ -1,4 +1,5 @@
 @import './common/card.less';
+@screen-phone: 767px;
 
 .modal-balansol {
   .balansol-modal-content {
@@ -56,13 +57,24 @@
   &:after {
     content: '';
     background: url('../../static/images/balansol-background.png');
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
     opacity: 0.5;
     height: 100vh;
-    top: -64px;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    position: absolute;
-    z-index: -1;
+    position: fixed;
+  }
+}
+
+.chart-card {
+  height: 396px;
+  box-shadow: unset;
+  .chart-title {
+    height: 38px;
+  }
+  @media screen and (max-width: @screen-phone) {
+    height: 380px;
   }
 }
