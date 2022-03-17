@@ -13,7 +13,6 @@ import { AppState } from 'app/model'
 import MintInput from 'app/components/mintInput'
 import { PoolAvatar } from 'app/components/pools/poolAvatar'
 import { lptDecimals } from 'app/constant/index'
-import { useAccount, useWallet } from '@senhub/providers'
 import { MintSymbol } from 'shared/antd/mint'
 
 const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
