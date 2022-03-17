@@ -1,6 +1,7 @@
 import { Fragment, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { BN, utils, web3 } from '@project-serum/anchor'
+import { useAccount, useWallet } from '@senhub/providers'
 import { utils as utilsSenJS } from '@senswap/sen-js'
 
 import { Button, Col, Modal, Row, Typography } from 'antd'

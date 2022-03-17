@@ -21,7 +21,6 @@ export default function Pools() {
           </Col>
         </Row>
       </Col>
-
       <Col span={16}>
         <Row gutter={[24, 24]}>
           {Object.keys(pools).map((poolAddress) => {

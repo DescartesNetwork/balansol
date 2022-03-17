@@ -23,4 +23,10 @@ export enum PoolStatus {
   Active = 1,
 }
 
+export enum PoolCreatingStep {
+  setGradient = 'set-gradient',
+  addLiquidity = 'fund',
+  confirmCreatePool = 'confirm-create-pool',
+}
+
 export const lptDecimals = 9;

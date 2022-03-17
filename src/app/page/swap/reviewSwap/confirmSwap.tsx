@@ -14,11 +14,10 @@ import {
 } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
 import { MintAvatar, MintSymbol } from 'shared/antd/mint'
-import PreviewSwap from 'app/components/previewSwap'
+import PreviewSwap from 'app/components/swapInfo'
 
 import './index.less'
 import { AppState } from 'app/model'
-import { useAskAmount } from 'app/hooks/useAskAmount'
 import { notifyError, notifySuccess } from 'app/helper'
 
 const ConfirmSwap = ({
@@ -32,9 +31,7 @@ const ConfirmSwap = ({
   const [isLoading, setIsLoading] = useState(false)
   const {
     swap: { bidAmount, bidMint, askMint },
-    pools,
   } = useSelector((state: AppState) => state)
-  const askAmount = useAskAmount()
 
   const onCloseModal = useCallback(() => {
     onCancel(false)

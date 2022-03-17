@@ -1,6 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux'
 
-import { Row } from 'antd'
 import MintInput from 'app/components/mintInput'
 
 import { AppState } from 'app/model'
