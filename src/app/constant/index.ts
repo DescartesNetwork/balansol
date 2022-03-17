@@ -29,4 +29,4 @@ export enum PoolCreatingStep {
   confirmCreatePool = 'confirm-create-pool',
 }
 
-export const lptDecimals = 9;
+export const LPTDECIMALS = 9;

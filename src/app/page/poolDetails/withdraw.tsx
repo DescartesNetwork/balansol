@@ -12,7 +12,7 @@ import { notifyError, notifySuccess } from 'app/helper'
 import { AppState } from 'app/model'
 import MintInput from 'app/components/mintInput'
 import { PoolAvatar } from 'app/components/pools/poolAvatar'
-import { lptDecimals } from 'app/constant/index'
+import { LPTDECIMALS } from 'app/constant/index'
 import { MintSymbol } from 'shared/antd/mint'
 
 const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
@@ -31,7 +31,7 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
   const onSubmit = async () => {
     try {
       await checkInitializedAccount()
-      let amount = utilsSenJS.decimalize(lptAmount, lptDecimals)
+      let amount = utilsSenJS.decimalize(lptAmount, LPTDECIMALS)
       const { txId } = await window.balansol.removeLiquidity(
         poolAddress,
         new BN(String(amount)),
@@ -73,10 +73,10 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
       (mint) =>
         (allMintsSelected = {
           ...allMintsSelected,
-          [`${mint.toBase58()}`]: !isSelectedAll,
+          [`${mint.toBase58()}`]: true,
         }),
     )
-    setIsSelectedAll(!isSelectedAll)
+    setIsSelectedAll(true)
     setMinsSelected(allMintsSelected)
   }
 
