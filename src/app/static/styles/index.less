@@ -1,0 +1,63 @@
+@import './common/card.less';
+
+.modal-balansol {
+  .balansol-modal-content {
+    background: #212c4c !important;
+    border: 1px solid #4e4f5c !important;
+    border-radius: 24px !important;
+  }
+  .balansol-modal-header {
+    background: #212c4c !important;
+    border-radius: 24px 24px 0 0 !important;
+    border-bottom: none !important;
+  }
+}
+
+.percent-btn {
+  border-radius: 8px !important;
+  height: 8px !important;
+  width: 32px !important;
+}
+
+.caption {
+  font-size: 12px;
+}
+
+.balansol-btn {
+  background: #63e0b3 !important;
+  color: #081438 !important;
+  border-radius: 24px !important;
+  border: unset !important;
+}
+
+.mint-select {
+  background: #394360 !important;
+  border-radius: 16px !important;
+  padding: 4px 8px !important;
+}
+
+.withdraw {
+  .btn-toke-name {
+    border: unset !important;
+    background: rgba(99, 224, 179, 0.1) !important;
+    .title {
+      color: #63e0b3;
+      font-weight: 400;
+    }
+  }
+}
+
+#balansol {
+  &:after {
+    content: '';
+    background: url('../../static/images/balansol-background.png');
+    opacity: 0.5;
+    height: 100vh;
+    top: -64px;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    position: absolute;
+    z-index: -1;
+  }
+}
