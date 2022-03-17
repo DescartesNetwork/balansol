@@ -1,12 +1,10 @@
 import React, { Dispatch, Fragment, useState } from 'react'
 
 import { Col, Row, Space, Switch, Tooltip, Typography } from 'antd'
-import { TokenInfo } from '..'
-import InputSwap from 'app/components/inputSwap'
-import { token } from '@project-serum/anchor/dist/cjs/utils'
-import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
+import { TokenInfo } from '../index'
 import IonIcon from 'shared/antd/ionicon'
 import LiquidityInfo from '../liquidityInfo'
+import MintInput from 'app/components/mintInput'
 
 const AddLiquidty = ({
   tokenList,
@@ -34,7 +32,7 @@ const AddLiquidty = ({
       <Col>
         <Space direction="vertical" size={8}>
           {tokenList.map((value, idx) => (
-            <InputSwap
+            <MintInput
               amount={depositedAmounts[idx]}
               selectedMint={value.addressToken}
               onChangeAmount={(value: string) => {

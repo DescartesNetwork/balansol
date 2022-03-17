@@ -49,7 +49,7 @@ const SelectToken = ({
           weight: new BN(e.weight),
         }
       })
-      const { txId, poolAddress } = await window.sen_balancer.initializePool(
+      const { txId, poolAddress } = await window.balansol.initializePool(
         fee,
         mintsConfig,
       )

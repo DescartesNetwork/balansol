@@ -1,15 +1,13 @@
-import { BN, web3 } from '@project-serum/anchor'
-import { token } from '@project-serum/anchor/dist/cjs/utils'
-import { useMint } from '@senhub/providers'
-import { MintActionStates } from '@senswap/balancer'
-import { Button, Col, Row, Space, Typography } from 'antd'
-import { notifyError, notifySuccess } from 'app/helper'
 import React, { useCallback, useEffect, useState } from 'react'
+import { BN, web3 } from '@project-serum/anchor'
+import { useMint } from '@senhub/providers'
+
+import { Button, Col, Row, Typography } from 'antd'
 import { MintSymbol } from 'shared/antd/mint'
-import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
+
+import { notifyError, notifySuccess } from 'app/helper'
 import { fetchCGK } from 'shared/util'
-import { TokenInfo } from '.'
-import Price from './Price'
+import { TokenInfo } from './index'
 
 type TokenPrice = {
   price: number
@@ -52,7 +50,7 @@ const LiquidityInfo = ({
   const onAddLiquidity = async () => {
     try {
       for (let i = 0; i < tokenList.length; i++) {
-        await window.sen_balancer.initializeJoin(
+        await window.balansol.initializeJoin(
           poolAddress,
           new web3.PublicKey(tokenList[i].addressToken),
           new BN(depositAmounts[i]),
@@ -82,7 +80,7 @@ const LiquidityInfo = ({
       <Col span={24}>
         <Row>
           <Col flex={1}>
-            <Typography.Text>Total value</Typography.Text>
+            <Typography.Text type="secondary">Total value</Typography.Text>
           </Col>
           <Col>
             <Typography.Title level={3}>

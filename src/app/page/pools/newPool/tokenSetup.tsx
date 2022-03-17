@@ -4,6 +4,7 @@ import { Col, Row } from 'antd'
 import WeightControl from './weightControl'
 import Selection from 'app/components/selection'
 import { TokenInfo } from '.'
+import { useMintsSwap } from 'app/hooks/useMintsSwap'
 
 const TokenSetup = ({
   tokenInfo,
@@ -16,6 +17,7 @@ const TokenSetup = ({
   onRemoveToken: (index: number) => void
   index: number
 }) => {
+  const mintsSwap = useMintsSwap()
   const { addressToken, weight, isLocked } = tokenInfo
   const onChangeToken = (value: string) => {
     onChangeTokenInfo(
@@ -54,7 +56,11 @@ const TokenSetup = ({
   return (
     <Row>
       <Col flex="auto">
-        <Selection selectedMint={addressToken} onChange={onChangeToken} />
+        <Selection
+          selectedMint={addressToken}
+          onChange={onChangeToken}
+          mints={mintsSwap}
+        />
       </Col>
       <Col>
         <WeightControl

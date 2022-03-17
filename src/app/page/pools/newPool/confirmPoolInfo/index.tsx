@@ -1,5 +1,5 @@
 import { useMint } from '@senhub/providers'
-import { Button, Card, Col, Row, Table } from 'antd'
+import { Button, Card, Col, Row, Table, Typography } from 'antd'
 import React, {
   Dispatch,
   Fragment,
@@ -10,6 +10,8 @@ import React, {
 import { fetchCGK } from 'shared/util'
 import { TokenInfo } from '..'
 import { WORMHOLE_COLUMNS } from './column'
+
+import './index.less'
 
 type PoolInfo = {
   token: TokenInfo
@@ -44,11 +46,16 @@ const ConfirmPoolInfo = ({
         const ticket = tokenInfo?.extensions?.coingeckoId
         const CGKTokenInfo = await fetchCGK(ticket)
         if (!CGKTokenInfo) return { token: value, amount: 0, value: 0 }
-        console.log(CGKTokenInfo, 'CGKTokenInfo')
+        console.log(
+          CGKTokenInfo?.price,
+          Number(depositedAmounts[idx]),
+          depositedAmounts[idx],
+          'CGKTokenInfo',
+        )
         return {
           token: value,
           amount: Number(depositedAmounts[idx]),
-          value: (CGKTokenInfo?.price * Number(depositedAmounts[idx])) | 0,
+          value: CGKTokenInfo?.price * (Number(depositedAmounts[idx]) | 0),
         }
       }),
     )
@@ -72,14 +79,23 @@ const ConfirmPoolInfo = ({
           dataSource={poolInfo}
           rowClassName={(record, index) => (index % 2 ? 'odd-row' : 'even-row')}
           pagination={false}
-          // scroll={{ x: 1000 }}
           rowKey={(record) => record.token.addressToken}
         />
       </Col>
       <Col span={24}>
-        <Card>
+        <Card
+          style={{
+            borderRadius: '8px',
+            backgroundColor: '#142042',
+            boxShadow: 'none',
+          }}
+          bodyStyle={{ padding: 16 }}
+          bordered={false}
+        >
           <Row>
-            <Col flex={1}>Total value</Col>
+            <Col flex={1}>
+              <Typography.Text type="secondary">Total value</Typography.Text>
+            </Col>
             <Col>{poolTotalValue}</Col>
           </Row>
         </Card>

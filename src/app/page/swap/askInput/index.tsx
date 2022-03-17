@@ -1,11 +1,11 @@
 import { useDispatch, useSelector } from 'react-redux'
 
 import { Card } from 'antd'
-import InputSwap from 'app/components/inputSwap'
 
 import { AppState } from 'app/model'
 import { setSwapState } from 'app/model/swap.controller'
 import { useAskAmount } from 'app/hooks/useAskAmount'
+import MintInput from 'app/components/mintInput'
 
 export default function AskInput() {
   const {
@@ -20,7 +20,7 @@ export default function AskInput() {
   }
   return (
     <Card bordered={false} className="card-swap" bodyStyle={{ padding: 0 }}>
-      <InputSwap
+      <MintInput
         amount={askAmount}
         selectedMint={askMint}
         onSelect={(mint) => dispatch(setSwapState({ askMint: mint }))}
