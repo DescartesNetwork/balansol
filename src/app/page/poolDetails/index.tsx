@@ -92,7 +92,7 @@ const PoolDetails = () => {
                       </Row>
                     </Col>
                     <Col span={24}>
-                      <Image width="100%" src={BarChart} />
+                      <Image width="50%" src={BarChart} />
                     </Col>
                   </Row>
                 </Card>
@@ -113,7 +113,7 @@ const PoolDetails = () => {
                       </Row>
                     </Col>
                     <Col span={24}>
-                      <Image width="80%" src={DoughnutChart} />
+                      <Image width="50%" src={DoughnutChart} />
                     </Col>
                   </Row>
                 </Card>
