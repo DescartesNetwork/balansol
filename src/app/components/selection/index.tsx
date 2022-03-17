@@ -12,11 +12,13 @@ const Selection = ({
   mints = [],
   onChange = () => {},
   mintLabel,
+  mintAvatar,
 }: {
   selectedMint: string
   mints?: string[]
   onChange?: (mint: string) => void
   mintLabel?: ReactNode
+  mintAvatar?: ReactNode
 }) => {
   const [visible, setVisible] = useState(false)
 
@@ -30,7 +32,7 @@ const Selection = ({
       {/* Mint selected */}
 
       <Space className="mint-select" onClick={() => setVisible(true)}>
-        <MintAvatar mintAddress={selectedMint} />
+        {mintAvatar || <MintAvatar mintAddress={selectedMint} />}
         {mintLabel || (
           <Fragment>
             <Typography.Text type="secondary">
