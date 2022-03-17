@@ -15,14 +15,12 @@ export default function BidInput() {
   const mintsSwap = useMintsSwap()
 
   return (
-    <Row>
-      <MintInput
-        amount={bidAmount}
-        selectedMint={bidMint}
-        onSelect={(mint) => dispatch(setSwapState({ bidMint: mint }))}
-        onChangeAmount={(val) => dispatch(setSwapState({ bidAmount: val }))}
-        mints={mintsSwap}
-      />
-    </Row>
+    <MintInput
+      amount={bidAmount}
+      selectedMint={bidMint}
+      onSelect={(mint) => dispatch(setSwapState({ bidMint: mint }))}
+      onChangeAmount={(val) => dispatch(setSwapState({ bidAmount: val }))}
+      mints={mintsSwap}
+    />
   )
 }

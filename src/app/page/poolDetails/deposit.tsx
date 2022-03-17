@@ -11,7 +11,6 @@ import { notifyError, notifySuccess } from 'app/helper'
 import { AppState } from 'app/model'
 import { useMint } from '@senhub/providers'
 
-
 const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   const [visible, setVisible] = useState(false)
   const [mintsAmount, setMintAmount] = useState<Record<string, string>>({})
@@ -30,13 +29,18 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   const onSubmit = async () => {
     setLoading(true)
     try {
-      const amountsIn = await Promise.all(poolData.mints.map(async (mint) => {
-        let mintAddress = mint.toBase58()
-        let decimals = await getDecimals(mintAddress)
-        let mintAmmount = utils.decimalize(mintsAmount[mintAddress], decimals)
-        return new BN(String(mintAmmount))
-      }))
-      const { txId } = await window.sen_balancer.addLiquidity(poolAddress, amountsIn)
+      const amountsIn = await Promise.all(
+        poolData.mints.map(async (mint) => {
+          let mintAddress = mint.toBase58()
+          let decimals = await getDecimals(mintAddress)
+          let mintAmmount = utils.decimalize(mintsAmount[mintAddress], decimals)
+          return new BN(String(mintAmmount))
+        }),
+      )
+      const { txId } = await window.balansol.addLiquidity(
+        poolAddress,
+        amountsIn,
+      )
       notifySuccess('Deposit', txId)
     } catch (error) {
       notifyError(error)

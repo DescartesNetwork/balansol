@@ -27,13 +27,13 @@ const NewPool = () => {
           weight: new BN(50),
         }
       })
-      const { txId, poolAddress } = await window.sen_balancer.initializePool(
+      const { txId, poolAddress } = await window.balansol.initializePool(
         fee,
         mintsConfig,
       )
 
       for (const mintConfig of mintsConfig) {
-        await window.sen_balancer.initializeJoin(
+        await window.balansol.initializeJoin(
           poolAddress,
           mintConfig.publicKey,
           mintConfig.amountIn,

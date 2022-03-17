@@ -33,7 +33,7 @@ const PoolWatcher: FunctionComponent = (props) => {
   // Watch account changes
   const watchData = useCallback(async () => {
     if (watchId) return console.warn('Already watched')
-    watchId = window.sen_balancer.watch((er: string | null, re) => {
+    watchId = window.balansol.watch((er: string | null, re) => {
       if (er) return console.error(er)
       if (re) return dispatch(upsetPool({ address: re.address, data: re.data }))
     }, [])
@@ -46,7 +46,7 @@ const PoolWatcher: FunctionComponent = (props) => {
     return () => {
       ;(async () => {
         try {
-          await window.sen_balancer.unwatch(watchId)
+          await window.balansol.unwatch(watchId)
         } catch (er) {}
       })()
       watchId = 0

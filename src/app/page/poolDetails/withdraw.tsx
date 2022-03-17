@@ -25,7 +25,7 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
   const onSubmit = async () => {
     try {
       await checkInitializedAccount()
-      const { txId } = await window.sen_balancer.removeLiquidity(
+      const { txId } = await window.balansol.removeLiquidity(
         poolAddress,
         new BN(lptAmount),
       )

@@ -17,6 +17,7 @@ export default function MintInput({
   mints,
   onSelect = () => {},
   mintLabel,
+  mintAvatar,
 }: {
   amount: string
   onChangeAmount?: (val: string) => void
@@ -24,12 +25,13 @@ export default function MintInput({
   onSelect?: (mint: string) => void
   mints: string[]
   mintLabel?: ReactNode
+  mintAvatar?: ReactNode
 }) {
   const { balance } = useAccountBalanceByMintAddress(selectedMint)
 
   return (
     <Row
-      gutter={[16, 10]}
+      gutter={[0, 10]}
       align="middle"
       style={{
         background: '#142042',
@@ -46,6 +48,7 @@ export default function MintInput({
               onChange={onSelect}
               mints={mints}
               mintLabel={mintLabel}
+              mintAvatar={mintAvatar}
             />
           </Col>
           {/* Amount input */}
@@ -96,7 +99,7 @@ export default function MintInput({
                       className="proportion-btn"
                       onClick={() => onChangeAmount(String(minValue))}
                       style={{
-                        background: isActive ? '#f148fb' : undefined,
+                        background: isActive ? '#63e0b3' : undefined,
                       }}
                     />
                     <Typography.Text type="secondary" className="caption">

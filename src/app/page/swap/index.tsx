@@ -23,13 +23,13 @@ export default function Swap() {
               <SettingArea />
             </Col>
             <Col span={24}>
-              <Card
+              {/* <Card
                 bordered={false}
                 className="card-swap"
                 bodyStyle={{ padding: 0 }}
-              >
-                <BidInput />
-              </Card>
+              > */}
+              <BidInput />
+              {/* </Card> */}
             </Col>
             <Col
               span={24}
