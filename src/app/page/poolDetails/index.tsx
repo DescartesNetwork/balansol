@@ -30,10 +30,10 @@ const PoolDetails = () => {
               <Col lg={6} md={6} xs={24}>
                 <Row gutter={[12, 12]} justify="end">
                   <Col span={12}>
-                    <Deposit poolAddress={poolAddress} />
+                    <Withdraw poolAddress={poolAddress} />
                   </Col>
                   <Col span={12}>
-                    <Withdraw poolAddress={poolAddress} />
+                    <Deposit poolAddress={poolAddress} />
                   </Col>
                 </Row>
               </Col>
