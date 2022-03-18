@@ -24,9 +24,7 @@ const PoolDetails = () => {
               <Col lg={18} md={18} xs={24}>
                 <Space align="start">
                   <PoolAvatar poolAddress={poolAddress} />
-                  <Typography.Text type="secondary">
-                    Balansol LP
-                  </Typography.Text>
+                  <Typography.Title level={4}>Balansol LP</Typography.Title>
                 </Space>
               </Col>
               <Col lg={6} md={6} xs={24}>
@@ -92,7 +90,9 @@ const PoolDetails = () => {
                       </Row>
                     </Col>
                     <Col span={24}>
-                      <Image width="50%" src={BarChart} />
+                      <Row justify="center">
+                        <Image width="50%" src={BarChart} />
+                      </Row>
                     </Col>
                   </Row>
                 </Card>
@@ -113,7 +113,9 @@ const PoolDetails = () => {
                       </Row>
                     </Col>
                     <Col span={24}>
-                      <Image width="50%" src={DoughnutChart} />
+                      <Row justify="center">
+                        <Image width="50%" src={DoughnutChart} />
+                      </Row>
                     </Col>
                   </Row>
                 </Card>
