@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { Dispatch, useCallback, useEffect, useState } from 'react'
 import { BN, web3 } from '@project-serum/anchor'
 import { useMint } from '@senhub/providers'
 
@@ -6,8 +6,9 @@ import { Button, Col, Row, Typography } from 'antd'
 import { MintSymbol } from 'shared/antd/mint'
 
 import { notifyError, notifySuccess } from 'app/helper'
-import { fetchCGK } from 'shared/util'
+import { fetchCGK, numeric } from 'shared/util'
 import { TokenInfo } from './index'
+import { utils } from '@senswap/sen-js'
 
 type TokenPrice = {
   price: number
@@ -18,14 +19,16 @@ const LiquidityInfo = ({
   tokenList,
   depositAmounts,
   poolAddress,
+  setCurrentStep,
 }: {
   tokenList: TokenInfo[]
   depositAmounts: string[]
   poolAddress: string
+  setCurrentStep: Dispatch<React.SetStateAction<number>>
 }) => {
   const [tokenPrice, setTokenPrice] = useState<TokenPrice[]>([])
 
-  const { tokenProvider } = useMint()
+  const { tokenProvider, getDecimals } = useMint()
 
   const getTokensPrice = useCallback(async () => {
     const tokensPrice = await Promise.all(
@@ -36,10 +39,15 @@ const LiquidityInfo = ({
         if (!CGKTokenInfo) return { price: 0, valuation: 0 }
         return {
           price: CGKTokenInfo?.price,
-          valuation: (CGKTokenInfo?.price * Number(depositAmounts[idx])) | 0,
+          valuation: Number(
+            numeric(
+              CGKTokenInfo?.price * Number(depositAmounts[idx] || 0),
+            ).format('0,0.[00]'),
+          ),
         }
       }),
     )
+    console.log(tokensPrice, 'toekekekek', depositAmounts)
     setTokenPrice(tokensPrice)
   }, [depositAmounts, tokenList, tokenProvider])
 
@@ -50,12 +58,16 @@ const LiquidityInfo = ({
   const onAddLiquidity = async () => {
     try {
       for (let i = 0; i < tokenList.length; i++) {
+        let decimals = await getDecimals(tokenList[i].addressToken)
+        let mintAmmount = utils.decimalize(depositAmounts[i], decimals)
+
         await window.balansol.initializeJoin(
           poolAddress,
           new web3.PublicKey(tokenList[i].addressToken),
-          new BN(depositAmounts[i]),
+          new BN(String(mintAmmount)),
         )
       }
+      setCurrentStep(2)
       notifySuccess('Fund pool', '')
     } catch (error) {
       notifyError(error)

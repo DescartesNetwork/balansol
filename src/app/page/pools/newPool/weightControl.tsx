@@ -35,7 +35,6 @@ export default function WeightControl({
           style={{ width: '52px' }}
         />
         <Button
-          type="text"
           onClick={() => {
             onChangeLock(!isLocked)
           }}
@@ -45,9 +44,9 @@ export default function WeightControl({
               name={isLocked ? 'lock-closed-outline' : 'lock-open-outline'}
             />
           }
+          style={{ background: 'unset' }}
         />
         <Button
-          type="text"
           onClick={() => {
             onRemoveToken()
           }}

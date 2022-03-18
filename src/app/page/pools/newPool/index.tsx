@@ -1,10 +1,16 @@
-import { Fragment, useMemo, useState } from 'react'
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { useMint } from '@senhub/providers'
 
 import { Button, Col, Modal, Row, Steps, Typography } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
 import SelectToken from './selectToken'
 import AddLiquidty from './addLiquidity'
 import ConfirmPoolInfo from './confirmPoolInfo'
+
+import { AppState } from 'app/model'
+import { numeric } from 'shared/util'
+import { undecimalizeWrapper } from 'app/helper'
 
 const { Step } = Steps
 
@@ -15,14 +21,58 @@ export type TokenInfo = {
 }
 
 const NewPool = () => {
+  const { pools } = useSelector((state: AppState) => state)
   const [visible, setVisible] = useState(false)
   const [currentStep, setCurrentStep] = useState(0)
   const [poolAddress, setPoolAddress] = useState('')
   const [depositedAmounts, setDepositedAmounts] = useState<string[]>([])
+  const [restoredDepositedAmounts, setRestoreDepositedAmounts] = useState<
+    string[]
+  >([])
   const [tokenList, setTokenList] = useState<TokenInfo[]>([
     { addressToken: '', weight: '50', isLocked: false },
     { addressToken: '', weight: '50', isLocked: false },
   ])
+  const { getDecimals } = useMint()
+
+  const recoverCreatPoolProcess = useCallback(async () => {
+    const poolAddresses = Object.keys(pools)
+    for (let i = 0; i < poolAddresses.length; i++) {
+      if (
+        Object.keys(pools[poolAddresses[i]].state as any).includes(
+          'uninitialized',
+        )
+      ) {
+        setCurrentStep(1)
+        setPoolAddress(poolAddresses[i])
+        const recoveryPoolState = pools[poolAddresses[i]].mints.map(
+          (mint, idx) => {
+            return {
+              addressToken: mint.toBase58(),
+              weight: pools[poolAddresses[i]].weights[idx].toString(),
+              isLocked: false,
+            }
+          },
+        )
+        setTokenList(recoveryPoolState)
+        const recoveryReservePool = await Promise.all(
+          pools[poolAddresses[i]].reserves.map(async (value) => {
+            const decimals = await getDecimals(poolAddresses[i])
+            return numeric(undecimalizeWrapper(value, decimals)).format(
+              '0.[000]',
+            )
+          }),
+        )
+        setDepositedAmounts(recoveryReservePool)
+        setRestoreDepositedAmounts(recoveryReservePool)
+        return
+      }
+    }
+  }, [getDecimals, pools])
+
+  useEffect(() => {
+    recoverCreatPoolProcess()
+  }, [recoverCreatPoolProcess])
 
   const creatingPoolProcess = useMemo(() => {
     switch (currentStep) {
@@ -44,6 +94,7 @@ const NewPool = () => {
             poolAddress={poolAddress}
             depositedAmounts={depositedAmounts}
             setDepositedAmounts={setDepositedAmounts}
+            restoredDepositedAmounts={restoredDepositedAmounts}
           />
         )
       case 2:
@@ -58,28 +109,16 @@ const NewPool = () => {
           />
         )
     }
-  }, [currentStep, depositedAmounts, poolAddress, tokenList])
+  }, [
+    currentStep,
+    depositedAmounts,
+    poolAddress,
+    restoredDepositedAmounts,
+    tokenList,
+  ])
 
   const onChange = (value: number) => {
     setCurrentStep(value)
-  }
-
-  const onChangeTokenInfo = (value: TokenInfo, index: number) => {
-    if (tokenList[index].weight !== value.weight) {
-      const portionWeight =
-        (100 - Number(value.weight)) / (tokenList.length - 1)
-      const newTokenList: TokenInfo[] = tokenList.map((token, idx) => {
-        if (index !== idx) return { ...token, weight: String(portionWeight) }
-        return value
-      })
-      return setTokenList(newTokenList)
-    }
-    const newTokenList = tokenList.map((token, idx) => {
-      if (idx === index) return value
-      return token
-    })
-
-    setTokenList(newTokenList)
   }
 
   return (

@@ -7,7 +7,7 @@ import React, {
   useEffect,
   useState,
 } from 'react'
-import { fetchCGK } from 'shared/util'
+import { fetchCGK, numeric } from 'shared/util'
 import { TokenInfo } from '..'
 import { WORMHOLE_COLUMNS } from './column'
 
@@ -55,7 +55,11 @@ const ConfirmPoolInfo = ({
         return {
           token: value,
           amount: Number(depositedAmounts[idx]),
-          value: CGKTokenInfo?.price * (Number(depositedAmounts[idx]) | 0),
+          value: Number(
+            numeric(CGKTokenInfo?.price * Number(depositedAmounts[idx])).format(
+              '0,0.[00]',
+            ),
+          ),
         }
       }),
     )

@@ -122,6 +122,7 @@ const SelectToken = ({
   }
 
   const onAddNewToken = () => {
+    if (tokenList.length >= 8) return
     const tokensNotLock = tokenList.filter((value) => value.isLocked === false)
     const remainingWeight = tokensNotLock.reduce(
       (previousSum, currentValue) => previousSum + Number(currentValue.weight),
@@ -161,6 +162,7 @@ const SelectToken = ({
       {tokenList.map((value, index) => (
         <Col span={24}>
           <TokenSetup
+            tokenList={tokenList}
             tokenInfo={value}
             onChangeTokenInfo={onChangeTokenInfo}
             onRemoveToken={onRemoveToken}

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { Col, Row } from 'antd'
 import WeightControl from './weightControl'
@@ -8,18 +8,29 @@ import { TokenInfo } from './index'
 import { useMintsSwap } from 'app/hooks/useMintsSwap'
 
 const TokenSetup = ({
+  tokenList,
   tokenInfo,
   onChangeTokenInfo,
   onRemoveToken,
   index,
 }: {
+  tokenList: TokenInfo[]
   tokenInfo: TokenInfo
   onChangeTokenInfo: (value: TokenInfo, index: number) => void
   onRemoveToken: (index: number) => void
   index: number
 }) => {
   const mintsSwap = useMintsSwap()
+  const [sourceMint, setSourceMint] = useState<string[]>([])
   const { addressToken, weight, isLocked } = tokenInfo
+
+  useEffect(() => {
+    const newestSourceMint = mintsSwap.filter(
+      (value) => !tokenList.map((token) => token.addressToken).includes(value),
+    )
+    setSourceMint(newestSourceMint)
+  }, [mintsSwap, tokenList])
+
   const onChangeToken = (value: string) => {
     onChangeTokenInfo(
       {
@@ -60,7 +71,7 @@ const TokenSetup = ({
         <Selection
           selectedMint={addressToken}
           onChange={onChangeToken}
-          mints={mintsSwap}
+          mints={sourceMint}
         />
       </Col>
       <Col>

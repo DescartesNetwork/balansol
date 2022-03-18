@@ -13,6 +13,7 @@ const AddLiquidty = ({
   poolAddress,
   depositedAmounts,
   setDepositedAmounts,
+  restoredDepositedAmounts,
 }: {
   tokenList: TokenInfo[]
   onSetTokenList: Dispatch<React.SetStateAction<TokenInfo[]>>
@@ -20,11 +21,11 @@ const AddLiquidty = ({
   poolAddress: string
   depositedAmounts: string[]
   setDepositedAmounts: Dispatch<React.SetStateAction<string[]>>
+  restoredDepositedAmounts: string[]
 }) => {
   const [isOptimizeLiquidity, setIsOptimizeLiquidity] = useState(false)
 
   const onSwitchOptimize = (checked: boolean) => {
-    console.log(checked, 'chekekek')
     setIsOptimizeLiquidity(checked)
   }
   return (
@@ -40,6 +41,7 @@ const AddLiquidty = ({
                 newState[idx] = value
                 setDepositedAmounts(newState)
               }}
+              restoredAmount={restoredDepositedAmounts[idx]}
             />
           ))}
           <Row justify="end" gutter={[8, 0]}>
@@ -62,6 +64,7 @@ const AddLiquidty = ({
           tokenList={tokenList}
           depositAmounts={depositedAmounts}
           poolAddress={poolAddress}
+          setCurrentStep={setCurrentStep}
         />
       </Col>
     </Fragment>

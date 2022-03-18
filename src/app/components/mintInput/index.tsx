@@ -6,7 +6,7 @@ import Selection from '../selection'
 import { numeric } from 'shared/util'
 import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
 import './index.less'
-import { ReactNode } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 
 const PROPORTIONS = [50, 100]
 
@@ -18,6 +18,7 @@ export default function MintInput({
   onSelect = () => {},
   mintLabel,
   mintAvatar,
+  restoredAmount,
 }: {
   amount: string
   onChangeAmount?: (val: string) => void
@@ -26,8 +27,19 @@ export default function MintInput({
   mints?: string[]
   mintLabel?: ReactNode
   mintAvatar?: ReactNode
+  restoredAmount?: string
 }) {
+  const [runTimeBalance, setRunTimeBalance] = useState(0)
+  const [disable, setDisable] = useState(false)
   const { balance } = useAccountBalanceByMintAddress(selectedMint)
+
+  useEffect(() => {
+    setRunTimeBalance(balance)
+  }, [balance])
+
+  useEffect(() => {
+    if (!!Number(restoredAmount)) setDisable(true)
+  }, [restoredAmount])
 
   return (
     <Row
@@ -64,7 +76,14 @@ export default function MintInput({
               }}
               placeholder="0"
               value={amount}
-              onValue={onChangeAmount}
+              onValue={(e) => {
+                if (!!onChangeAmount) onChangeAmount(e)
+
+                const balanceTemp = balance - Number(e)
+                if (balanceTemp > 0) return setRunTimeBalance(balanceTemp)
+                return setRunTimeBalance(0)
+              }}
+              disabled={disable}
             />
           </Col>
         </Row>
@@ -80,7 +99,7 @@ export default function MintInput({
                 style={{ cursor: 'pointer' }}
                 onClick={() => {}}
               >
-                {numeric(balance).format('0,0.[00]')}
+                {numeric(runTimeBalance).format('0,0.[00]')}
               </Typography.Text>
               <Typography.Text type="secondary">
                 <MintSymbol mintAddress={''} />
@@ -97,7 +116,13 @@ export default function MintInput({
                   <Space size={4} direction="vertical">
                     <Radio.Button
                       className="proportion-btn"
-                      onClick={() => onChangeAmount(String(minValue))}
+                      onClick={() => {
+                        onChangeAmount(String(minValue))
+                        const balanceTemp = balance - minValue
+                        if (balanceTemp > 0)
+                          return setRunTimeBalance(balanceTemp)
+                        return setRunTimeBalance(0)
+                      }}
                       style={{
                         background: isActive ? '#63e0b3' : undefined,
                       }}
