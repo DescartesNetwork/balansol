@@ -19,27 +19,41 @@ export default function MintInput({
   mintLabel,
   mintAvatar,
   restoredAmount,
+  isOptimizeLiquidity,
 }: {
   amount: string
-  onChangeAmount?: (val: string) => void
+  onChangeAmount?: (val: string, balance: number) => void
   selectedMint: string
   onSelect?: (mint: string) => void
   mints?: string[]
   mintLabel?: ReactNode
   mintAvatar?: ReactNode
   restoredAmount?: string
+  isOptimizeLiquidity?: boolean
 }) {
   const [runTimeBalance, setRunTimeBalance] = useState(0)
   const [disable, setDisable] = useState(false)
   const { balance } = useAccountBalanceByMintAddress(selectedMint)
 
   useEffect(() => {
-    setRunTimeBalance(balance)
-  }, [balance])
+    if (Number(amount) > balance) {
+      return setRunTimeBalance(0)
+    }
+
+    setRunTimeBalance(balance - (Number(amount) || 0))
+  }, [amount, balance])
 
   useEffect(() => {
     if (!!Number(restoredAmount)) setDisable(true)
   }, [restoredAmount])
+
+  const onInput = (value: string) => {
+    if (!!onChangeAmount) onChangeAmount(value, balance)
+
+    const balanceTemp = balance - Number(value)
+    if (balanceTemp > 0) return setRunTimeBalance(balanceTemp)
+    return setRunTimeBalance(0)
+  }
 
   return (
     <Row
@@ -76,14 +90,9 @@ export default function MintInput({
               }}
               placeholder="0"
               value={amount}
-              onValue={(e) => {
-                if (!!onChangeAmount) onChangeAmount(e)
-
-                const balanceTemp = balance - Number(e)
-                if (balanceTemp > 0) return setRunTimeBalance(balanceTemp)
-                return setRunTimeBalance(0)
-              }}
+              onValue={onInput}
               disabled={disable}
+              max={balance + 1}
             />
           </Col>
         </Row>
@@ -102,7 +111,7 @@ export default function MintInput({
                 {numeric(runTimeBalance).format('0,0.[00]')}
               </Typography.Text>
               <Typography.Text type="secondary">
-                <MintSymbol mintAddress={''} />
+                <MintSymbol mintAddress={selectedMint} />
               </Typography.Text>
             </Space>
           </Col>
@@ -117,7 +126,7 @@ export default function MintInput({
                     <Radio.Button
                       className="proportion-btn"
                       onClick={() => {
-                        onChangeAmount(String(minValue))
+                        onChangeAmount(String(minValue), balance)
                         const balanceTemp = balance - minValue
                         if (balanceTemp > 0)
                           return setRunTimeBalance(balanceTemp)

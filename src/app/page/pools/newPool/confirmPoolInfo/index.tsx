@@ -1,5 +1,6 @@
 import { useMint } from '@senhub/providers'
 import { Button, Card, Col, Row, Table, Typography } from 'antd'
+import { PoolCreatingStep } from 'app/constant'
 import React, {
   Dispatch,
   Fragment,
@@ -26,13 +27,15 @@ const ConfirmPoolInfo = ({
   poolAddress,
   depositedAmounts,
   setVisible,
+  onReset,
 }: {
   tokenList: TokenInfo[]
   onSetTokenList: Dispatch<React.SetStateAction<TokenInfo[]>>
-  setCurrentStep: Dispatch<React.SetStateAction<number>>
+  setCurrentStep: Dispatch<React.SetStateAction<PoolCreatingStep>>
   poolAddress: string
   depositedAmounts: string[]
   setVisible: Dispatch<React.SetStateAction<boolean>>
+  onReset: () => void
 }) => {
   const [poolInfo, setPoolInfo] = useState<PoolInfo[]>([])
   const [poolTotalValue, setPoolTotalValue] = useState(0)
@@ -44,14 +47,8 @@ const ConfirmPoolInfo = ({
       tokenList.map(async (value, idx) => {
         const tokenInfo = await tokenProvider.findByAddress(value.addressToken)
         const ticket = tokenInfo?.extensions?.coingeckoId
+        if (!ticket) return { token: value, amount: 0, value: 0 }
         const CGKTokenInfo = await fetchCGK(ticket)
-        if (!CGKTokenInfo) return { token: value, amount: 0, value: 0 }
-        console.log(
-          CGKTokenInfo?.price,
-          Number(depositedAmounts[idx]),
-          depositedAmounts[idx],
-          'CGKTokenInfo',
-        )
         return {
           token: value,
           amount: Number(depositedAmounts[idx]),
@@ -96,11 +93,13 @@ const ConfirmPoolInfo = ({
           bodyStyle={{ padding: 16 }}
           bordered={false}
         >
-          <Row>
+          <Row align="middle">
             <Col flex={1}>
               <Typography.Text type="secondary">Total value</Typography.Text>
             </Col>
-            <Col>{poolTotalValue}</Col>
+            <Col>
+              <Typography.Title level={3}>${poolTotalValue}</Typography.Title>
+            </Col>
           </Row>
         </Card>
       </Col>
@@ -108,7 +107,7 @@ const ConfirmPoolInfo = ({
         <Button
           type="primary"
           onClick={() => {
-            setVisible(false)
+            onReset()
           }}
           style={{ borderRadius: 40 }}
           block

@@ -6,9 +6,10 @@ import { Button, Col, Row, Typography } from 'antd'
 import { MintSymbol } from 'shared/antd/mint'
 
 import { notifyError, notifySuccess } from 'app/helper'
-import { fetchCGK, numeric } from 'shared/util'
+import { fetchCGK } from 'shared/util'
 import { TokenInfo } from './index'
 import { utils } from '@senswap/sen-js'
+import { PoolCreatingStep } from 'app/constant'
 
 type TokenPrice = {
   price: number
@@ -16,15 +17,19 @@ type TokenPrice = {
 }
 
 const LiquidityInfo = ({
+  disableBtnSupply,
   tokenList,
-  depositAmounts,
+  depositedAmounts,
   poolAddress,
   setCurrentStep,
+  restoredDepositedAmounts,
 }: {
+  disableBtnSupply: boolean
   tokenList: TokenInfo[]
-  depositAmounts: string[]
+  depositedAmounts: string[]
   poolAddress: string
   setCurrentStep: Dispatch<React.SetStateAction<number>>
+  restoredDepositedAmounts: string[]
 }) => {
   const [tokenPrice, setTokenPrice] = useState<TokenPrice[]>([])
 
@@ -35,21 +40,20 @@ const LiquidityInfo = ({
       tokenList.map(async ({ addressToken }, idx) => {
         const token = await tokenProvider.findByAddress(addressToken)
         const ticket = token?.extensions?.coingeckoId
+        if (!ticket) return { price: 0, valuation: 0 }
         const CGKTokenInfo = await fetchCGK(ticket)
-        if (!CGKTokenInfo) return { price: 0, valuation: 0 }
         return {
           price: CGKTokenInfo?.price,
-          valuation: Number(
-            numeric(
-              CGKTokenInfo?.price * Number(depositAmounts[idx] || 0),
-            ).format('0,0.[00]'),
-          ),
+          valuation: !!Number(
+            CGKTokenInfo?.price * Number(depositedAmounts[idx]),
+          )
+            ? Number(CGKTokenInfo?.price * Number(depositedAmounts[idx]))
+            : 0,
         }
       }),
     )
-    console.log(tokensPrice, 'toekekekek', depositAmounts)
     setTokenPrice(tokensPrice)
-  }, [depositAmounts, tokenList, tokenProvider])
+  }, [depositedAmounts, tokenList, tokenProvider])
 
   useEffect(() => {
     getTokensPrice()
@@ -58,8 +62,13 @@ const LiquidityInfo = ({
   const onAddLiquidity = async () => {
     try {
       for (let i = 0; i < tokenList.length; i++) {
+        if (
+          isNaN(Number(restoredDepositedAmounts[i])) !== true &&
+          Number(restoredDepositedAmounts[i]) !== 0
+        )
+          continue
         let decimals = await getDecimals(tokenList[i].addressToken)
-        let mintAmmount = utils.decimalize(depositAmounts[i], decimals)
+        let mintAmmount = utils.decimalize(depositedAmounts[i], decimals)
 
         await window.balansol.initializeJoin(
           poolAddress,
@@ -67,7 +76,7 @@ const LiquidityInfo = ({
           new BN(String(mintAmmount)),
         )
       }
-      setCurrentStep(2)
+      setCurrentStep(PoolCreatingStep.confirmCreatePool)
       notifySuccess('Fund pool', '')
     } catch (error) {
       notifyError(error)
@@ -81,7 +90,7 @@ const LiquidityInfo = ({
           <Row>
             <Col flex={1}>
               <MintSymbol mintAddress={value.addressToken} />
-              <Typography.Text>{tokenPrice[idx]?.price}</Typography.Text>
+              <Typography.Text>({tokenPrice[idx]?.price})</Typography.Text>
             </Col>
             <Col>
               <Typography.Text>{tokenPrice[idx]?.valuation} $</Typography.Text>
@@ -90,7 +99,7 @@ const LiquidityInfo = ({
         ))}
       </Col>
       <Col span={24}>
-        <Row>
+        <Row align="middle">
           <Col flex={1}>
             <Typography.Text type="secondary">Total value</Typography.Text>
           </Col>
@@ -107,7 +116,12 @@ const LiquidityInfo = ({
         </Row>
       </Col>
       <Col span={24}>
-        <Button type="primary" onClick={onAddLiquidity} disabled={false} block>
+        <Button
+          type="primary"
+          onClick={onAddLiquidity}
+          disabled={disableBtnSupply}
+          block
+        >
           Supply
         </Button>
       </Col>

@@ -12,6 +12,9 @@ import { AppState } from 'app/model'
 import { numeric } from 'shared/util'
 import { undecimalizeWrapper } from 'app/helper'
 
+import './index.less'
+import { PoolCreatingStep } from 'app/constant'
+
 const { Step } = Steps
 
 export type TokenInfo = {
@@ -20,63 +23,83 @@ export type TokenInfo = {
   isLocked: boolean
 }
 
+const initializedTokenList = [
+  { addressToken: '', weight: '50', isLocked: false },
+  { addressToken: '', weight: '50', isLocked: false },
+]
+
 const NewPool = () => {
   const { pools } = useSelector((state: AppState) => state)
   const [visible, setVisible] = useState(false)
-  const [currentStep, setCurrentStep] = useState(0)
+  const [currentStep, setCurrentStep] = useState(PoolCreatingStep.setGradient)
   const [poolAddress, setPoolAddress] = useState('')
   const [depositedAmounts, setDepositedAmounts] = useState<string[]>([])
   const [restoredDepositedAmounts, setRestoreDepositedAmounts] = useState<
     string[]
   >([])
-  const [tokenList, setTokenList] = useState<TokenInfo[]>([
-    { addressToken: '', weight: '50', isLocked: false },
-    { addressToken: '', weight: '50', isLocked: false },
-  ])
+  const [tokenList, setTokenList] = useState<TokenInfo[]>(initializedTokenList)
   const { getDecimals } = useMint()
 
   const recoverCreatPoolProcess = useCallback(async () => {
-    const poolAddresses = Object.keys(pools)
-    for (let i = 0; i < poolAddresses.length; i++) {
+    if (visible) return
+    const addressWallet = await window.sentre.wallet?.getAddress()
+    const createdPools = Object.keys(pools).filter(
+      (value) => pools[value].authority.toBase58() === addressWallet,
+    )
+    for (let i = 0; i < createdPools.length; i++) {
       if (
-        Object.keys(pools[poolAddresses[i]].state as any).includes(
+        Object.keys(pools[createdPools[i]].state as any).includes(
           'uninitialized',
         )
       ) {
-        setCurrentStep(1)
-        setPoolAddress(poolAddresses[i])
-        const recoveryPoolState = pools[poolAddresses[i]].mints.map(
+        setCurrentStep(PoolCreatingStep.addLiquidity)
+        setPoolAddress(createdPools[i])
+        const recoveryPoolState = pools[createdPools[i]].mints.map(
           (mint, idx) => {
             return {
               addressToken: mint.toBase58(),
-              weight: pools[poolAddresses[i]].weights[idx].toString(),
+              weight: (
+                pools[createdPools[i]].weights[idx].toNumber() /
+                10 ** 9
+              ).toString(),
               isLocked: false,
             }
           },
         )
         setTokenList(recoveryPoolState)
         const recoveryReservePool = await Promise.all(
-          pools[poolAddresses[i]].reserves.map(async (value) => {
-            const decimals = await getDecimals(poolAddresses[i])
+          pools[createdPools[i]].reserves.map(async (value, idx) => {
+            const decimals = await getDecimals(
+              pools[createdPools[i]].mints[idx].toBase58(),
+            )
             return numeric(undecimalizeWrapper(value, decimals)).format(
               '0.[000]',
             )
           }),
         )
         setDepositedAmounts(recoveryReservePool)
+
         setRestoreDepositedAmounts(recoveryReservePool)
-        return
       }
     }
-  }, [getDecimals, pools])
+  }, [getDecimals, pools, visible])
 
   useEffect(() => {
     recoverCreatPoolProcess()
   }, [recoverCreatPoolProcess])
 
+  const onReset = () => {
+    setVisible(false)
+    setTokenList(initializedTokenList)
+    setPoolAddress('')
+    setDepositedAmounts([])
+    setRestoreDepositedAmounts([])
+    setCurrentStep(PoolCreatingStep.setGradient)
+  }
+
   const creatingPoolProcess = useMemo(() => {
     switch (currentStep) {
-      case 0:
+      case PoolCreatingStep.setGradient:
         return (
           <SelectToken
             tokenList={tokenList}
@@ -85,7 +108,7 @@ const NewPool = () => {
             setPoolAddress={setPoolAddress}
           />
         )
-      case 1:
+      case PoolCreatingStep.addLiquidity:
         return (
           <AddLiquidty
             tokenList={tokenList}
@@ -97,7 +120,7 @@ const NewPool = () => {
             restoredDepositedAmounts={restoredDepositedAmounts}
           />
         )
-      case 2:
+      case PoolCreatingStep.confirmCreatePool:
         return (
           <ConfirmPoolInfo
             tokenList={tokenList}
@@ -106,6 +129,7 @@ const NewPool = () => {
             poolAddress={poolAddress}
             depositedAmounts={depositedAmounts}
             setVisible={setVisible}
+            onReset={onReset}
           />
         )
     }
@@ -116,10 +140,6 @@ const NewPool = () => {
     restoredDepositedAmounts,
     tokenList,
   ])
-
-  const onChange = (value: number) => {
-    setCurrentStep(value)
-  }
 
   return (
     <Fragment>
@@ -146,7 +166,7 @@ const NewPool = () => {
             <Typography.Title level={4}>New Pool</Typography.Title>
           </Col>
           <Col span={24}>
-            <Steps size="small" current={currentStep} onChange={onChange}>
+            <Steps size="small" current={currentStep}>
               <Step title="Select tokens & weights" />
               <Step title="Set liquidity" />
               <Step title="Confirm" />

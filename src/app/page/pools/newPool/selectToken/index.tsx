@@ -2,6 +2,7 @@ import { BN, web3 } from '@project-serum/anchor'
 import { MintActionStates } from '@senswap/balancer'
 import { Button, Col, Row, Space, Typography } from 'antd'
 import Proportion from 'app/components/proportion'
+import { PoolCreatingStep } from 'app/constant'
 import { notifyError, notifySuccess } from 'app/helper'
 import React, { Dispatch, Fragment, useEffect, useState } from 'react'
 import IonIcon from 'shared/antd/ionicon'
@@ -16,7 +17,7 @@ const SelectToken = ({
 }: {
   tokenList: TokenInfo[]
   onSetTokenList: Dispatch<React.SetStateAction<TokenInfo[]>>
-  setCurrentStep: Dispatch<React.SetStateAction<number>>
+  setCurrentStep: Dispatch<React.SetStateAction<PoolCreatingStep>>
   setPoolAddress: Dispatch<React.SetStateAction<string>>
 }) => {
   const [disable, setDisable] = useState(true)
@@ -42,11 +43,12 @@ const SelectToken = ({
     try {
       const fee = new BN(500_000_000)
       const mintsConfig = tokenList.map((e) => {
+        const normalizeWeight = Number(e.weight) * 10 ** 9
         return {
           publicKey: new web3.PublicKey(e.addressToken),
           action: MintActionStates.Active,
           amountIn: new BN(0),
-          weight: new BN(e.weight),
+          weight: new BN(normalizeWeight),
         }
       })
       const { txId, poolAddress } = await window.balansol.initializePool(
@@ -55,7 +57,7 @@ const SelectToken = ({
       )
 
       setPoolAddress(poolAddress)
-      setCurrentStep(1)
+      setCurrentStep(PoolCreatingStep.addLiquidity)
       notifySuccess('Create pool', txId)
     } catch (error) {
       notifyError(error)
@@ -128,13 +130,33 @@ const SelectToken = ({
       (previousSum, currentValue) => previousSum + Number(currentValue.weight),
       0,
     )
-    const newProportionalWeight = remainingWeight / (tokensNotLock.length + 1)
-    const newTokenList: TokenInfo[] = tokenList.map((token, idx) => {
-      if (token.isLocked) {
-        return token
+    const newProportionalWeight =
+      Math.round((remainingWeight / (tokensNotLock.length + 1)) * 100) / 100
+    let flag = false
+    let newTokenList: TokenInfo[] = []
+
+    for (let i = 0; i < tokenList.length; i++) {
+      if (tokenList[i].isLocked) {
+        newTokenList.push(tokenList[i])
+        continue
       }
-      return { ...token, weight: String(newProportionalWeight) }
-    })
+      if (flag === false) {
+        newTokenList.push({
+          ...tokenList[i],
+          weight: (
+            remainingWeight -
+            Number((newProportionalWeight * tokensNotLock.length).toFixed(2))
+          ).toFixed(2),
+        })
+        flag = true
+        continue
+      }
+      newTokenList.push({
+        ...tokenList[i],
+        weight: String(newProportionalWeight),
+      })
+    }
+
     onSetTokenList([
       ...newTokenList,
       {
@@ -148,7 +170,47 @@ const SelectToken = ({
   const onRemoveToken = (index: number) => {
     const newTokenList = [...tokenList]
     newTokenList.splice(index, 1)
-    onSetTokenList(newTokenList)
+    const tokensNotLock = newTokenList.filter(
+      (value) => value.isLocked === false,
+    )
+    const lockedTokens = newTokenList.filter((value) => value.isLocked === true)
+    const remainingWeight =
+      100 -
+      lockedTokens.reduce(
+        (previousSum, currentValue) =>
+          previousSum + Number(currentValue.weight),
+        0,
+      )
+
+    const newProportionalWeight =
+      Math.round((remainingWeight / tokensNotLock.length) * 100) / 100
+    let flag = false
+    let newRecalculatedTokenList: TokenInfo[] = []
+
+    for (let i = 0; i < newTokenList.length; i++) {
+      if (newTokenList[i].isLocked) {
+        newRecalculatedTokenList.push(newTokenList[i])
+        continue
+      }
+      if (flag === false) {
+        newRecalculatedTokenList.push({
+          ...newTokenList[i],
+          weight: (
+            remainingWeight -
+            Number(
+              (newProportionalWeight * (tokensNotLock.length - 1)).toFixed(2),
+            )
+          ).toFixed(2),
+        })
+        flag = true
+        continue
+      }
+      newRecalculatedTokenList.push({
+        ...newTokenList[i],
+        weight: String(newProportionalWeight),
+      })
+    }
+    onSetTokenList(newRecalculatedTokenList)
   }
 
   return (

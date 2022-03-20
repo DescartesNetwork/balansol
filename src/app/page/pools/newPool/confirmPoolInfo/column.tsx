@@ -1,4 +1,5 @@
 import { token } from '@project-serum/anchor/dist/cjs/utils'
+import { utils } from '@senswap/sen-js'
 import { Space, Typography } from 'antd'
 import { MintAvatar, MintSymbol } from 'shared/antd/mint'
 import { TokenInfo } from '..'
@@ -24,7 +25,7 @@ export const WORMHOLE_COLUMNS = [
     render: (token: TokenInfo) => {
       return (
         <Typography.Text style={{ fontWeight: 700 }}>
-          {token.weight} %
+          {Number(token.weight)} %
         </Typography.Text>
       )
     },

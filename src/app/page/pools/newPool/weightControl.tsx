@@ -4,6 +4,7 @@ import { Button, Col, Input, Row } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
 import { allowedKeyCode } from 'app/constant'
 import { TokenInfo } from '.'
+import { TextalignJustifyright } from 'iconsax-react'
 
 export default function WeightControl({
   tokenInfo,
@@ -19,8 +20,8 @@ export default function WeightControl({
   const { weight, isLocked } = tokenInfo
 
   return (
-    <Row justify="end">
-      <Col span={24}>
+    <Row justify="end" align="middle">
+      <Col>
         <Input
           value={weight}
           size="small"
@@ -32,8 +33,11 @@ export default function WeightControl({
           }}
           suffix={'%'}
           disabled={isLocked}
-          style={{ width: '52px' }}
+          maxLength={5}
+          className="input-weight"
         />
+      </Col>
+      <Col>
         <Button
           onClick={() => {
             onChangeLock(!isLocked)
@@ -46,6 +50,8 @@ export default function WeightControl({
           }
           style={{ background: 'unset' }}
         />
+      </Col>
+      <Col>
         <Button
           onClick={() => {
             onRemoveToken()

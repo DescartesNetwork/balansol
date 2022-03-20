@@ -29,6 +29,7 @@ export default function Proportion({ tokenList }: { tokenList: TokenInfo[] }) {
                 borderRadius: '20px',
                 zIndex: `${index}`,
                 marginRight: '-8px',
+                alignItems: 'center',
               }}
             >
               <MintAvatar mintAddress={value.addressToken} />
