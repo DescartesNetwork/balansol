@@ -1,6 +1,7 @@
 import React, { Dispatch, useCallback, useEffect, useState } from 'react'
 import { BN, web3 } from '@project-serum/anchor'
 import { useMint } from '@senhub/providers'
+import { utils } from '@senswap/sen-js'
 
 import { Button, Col, Row, Typography } from 'antd'
 import { MintSymbol } from 'shared/antd/mint'
@@ -8,7 +9,6 @@ import { MintSymbol } from 'shared/antd/mint'
 import { notifyError, notifySuccess } from 'app/helper'
 import { fetchCGK } from 'shared/util'
 import { TokenInfo } from './index'
-import { utils } from '@senswap/sen-js'
 import { PoolCreatingStep } from 'app/constant'
 
 type TokenPrice = {
@@ -40,15 +40,15 @@ const LiquidityInfo = ({
       tokenList.map(async ({ addressToken }, idx) => {
         const token = await tokenProvider.findByAddress(addressToken)
         const ticket = token?.extensions?.coingeckoId
+
         if (!ticket) return { price: 0, valuation: 0 }
+
         const CGKTokenInfo = await fetchCGK(ticket)
+
         return {
           price: CGKTokenInfo?.price,
-          valuation: !!Number(
-            CGKTokenInfo?.price * Number(depositedAmounts[idx]),
-          )
-            ? Number(CGKTokenInfo?.price * Number(depositedAmounts[idx]))
-            : 0,
+          valuation:
+            Number(CGKTokenInfo?.price * Number(depositedAmounts[idx])) || 0,
         }
       }),
     )
@@ -67,6 +67,7 @@ const LiquidityInfo = ({
           Number(restoredDepositedAmounts[i]) !== 0
         )
           continue
+
         let decimals = await getDecimals(tokenList[i].addressToken)
         let mintAmmount = utils.decimalize(depositedAmounts[i], decimals)
 
@@ -76,6 +77,7 @@ const LiquidityInfo = ({
           new BN(String(mintAmmount)),
         )
       }
+
       setCurrentStep(PoolCreatingStep.confirmCreatePool)
       notifySuccess('Fund pool', '')
     } catch (error) {

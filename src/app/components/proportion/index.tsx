@@ -1,16 +1,17 @@
-import { TokenInfo } from 'app/page/pools/newPool'
 import { Fragment } from 'react'
+
+import { TokenInfo } from 'app/page/pools/newPool'
 import { MintAvatar } from 'shared/antd/mint'
 import { randomColor } from 'shared/util'
-
-import './index.less'
 
 export default function Proportion({ tokenList }: { tokenList: TokenInfo[] }) {
   const weightTotal = tokenList.reduce(
     (previousSum, currentValue) => previousSum + Number(currentValue.weight),
     0,
   )
+
   const remainingPortion = 100 - weightTotal
+
   return (
     <div style={{ display: 'flex' }} className="progress">
       {tokenList.map((value, index) => {

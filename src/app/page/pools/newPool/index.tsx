@@ -11,9 +11,9 @@ import ConfirmPoolInfo from './confirmPoolInfo'
 import { AppState } from 'app/model'
 import { numeric } from 'shared/util'
 import { undecimalizeWrapper } from 'app/helper'
+import { generalNomalizedNumber, PoolCreatingStep } from 'app/constant'
 
 import './index.less'
-import { PoolCreatingStep } from 'app/constant'
 
 const { Step } = Steps
 
@@ -42,10 +42,12 @@ const NewPool = () => {
 
   const recoverCreatPoolProcess = useCallback(async () => {
     if (visible) return
+
     const addressWallet = await window.sentre.wallet?.getAddress()
     const createdPools = Object.keys(pools).filter(
       (value) => pools[value].authority.toBase58() === addressWallet,
     )
+
     for (let i = 0; i < createdPools.length; i++) {
       if (
         Object.keys(pools[createdPools[i]].state as any).includes(
@@ -54,19 +56,22 @@ const NewPool = () => {
       ) {
         setCurrentStep(PoolCreatingStep.addLiquidity)
         setPoolAddress(createdPools[i])
+
         const recoveryPoolState = pools[createdPools[i]].mints.map(
           (mint, idx) => {
             return {
               addressToken: mint.toBase58(),
               weight: (
                 pools[createdPools[i]].weights[idx].toNumber() /
-                10 ** 9
+                generalNomalizedNumber
               ).toString(),
               isLocked: false,
             }
           },
         )
+
         setTokenList(recoveryPoolState)
+
         const recoveryReservePool = await Promise.all(
           pools[createdPools[i]].reserves.map(async (value, idx) => {
             const decimals = await getDecimals(
@@ -112,7 +117,6 @@ const NewPool = () => {
         return (
           <AddLiquidty
             tokenList={tokenList}
-            onSetTokenList={setTokenList}
             setCurrentStep={setCurrentStep}
             poolAddress={poolAddress}
             depositedAmounts={depositedAmounts}
@@ -124,11 +128,7 @@ const NewPool = () => {
         return (
           <ConfirmPoolInfo
             tokenList={tokenList}
-            onSetTokenList={setTokenList}
-            setCurrentStep={setCurrentStep}
-            poolAddress={poolAddress}
             depositedAmounts={depositedAmounts}
-            setVisible={setVisible}
             onReset={onReset}
           />
         )

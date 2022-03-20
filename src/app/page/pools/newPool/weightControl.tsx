@@ -2,9 +2,9 @@ import React from 'react'
 
 import { Button, Col, Input, Row } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
+
 import { allowedKeyCode } from 'app/constant'
-import { TokenInfo } from '.'
-import { TextalignJustifyright } from 'iconsax-react'
+import { TokenInfo } from './index'
 
 export default function WeightControl({
   tokenInfo,

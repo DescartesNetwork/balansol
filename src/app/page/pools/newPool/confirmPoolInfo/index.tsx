@@ -1,15 +1,10 @@
+import React, { Fragment, useCallback, useEffect, useState } from 'react'
 import { useMint } from '@senhub/providers'
+
 import { Button, Card, Col, Row, Table, Typography } from 'antd'
-import { PoolCreatingStep } from 'app/constant'
-import React, {
-  Dispatch,
-  Fragment,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react'
+
 import { fetchCGK, numeric } from 'shared/util'
-import { TokenInfo } from '..'
+import { TokenInfo } from '../index'
 import { WORMHOLE_COLUMNS } from './column'
 
 import './index.less'
@@ -22,24 +17,15 @@ type PoolInfo = {
 
 const ConfirmPoolInfo = ({
   tokenList,
-  onSetTokenList,
-  setCurrentStep,
-  poolAddress,
   depositedAmounts,
-  setVisible,
   onReset,
 }: {
   tokenList: TokenInfo[]
-  onSetTokenList: Dispatch<React.SetStateAction<TokenInfo[]>>
-  setCurrentStep: Dispatch<React.SetStateAction<PoolCreatingStep>>
-  poolAddress: string
   depositedAmounts: string[]
-  setVisible: Dispatch<React.SetStateAction<boolean>>
   onReset: () => void
 }) => {
   const [poolInfo, setPoolInfo] = useState<PoolInfo[]>([])
   const [poolTotalValue, setPoolTotalValue] = useState(0)
-
   const { tokenProvider } = useMint()
 
   const getPoolInfo = useCallback(async () => {
@@ -64,6 +50,7 @@ const ConfirmPoolInfo = ({
       (previousSum, currentValue) => previousSum + currentValue.value,
       0,
     )
+
     setPoolTotalValue(totalValue)
     setPoolInfo(poolElements)
   }, [depositedAmounts, tokenList, tokenProvider])
@@ -106,9 +93,7 @@ const ConfirmPoolInfo = ({
       <Col span={24}>
         <Button
           type="primary"
-          onClick={() => {
-            onReset()
-          }}
+          onClick={onReset}
           style={{ borderRadius: 40 }}
           block
         >

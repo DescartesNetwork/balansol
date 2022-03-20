@@ -1,13 +1,15 @@
+import React, { Dispatch, Fragment, useEffect, useState } from 'react'
 import { BN, web3 } from '@project-serum/anchor'
 import { MintActionStates } from '@senswap/balancer'
-import { Button, Col, Row, Space, Typography } from 'antd'
+
+import { Button, Col, Row } from 'antd'
 import Proportion from 'app/components/proportion'
-import { PoolCreatingStep } from 'app/constant'
-import { notifyError, notifySuccess } from 'app/helper'
-import React, { Dispatch, Fragment, useEffect, useState } from 'react'
 import IonIcon from 'shared/antd/ionicon'
-import { TokenInfo } from '..'
 import TokenSetup from '../tokenSetup'
+
+import { generalNomalizedNumber, PoolCreatingStep } from 'app/constant'
+import { notifyError, notifySuccess } from 'app/helper'
+import { TokenInfo } from '../index'
 
 const SelectToken = ({
   tokenList,
@@ -27,15 +29,15 @@ const SelectToken = ({
       (previousSum, currentToken) => Number(currentToken.weight) + previousSum,
       0,
     )
-    if (currentWeightTotal !== 100) {
-      return setDisable(true)
-    }
+
+    if (currentWeightTotal !== 100) return setDisable(true)
+
     for (let index = 0; index < tokenList.length; index++) {
       const token = tokenList[index]
-      if (token.addressToken === '' || Number(token.weight) === 0) {
+      if (token.addressToken === '' || Number(token.weight) === 0)
         return setDisable(true)
-      }
     }
+
     setDisable(false)
   }, [tokenList])
 
@@ -43,7 +45,7 @@ const SelectToken = ({
     try {
       const fee = new BN(500_000_000)
       const mintsConfig = tokenList.map((e) => {
-        const normalizeWeight = Number(e.weight) * 10 ** 9
+        const normalizeWeight = Number(e.weight) * generalNomalizedNumber
         return {
           publicKey: new web3.PublicKey(e.addressToken),
           action: MintActionStates.Active,
@@ -67,12 +69,8 @@ const SelectToken = ({
   const onChangeTokenInfo = (value: TokenInfo, index: number) => {
     if (Number(value.weight) > 100) {
       const newTokenList = tokenList.map((token, idx) => {
-        if (idx === index) {
-          return value
-        }
-        if (token.isLocked) {
-          return token
-        }
+        if (idx === index) return value
+        if (token.isLocked) return token
         return { ...token, weight: '0' }
       })
 
@@ -98,25 +96,23 @@ const SelectToken = ({
           previousSum + Number(currentValue.weight),
         0,
       )
+
       const portionWeight =
         (100 - Number(value.weight) - lockedTokenWeight) /
         (tokensNotLock.length - 1)
 
       const newTokenList: TokenInfo[] = tokenList.map((tokenIn, ind) => {
-        if (index !== ind && !tokenIn.isLocked) {
+        if (index !== ind && !tokenIn.isLocked)
           return { ...tokenIn, weight: String(portionWeight) }
-        }
-        if (index === ind) {
-          return value
-        }
+
+        if (index === ind) return value
+
         return tokenIn
       })
       return onSetTokenList(newTokenList)
     }
     const newTokenList = tokenList.map((token, idx) => {
-      if (idx === index) {
-        return value
-      }
+      if (idx === index) return value
       return token
     })
 
@@ -124,14 +120,18 @@ const SelectToken = ({
   }
 
   const onAddNewToken = () => {
+    //Limit maximum 8 tokens in a pool
     if (tokenList.length >= 8) return
+
     const tokensNotLock = tokenList.filter((value) => value.isLocked === false)
     const remainingWeight = tokensNotLock.reduce(
       (previousSum, currentValue) => previousSum + Number(currentValue.weight),
       0,
     )
-    const newProportionalWeight =
-      Math.round((remainingWeight / (tokensNotLock.length + 1)) * 100) / 100
+    const newProportionalWeight = (
+      remainingWeight /
+      (tokensNotLock.length + 1)
+    ).toFixed(2)
     let flag = false
     let newTokenList: TokenInfo[] = []
 
@@ -145,7 +145,9 @@ const SelectToken = ({
           ...tokenList[i],
           weight: (
             remainingWeight -
-            Number((newProportionalWeight * tokensNotLock.length).toFixed(2))
+            Number(
+              (Number(newProportionalWeight) * tokensNotLock.length).toFixed(2),
+            )
           ).toFixed(2),
         })
         flag = true
@@ -182,8 +184,9 @@ const SelectToken = ({
         0,
       )
 
-    const newProportionalWeight =
-      Math.round((remainingWeight / tokensNotLock.length) * 100) / 100
+    const newProportionalWeight = (
+      remainingWeight / tokensNotLock.length
+    ).toFixed(2)
     let flag = false
     let newRecalculatedTokenList: TokenInfo[] = []
 
@@ -192,13 +195,17 @@ const SelectToken = ({
         newRecalculatedTokenList.push(newTokenList[i])
         continue
       }
+
       if (flag === false) {
         newRecalculatedTokenList.push({
           ...newTokenList[i],
           weight: (
             remainingWeight -
             Number(
-              (newProportionalWeight * (tokensNotLock.length - 1)).toFixed(2),
+              (
+                Number(newProportionalWeight) *
+                (tokensNotLock.length - 1)
+              ).toFixed(2),
             )
           ).toFixed(2),
         })
@@ -210,6 +217,7 @@ const SelectToken = ({
         weight: String(newProportionalWeight),
       })
     }
+
     onSetTokenList(newRecalculatedTokenList)
   }
 
@@ -254,20 +262,6 @@ const SelectToken = ({
               Supply
             </Button>
           </Col>
-          {false && (
-            <Col span={24}>
-              <Space align="start">
-                <Typography.Text className="caption" type="danger">
-                  <IonIcon name="warning-outline" />
-                </Typography.Text>
-                <Typography.Text className="caption" type="danger">
-                  A pool of the desired pair of tokens had already created. We
-                  highly recommend to deposit your liquidity to the pool
-                  instead.
-                </Typography.Text>
-              </Space>
-            </Col>
-          )}
         </Row>
       </Col>
     </Fragment>

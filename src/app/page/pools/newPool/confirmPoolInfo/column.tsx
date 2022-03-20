@@ -1,8 +1,7 @@
-import { token } from '@project-serum/anchor/dist/cjs/utils'
-import { utils } from '@senswap/sen-js'
 import { Space, Typography } from 'antd'
 import { MintAvatar, MintSymbol } from 'shared/antd/mint'
-import { TokenInfo } from '..'
+
+import { TokenInfo } from '../index'
 
 export const WORMHOLE_COLUMNS = [
   {

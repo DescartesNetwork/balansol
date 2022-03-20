@@ -42,3 +42,5 @@ export const allowedKeyCode = [
   '0',
   null,
 ]
+
+export const generalNomalizedNumber = 10 ** 9

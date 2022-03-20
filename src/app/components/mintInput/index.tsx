@@ -1,3 +1,5 @@
+import { ReactNode, useEffect, useState } from 'react'
+
 import { Col, Radio, Row, Space, Typography } from 'antd'
 import NumericInput from 'shared/antd/numericInput'
 import { MintSymbol } from 'shared/antd/mint'
@@ -5,8 +7,8 @@ import Selection from '../selection'
 
 import { numeric } from 'shared/util'
 import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
+
 import './index.less'
-import { ReactNode, useEffect, useState } from 'react'
 
 const PROPORTIONS = [50, 100]
 
@@ -19,7 +21,6 @@ export default function MintInput({
   mintLabel,
   mintAvatar,
   restoredAmount,
-  isOptimizeLiquidity,
 }: {
   amount: string
   onChangeAmount?: (val: string, balance: number) => void
@@ -29,16 +30,13 @@ export default function MintInput({
   mintLabel?: ReactNode
   mintAvatar?: ReactNode
   restoredAmount?: string
-  isOptimizeLiquidity?: boolean
 }) {
   const [runTimeBalance, setRunTimeBalance] = useState(0)
   const [disable, setDisable] = useState(false)
   const { balance } = useAccountBalanceByMintAddress(selectedMint)
 
   useEffect(() => {
-    if (Number(amount) > balance) {
-      return setRunTimeBalance(0)
-    }
+    if (Number(amount) > balance) return setRunTimeBalance(0)
 
     setRunTimeBalance(balance - (Number(amount) || 0))
   }, [amount, balance])
@@ -52,6 +50,7 @@ export default function MintInput({
 
     const balanceTemp = balance - Number(value)
     if (balanceTemp > 0) return setRunTimeBalance(balanceTemp)
+
     return setRunTimeBalance(0)
   }
 

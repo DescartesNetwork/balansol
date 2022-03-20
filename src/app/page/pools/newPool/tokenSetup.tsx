@@ -41,6 +41,7 @@ const TokenSetup = ({
       index,
     )
   }
+
   const onChangeWeight = (value: string) => {
     onChangeTokenInfo(
       {
@@ -62,9 +63,11 @@ const TokenSetup = ({
       index,
     )
   }
+
   const onRemove = () => {
     onRemoveToken(index)
   }
+
   return (
     <Row>
       <Col flex="auto">

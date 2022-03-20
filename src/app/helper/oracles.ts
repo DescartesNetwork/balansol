@@ -38,3 +38,18 @@ export const calcOutGivenIn = (
 
   return (lpAmountNumber / totalSupplyNumber) * balanceInNumber
 }
+
+export const calcOptimizedDepositedAmount = (
+  baseTokenInfo: any,
+  calculatedTokenInfo: any,
+  baseTokenAmount: string,
+  baseTokenWeight: string,
+  calculatedTokenWeight: string,
+) => {
+  return (
+    (baseTokenInfo?.price *
+      Number(baseTokenAmount) *
+      Number(calculatedTokenWeight)) /
+    (calculatedTokenInfo?.price * Number(baseTokenWeight))
+  )
+}

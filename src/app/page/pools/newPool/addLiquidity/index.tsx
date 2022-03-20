@@ -1,19 +1,18 @@
 import React, { Dispatch, Fragment, useState } from 'react'
+import { useMint } from '@senhub/providers'
 
 import { Col, Row, Space, Switch, Tooltip, Typography } from 'antd'
 import { TokenInfo } from '../index'
 import IonIcon from 'shared/antd/ionicon'
 import LiquidityInfo from '../liquidityInfo'
 import MintInput from 'app/components/mintInput'
-import { useMint, usePool } from '@senhub/providers'
-import { useSelector } from 'react-redux'
-import { AppState } from 'app/model'
+
 import { fetchCGK } from 'shared/util'
 import { PoolCreatingStep } from 'app/constant'
+import { calcOptimizedDepositedAmount } from 'app/helper/oracles'
 
 const AddLiquidty = ({
   tokenList,
-  onSetTokenList,
   setCurrentStep,
   poolAddress,
   depositedAmounts,
@@ -21,7 +20,6 @@ const AddLiquidty = ({
   restoredDepositedAmounts,
 }: {
   tokenList: TokenInfo[]
-  onSetTokenList: Dispatch<React.SetStateAction<TokenInfo[]>>
   setCurrentStep: Dispatch<React.SetStateAction<PoolCreatingStep>>
   poolAddress: string
   depositedAmounts: string[]
@@ -35,12 +33,15 @@ const AddLiquidty = ({
 
   const onSwitchOptimize = async (checked: boolean) => {
     setIsOptimizeLiquidity(checked)
+
     if (!checked) return
+
     const newState = [...depositedAmounts]
     const token = await tokenProvider.findByAddress(
       tokenList[baseTokenIndex].addressToken,
     )
     const ticket = token?.extensions?.coingeckoId
+
     if (!ticket) {
       const state = new Array<string>(newState.length)
       state[baseTokenIndex] = newState[baseTokenIndex]
@@ -64,6 +65,7 @@ const AddLiquidty = ({
         )
       }),
     )
+
     return setDepositedAmounts(autoDepositedAmount)
   }
   const onChangeAmount = async (
@@ -72,9 +74,12 @@ const AddLiquidty = ({
     balance: number,
   ) => {
     setBaseTokenIndex(idx)
+
     const valueInNumber = Number(value)
+
     if (valueInNumber < balance && valueInNumber !== 0) setDisable(false)
     if (valueInNumber > balance || valueInNumber === 0) setDisable(true)
+
     const newState = [...depositedAmounts]
     const token = await tokenProvider.findByAddress(tokenList[idx].addressToken)
     const ticket = token?.extensions?.coingeckoId
@@ -100,13 +105,20 @@ const AddLiquidty = ({
         const CGKTokenInfo = await fetchCGK(ticket)
         if (idx === calcedIdx) return value
         return String(
-          (CGKEnteredTokenInfo?.price * Number(value) * Number(weight)) /
-            (CGKTokenInfo?.price * Number(tokenList[calcedIdx].weight)),
+          calcOptimizedDepositedAmount(
+            CGKEnteredTokenInfo,
+            CGKTokenInfo,
+            value,
+            weight,
+            tokenList[calcedIdx].weight,
+          ),
         )
       }),
     )
+
     return setDepositedAmounts(autoDepositedAmount)
   }
+
   return (
     <Fragment>
       <Col span={24}>
@@ -119,7 +131,6 @@ const AddLiquidty = ({
                 onChangeAmount(value, idx, balance)
               }
               restoredAmount={restoredDepositedAmounts[idx]}
-              isOptimizeLiquidity={isOptimizeLiquidity}
             />
           ))}
           <Row justify="end" gutter={[8, 0]}>
