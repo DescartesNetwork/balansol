@@ -34,8 +34,8 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
         poolData.mints.map(async (mint) => {
           let mintAddress = mint.toBase58()
           let decimals = await getDecimals(mintAddress)
-          let mintAmmount = utils.decimalize(mintsAmount[mintAddress], decimals)
-          return new BN(String(mintAmmount))
+          let mintAmount = utils.decimalize(mintsAmount[mintAddress], decimals)
+          return new BN(String(mintAmount))
         }),
       )
       const { txId } = await window.balansol.addLiquidity(
@@ -52,7 +52,9 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
 
   return (
     <Fragment>
-      <Button onClick={() => setVisible(true)}>Deposit</Button>
+      <Button onClick={() => setVisible(true)} block>
+        Deposit
+      </Button>
       {/* Modal deposit */}
       <Modal
         title={<Typography.Title level={4}>Deposit</Typography.Title>}
