@@ -1,46 +1,61 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 import { Button, Col, Input, Row } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
 
+import { allowedKeyCode } from 'app/constant'
+import { TokenInfo } from './index'
+
 export default function WeightControl({
-  weight,
-  onChange,
+  tokenInfo,
+  onChangeWeight,
+  onChangeLock,
+  onRemoveToken,
 }: {
-  weight: string
-  onChange: (value: string) => void
+  tokenInfo: TokenInfo
+  onChangeWeight: (value: string) => void
+  onChangeLock: (value: boolean) => void
+  onRemoveToken: () => void
 }) {
-  const [lock, setLock] = useState(false)
+  const { weight, isLocked } = tokenInfo
 
   return (
-    <Row justify="end">
-      <Col span={24}>
+    <Row justify="end" align="middle">
+      <Col>
         <Input
           value={weight}
           size="small"
           bordered={false}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            onChange(e.target.value)
-          }
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            if (allowedKeyCode.includes((e.nativeEvent as any).data)) {
+              onChangeWeight(e.target.value)
+            }
+          }}
           suffix={'%'}
-          disabled={lock}
-          style={{ width: '52px' }}
+          disabled={isLocked}
+          maxLength={5}
+          className="input-weight"
         />
+      </Col>
+      <Col>
         <Button
-          type="text"
           onClick={() => {
-            setLock(!lock)
+            onChangeLock(!isLocked)
           }}
           shape="circle"
           icon={
             <IonIcon
-              name={lock ? 'lock-closed-outline' : 'lock-open-outline'}
+              name={isLocked ? 'lock-closed-outline' : 'lock-open-outline'}
             />
           }
+          style={{ background: 'unset' }}
         />
+      </Col>
+      <Col>
         <Button
-          type="text"
-          onClick={() => {}}
+          onClick={() => {
+            onRemoveToken()
+          }}
           shape="circle"
           icon={<IonIcon name="trash-outline" />}
         />

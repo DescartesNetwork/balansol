@@ -24,9 +24,24 @@ export enum PoolStatus {
 }
 
 export enum PoolCreatingStep {
-  setGradient = 'set-gradient',
-  addLiquidity = 'fund',
-  confirmCreatePool = 'confirm-create-pool',
+  setGradient = 0,
+  addLiquidity = 1,
+  confirmCreatePool = 2,
 }
 
-export const LPTDECIMALS = 9;
+export const allowedKeyCode = [
+  '1',
+  '2',
+  '3',
+  '4',
+  '5',
+  '6',
+  '7',
+  '8',
+  '9',
+  '0',
+  null,
+]
+
+export const generalNomalizedNumber = 10 ** 9
+export const LPTDECIMALS = 9

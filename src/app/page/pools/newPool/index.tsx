@@ -1,81 +1,145 @@
-import { BN, web3 } from '@project-serum/anchor'
-import { Fragment, useState } from 'react'
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { useMint } from '@senhub/providers'
 
-import { Button, Col, Modal, Row, Space, Steps, Typography } from 'antd'
+import { Button, Col, Modal, Row, Steps, Typography } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
-import { MintActionStates } from '@senswap/balancer'
-import { notifyError, notifySuccess } from 'app/helper'
-import TokenSetup from './tokenSetup'
+import SelectToken from './selectToken'
+import AddLiquidty from './addLiquidity'
+import ConfirmPoolInfo from './confirmPoolInfo'
+
+import { AppState } from 'app/model'
+import { numeric } from 'shared/util'
+import { undecimalizeWrapper } from 'app/helper'
+import { generalNomalizedNumber, PoolCreatingStep } from 'app/constant'
+
+import './index.less'
 
 const { Step } = Steps
 
 export type TokenInfo = {
   addressToken: string
   weight: string
+  isLocked: boolean
 }
 
+const initializedTokenList = [
+  { addressToken: '', weight: '50', isLocked: false },
+  { addressToken: '', weight: '50', isLocked: false },
+]
+
 const NewPool = () => {
+  const { pools } = useSelector((state: AppState) => state)
   const [visible, setVisible] = useState(false)
-  const [currentStep, setCurrentStep] = useState(0)
-  const [tokenList, setTokenList] = useState<TokenInfo[]>([
-    { addressToken: '', weight: '50' },
-    { addressToken: '', weight: '50' },
-  ])
+  const [currentStep, setCurrentStep] = useState(PoolCreatingStep.setGradient)
+  const [poolAddress, setPoolAddress] = useState('')
+  const [depositedAmounts, setDepositedAmounts] = useState<string[]>([])
+  const [restoredDepositedAmounts, setRestoreDepositedAmounts] = useState<
+    string[]
+  >([])
+  const [tokenList, setTokenList] = useState<TokenInfo[]>(initializedTokenList)
+  const { getDecimals } = useMint()
 
-  const onCreate = async () => {
-    try {
-      const fee = new BN(500_000_000)
-      const mintsConfig = [
-        'FVZFSXu3yn17YdcxLD72TFDUqkdE5xZvcW18EUpRQEbe',
-        '3aMbgP7aGsP1sVcFKc6j65zu7UiziP57SMFzf6ptiCSX',
-        '2z6Ci38Cx6PyL3tFrT95vbEeB3izqpoLdxxBkJk2euyj',
-      ].map((e) => {
-        return {
-          publicKey: new web3.PublicKey(e),
-          action: MintActionStates.Active,
-          amountIn: new BN(500_000_000),
-          weight: new BN(50),
-        }
-      })
-      const { txId, poolAddress } = await window.balansol.initializePool(
-        fee,
-        mintsConfig,
-      )
+  const recoverCreatPoolProcess = useCallback(async () => {
+    if (visible) return
 
-      for (const mintConfig of mintsConfig) {
-        await window.balansol.initializeJoin(
-          poolAddress,
-          mintConfig.publicKey,
-          mintConfig.amountIn,
+    const addressWallet = await window.sentre.wallet?.getAddress()
+    const createdPools = Object.keys(pools).filter(
+      (value) => pools[value].authority.toBase58() === addressWallet,
+    )
+
+    for (let i = 0; i < createdPools.length; i++) {
+      if (
+        Object.keys(pools[createdPools[i]].state as any).includes(
+          'uninitialized',
         )
+      ) {
+        setCurrentStep(PoolCreatingStep.addLiquidity)
+        setPoolAddress(createdPools[i])
+
+        const recoveryPoolState = pools[createdPools[i]].mints.map(
+          (mint, idx) => {
+            return {
+              addressToken: mint.toBase58(),
+              weight: (
+                pools[createdPools[i]].weights[idx].toNumber() /
+                generalNomalizedNumber
+              ).toString(),
+              isLocked: false,
+            }
+          },
+        )
+
+        setTokenList(recoveryPoolState)
+
+        const recoveryReservePool = await Promise.all(
+          pools[createdPools[i]].reserves.map(async (value, idx) => {
+            const decimals = await getDecimals(
+              pools[createdPools[i]].mints[idx].toBase58(),
+            )
+            return numeric(undecimalizeWrapper(value, decimals)).format(
+              '0.[000]',
+            )
+          }),
+        )
+        setDepositedAmounts(recoveryReservePool)
+
+        setRestoreDepositedAmounts(recoveryReservePool)
       }
-      notifySuccess('Create pool', txId)
-    } catch (error) {
-      notifyError(error)
     }
+  }, [getDecimals, pools, visible])
+
+  useEffect(() => {
+    recoverCreatPoolProcess()
+  }, [recoverCreatPoolProcess])
+
+  const onReset = () => {
+    setVisible(false)
+    setTokenList(initializedTokenList)
+    setPoolAddress('')
+    setDepositedAmounts([])
+    setRestoreDepositedAmounts([])
+    setCurrentStep(PoolCreatingStep.setGradient)
   }
 
-  const onChange = (value: number) => {
-    setCurrentStep(value)
-  }
-
-  const onChangeTokenInfo = (value: TokenInfo, index: number) => {
-    if (tokenList[index].weight !== value.weight) {
-      const portionWeight =
-        (100 - Number(value.weight)) / (tokenList.length - 1)
-      const newTokenList: TokenInfo[] = tokenList.map((token, idx) => {
-        if (index !== idx) return { ...token, weight: String(portionWeight) }
-        return value
-      })
-      return setTokenList(newTokenList)
+  const creatingPoolProcess = useMemo(() => {
+    switch (currentStep) {
+      case PoolCreatingStep.setGradient:
+        return (
+          <SelectToken
+            tokenList={tokenList}
+            onSetTokenList={setTokenList}
+            setCurrentStep={setCurrentStep}
+            setPoolAddress={setPoolAddress}
+          />
+        )
+      case PoolCreatingStep.addLiquidity:
+        return (
+          <AddLiquidty
+            tokenList={tokenList}
+            setCurrentStep={setCurrentStep}
+            poolAddress={poolAddress}
+            depositedAmounts={depositedAmounts}
+            setDepositedAmounts={setDepositedAmounts}
+            restoredDepositedAmounts={restoredDepositedAmounts}
+          />
+        )
+      case PoolCreatingStep.confirmCreatePool:
+        return (
+          <ConfirmPoolInfo
+            tokenList={tokenList}
+            depositedAmounts={depositedAmounts}
+            onReset={onReset}
+          />
+        )
     }
-    const newTokenList = tokenList.map((token, idx) => {
-      if (idx === index) return value
-      return token
-    })
-
-    setTokenList(newTokenList)
-  }
+  }, [
+    currentStep,
+    depositedAmounts,
+    poolAddress,
+    restoredDepositedAmounts,
+    tokenList,
+  ])
 
   return (
     <Fragment>
@@ -102,56 +166,13 @@ const NewPool = () => {
             <Typography.Title level={4}>New Pool</Typography.Title>
           </Col>
           <Col span={24}>
-            <Steps size="small" current={currentStep} onChange={onChange}>
-              <Step title="Select tokens and weights" />
+            <Steps size="small" current={currentStep}>
+              <Step title="Select tokens & weights" />
               <Step title="Set liquidity" />
               <Step title="Confirm" />
             </Steps>
           </Col>
-          <Col span={24}>
-            <Row>
-              <Col flex="auto">Token</Col>
-              <Col>Weight</Col>
-            </Row>
-          </Col>
-          {tokenList.map((value, index) => (
-            <Col span={24}>
-              <TokenSetup
-                tokenInfo={value}
-                onChangeTokenInfo={onChangeTokenInfo}
-                index={index}
-              />
-            </Col>
-          ))}
-
-          <Col span={24}>
-            <Row gutter={[16, 16]}>
-              <Col span={24}>
-                <Button
-                  type="primary"
-                  onClick={onCreate}
-                  disabled={false}
-                  block
-                >
-                  Supply
-                </Button>
-              </Col>
-              {false && (
-                <Col span={24}>
-                  <Space align="start">
-                    <Typography.Text className="caption" type="danger">
-                      <IonIcon name="warning-outline" />
-                    </Typography.Text>
-                    <Typography.Text className="caption" type="danger">
-                      A pool of the desired pair of tokens had already created.
-                      We highly recommend to deposit your liquidity to the pool
-                      instead.
-                    </Typography.Text>
-                  </Space>
-                </Col>
-              )}
-            </Row>
-          </Col>
+          {creatingPoolProcess}
         </Row>
       </Modal>
     </Fragment>
