@@ -1,6 +1,7 @@
-import { Button, Card, Input } from 'antd'
 import React, { useState } from 'react'
-import IonIcon from 'shared/antd/ionicon'
+
+import { Button, Card, Input } from 'antd'
+import { SearchOutlined } from '@ant-design/icons'
 
 import './search.less'
 
@@ -16,12 +17,9 @@ export default function Search() {
         prefix={
           <Button
             type="text"
-            style={{ marginLeft: -7 }}
             size="small"
             onClick={() => {}}
-            icon={
-              <IonIcon name={search ? 'close-outline' : 'search-outline'} />
-            }
+            icon={<SearchOutlined style={{ fontSize: '24px' }} />}
           />
         }
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {

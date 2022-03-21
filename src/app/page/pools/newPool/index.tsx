@@ -144,7 +144,7 @@ const NewPool = () => {
   return (
     <Fragment>
       <Button
-        type="primary"
+        className="btn-outline"
         icon={<IonIcon name="add-outline" />}
         onClick={() => setVisible(!visible)}
         style={{ borderRadius: 40 }}
@@ -160,6 +160,8 @@ const NewPool = () => {
         footer={null}
         destroyOnClose={true}
         centered={true}
+        width={572}
+        className="modal-balansol"
       >
         <Row gutter={[24, 24]}>
           <Col span={24}>
