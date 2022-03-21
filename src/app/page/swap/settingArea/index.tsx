@@ -8,7 +8,7 @@ export default function SettingArea() {
   return (
     <Space>
       <PoweredBySentre />
-      <Divider type="vertical" style={{ padding: 0 }} />
+      <Divider type="vertical" style={{ padding: 0, margin: 0 }} />
       <Popover
         placement="bottomRight"
         overlayInnerStyle={{ width: 300 }}
@@ -24,8 +24,9 @@ export default function SettingArea() {
         <Button
           type="text"
           shape="circle"
-          size="small"
-          icon={<IonIcon name="cog-outline" />}
+          size="large"
+          icon={<IonIcon name="cog-outline" style={{ color: '#ffffff' }} />}
+          style={{ background: 'transparent' }}
         />
       </Popover>
     </Space>

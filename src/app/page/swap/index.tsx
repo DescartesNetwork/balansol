@@ -31,7 +31,12 @@ export default function Swap() {
                   <Button
                     className="btn-switch-type"
                     size="small"
-                    icon={<IonIcon name="git-compare-outline" />}
+                    icon={
+                      <IonIcon
+                        name="git-compare-outline"
+                        style={{ color: 'white' }}
+                      />
+                    }
                     onClick={onSwitch}
                   />
                 </Col>
