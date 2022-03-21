@@ -1,20 +1,28 @@
 import { Col, Row, Space, Typography } from 'antd'
+import { useWithdrawToken } from 'app/hooks/useWithdrawToken'
 import { MintAvatar, MintSymbol } from 'shared/antd/mint'
 
-const TokenWillReceive = () => {
+const TokenWillReceive = ({
+  mintAddress,
+  amount,
+}: {
+  mintAddress: string
+  amount?: string
+}) => {
+  const amountWithdrawToken = useWithdrawToken(amount || '')
   return (
     <Col span={24}>
       <Row>
         <Col flex="auto">
           <Space>
-            <MintAvatar mintAddress="" />
+            <MintAvatar mintAddress={mintAddress} />
             <Typography.Text type="secondary">
-              <MintSymbol mintAddress={''} />
+              <MintSymbol mintAddress={mintAddress} />
             </Typography.Text>
           </Space>
         </Col>
         <Col>
-          <Typography.Text>0</Typography.Text>
+          <Typography.Text>{amountWithdrawToken}</Typography.Text>
         </Col>
       </Row>
     </Col>

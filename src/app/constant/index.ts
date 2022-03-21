@@ -28,3 +28,5 @@ export enum PoolCreatingStep {
   addLiquidity = 'fund',
   confirmCreatePool = 'confirm-create-pool',
 }
+
+export const LPTDECIMALS = 9;
