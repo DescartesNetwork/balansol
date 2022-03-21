@@ -17,7 +17,7 @@ const MintRatio = ({ reversed = false }: { reversed?: boolean }) => {
   return (
     <Space>
       <MintSymbol mintAddress={actualBid} />
-      <Typography.Text>/</Typography.Text>
+      <Typography.Text>=</Typography.Text>
       <MintSymbol mintAddress={actualAsk} />
     </Space>
   )
@@ -32,7 +32,13 @@ const Price = () => {
         type="text"
         onClick={() => setReversed(!reversed)}
         shape="circle"
-        icon={<IonIcon name="swap-horizontal-outline" />}
+        icon={
+          <IonIcon
+            name="swap-horizontal-outline"
+            style={{ color: '#F3F3F5' }}
+          />
+        }
+        style={{ background: 'transparent' }}
       />
       <Typography.Text>100</Typography.Text>
       <MintRatio reversed={reversed} />
