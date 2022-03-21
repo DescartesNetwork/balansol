@@ -247,9 +247,14 @@ const SelectToken = ({
           onClick={() => {
             onAddNewToken()
           }}
-          style={{ borderRadius: 40 }}
+          style={{
+            borderRadius: 40,
+            background: 'transparent',
+            color: '#63E0B3',
+            borderColor: '#63E0B3',
+          }}
         >
-          New pool
+          Add a token
         </Button>
       </Col>
       <Col span={24}>

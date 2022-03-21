@@ -78,7 +78,12 @@ const AddLiquidty = ({
     const valueInNumber = Number(value)
 
     if (valueInNumber < balance && valueInNumber !== 0) setDisable(false)
-    if (valueInNumber > balance || valueInNumber === 0) setDisable(true)
+    if (
+      valueInNumber > balance ||
+      valueInNumber === 0 ||
+      depositedAmounts.includes('0')
+    )
+      setDisable(true)
 
     const newState = [...depositedAmounts]
     const token = await tokenProvider.findByAddress(tokenList[idx].addressToken)
@@ -104,6 +109,11 @@ const AddLiquidty = ({
         if (!ticket) return '0'
         const CGKTokenInfo = await fetchCGK(ticket)
         if (idx === calcedIdx) return value
+        if (
+          !!restoredDepositedAmounts[idx] &&
+          restoredDepositedAmounts[idx] !== '0'
+        )
+          return restoredDepositedAmounts[idx]
         return String(
           calcOptimizedDepositedAmount(
             CGKEnteredTokenInfo,
