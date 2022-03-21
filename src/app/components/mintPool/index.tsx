@@ -4,8 +4,10 @@ import React from 'react'
 const MintPool = ({ address }: { address: string }) => {
   return (
     <Space size={2}>
-      <Typography.Text>50</Typography.Text>
-      <Typography.Text>Usdt</Typography.Text>
+      <Typography.Text>Balansol LP </Typography.Text>
+      <Typography.Text type="secondary">
+        ( 25% USDC - 25% SOL - 50% SNTR)
+      </Typography.Text>
     </Space>
   )
 }
