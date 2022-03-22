@@ -8,12 +8,27 @@ import SettingArea from './settingArea'
 import IonIcon from 'shared/antd/ionicon'
 import SwapInfo from 'app/components/swapInfo'
 
+import { useDispatch, useSelector } from 'react-redux'
+import { setSwapState } from 'app/model/swap.controller'
+import { AppState } from 'app/model'
+import { useRouteSwap } from 'app/hooks/useRouteSwap'
+
 import './index.less'
 
 export default function Swap() {
+  const dispatch = useDispatch()
+
+  const {
+    swap: { askMint, bidMint },
+  } = useSelector((state: AppState) => state)
+
+  const { askAmount } = useRouteSwap()
+
   const onSwitch = () => {
-    console.log('Switch input')
+    dispatch(setSwapState({ askMint: bidMint, bidMint: askMint }))
+    dispatch(setSwapState({ bidAmount: askAmount }))
   }
+
   return (
     <Row justify="center">
       <Col lg={8}>

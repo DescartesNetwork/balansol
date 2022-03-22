@@ -24,7 +24,7 @@ export default function DetailsCard({ poolAddress }: { poolAddress: string }) {
         <Col span={24}>
           <Space>
             {[1, 2, 3, 4].map((idx) => (
-              <MintPool address="" />
+              <MintPool address="" key={idx} />
             ))}
           </Space>
         </Col>

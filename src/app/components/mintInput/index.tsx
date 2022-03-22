@@ -31,15 +31,8 @@ export default function MintInput({
   mintAvatar?: ReactNode
   restoredAmount?: string
 }) {
-  const [runTimeBalance, setRunTimeBalance] = useState(0)
   const [disable, setDisable] = useState(false)
   const { balance } = useAccountBalanceByMintAddress(selectedMint)
-
-  useEffect(() => {
-    if (Number(amount) > balance) return setRunTimeBalance(0)
-
-    setRunTimeBalance(balance - (Number(amount) || 0))
-  }, [amount, balance])
 
   useEffect(() => {
     if (!!Number(restoredAmount)) setDisable(true)
@@ -47,11 +40,6 @@ export default function MintInput({
 
   const onInput = (value: string) => {
     if (!!onChangeAmount) onChangeAmount(value, balance)
-
-    const balanceTemp = balance - Number(value)
-    if (balanceTemp > 0) return setRunTimeBalance(balanceTemp)
-
-    return setRunTimeBalance(0)
   }
 
   return (
@@ -91,7 +79,6 @@ export default function MintInput({
               value={amount}
               onValue={onInput}
               disabled={disable}
-              max={balance + 1}
             />
           </Col>
         </Row>
@@ -107,7 +94,7 @@ export default function MintInput({
                 style={{ cursor: 'pointer' }}
                 onClick={() => {}}
               >
-                {numeric(runTimeBalance).format('0,0.[00]')}
+                {numeric(balance).format('0,0.[00]')}
               </Typography.Text>
               <Typography.Text type="secondary">
                 <MintSymbol mintAddress={selectedMint} />
@@ -121,15 +108,12 @@ export default function MintInput({
                 const minValue = (balance * val) / 100
                 const isActive = balance && Number(amount) >= minValue
                 return (
-                  <Space size={4} direction="vertical">
+                  <Space size={4} direction="vertical" key={val}>
                     <Radio.Button
                       className="proportion-btn"
+                      disabled={disable}
                       onClick={() => {
                         onChangeAmount(String(minValue), balance)
-                        const balanceTemp = balance - minValue
-                        if (balanceTemp > 0)
-                          return setRunTimeBalance(balanceTemp)
-                        return setRunTimeBalance(0)
                       }}
                       style={{
                         background: isActive ? '#63e0b3' : undefined,

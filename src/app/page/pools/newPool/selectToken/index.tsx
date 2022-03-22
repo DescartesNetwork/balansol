@@ -230,7 +230,7 @@ const SelectToken = ({
         </Row>
       </Col>
       {tokenList.map((value, index) => (
-        <Col span={24}>
+        <Col span={24} key={index}>
           <TokenSetup
             tokenList={tokenList}
             tokenInfo={value}

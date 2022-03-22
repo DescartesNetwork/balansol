@@ -25,7 +25,7 @@ export default function Pools() {
         <Row gutter={[24, 24]}>
           {Object.keys(pools).map((poolAddress) => {
             return (
-              <Col span={12}>
+              <Col span={12} key={poolAddress}>
                 <DetailsCard poolAddress={poolAddress} />
               </Col>
             )

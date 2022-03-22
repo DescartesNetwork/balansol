@@ -141,6 +141,7 @@ const AddLiquidty = ({
                 onChangeAmount(value, idx, balance)
               }
               restoredAmount={restoredDepositedAmounts[idx]}
+              key={idx}
             />
           ))}
           <Row justify="end" gutter={[8, 0]}>

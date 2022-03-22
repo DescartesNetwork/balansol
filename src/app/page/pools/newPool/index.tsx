@@ -83,6 +83,7 @@ const NewPool = () => {
           }),
         )
         setDepositedAmounts(recoveryReservePool)
+        console.log(recoveryReservePool, 'recoveryReservePool')
 
         setRestoreDepositedAmounts(recoveryReservePool)
       }
