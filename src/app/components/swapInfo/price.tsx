@@ -15,12 +15,12 @@ const MintRatio = ({ reversed = false }: { reversed?: boolean }) => {
   } = useSelector((state: AppState) => state)
 
   const [spotPrice, setSpotPrice] = useState(0)
-  const { bestPool } = useRouteSwap()
+  const { pool } = useRouteSwap()
 
   useEffect(() => {
-    if (!bestPool) return setSpotPrice(0)
+    if (!pool) return setSpotPrice(0)
 
-    const bestPoolInfo = pools[bestPool]
+    const bestPoolInfo = pools[pool]
     const tokenInIdx = bestPoolInfo.mints.findIndex(
       (mint) => mint.toBase58() === bidMint,
     )
@@ -37,7 +37,7 @@ const MintRatio = ({ reversed = false }: { reversed?: boolean }) => {
     )
 
     setSpotPrice(hotSpotPrice)
-  }, [askMint, bestPool, bidMint, pools])
+  }, [askMint, pool, bidMint, pools])
 
   const actualBid = reversed ? bidMint : askMint
   const actualAsk = reversed ? askMint : bidMint

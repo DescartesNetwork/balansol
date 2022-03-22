@@ -1,4 +1,25 @@
-import { BN } from '@project-serum/anchor'
+import { Address, BN, web3 } from '@project-serum/anchor'
+import { PoolData } from '@senswap/balancer'
+
+export function findMintIndex(poolData: PoolData, mint: Address): number {
+  return poolData.mints
+    .map((e) => e.toBase58())
+    .indexOf(new web3.PublicKey(mint).toBase58())
+}
+
+export function getMintInfo(poolData: PoolData, mint: Address) {
+  const mintIdx = findMintIndex(poolData, mint)
+  if (mintIdx === -1) return null
+  const normalizedWeight = calcNormalizedWeight(
+    poolData.weights,
+    poolData.weights[mintIdx],
+  )
+  return {
+    reserve: poolData.reserves[mintIdx],
+    normalizedWeight: normalizedWeight,
+    treasury: poolData.treasuries[mintIdx],
+  }
+}
 
 export function valueFunction(reserves: string[], weights: string[]): number {
   const reservesInNumber = reserves.map((value) => Number(value))
@@ -76,7 +97,7 @@ export function calOutGivenInSwap(
   )
 }
 
-export function calWeightToken(weights: BN[], weightToken: BN): number {
+export function calcNormalizedWeight(weights: BN[], weightToken: BN): number {
   const numWeightsIn = weights.map((value) => value?.toNumber())
   const numWeightToken = weightToken?.toNumber()
   const weightSum = numWeightsIn.reduce((pre, curr) => pre + curr, 0)

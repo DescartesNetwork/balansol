@@ -25,8 +25,13 @@ export default function Swap() {
   const { askAmount } = useRouteSwap()
 
   const onSwitch = () => {
-    dispatch(setSwapState({ askMint: bidMint, bidMint: askMint }))
-    dispatch(setSwapState({ bidAmount: askAmount }))
+    dispatch(
+      setSwapState({
+        askMint: bidMint,
+        bidMint: askMint,
+        bidAmount: askAmount,
+      }),
+    )
   }
 
   return (
