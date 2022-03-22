@@ -2,8 +2,8 @@ import React, { Dispatch, Fragment, useState } from 'react'
 import { useMint } from '@senhub/providers'
 
 import { Col, Row, Space, Switch, Tooltip, Typography } from 'antd'
+import { InfoCircleOutlined } from '@ant-design/icons'
 import { TokenInfo } from '../index'
-import IonIcon from 'shared/antd/ionicon'
 import LiquidityInfo from '../liquidityInfo'
 import MintInput from 'app/components/mintInput'
 
@@ -132,31 +132,35 @@ const AddLiquidty = ({
   return (
     <Fragment>
       <Col span={24}>
-        <Space direction="vertical" size={8}>
+        <Row justify="center" gutter={[8, 8]}>
           {tokenList.map((value, idx) => (
-            <MintInput
-              amount={depositedAmounts[idx]}
-              selectedMint={value.addressToken}
-              onChangeAmount={(value: string, balance: number) =>
-                onChangeAmount(value, idx, balance)
-              }
-              restoredAmount={restoredDepositedAmounts[idx]}
-            />
+            <Col span={24}>
+              <MintInput
+                amount={depositedAmounts[idx]}
+                selectedMint={value.addressToken}
+                onChangeAmount={(value: string, balance: number) =>
+                  onChangeAmount(value, idx, balance)
+                }
+                restoredAmount={restoredDepositedAmounts[idx]}
+              />
+            </Col>
           ))}
-          <Row justify="end" gutter={[8, 0]}>
-            <Col>
-              <Tooltip title="prompt text">
-                <IonIcon name="information-circle-outline" />
-              </Tooltip>
-            </Col>
-            <Col>
-              <Typography.Text>Auto optimize liquidity</Typography.Text>
-            </Col>
-            <Col>
-              <Switch onChange={onSwitchOptimize} />
-            </Col>
-          </Row>
-        </Space>
+          <Col span={24}>
+            <Row justify="end" gutter={[8, 0]}>
+              <Col>
+                <Space>
+                  <Tooltip title="prompt text">
+                    <InfoCircleOutlined style={{ color: '#9CA1AF' }} />
+                  </Tooltip>
+                  <Typography.Text>Auto optimize liquidity</Typography.Text>
+                </Space>
+              </Col>
+              <Col>
+                <Switch size="small" onChange={onSwitchOptimize} />
+              </Col>
+            </Row>
+          </Col>
+        </Row>
       </Col>
       <Col span={24}>
         <LiquidityInfo

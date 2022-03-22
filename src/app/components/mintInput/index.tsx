@@ -85,7 +85,6 @@ export default function MintInput({
                 fontSize: 24,
                 maxWidth: 150,
                 padding: 0,
-                color: '#9CA1AF',
               }}
               placeholder="0"
               value={amount}

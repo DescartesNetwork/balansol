@@ -91,11 +91,13 @@ const LiquidityInfo = ({
         {tokenList.map((value, idx) => (
           <Row>
             <Col flex={1}>
-              <MintSymbol mintAddress={value.addressToken} />
+              <Typography.Text type="secondary">
+                <MintSymbol mintAddress={value.addressToken} />
+              </Typography.Text>
               <Typography.Text>({tokenPrice[idx]?.price})</Typography.Text>
             </Col>
             <Col>
-              <Typography.Text>{tokenPrice[idx]?.valuation} $</Typography.Text>
+              <Typography.Text>${tokenPrice[idx]?.valuation}</Typography.Text>
             </Col>
           </Row>
         ))}
@@ -107,12 +109,12 @@ const LiquidityInfo = ({
           </Col>
           <Col>
             <Typography.Title level={3}>
+              $
               {tokenPrice.reduce(
                 (previousSum, currentValue) =>
                   previousSum + currentValue?.valuation,
                 0,
               )}{' '}
-              $
             </Typography.Title>
           </Col>
         </Row>

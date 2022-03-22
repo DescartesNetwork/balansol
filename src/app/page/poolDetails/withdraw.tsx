@@ -82,7 +82,7 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
 
   return (
     <Fragment>
-      <Button className="btn-withdraw" onClick={() => setVisible(true)} block>
+      <Button className="btn-outline" onClick={() => setVisible(true)} block>
         Withdraw
       </Button>
       {/* Modal withdraw */}
