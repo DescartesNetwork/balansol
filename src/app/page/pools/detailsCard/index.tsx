@@ -23,9 +23,7 @@ export default function DetailsCard({ poolAddress }: { poolAddress: string }) {
       <Row gutter={[0, 24]}>
         <Col span={24}>
           <Space>
-            {[1, 2, 3, 4].map((idx) => (
-              <MintPool address="" key={idx} />
-            ))}
+            <MintPool address="" />
           </Space>
         </Col>
         <Col span={24}>
@@ -33,12 +31,16 @@ export default function DetailsCard({ poolAddress }: { poolAddress: string }) {
             <Col flex="auto">
               <Row>
                 <Col span={24}>
-                  <Typography.Text>TVL</Typography.Text>
-                  <Typography.Text> $299.11$</Typography.Text>
+                  <Space>
+                    <Typography.Text type="secondary">TVL:</Typography.Text>
+                    <Typography.Title level={5}> $299.11$</Typography.Title>
+                  </Space>
                 </Col>
                 <Col span={24}>
-                  <Typography.Text>APY</Typography.Text>
-                  <Typography.Text> 9%</Typography.Text>
+                  <Space>
+                    <Typography.Text type="secondary">APY:</Typography.Text>
+                    <Typography.Title level={5}> 9%</Typography.Title>
+                  </Space>
                 </Col>
               </Row>
             </Col>

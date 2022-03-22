@@ -52,7 +52,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
 
   return (
     <Fragment>
-      <Button onClick={() => setVisible(true)} block>
+      <Button type="primary" onClick={() => setVisible(true)} block>
         Deposit
       </Button>
       {/* Modal deposit */}

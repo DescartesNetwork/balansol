@@ -28,7 +28,7 @@ const SwapAndPools = () => {
   if (!selectedTab) return null
   return (
     <Fragment>
-      <Row gutter={[24, 24]} justify="center">
+      <Row gutter={[24, 24]} justify="center" style={{ paddingBottom: 12 }}>
         <Col>
           <Radio.Group
             onChange={(val) => onChange(val.target.value)}
