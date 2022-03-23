@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import MintInput from 'app/components/mintInput'
@@ -21,6 +21,11 @@ export default function BidInput() {
   const onChange = (val: string) => {
     dispatch(setSwapState({ bidAmount: val }))
   }
+  // Ignore askMint in mints
+  const filteredMints = useMemo(
+    () => mintsSwap.filter((value) => value !== askMint),
+    [askMint, mintsSwap],
+  )
 
   return (
     <MintInput
@@ -28,7 +33,7 @@ export default function BidInput() {
       selectedMint={bidMint}
       onSelect={(mint) => dispatch(setSwapState({ bidMint: mint }))}
       onChangeAmount={onChange}
-      mints={mintsSwap.filter((value) => value !== askMint)}
+      mints={filteredMints}
     />
   )
 }

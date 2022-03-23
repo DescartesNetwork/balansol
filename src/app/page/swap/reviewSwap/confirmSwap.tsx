@@ -21,6 +21,7 @@ import { useRouteSwap } from 'app/hooks/useRouteSwap'
 import { useOracles } from 'app/hooks/useOracles'
 
 import './index.less'
+import { PriceImpact } from 'app/constant'
 
 const ConfirmSwap = ({
   visible = false,
@@ -40,7 +41,8 @@ const ConfirmSwap = ({
   const { decimalizeMintAmount } = useOracles()
 
   useEffect(() => {
-    if (Number(priceImpact) > 0.2) return setIsDisplayWarning(true)
+    if (Number(priceImpact) > PriceImpact.GoodImpact)
+      return setIsDisplayWarning(true)
     setIsDisplayWarning(false)
   }, [priceImpact])
 

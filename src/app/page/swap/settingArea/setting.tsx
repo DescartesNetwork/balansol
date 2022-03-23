@@ -2,8 +2,9 @@ import React from 'react'
 
 import { Button, Col, Row, Typography } from 'antd'
 
+const Options = [0.5, 1, 2, 3]
+
 const Setting = () => {
-  const Options = [0.5, 1, 2, 3]
   return (
     <Row gutter={[8, 8]}>
       <Col span={24}>

@@ -3,13 +3,13 @@ import { PoolData } from '@senswap/balancer'
 
 import { GENERAL_NORMALIZED_NUMBER } from 'app/constant'
 
-export function findMintIndex(poolData: PoolData, mint: Address): number {
+export const findMintIndex = (poolData: PoolData, mint: Address): number => {
   return poolData.mints
     .map((e) => e.toBase58())
     .indexOf(new web3.PublicKey(mint).toBase58())
 }
 
-export function getMintInfo(poolData: PoolData, mint: Address) {
+export const getMintInfo = (poolData: PoolData, mint: Address) => {
   const mintIdx = findMintIndex(poolData, mint)
   if (mintIdx === -1) return null
   const normalizedWeight = calcNormalizedWeight(
@@ -23,7 +23,10 @@ export function getMintInfo(poolData: PoolData, mint: Address) {
   }
 }
 
-export function valueFunction(reserves: string[], weights: string[]): number {
+export const valueFunction = (
+  reserves: string[],
+  weights: string[],
+): number => {
   const numReserves = reserves.map((value) => Number(value))
   const numWeights = weights.map((value) => Number(value))
   const sumWeight = numWeights.reduce((a, b) => a + b, 0)
@@ -35,10 +38,10 @@ export function valueFunction(reserves: string[], weights: string[]): number {
   return result
 }
 
-export function calTotalSupplyPool(
+export const calTotalSupplyPool = (
   reserves: string[],
   weights: string[],
-): number {
+): number => {
   return valueFunction(reserves, weights) * reserves.length
 }
 
@@ -77,14 +80,14 @@ export const calcOptimizedDepositedAmount = (
   )
 }
 
-export function calcOutGivenInSwap(
+export const calcOutGivenInSwap = (
   amountIn: BN,
   balanceOut: BN,
   balanceIn: BN,
   weightOut: number,
   weightIn: number,
   swapFee: BN,
-): BN {
+): BN => {
   const numBalanceOut = balanceOut.toNumber()
   const numBalanceIn = balanceIn.toNumber()
   const numAmountIn = amountIn.toNumber()
@@ -99,14 +102,14 @@ export function calcOutGivenInSwap(
   )
 }
 
-export function calcInGivenOutSwap(
+export const calcInGivenOutSwap = (
   amountOut: BN,
   balanceOut: BN,
   balanceIn: BN,
   weightOut: number,
   weightIn: number,
   swapFee: BN,
-): BN {
+): BN => {
   const numBalanceOut = balanceOut.toNumber()
   const numBalanceIn = balanceIn.toNumber()
   const numAmountOut = amountOut.toNumber()
@@ -121,19 +124,22 @@ export function calcInGivenOutSwap(
   )
 }
 
-export function calcNormalizedWeight(weights: BN[], weightToken: BN): number {
+export const calcNormalizedWeight = (
+  weights: BN[],
+  weightToken: BN,
+): number => {
   const numWeightsIn = weights.map((value) => value?.toNumber())
   const numWeightToken = weightToken?.toNumber()
   const weightSum = numWeightsIn.reduce((pre, curr) => pre + curr, 0)
   return numWeightToken / weightSum
 }
 
-export function calcSpotPrice(
+export const calcSpotPrice = (
   balanceIn: BN,
   weightIn: number,
   balanceOut: BN,
   weightOut: number,
-): number {
+): number => {
   const numBalanceIn = balanceIn?.toNumber()
 
   const numBalanceOut = balanceOut?.toNumber()
