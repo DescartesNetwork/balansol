@@ -8,6 +8,7 @@ import { useRouteSwap } from 'app/hooks/useRouteSwap'
 
 const RouteAvatar = () => {
   const { askMint, bidMint } = useRouteSwap()
+
   return (
     <Space>
       {[bidMint, askMint]?.map((mintAddress, i) => (

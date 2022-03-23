@@ -1,5 +1,6 @@
-import { Button, Col, Row, Typography } from 'antd'
 import React from 'react'
+
+import { Button, Col, Row, Typography } from 'antd'
 
 const Setting = () => {
   const Options = [0.5, 1, 2, 3]

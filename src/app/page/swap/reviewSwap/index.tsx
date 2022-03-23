@@ -1,8 +1,10 @@
-import { Button, Col, Row } from 'antd'
-import { AppState } from 'app/model'
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+
+import { Button, Col, Row } from 'antd'
 import ConfirmSwap from './confirmSwap'
+
+import { AppState } from 'app/model'
 
 import './index.less'
 

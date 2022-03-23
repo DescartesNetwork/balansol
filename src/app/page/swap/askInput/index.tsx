@@ -1,6 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
-import { BN } from '@project-serum/anchor'
 
 import { Card } from 'antd'
 import MintInput from 'app/components/mintInput'
@@ -9,21 +8,17 @@ import { AppState } from 'app/model'
 import { setSwapState } from 'app/model/swap.controller'
 import { useRouteSwap } from 'app/hooks/useRouteSwap'
 import { useMintsSwap } from 'app/hooks/useMintsSwap'
-import { calcInGivenOutSwap, getMintInfo } from 'app/helper/oracles'
-import { useOracles } from 'app/hooks/useOracles'
 import { useReversedSwap } from 'app/hooks/useReversedSwap'
 
 export default function AskInput() {
   const {
     swap: { askMint, bidMint },
-    pools,
   } = useSelector((state: AppState) => state)
   const dispatch = useDispatch()
   const { askAmount } = useRouteSwap()
 
   const { estimateTokenOut } = useReversedSwap()
   const mintsSwap = useMintsSwap()
-  const { decimalizeMintAmount, undecimalizeMintAmount } = useOracles()
 
   useEffect(() => {
     const newMintSwap = mintsSwap.filter((value) => value !== bidMint)
@@ -31,6 +26,7 @@ export default function AskInput() {
   }, [bidMint, dispatch, mintsSwap])
 
   const onChange = async (val: string) => {
+    // Temp to fix later. Currently, estimateTokenOut don't go right
     const newBidAmount = await estimateTokenOut(val)
 
     dispatch(
