@@ -111,13 +111,6 @@ export function calcInGivenOutSwap(
   const numBalanceIn = balanceIn.toNumber()
   const numAmountOut = amountOut.toNumber()
   const numSwapFee = swapFee.toNumber() / GENERAL_NORMALIZED_NUMBER
-  console.log(
-    numBalanceOut,
-    numBalanceIn,
-    numAmountOut,
-    numSwapFee,
-    'numAmountOut, numSwapFee',
-  )
   const ratioBeforeAfterBalance = numBalanceOut / (numBalanceOut - numAmountOut)
 
   const ratioInOutWeight = weightOut / weightIn

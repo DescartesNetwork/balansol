@@ -56,16 +56,17 @@ const ConfirmSwap = ({
     try {
       const BidAmountBN = await decimalizeMintAmount(bidAmount, bidMint)
 
-      // const c = pools[
-      //   '8XvNYDCnwGriirSXv2QiYZPuxnmK87PFTNRC52hQMTZc'
-      // ].reserves.map(async (value, idx) => {
-      //   console.log(value.toString(), BidAmountBN.toNumber())
-      // })
+      console.log(pools[pool], 'poolData')
+      console.log(bidAmount, 'bidAmount')
+      console.log(BidAmountBN, 'bidAmountBN')
+      console.log(bidMint, 'bidMint')
+      console.log(askMint, ' askMint')
+
       const { txId } = await window.balansol.swap(
-        new BN(0.1),
+        BidAmountBN,
         bidMint,
         askMint,
-        '8XvNYDCnwGriirSXv2QiYZPuxnmK87PFTNRC52hQMTZc',
+        pool,
       )
       notifySuccess('Swap', txId)
     } catch (error) {
