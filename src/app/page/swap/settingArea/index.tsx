@@ -1,8 +1,9 @@
 import React from 'react'
 
-import { Button, Col, Divider, Popover, Row, Space, Typography } from 'antd'
+import { Button, Divider, Popover, Space } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
 import PoweredBySentre from './poweredBySentre'
+import Setting from './setting'
 
 export default function SettingArea() {
   return (
@@ -12,13 +13,7 @@ export default function SettingArea() {
       <Popover
         placement="bottomRight"
         overlayInnerStyle={{ width: 300 }}
-        content={
-          <Row gutter={[8, 8]}>
-            <Col span={24}>
-              <Typography.Title level={5}>Settings</Typography.Title>
-            </Col>
-          </Row>
-        }
+        content={<Setting />}
         trigger="click"
       >
         <Button

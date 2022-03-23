@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { BN } from '@project-serum/anchor'
 
 import {
   Row,
@@ -16,13 +15,12 @@ import IonIcon from 'shared/antd/ionicon'
 import { MintAvatar, MintSymbol } from 'shared/antd/mint'
 import PreviewSwap from 'app/components/swapInfo'
 
-import './index.less'
 import { AppState } from 'app/model'
 import { notifyError, notifySuccess } from 'app/helper'
 import { useRouteSwap } from 'app/hooks/useRouteSwap'
-import { GENERAL_NORMALIZED_NUMBER } from 'app/constant'
-import { utils } from '@senswap/sen-js'
 import { useOracles } from 'app/hooks/useOracles'
+
+import './index.less'
 
 const ConfirmSwap = ({
   visible = false,
@@ -33,7 +31,6 @@ const ConfirmSwap = ({
 }) => {
   const {
     swap: { bidAmount, bidMint, askMint },
-    pools,
   } = useSelector((state: AppState) => state)
 
   const [checked, setChecked] = useState(false)
@@ -55,12 +52,6 @@ const ConfirmSwap = ({
   const onSwap = async () => {
     try {
       const BidAmountBN = await decimalizeMintAmount(bidAmount, bidMint)
-
-      console.log(pools[pool], 'poolData')
-      console.log(bidAmount, 'bidAmount')
-      console.log(BidAmountBN, 'bidAmountBN')
-      console.log(bidMint, 'bidMint')
-      console.log(askMint, ' askMint')
 
       const { txId } = await window.balansol.swap(
         BidAmountBN,

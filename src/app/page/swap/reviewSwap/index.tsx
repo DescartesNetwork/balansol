@@ -8,7 +8,7 @@ import './index.less'
 
 const ReviewSwap = () => {
   const {
-    swap: { bidAmount, bidMint, askMint },
+    swap: { bidAmount },
   } = useSelector((state: AppState) => state)
 
   const [visible, setVisivle] = useState(false)
