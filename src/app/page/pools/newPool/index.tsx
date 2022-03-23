@@ -11,7 +11,7 @@ import ConfirmPoolInfo from './confirmPoolInfo'
 import { AppState } from 'app/model'
 import { numeric } from 'shared/util'
 import { undecimalizeWrapper } from 'app/helper'
-import { generalNomalizedNumber, PoolCreatingStep } from 'app/constant'
+import { GENERAL_NORMALIZED_NUMBER, PoolCreatingStep } from 'app/constant'
 
 import './index.less'
 
@@ -63,7 +63,7 @@ const NewPool = () => {
               addressToken: mint.toBase58(),
               weight: (
                 pools[createdPools[i]].weights[idx].toNumber() /
-                generalNomalizedNumber
+                GENERAL_NORMALIZED_NUMBER
               ).toString(),
               isLocked: false,
             }
@@ -83,7 +83,6 @@ const NewPool = () => {
           }),
         )
         setDepositedAmounts(recoveryReservePool)
-        console.log(recoveryReservePool, 'recoveryReservePool')
 
         setRestoreDepositedAmounts(recoveryReservePool)
       }

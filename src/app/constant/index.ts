@@ -43,5 +43,5 @@ export const allowedKeyCode = [
   null,
 ]
 
-export const generalNomalizedNumber = 10 ** 9
+export const GENERAL_NORMALIZED_NUMBER = 10 ** 9
 export const LPTDECIMALS = 9

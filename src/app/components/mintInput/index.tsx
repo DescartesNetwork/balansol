@@ -21,6 +21,7 @@ export default function MintInput({
   mintLabel,
   mintAvatar,
   restoredAmount,
+  disableProportionButton,
 }: {
   amount: string
   onChangeAmount?: (val: string, balance: number) => void
@@ -30,6 +31,7 @@ export default function MintInput({
   mintLabel?: ReactNode
   mintAvatar?: ReactNode
   restoredAmount?: string
+  disableProportionButton?: boolean
 }) {
   const [disable, setDisable] = useState(false)
   const { balance } = useAccountBalanceByMintAddress(selectedMint)
@@ -101,7 +103,10 @@ export default function MintInput({
             </Space>
           </Col>
           {/* proportion  */}
-          <Col className="proportion-wrap">
+          <Col
+            className="proportion-wrap"
+            style={{ display: disableProportionButton ? 'none' : '' }}
+          >
             <Space>
               {PROPORTIONS.map((val) => {
                 const minValue = (balance * val) / 100

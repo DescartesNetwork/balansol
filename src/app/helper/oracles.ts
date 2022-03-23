@@ -1,6 +1,8 @@
 import { Address, BN, web3 } from '@project-serum/anchor'
 import { PoolData } from '@senswap/balancer'
 
+import { GENERAL_NORMALIZED_NUMBER } from 'app/constant'
+
 export function findMintIndex(poolData: PoolData, mint: Address): number {
   return poolData.mints
     .map((e) => e.toBase58())
@@ -22,15 +24,15 @@ export function getMintInfo(poolData: PoolData, mint: Address) {
 }
 
 export function valueFunction(reserves: string[], weights: string[]): number {
-  const reservesInNumber = reserves.map((value) => Number(value))
-  const weightInNumber = weights.map((value) => Number(value))
-  const sumWeight = weightInNumber.reduce(
-    (previousValue, currentValue) => previousValue + currentValue,
-  )
-  return reservesInNumber.reduce((previousValue, currentValue, currenIndex) => {
-    const nomalizeWeight = weightInNumber[currenIndex] / sumWeight
-    return previousValue * currentValue ** nomalizeWeight
-  }, 1)
+  const numReserves = reserves.map((value) => Number(value))
+  const numWeights = weights.map((value) => Number(value))
+  const sumWeight = numWeights.reduce((a, b) => a + b, 0)
+  let result = 1
+  for (let i = 0; i < numReserves.length; i++) {
+    const nomalizeWeight = numWeights[i] / sumWeight
+    result *= numReserves[i] ** nomalizeWeight
+  }
+  return result
 }
 
 export function calTotalSupplyPool(
@@ -75,25 +77,54 @@ export const calcOptimizedDepositedAmount = (
   )
 }
 
-export function calOutGivenInSwap(
+export function calcOutGivenInSwap(
   amountIn: BN,
   balanceOut: BN,
   balanceIn: BN,
   weightOut: number,
   weightIn: number,
   swapFee: BN,
-): number {
+): BN {
   const numBalanceOut = balanceOut.toNumber()
   const numBalanceIn = balanceIn.toNumber()
   const numAmountIn = amountIn.toNumber()
-  const numSwapFee = swapFee.toNumber() / 10 ** 9
+  const numSwapFee = swapFee.toNumber() / GENERAL_NORMALIZED_NUMBER
   const ratioBeforeAfterBalance = numBalanceIn / (numBalanceIn + numAmountIn)
 
   const ratioInOutWeight = weightIn / weightOut
-  return (
+  return new BN(
     numBalanceOut *
-    (1 - ratioBeforeAfterBalance ** ratioInOutWeight) *
-    (1 - numSwapFee)
+      (1 - ratioBeforeAfterBalance ** ratioInOutWeight) *
+      (1 - numSwapFee),
+  )
+}
+
+export function calcInGivenOutSwap(
+  amountOut: BN,
+  balanceOut: BN,
+  balanceIn: BN,
+  weightOut: number,
+  weightIn: number,
+  swapFee: BN,
+): BN {
+  const numBalanceOut = balanceOut.toNumber()
+  const numBalanceIn = balanceIn.toNumber()
+  const numAmountOut = amountOut.toNumber()
+  const numSwapFee = swapFee.toNumber() / GENERAL_NORMALIZED_NUMBER
+  console.log(
+    numBalanceOut,
+    numBalanceIn,
+    numAmountOut,
+    numSwapFee,
+    'numAmountOut, numSwapFee',
+  )
+  const ratioBeforeAfterBalance = numBalanceOut / (numBalanceOut - numAmountOut)
+
+  const ratioInOutWeight = weightOut / weightIn
+  return new BN(
+    numBalanceIn *
+      (ratioBeforeAfterBalance ** ratioInOutWeight - 1) *
+      (1 - numSwapFee),
   )
 }
 
@@ -104,15 +135,15 @@ export function calcNormalizedWeight(weights: BN[], weightToken: BN): number {
   return numWeightToken / weightSum
 }
 
-export function calSpotPrice(
+export function calcSpotPrice(
   balanceIn: BN,
-  weightIn: BN,
+  weightIn: number,
   balanceOut: BN,
-  weightOut: BN,
+  weightOut: number,
 ): number {
   const numBalanceIn = balanceIn?.toNumber()
-  const numWeightIn = weightIn?.toNumber()
+
   const numBalanceOut = balanceOut?.toNumber()
-  const numWeightOut = weightOut?.toNumber()
-  return numBalanceIn / numWeightIn / (numBalanceOut / numWeightOut)
+
+  return numBalanceIn / weightIn / (numBalanceOut / weightOut)
 }

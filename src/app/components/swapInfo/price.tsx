@@ -5,7 +5,7 @@ import IonIcon from 'shared/antd/ionicon'
 import { MintSymbol } from 'shared/antd/mint'
 import { useSelector } from 'react-redux'
 import { AppState } from 'app/model'
-import { calSpotPrice } from 'app/helper/oracles'
+import { calcSpotPrice, getMintInfo } from 'app/helper/oracles'
 import { useRouteSwap } from 'app/hooks/useRouteSwap'
 
 const MintRatio = ({ reversed = false }: { reversed?: boolean }) => {
@@ -21,19 +21,16 @@ const MintRatio = ({ reversed = false }: { reversed?: boolean }) => {
     if (!pool) return setSpotPrice(0)
 
     const bestPoolInfo = pools[pool]
-    const tokenInIdx = bestPoolInfo.mints.findIndex(
-      (mint) => mint.toBase58() === bidMint,
-    )
+    const bidMintInfo = getMintInfo(bestPoolInfo, bidMint)
+    const askMintInfo = getMintInfo(bestPoolInfo, askMint)
 
-    const tokenOutIdx = bestPoolInfo.mints.findIndex(
-      (mint) => mint.toBase58() === askMint,
-    )
+    if (!bidMintInfo || !askMintInfo) return setSpotPrice(0)
 
-    const hotSpotPrice = calSpotPrice(
-      bestPoolInfo.reserves[tokenInIdx],
-      bestPoolInfo.weights[tokenInIdx],
-      bestPoolInfo.reserves[tokenOutIdx],
-      bestPoolInfo.weights[tokenOutIdx],
+    const hotSpotPrice = calcSpotPrice(
+      bidMintInfo.reserve,
+      bidMintInfo.normalizedWeight,
+      askMintInfo.reserve,
+      askMintInfo.normalizedWeight,
     )
 
     setSpotPrice(hotSpotPrice)
