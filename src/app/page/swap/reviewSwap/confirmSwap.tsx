@@ -1,6 +1,5 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { BN } from '@project-serum/anchor'
 
 import {
   Row,
@@ -16,9 +15,13 @@ import IonIcon from 'shared/antd/ionicon'
 import { MintAvatar, MintSymbol } from 'shared/antd/mint'
 import PreviewSwap from 'app/components/swapInfo'
 
-import './index.less'
 import { AppState } from 'app/model'
 import { notifyError, notifySuccess } from 'app/helper'
+import { useRouteSwap } from 'app/hooks/useRouteSwap'
+import { useOracles } from 'app/hooks/useOracles'
+
+import './index.less'
+import { PriceImpact } from 'app/constant'
 
 const ConfirmSwap = ({
   visible = false,
@@ -27,11 +30,21 @@ const ConfirmSwap = ({
   visible?: boolean
   onCancel?: (visible: boolean) => void
 }) => {
-  const [checked, setChecked] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
   const {
     swap: { bidAmount, bidMint, askMint },
   } = useSelector((state: AppState) => state)
+
+  const [checked, setChecked] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isDisplayWarning, setIsDisplayWarning] = useState(false)
+  const { askAmount, priceImpact, pool } = useRouteSwap()
+  const { decimalizeMintAmount } = useOracles()
+
+  useEffect(() => {
+    if (Number(priceImpact) > PriceImpact.GoodImpact)
+      return setIsDisplayWarning(true)
+    setIsDisplayWarning(false)
+  }, [priceImpact])
 
   const onCloseModal = useCallback(() => {
     onCancel(false)
@@ -40,11 +53,13 @@ const ConfirmSwap = ({
 
   const onSwap = async () => {
     try {
+      const BidAmountBN = await decimalizeMintAmount(bidAmount, bidMint)
+
       const { txId } = await window.balansol.swap(
-        new BN(bidAmount),
+        BidAmountBN,
         bidMint,
         askMint,
-        '8XvNYDCnwGriirSXv2QiYZPuxnmK87PFTNRC52hQMTZc',
+        pool,
       )
       notifySuccess('Swap', txId)
     } catch (error) {
@@ -70,12 +85,12 @@ const ConfirmSwap = ({
               <Space direction="vertical">
                 <Typography.Text>From</Typography.Text>
                 <Space>
-                  <MintAvatar mintAddress={''} />
+                  <MintAvatar mintAddress={bidMint} />
                   <Typography.Text>
-                    <MintSymbol mintAddress={''} />
+                    <MintSymbol mintAddress={bidMint} />
                   </Typography.Text>
                 </Space>
-                <Typography.Title level={4}>122</Typography.Title>
+                <Typography.Title level={4}>{bidAmount}</Typography.Title>
               </Space>
             </Col>
             <Col>
@@ -85,12 +100,12 @@ const ConfirmSwap = ({
               <Space direction="vertical" align="end">
                 <Typography.Text>To</Typography.Text>
                 <Space>
-                  <MintAvatar mintAddress={''} />
+                  <MintAvatar mintAddress={askMint} />
                   <Typography.Text>
-                    <MintSymbol mintAddress={''} />
+                    <MintSymbol mintAddress={askMint} />
                   </Typography.Text>
                 </Space>
-                <Typography.Title level={4}>112</Typography.Title>
+                <Typography.Title level={4}>{askAmount}</Typography.Title>
               </Space>
             </Col>
           </Row>
@@ -100,7 +115,7 @@ const ConfirmSwap = ({
             <PreviewSwap />
           </Card>
         </Col>
-        {true && (
+        {isDisplayWarning && (
           <Col span={24}>
             <Checkbox checked={checked} onChange={() => setChecked(!checked)}>
               The price impact is currently high. Tick the checkbox to accept

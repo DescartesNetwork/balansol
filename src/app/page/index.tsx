@@ -36,7 +36,11 @@ const SwapAndPools = () => {
             value={selectedTab}
           >
             {Object.keys(HOMEPAGE_TABS).map((key) => (
-              <Radio.Button style={{ minWidth: 90 }} value={HOMEPAGE_TABS[key]}>
+              <Radio.Button
+                style={{ minWidth: 90 }}
+                value={HOMEPAGE_TABS[key]}
+                key={key}
+              >
                 {key}
               </Radio.Button>
             ))}

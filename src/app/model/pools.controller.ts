@@ -25,7 +25,6 @@ export const getPools = createAsyncThunk(`${NAME}/getPools`, async () => {
   for (const pool of pools) {
     bulk[pool.publicKey.toBase58()] = pool.account
   }
-  console.log('pools', pools)
   return bulk
 })
 
