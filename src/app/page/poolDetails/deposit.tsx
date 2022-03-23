@@ -1,5 +1,5 @@
-import { Fragment, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { Fragment, useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { BN } from '@project-serum/anchor'
 import { utils } from '@senswap/sen-js'
 
@@ -7,24 +7,46 @@ import { Button, Col, Modal, Row, Typography } from 'antd'
 import MintInput from 'app/components/mintInput'
 import IonIcon from 'shared/antd/ionicon'
 import { MintSymbol } from 'shared/antd/mint'
+import { DepositState, setDepositState } from 'app/model/deposit.controller'
 
 import { notifyError, notifySuccess } from 'app/helper'
 import { AppState } from 'app/model'
 import { useMint } from '@senhub/providers'
 
 const Deposit = ({ poolAddress }: { poolAddress: string }) => {
-  const [visible, setVisible] = useState(false)
-  const [mintsAmount, setMintAmount] = useState<Record<string, string>>({})
-  const [loading, setLoading] = useState(false)
   const {
     pools: { [poolAddress]: poolData },
+    deposits,
   } = useSelector((state: AppState) => state)
+
+  const [visible, setVisible] = useState(false)
+  const [disable, setDisable] = useState(true)
+  const [mintsAmount, setMintAmount] = useState<Record<string, string>>({})
+  const [loading, setLoading] = useState(false)
   const { getDecimals } = useMint()
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    const initialData: DepositState = {}
+    poolData.mints.map((value) => {
+      initialData[value.toBase58()] = { address: value.toBase58(), amount: 0 }
+      return null
+    })
+    dispatch(setDepositState(initialData))
+  }, [dispatch, poolData.mints])
+
+  useEffect(() => {
+    for (let value in deposits) {
+      console.log(Number(deposits[value].amount))
+      if (Number(deposits[value].amount) === 0) return setDisable(true)
+    }
+    return setDisable(false)
+  }, [deposits])
 
   const onChange = (mint: string, value: string) => {
-    const newMintsAmount = { ...mintsAmount }
-    newMintsAmount[mint] = value
-    setMintAmount(newMintsAmount)
+    dispatch(
+      setDepositState({ [mint]: { address: mint, amount: Number(value) } }),
+    )
   }
 
   const onSubmit = async () => {
@@ -82,9 +104,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
                           <Typography.Text type="secondary">
                             <MintSymbol mintAddress={mintAddress || ''} />
                           </Typography.Text>
-                          <Typography.Text type="secondary">
-                            50%
-                          </Typography.Text>
+                          <Typography.Text type="secondary">44</Typography.Text>
                         </Fragment>
                       }
                     />
@@ -103,7 +123,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
                     </Typography.Text>
                   </Col>
                   <Col>
-                    <span style={{ color: '#03A326' }}>0 %</span>
+                    <span style={{ color: '#03A326' }}>{} %</span>
                   </Col>
                 </Row>
               </Col>
@@ -128,6 +148,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
               block
               onClick={onSubmit}
               loading={loading}
+              disabled={disable}
             >
               Deposit
             </Button>
