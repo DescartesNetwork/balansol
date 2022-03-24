@@ -89,7 +89,7 @@ const LiquidityInfo = ({
     <Row gutter={[16, 16]}>
       <Col span={24}>
         {tokenList.map((value, idx) => (
-          <Row>
+          <Row key={idx}>
             <Col flex={1}>
               <Typography.Text type="secondary">
                 <MintSymbol mintAddress={value.addressToken} />

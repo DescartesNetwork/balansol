@@ -7,7 +7,7 @@ import Proportion from 'app/components/proportion'
 import IonIcon from 'shared/antd/ionicon'
 import TokenSetup from '../tokenSetup'
 
-import { generalNomalizedNumber, PoolCreatingStep } from 'app/constant'
+import { GENERAL_NORMALIZED_NUMBER, PoolCreatingStep } from 'app/constant'
 import { notifyError, notifySuccess } from 'app/helper'
 import { TokenInfo } from '../index'
 
@@ -45,7 +45,7 @@ const SelectToken = ({
     try {
       const fee = new BN(500_000_000)
       const mintsConfig = tokenList.map((e) => {
-        const normalizeWeight = Number(e.weight) * generalNomalizedNumber
+        const normalizeWeight = Number(e.weight) * GENERAL_NORMALIZED_NUMBER
         return {
           publicKey: new web3.PublicKey(e.addressToken),
           action: MintActionStates.Active,
@@ -230,7 +230,7 @@ const SelectToken = ({
         </Row>
       </Col>
       {tokenList.map((value, index) => (
-        <Col span={24}>
+        <Col span={24} key={index}>
           <TokenSetup
             tokenList={tokenList}
             tokenInfo={value}
