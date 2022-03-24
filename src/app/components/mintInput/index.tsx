@@ -23,7 +23,7 @@ export default function MintInput({
   ratioButton,
 }: {
   amount: string
-  onChangeAmount?: (val: string, balance: number) => void
+  onChangeAmount?: (val: string, invalid?: boolean) => void
   selectedMint: string
   onSelect?: (mint: string) => void
   mints?: string[]
@@ -34,7 +34,9 @@ export default function MintInput({
   const { balance } = useAccountBalanceByMintAddress(selectedMint)
 
   const onInput = (value: string) => {
-    if (!!onChangeAmount) onChangeAmount(value, balance)
+    if (Number(value) > balance && !!onChangeAmount)
+      return onChangeAmount(value, true)
+    return onChangeAmount(value, false)
   }
 
   return (
@@ -113,7 +115,7 @@ export default function MintInput({
                         className="proportion-btn"
                         disabled={!onChangeAmount}
                         onClick={() => {
-                          onChangeAmount(String(minValue), balance)
+                          onChangeAmount(String(minValue))
                         }}
                         style={{
                           background: isActive ? '#63e0b3' : undefined,

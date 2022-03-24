@@ -3,6 +3,12 @@ import { PoolData } from '@senswap/balancer'
 
 import { GENERAL_NORMALIZED_NUMBER } from 'app/constant'
 
+export type MintInfo = {
+  reserve: BN
+  normalizedWeight: number
+  treasury: web3.PublicKey
+}
+
 export const findMintIndex = (poolData: PoolData, mint: Address): number => {
   return poolData.mints
     .map((e) => e.toBase58())
