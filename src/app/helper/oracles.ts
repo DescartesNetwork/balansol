@@ -166,18 +166,20 @@ export const calcMintReceiveRemoveSingleSide = (
   let fee_rate = numFee / PRECISION
   let feeWithdraw = amount_out * (1 - (normalizeWeight * (fee_rate - 1) + 1))
 
-  console.log('tbl: ', tbl)
-  console.log('mount_out: ', amount_out)
-  console.log('fee_rate: ', fee_rate)
-  console.log('feeWithdraw: ', feeWithdraw)
-  console.log('receive: ', amount_out - feeWithdraw)
   return new BN(amount_out - feeWithdraw)
 }
 
 export const calcMintReceivesRemoveFullSide = (
   lptAmount: BN,
   lptSupply: BN,
-  reserves: [],
+  reserves: BN[],
 ) => {
-  return []
+  const numLptAmount = lptAmount.toNumber()
+  const numLptSupply = lptSupply.toNumber()
+
+  let lpt_rate = numLptAmount / numLptSupply
+  let amounts_out = reserves.map((reserve) => {
+    return lpt_rate * Number(reserve)
+  })
+  return amounts_out
 }
