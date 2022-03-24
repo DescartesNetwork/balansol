@@ -13,7 +13,9 @@ import { notifyError, notifySuccess } from 'app/helper'
 import { AppState } from 'app/model'
 import { useMint } from '@senhub/providers'
 import {
+  calcLpOutMultiGivenIn,
   calcLpSingleGivenIn,
+  calcNormalizedWeight,
   calTotalSupplyPool as calcTotalSupplyPool,
   getMintInfo,
 } from 'app/helper/oracles'
@@ -54,37 +56,43 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
 
   useEffect(() => {
     ;(async () => {
-      const NoneZeroAmouts = depositInfo.filter((value) => {
+      const noneZeroAmouts = depositInfo.filter((value) => {
         return !!value.amount
       })
 
-      switch (NoneZeroAmouts.length) {
-        case 0:
-          return
-        case 1:
-          const mintInfo = getMintInfo(poolData, NoneZeroAmouts[0].address)
-          if (!mintInfo?.reserve || !mintInfo.normalizedWeight) {
-            return setTotalValue(0)
-          }
-          const totalSuply = calcTotalSupplyPool(
-            poolData.reserves.map((value) => value.toString()),
-            poolData.weights.map((value) => value.toString()),
-          )
+      if (noneZeroAmouts.length === 0) return setTotalValue(0)
 
-          const amountBN = await decimalizeMintAmount(
-            NoneZeroAmouts[0].amount,
-            NoneZeroAmouts[0].address,
-          )
-
-          const lpDecimals = await getDecimals(poolData.mintLpt.toBase58())
-          const newTotalValue = calcLpSingleGivenIn(
-            amountBN,
-            mintInfo?.reserve,
-            mintInfo?.normalizedWeight,
-            totalSuply / 10 ** lpDecimals,
-          )
-          return setTotalValue(newTotalValue)
+      const mintInfos = []
+      for (let i = 0; i < noneZeroAmouts.length; i++) {
+        const mintInfo = getMintInfo(poolData, noneZeroAmouts[i].address)
+        if (!mintInfo?.reserve || !mintInfo.normalizedWeight) {
+          return setTotalValue(0)
+        }
+        mintInfos.push(mintInfo.reserve)
       }
+
+      const totalSuply = calcTotalSupplyPool(
+        poolData.reserves.map((value) => value.toString()),
+        poolData.weights.map((value) => value.toString()),
+      )
+
+      const amountsBN = await Promise.all(
+        noneZeroAmouts.map(async (value) => {
+          const amountBN = await decimalizeMintAmount(
+            value.amount,
+            value.address,
+          )
+          return amountBN
+        }),
+      )
+
+      const lpDecimals = await getDecimals(poolData.mintLpt.toBase58())
+      const newTotalValue = calcLpOutMultiGivenIn(
+        amountsBN,
+        mintInfos,
+        new BN(totalSuply),
+      )
+      setTotalValue(newTotalValue)
     })()
   }, [decimalizeMintAmount, depositInfo, getDecimals, poolData])
 
@@ -145,8 +153,12 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
             <Row gutter={[24, 8]}>
               {poolData.mints.map((mint, index) => {
                 let mintAddress: string = mint.toBase58()
+                const normalizedWeight = calcNormalizedWeight(
+                  poolData.weights,
+                  poolData.weights[index],
+                )
                 return (
-                  <Col span={24} key={index}>
+                  <Col span={24} key={mint.toBase58()}>
                     <MintInput
                       selectedMint={mintAddress}
                       amount={mintsAmount[mintAddress]}
@@ -157,7 +169,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
                             <MintSymbol mintAddress={mintAddress || ''} />
                           </Typography.Text>
                           <Typography.Text type="secondary">
-                            {poolData.weights[index]}
+                            {normalizedWeight}
                           </Typography.Text>
                         </Fragment>
                       }
@@ -185,7 +197,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
                 <Row align="middle">
                   <Col flex="auto">
                     <Typography.Text type="secondary">
-                      You will reveice
+                      You will receive
                     </Typography.Text>
                   </Col>
                   <Col>
