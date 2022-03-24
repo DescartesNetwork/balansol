@@ -141,7 +141,6 @@ const AddLiquidty = ({
                 onChangeAmount={(value: string, balance: number) =>
                   onChangeAmount(value, idx, balance)
                 }
-                restoredAmount={restoredDepositedAmounts[idx]}
               />
             </Col>
           ))}

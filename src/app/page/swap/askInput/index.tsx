@@ -44,7 +44,7 @@ export default function AskInput() {
         onSelect={(mint) => dispatch(setSwapState({ askMint: mint }))}
         onChangeAmount={onChange}
         mints={mintsSwap.filter((value) => value !== bidMint)}
-        disableRatioButton={true}
+        ratioButton={null}
       />
     </Card>
   )

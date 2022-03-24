@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode } from 'react'
 
 import { Col, Radio, Row, Space, Typography } from 'antd'
 import NumericInput from 'shared/antd/numericInput'
@@ -20,8 +20,7 @@ export default function MintInput({
   onSelect = () => {},
   mintLabel,
   mintAvatar,
-  restoredAmount,
-  disableRatioButton,
+  ratioButton,
 }: {
   amount: string
   onChangeAmount?: (val: string, balance: number) => void
@@ -30,15 +29,9 @@ export default function MintInput({
   mints?: string[]
   mintLabel?: ReactNode
   mintAvatar?: ReactNode
-  restoredAmount?: string
-  disableRatioButton?: boolean
+  ratioButton?: ReactNode
 }) {
-  const [disable, setDisable] = useState(false)
   const { balance } = useAccountBalanceByMintAddress(selectedMint)
-
-  useEffect(() => {
-    if (!!Number(restoredAmount)) setDisable(true)
-  }, [restoredAmount])
 
   const onInput = (value: string) => {
     if (!!onChangeAmount) onChangeAmount(value, balance)
@@ -79,7 +72,7 @@ export default function MintInput({
               placeholder="0"
               value={amount}
               onValue={onInput}
-              disabled={disable}
+              disabled={!onChangeAmount}
             />
           </Col>
         </Row>
@@ -102,34 +95,38 @@ export default function MintInput({
               </Typography.Text>
             </Space>
           </Col>
-          {/* proportion  */}
+          {/* RatioButton  */}
           <Col
             className="proportion-wrap"
-            style={{ display: disableRatioButton ? 'none' : '' }}
+            style={{ display: ratioButton === null ? 'none' : '' }}
           >
-            <Space>
-              {PROPORTIONS.map((val) => {
-                const minValue = (balance * val) / 100
-                const isActive = balance && Number(amount) >= minValue
-                return (
-                  <Space size={4} direction="vertical" key={val}>
-                    <Radio.Button
-                      className="proportion-btn"
-                      disabled={disable}
-                      onClick={() => {
-                        onChangeAmount(String(minValue), balance)
-                      }}
-                      style={{
-                        background: isActive ? '#63e0b3' : undefined,
-                      }}
-                    />
-                    <Typography.Text type="secondary" className="caption">
-                      {`${val}%`}
-                    </Typography.Text>
-                  </Space>
-                )
-              })}
-            </Space>
+            {ratioButton ? (
+              ratioButton
+            ) : (
+              <Space>
+                {PROPORTIONS.map((val) => {
+                  const minValue = (balance * val) / 100
+                  const isActive = balance && Number(amount) >= minValue
+                  return (
+                    <Space size={4} direction="vertical" key={val}>
+                      <Radio.Button
+                        className="proportion-btn"
+                        disabled={!onChangeAmount}
+                        onClick={() => {
+                          onChangeAmount(String(minValue), balance)
+                        }}
+                        style={{
+                          background: isActive ? '#63e0b3' : undefined,
+                        }}
+                      />
+                      <Typography.Text type="secondary" className="caption">
+                        {`${val}%`}
+                      </Typography.Text>
+                    </Space>
+                  )
+                })}
+              </Space>
+            )}
           </Col>
         </Row>
       </Col>
