@@ -87,10 +87,14 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
       )
 
       const lpDecimals = await getDecimals(poolData.mintLpt.toBase58())
+      const totalSupplyBN = await decimalizeMintAmount(
+        totalSuply / 10 ** lpDecimals,
+        poolData.mintLpt.toBase58(),
+      )
       const newTotalValue = calcLpOutMultiGivenIn(
         amountsBN,
         mintInfos,
-        new BN(totalSuply),
+        totalSupplyBN,
       )
       setTotalValue(newTotalValue)
     })()
