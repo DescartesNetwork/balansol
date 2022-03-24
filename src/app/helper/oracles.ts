@@ -2,6 +2,7 @@ import { Address, BN, web3 } from '@project-serum/anchor'
 import { PoolData } from '@senswap/balancer'
 
 import { GENERAL_NORMALIZED_NUMBER } from 'app/constant'
+import { PRECISION } from 'app/constant/index'
 
 export const findMintIndex = (poolData: PoolData, mint: Address): number => {
   return poolData.mints
@@ -11,7 +12,8 @@ export const findMintIndex = (poolData: PoolData, mint: Address): number => {
 
 export const getMintInfo = (poolData: PoolData, mint: Address) => {
   const mintIdx = findMintIndex(poolData, mint)
-  if (mintIdx === -1) return null
+  if (mintIdx === -1) throw new Error('Can not find mint in pool')
+
   const normalizedWeight = calcNormalizedWeight(
     poolData.weights,
     poolData.weights[mintIdx],
@@ -145,4 +147,37 @@ export const calcSpotPrice = (
   const numBalanceOut = balanceOut?.toNumber()
 
   return numBalanceIn / weightIn / (numBalanceOut / weightOut)
+}
+
+export const calcMintReceiveRemoveSingleSide = (
+  lptAmount: BN,
+  lptSupply: BN,
+  normalizeWeight: number,
+  balance: BN,
+  fee: BN,
+) => {
+  const numLptAmount = lptAmount.toNumber()
+  const numLptSupply = lptSupply.toNumber()
+  const numFee = fee.toNumber()
+  const numBalance = balance.toNumber()
+
+  let tbl = (numLptSupply - numLptAmount) / numLptSupply
+  let amount_out = numBalance * (1 - Math.pow(tbl, 1 / normalizeWeight))
+  let fee_rate = numFee / PRECISION
+  let feeWithdraw = amount_out * (1 - (normalizeWeight * (fee_rate - 1) + 1))
+
+  console.log('tbl: ', tbl)
+  console.log('mount_out: ', amount_out)
+  console.log('fee_rate: ', fee_rate)
+  console.log('feeWithdraw: ', feeWithdraw)
+  console.log('receive: ', amount_out - feeWithdraw)
+  return new BN(amount_out - feeWithdraw)
+}
+
+export const calcMintReceivesRemoveFullSide = (
+  lptAmount: BN,
+  lptSupply: BN,
+  reserves: [],
+) => {
+  return []
 }

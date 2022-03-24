@@ -1,7 +1,7 @@
 import { Fragment, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { BN, utils, web3 } from '@project-serum/anchor'
-import { useAccount, useWallet } from '@senhub/providers'
+import { useAccount, useMint, useWallet } from '@senhub/providers'
 import { utils as utilsSenJS } from '@senswap/sen-js'
 
 import { Button, Col, Modal, Row, Typography } from 'antd'
@@ -12,8 +12,13 @@ import { MintSymbol } from 'shared/antd/mint'
 import IonIcon from 'shared/antd/ionicon'
 
 import { notifyError, notifySuccess } from 'app/helper'
+import {
+  calcMintReceiveRemoveSingleSide,
+  getMintInfo,
+} from 'app/helper/oracles'
 import { AppState } from 'app/model'
 import { LPTDECIMALS } from 'app/constant/index'
+import { useOracles } from 'app/hooks/useOracles'
 
 const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
   const [visible, setVisible] = useState(false)
@@ -27,13 +32,16 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
     wallet: { address: walletAddress },
   } = useWallet()
   const { accounts } = useAccount()
+  const { getMint } = useMint()
+  const { undecimalizeMintAmount } = useOracles()
 
   const onSubmit = async () => {
     try {
       await checkInitializedAccount()
       let amount = utilsSenJS.decimalize(lptAmount, LPTDECIMALS)
-      const { txId } = await window.balansol.removeLiquidity(
+      const { txId } = await window.balansol.removeSidedLiquidity(
         poolAddress,
+        Object.keys(mintsSelected).find((mint) => mintsSelected[mint]) || '',
         new BN(String(amount)),
       )
       notifySuccess('Withdraw', txId)
@@ -50,7 +58,7 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
       })
       if (!accounts[tokenAccount.toBase58()]) {
         const { wallet, splt } = window.sentre
-        if (!wallet) throw new Error('Login fist')
+        if (!wallet) throw new Error('Login first')
         await splt.initializeAccount(mint.toBase58(), walletAddress, wallet)
       }
     }
@@ -65,6 +73,28 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
     if (mintsSelected[mint]) {
       setMinsSelected({ [`${mint}`]: !mintsSelected[mint] })
     } else setMinsSelected({ [`${mint}`]: true })
+    calcMintReceiveSingleSide(mint)
+  }
+
+  const calcMintReceiveSingleSide = async (mint: string) => {
+    let minPltAddress = poolData.mintLpt.toBase58()
+    let mintPool = await getMint({ address: minPltAddress })
+    let lptSupply = mintPool[minPltAddress]?.supply
+    let amount = utilsSenJS.decimalize(lptAmount, LPTDECIMALS)
+    const mintPoolInfo = getMintInfo(poolData, mint)
+
+    console.log('poolData: ', poolData, minPltAddress)
+    console.log('lptSupply: ', lptSupply)
+    console.log('mintPoolsInfo: ', mintPoolInfo)
+
+    let result = calcMintReceiveRemoveSingleSide(
+      new BN(String(amount)),
+      new BN(String(lptSupply)),
+      Number(mintPoolInfo.normalizedWeight),
+      mintPoolInfo.reserve,
+      new BN(String(poolData.fee)),
+    )
+    console.log('result: ', await undecimalizeMintAmount(result, mint))
   }
 
   const selectAllMint = () => {
