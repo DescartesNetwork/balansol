@@ -65,6 +65,32 @@ export const calcOutGivenIn = (
   return (lpAmountNumber / totalSupplyNumber) * balanceInNumber
 }
 
+export const calcLpOutMultiGivenIn = (
+  lpAmount: BN,
+  balanceIn: BN,
+  totalSupply: BN,
+) => {
+  const lpAmountNumber = lpAmount.toNumber()
+  const balanceInNumber = balanceIn.toNumber()
+  const totalSupplyNumber = totalSupply.toNumber()
+
+  return (lpAmountNumber / totalSupplyNumber) * balanceInNumber
+}
+
+export const calcLpSingleGivenIn = (
+  tokenAmount: BN,
+  balanceIn: BN,
+  weightIn: number,
+  totalSupply: number,
+) => {
+  const tokenAmountNumber = tokenAmount.toNumber()
+  const balanceInNumber = balanceIn.toNumber()
+
+  return (
+    totalSupply * ((1 + tokenAmountNumber / balanceInNumber) ** weightIn - 1)
+  )
+}
+
 export const calcOptimizedDepositedAmount = (
   baseTokenInfo: any,
   calculatedTokenInfo: any,

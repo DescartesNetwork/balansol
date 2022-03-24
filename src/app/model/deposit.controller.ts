@@ -1,22 +1,27 @@
+import { Address } from '@project-serum/anchor'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
 /**
  * Interface & Utility
  */
-
-export type DepositData = {
+export type DepositInfo = {
   amount: number
   address: string
 }
-
-export type DepositState = Record<string, DepositData>
+export type DepositState = {
+  poolAddress: string
+  depositInfo: DepositInfo[]
+}
 
 /**
  * Store constructor
  */
 
 const NAME = 'deposits'
-const initialState: DepositState = {}
+const initialState: DepositState = {
+  poolAddress: '',
+  depositInfo: [],
+}
 
 /**
  * Actions
