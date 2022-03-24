@@ -178,8 +178,8 @@ export const calcMintReceivesRemoveFullSide = (
   const numLptSupply = lptSupply.toNumber()
 
   let lpt_rate = numLptAmount / numLptSupply
-  let amounts_out = reserves.map((reserve) => {
-    return lpt_rate * Number(reserve)
+  let amounts_out: BN[] = reserves.map((reserve) => {
+    return new BN(lpt_rate * Number(reserve))
   })
   return amounts_out
 }

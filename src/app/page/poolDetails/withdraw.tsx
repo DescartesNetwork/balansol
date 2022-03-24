@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { BN, utils, web3 } from '@project-serum/anchor'
 import { useAccount, useMint, useWallet } from '@senhub/providers'
@@ -14,16 +14,22 @@ import IonIcon from 'shared/antd/ionicon'
 import { notifyError, notifySuccess } from 'app/helper'
 import {
   calcMintReceiveRemoveSingleSide,
+  calcMintReceivesRemoveFullSide,
   getMintInfo,
 } from 'app/helper/oracles'
 import { AppState } from 'app/model'
 import { LPTDECIMALS } from 'app/constant/index'
 import { useOracles } from 'app/hooks/useOracles'
 
+type MintSelectedInfo = {
+  mintAddress: string
+  amountReceive: number | string
+}
+
 const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
   const [visible, setVisible] = useState(false)
   const [lptAmount, setLptAmount] = useState('')
-  const [mintsSelected, setMinsSelected] = useState<Record<string, boolean>>({})
+  const [mintsSelected, setMintsSelected] = useState<MintSelectedInfo[]>([])
   const [isSelectedAll, setIsSelectedAll] = useState(false)
   const {
     pools: { [poolAddress]: poolData },
@@ -36,15 +42,26 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
   const { undecimalizeMintAmount } = useOracles()
 
   const onSubmit = async () => {
+    if (mintsSelected.length === 0) return
     try {
-      await checkInitializedAccount()
-      let amount = utilsSenJS.decimalize(lptAmount, LPTDECIMALS)
-      const { txId } = await window.balansol.removeSidedLiquidity(
-        poolAddress,
-        Object.keys(mintsSelected).find((mint) => mintsSelected[mint]) || '',
-        new BN(String(amount)),
-      )
-      notifySuccess('Withdraw', txId)
+      if (!isSelectedAll) {
+        await checkInitializedAccount()
+        let amount = utilsSenJS.decimalize(lptAmount, LPTDECIMALS)
+        const { txId } = await window.balansol.removeSidedLiquidity(
+          poolAddress,
+          mintsSelected[0].mintAddress,
+          new BN(String(amount)),
+        )
+        notifySuccess('Withdraw', txId)
+      } else {
+        await checkInitializedAccount()
+        let amount = utilsSenJS.decimalize(lptAmount, LPTDECIMALS)
+        const { txId } = await window.balansol.removeLiquidity(
+          poolAddress,
+          new BN(String(amount)),
+        )
+        notifySuccess('Withdraw', txId)
+      }
     } catch (error) {
       notifyError(error)
     }
@@ -64,51 +81,74 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
     }
   }
 
-  const selectMint = (mint: string) => {
-    if (isSelectedAll && mintsSelected[mint]) {
-      setIsSelectedAll(false)
-      setMinsSelected({ [`${mint}`]: true })
-      return
-    }
-    if (mintsSelected[mint]) {
-      setMinsSelected({ [`${mint}`]: !mintsSelected[mint] })
-    } else setMinsSelected({ [`${mint}`]: true })
-    calcMintReceiveSingleSide(mint)
-  }
-
-  const calcMintReceiveSingleSide = async (mint: string) => {
+  const calcMintReceiveFullSide = useCallback(async () => {
     let minPltAddress = poolData.mintLpt.toBase58()
     let mintPool = await getMint({ address: minPltAddress })
     let lptSupply = mintPool[minPltAddress]?.supply
     let amount = utilsSenJS.decimalize(lptAmount, LPTDECIMALS)
-    const mintPoolInfo = getMintInfo(poolData, mint)
+    console.log('poolData: ', poolData)
 
-    console.log('poolData: ', poolData, minPltAddress)
-    console.log('lptSupply: ', lptSupply)
-    console.log('mintPoolsInfo: ', mintPoolInfo)
-
-    let result = calcMintReceiveRemoveSingleSide(
+    let result = calcMintReceivesRemoveFullSide(
       new BN(String(amount)),
       new BN(String(lptSupply)),
-      Number(mintPoolInfo.normalizedWeight),
-      mintPoolInfo.reserve,
-      new BN(String(poolData.fee)),
+      poolData.reserves,
     )
-    console.log('result: ', await undecimalizeMintAmount(result, mint))
-  }
+    return result
+  }, [getMint, lptAmount, poolData])
 
-  const selectAllMint = () => {
-    let allMintsSelected: any = {}
-    poolData.mints.map(
-      (mint) =>
-        (allMintsSelected = {
-          ...allMintsSelected,
-          [`${mint.toBase58()}`]: true,
-        }),
+  const calcMintReceiveSingleSide = useCallback(
+    async (mint: string) => {
+      let minPltAddress = poolData.mintLpt.toBase58()
+      let mintPool = await getMint({ address: minPltAddress })
+      let lptSupply = mintPool[minPltAddress]?.supply
+      let amount = utilsSenJS.decimalize(lptAmount, LPTDECIMALS)
+      const mintPoolInfo = getMintInfo(poolData, mint)
+      let result = calcMintReceiveRemoveSingleSide(
+        new BN(String(amount)),
+        new BN(String(lptSupply)),
+        Number(mintPoolInfo.normalizedWeight),
+        mintPoolInfo.reserve,
+        new BN(String(poolData.fee)),
+      )
+      return await undecimalizeMintAmount(result, mint)
+    },
+    [getMint, lptAmount, poolData, undecimalizeMintAmount],
+  )
+  const selectMint = useCallback(
+    async (mint: string) => {
+      let minInfo: MintSelectedInfo = {
+        mintAddress: mint,
+        amountReceive: await calcMintReceiveSingleSide(mint),
+      }
+      setIsSelectedAll(false)
+      setMintsSelected([minInfo])
+    },
+    [calcMintReceiveSingleSide],
+  )
+
+  const selectAllMint = useCallback(async () => {
+    let amountMints = await calcMintReceiveFullSide()
+    let allMintsSelected: MintSelectedInfo[] = await Promise.all(
+      poolData.mints.map(async (mint, index) => {
+        return {
+          mintAddress: mint.toBase58(),
+          amountReceive: await undecimalizeMintAmount(amountMints[index], mint),
+        }
+      }),
     )
     setIsSelectedAll(true)
-    setMinsSelected(allMintsSelected)
-  }
+    setMintsSelected(allMintsSelected)
+  }, [calcMintReceiveFullSide, poolData.mints, undecimalizeMintAmount])
+
+  useEffect(() => {
+    if (mintsSelected.length === 0) return
+    if (isSelectedAll) {
+      selectAllMint()
+    } else {
+      selectMint(mintsSelected[0]?.mintAddress)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lptAmount])
 
   return (
     <Fragment>
@@ -138,11 +178,14 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
                 <Row gutter={[12, 12]}>
                   {poolData.mints.map((mint, index) => {
                     let mintAddress: string = mint.toBase58()
+                    let isMintSelected = mintsSelected.some(
+                      (mint) => mint.mintAddress === mintAddress,
+                    )
                     return (
                       <Col key={index}>
                         <Button
                           className={`btn-toke-name ${
-                            mintsSelected[mintAddress] ? 'selected' : ''
+                            isMintSelected ? 'selected' : ''
                           }`}
                           onClick={() => selectMint(mintAddress)}
                         >
@@ -186,12 +229,12 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
                   You will receive
                 </Typography.Text>
               </Col>
-              {Object.keys(mintsSelected).map((mint) => {
-                return mintsSelected[mint] ? (
+              {mintsSelected.map((mint, index) => {
+                return mint ? (
                   <TokenWillReceive
-                    key={mint}
-                    mintAddress={mint}
-                    amount={lptAmount}
+                    key={index}
+                    mintAddress={mint.mintAddress}
+                    amount={mint.amountReceive}
                   />
                 ) : null
               })}
