@@ -33,7 +33,6 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   const [impactPrice, setImpactPrice] = useState(0)
   const [totalValue, setTotalValue] = useState(0)
   const [loading, setLoading] = useState(false)
-  const { getDecimals } = useMint()
   const dispatch = useDispatch()
 
   const { decimalizeMintAmount, undecimalizeMintAmount } = useOracles()
@@ -103,7 +102,6 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
           return amountBN
         }),
       )
-      console.log(totalSuply, 'totalSuply')
 
       // const totalSupplyBN = await decimalizeMintAmount(
       //   totalSuply,
@@ -183,7 +181,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
                   <Col span={24} key={mint.toBase58()}>
                     <MintInput
                       selectedMint={mintAddress}
-                      amount={mintsAmount[mintAddress]}
+                      amount={String(depositInfo[index]?.amount)}
                       onChangeAmount={(amount) => onChange(mintAddress, amount)}
                       mintLabel={
                         <Fragment>
