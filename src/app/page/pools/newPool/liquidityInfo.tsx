@@ -11,7 +11,7 @@ import { fetchCGK } from 'shared/util'
 import { TokenInfo } from './index'
 import { PoolCreatingStep } from 'app/constant'
 
-type TokenPrice = {
+export type TokenPrice = {
   price: number
   valuation: number
 }

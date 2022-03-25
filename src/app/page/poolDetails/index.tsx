@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 
 import { Card, Col, Image, Row, Space, Typography } from 'antd'
 import Deposit from './deposit'
@@ -7,14 +7,59 @@ import Withdraw from './withdraw'
 import { useAppRouter } from 'app/hooks/useAppRoute'
 import { PoolAvatar } from 'app/components/pools/poolAvatar'
 import CardPoolDetail from './cardPoolDetail'
-import BarChart from 'app/static/images/bar-chart.png'
-import DoughnutChart from 'app/static/images/doughnut-chart.png'
+import { useSelector } from 'react-redux'
+import { AppState } from 'app/model'
+import { useMintPrice } from 'app/hooks/useMintPrice'
+import { useOracles } from 'app/hooks/useOracles'
+import { BN } from '@project-serum/anchor'
+import { useMint } from '@senhub/providers'
+import DoughnutChart from './charts/doughnutChart'
+import BarChart from './charts/barChart'
 
 const PoolDetails = () => {
   const { getQuery } = useAppRouter()
   const poolAddress = getQuery('pool')
+  const {
+    pools: { [poolAddress || '']: poolData },
+  } = useSelector((state: AppState) => state)
+  const [TVL, setTVL] = useState(0)
+  const [LP, setLP] = useState('')
+  const { getTokenPrice } = useMintPrice()
+  const { undecimalizeMintAmount } = useOracles()
+  const { getMint } = useMint()
+
+  useEffect(() => {
+    ;(async () => {
+      if (!!poolData) {
+        let totalValueLocked = 0
+
+        for (let i = 0; i < poolData.reserves.length; i++) {
+          const tokenPrice = await getTokenPrice(poolData.mints[i].toBase58())
+          const numReserver = await undecimalizeMintAmount(
+            poolData.reserves[i],
+            poolData.mints[i],
+          )
+          totalValueLocked += tokenPrice * Number(numReserver)
+        }
+
+        const {
+          [poolData.mintLpt.toBase58()]: { supply },
+        } = await getMint({
+          address: poolData.mintLpt.toBase58(),
+        })
+        const numSupply = await undecimalizeMintAmount(
+          new BN(supply.toString()),
+          poolData.mintLpt,
+        )
+
+        setLP(numSupply)
+        setTVL(Number(totalValueLocked.toFixed(2)))
+      }
+    })()
+  }, [getMint, getTokenPrice, poolData, undecimalizeMintAmount])
 
   if (!poolAddress) return null
+
   return (
     <Row justify="center">
       <Col lg={20} md={24}>
@@ -45,7 +90,7 @@ const PoolDetails = () => {
                 <CardPoolDetail
                   title="TVL"
                   content={
-                    <Typography.Title level={3}>$245.98m</Typography.Title>
+                    <Typography.Title level={3}>$ {TVL}</Typography.Title>
                   }
                 />
               </Col>
@@ -60,7 +105,7 @@ const PoolDetails = () => {
                   title="My Contribution"
                   content={
                     <Fragment>
-                      <Typography.Title level={3}>62.7052</Typography.Title>
+                      <Typography.Title level={3}>{LP}</Typography.Title>
                       <Typography.Text type="secondary"> LP</Typography.Text>
                     </Fragment>
                   }
@@ -90,9 +135,7 @@ const PoolDetails = () => {
                       </Row>
                     </Col>
                     <Col span={24}>
-                      <Row justify="center">
-                        <Image width="50%" src={BarChart} />
-                      </Row>
+                      <BarChart />
                     </Col>
                   </Row>
                 </Card>
@@ -113,9 +156,7 @@ const PoolDetails = () => {
                       </Row>
                     </Col>
                     <Col span={24}>
-                      <Row justify="center">
-                        <Image width="50%" src={DoughnutChart} />
-                      </Row>
+                      <DoughnutChart />
                     </Col>
                   </Row>
                 </Card>
