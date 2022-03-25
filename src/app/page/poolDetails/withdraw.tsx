@@ -8,8 +8,8 @@ import { Button, Col, Modal, Row, Typography } from 'antd'
 import TokenWillReceive from './tokenWillReceive'
 import MintInput from 'app/components/mintInput'
 import { PoolAvatar } from 'app/components/pools/poolAvatar'
-import { MintSymbol } from 'shared/antd/mint'
 import IonIcon from 'shared/antd/ionicon'
+import ButtonSelectMint from './buttonSelectMint'
 
 import { notifyError, notifySuccess } from 'app/helper'
 import {
@@ -148,7 +148,7 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
       selectMint(mintsSelected[0]?.mintAddress)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lptAmount])
+  }, [lptAmount, poolData])
 
   return (
     <Fragment>
@@ -182,18 +182,12 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
                       (mint) => mint.mintAddress === mintAddress,
                     )
                     return (
-                      <Col key={index}>
-                        <Button
-                          className={`btn-toke-name ${
-                            isMintSelected ? 'selected' : ''
-                          }`}
-                          onClick={() => selectMint(mintAddress)}
-                        >
-                          <span className="title">
-                            <MintSymbol mintAddress={mintAddress || ''} />
-                          </span>
-                        </Button>
-                      </Col>
+                      <ButtonSelectMint
+                        key={index}
+                        mintAddress={mintAddress}
+                        isMintSelected={isMintSelected}
+                        selectMint={selectMint}
+                      ></ButtonSelectMint>
                     )
                   })}
                   <Col>
