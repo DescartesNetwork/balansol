@@ -49,7 +49,7 @@ const MintRatio = ({ reversed = false }: { reversed?: boolean }) => {
   )
 }
 
-const Price = () => {
+const SpotPrice = () => {
   const [reversed, setReversed] = useState(false)
 
   const onReversed = () => {
@@ -76,4 +76,4 @@ const Price = () => {
   )
 }
 
-export default Price
+export default SpotPrice
