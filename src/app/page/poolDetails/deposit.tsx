@@ -63,6 +63,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
       if (noneZeroAmouts.length === 0) return setTotalValue(0)
 
       const mintInfos = []
+
       for (let i = 0; i < noneZeroAmouts.length; i++) {
         const mintInfo = getMintInfo(poolData, noneZeroAmouts[i].address)
         if (!mintInfo?.reserve || !mintInfo.normalizedWeight) {
@@ -71,10 +72,27 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
         mintInfos.push(mintInfo.reserve)
       }
 
-      const totalSuply = calcTotalSupplyPool(
-        poolData.reserves.map((value) => value.toString()),
-        poolData.weights.map((value) => value.toString()),
+      const poolReverses = await Promise.all(
+        poolData.reserves.map(async (value, idx) => {
+          const undecilizedReserves = await undecimalizeMintAmount(
+            value,
+            poolData.mints[idx],
+          )
+          return undecilizedReserves
+        }),
       )
+
+      const poolWeights = await Promise.all(
+        poolData.weights.map(async (value, idx) => {
+          const undecilizedWeights = await undecimalizeMintAmount(
+            value,
+            poolData.mints[idx],
+          )
+          return undecilizedWeights
+        }),
+      )
+
+      const totalSuply = calcTotalSupplyPool(poolReverses, poolWeights)
 
       const amountsBN = await Promise.all(
         noneZeroAmouts.map(async (value) => {
@@ -85,20 +103,20 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
           return amountBN
         }),
       )
+      console.log(totalSuply, 'totalSuply')
 
-      const lpDecimals = await getDecimals(poolData.mintLpt.toBase58())
-      const totalSupplyBN = await decimalizeMintAmount(
-        totalSuply / 10 ** lpDecimals,
-        poolData.mintLpt.toBase58(),
-      )
+      // const totalSupplyBN = await decimalizeMintAmount(
+      //   totalSuply,
+      //   poolData.mintLpt.toBase58(),
+      // )
       const newTotalValue = calcLpOutMultiGivenIn(
         amountsBN,
         mintInfos,
-        totalSupplyBN,
+        totalSuply,
       )
       setTotalValue(newTotalValue)
     })()
-  }, [decimalizeMintAmount, depositInfo, getDecimals, poolData])
+  }, [decimalizeMintAmount, depositInfo, poolData, undecimalizeMintAmount])
 
   const onChange = (mint: string, value: string) => {
     const depositeInfoClone = depositInfo.map((info, idx) => {

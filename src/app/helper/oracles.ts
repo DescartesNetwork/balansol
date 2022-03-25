@@ -68,13 +68,12 @@ export const calcOutGivenIn = (
 export const calcLpOutMultiGivenIn = (
   amountIns: BN[],
   balanceIns: BN[],
-  totalSupply: BN,
+  totalSupply: number,
 ) => {
   const amountInSum = amountIns.reduce((a, b) => a + b.toNumber(), 0)
   const balanceInSum = balanceIns.reduce((a, b) => a + b.toNumber(), 0)
-  const numTotalSupply = totalSupply.toNumber()
 
-  return (amountInSum / balanceInSum) * numTotalSupply
+  return (amountInSum / balanceInSum) * totalSupply
 }
 
 export const calcLpSingleGivenIn = (
