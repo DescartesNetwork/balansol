@@ -68,7 +68,7 @@ const AddLiquidty = ({
 
     return setDepositedAmounts(autoDepositedAmount)
   }
-  const onChangeAmount = async (
+  const onUpdateAmount = async (
     value: string,
     idx: number,
     invalid?: boolean,
@@ -135,7 +135,7 @@ const AddLiquidty = ({
                 amount={depositedAmounts[idx]}
                 selectedMint={value.addressToken}
                 onChangeAmount={(value: string, invalid?: boolean) =>
-                  onChangeAmount(value, idx, invalid)
+                  onUpdateAmount(value, idx, invalid)
                 }
               />
             </Col>
