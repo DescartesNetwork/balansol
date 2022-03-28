@@ -43,6 +43,12 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
 
   const onSubmit = async () => {
     if (mintsSelected.length === 0) return
+    let isValidWithDraw: boolean = await validateWithdraw()
+    if (!isValidWithDraw) {
+      return notifyError({
+        message: 'Please input amount less than 30% available supply!',
+      })
+    }
     try {
       if (!isSelectedAll) {
         await checkInitializedAccount()
@@ -86,7 +92,6 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
     let mintPool = await getMint({ address: minPltAddress })
     let lptSupply = mintPool[minPltAddress]?.supply
     let amount = utilsSenJS.decimalize(lptAmount, LPTDECIMALS)
-    console.log('poolData: ', poolData)
 
     let result = calcMintReceivesRemoveFullSide(
       new BN(String(amount)),
@@ -140,6 +145,19 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
     setMintsSelected(allMintsSelected)
   }, [calcMintReceiveFullSide, poolData.mints, undecimalizeMintAmount])
 
+  const validateWithdraw = async () => {
+    let minPltAddress = poolData.mintLpt.toBase58()
+    let mintPool = await getMint({ address: minPltAddress })
+    let lptSupply = utilsSenJS.undecimalize(
+      mintPool[minPltAddress]?.supply,
+      LPTDECIMALS,
+    )
+    if (!isSelectedAll && Number(lptAmount) > Number(lptSupply) * 0.3) {
+      return false
+    }
+    return true
+  }
+
   useEffect(() => {
     if (mintsSelected.length === 0) return
     if (isSelectedAll) {
@@ -147,8 +165,15 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
     } else {
       selectMint(mintsSelected[0]?.mintAddress)
     }
+    // when pltAmount, changes, update each amountReceive in mintSelected
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lptAmount, poolData])
+
+  useEffect(() => {
+    selectAllMint()
+    // call only first time when load component to set default all mintSelected
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <Fragment>
@@ -214,6 +239,7 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
                 <Typography.Text type="secondary">Balansol LP</Typography.Text>
               }
               mintAvatar={<PoolAvatar poolAddress={poolAddress} />}
+              mintSymbol="LP"
             />
           </Col>
           <Col span={24}>

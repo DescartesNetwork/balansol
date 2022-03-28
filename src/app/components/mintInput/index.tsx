@@ -21,6 +21,7 @@ export default function MintInput({
   mintLabel,
   mintAvatar,
   ratioButton,
+  mintSymbol,
 }: {
   amount: string
   onChangeAmount?: (val: string, balance: number) => void
@@ -30,6 +31,7 @@ export default function MintInput({
   mintLabel?: ReactNode
   mintAvatar?: ReactNode
   ratioButton?: ReactNode
+  mintSymbol?: string
 }) {
   const { balance } = useAccountBalanceByMintAddress(selectedMint)
 
@@ -91,7 +93,7 @@ export default function MintInput({
                 {numeric(balance).format('0,0.[00]')}
               </Typography.Text>
               <Typography.Text type="secondary">
-                <MintSymbol mintAddress={selectedMint} />
+                {mintSymbol || <MintSymbol mintAddress={selectedMint} />}
               </Typography.Text>
             </Space>
           </Col>
