@@ -1,7 +1,5 @@
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { BN, web3 } from '@project-serum/anchor'
-import { utils } from '@senswap/sen-js'
 
 import { Button, Col, Modal, Row, Typography } from 'antd'
 import MintInput from 'app/components/mintInput'
@@ -11,27 +9,26 @@ import { DepositInfo, setDepositState } from 'app/model/deposit.controller'
 
 import { notifyError, notifySuccess } from 'app/helper'
 import { AppState } from 'app/model'
-import { useMint } from '@senhub/providers'
 import {
-  calcLpOutMultiGivenIn,
-  calcLpSingleGivenIn,
+  caclLpForTokensZeroPriceImpact,
+  calcBptOutGivenExactTokensIn,
   calcNormalizedWeight,
   calTotalSupplyPool as calcTotalSupplyPool,
   getMintInfo,
 } from 'app/helper/oracles'
 import { useOracles } from 'app/hooks/useOracles'
+import { GENERAL_NORMALIZED_NUMBER } from 'app/constant'
 
 const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   const {
     pools: { [poolAddress]: poolData },
-    deposits: { poolAddress: depositPoolAddr, depositInfo },
+    deposits: { depositInfo },
   } = useSelector((state: AppState) => state)
 
   const [visible, setVisible] = useState(false)
   const [disable, setDisable] = useState(true)
-  const [mintsAmount, setMintAmount] = useState<Record<string, string>>({})
-  const [impactPrice, setImpactPrice] = useState(0)
-  const [totalValue, setTotalValue] = useState(0)
+  const [impactPrice, setImpactPrice] = useState('0')
+  const [lpOutTotal, setLpOutTotal] = useState(0)
   const [loading, setLoading] = useState(false)
   const dispatch = useDispatch()
 
@@ -40,7 +37,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   useEffect(() => {
     const initialData: DepositInfo[] = []
     poolData.mints.map((value) => {
-      initialData.push({ address: value.toBase58(), amount: 0 })
+      initialData.push({ address: value.toBase58(), amount: '' })
       return null
     })
     dispatch(setDepositState({ poolAddress, depositInfo: initialData }))
@@ -48,25 +45,27 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
 
   useEffect(() => {
     for (let i = 0; i < depositInfo.length; i++) {
-      if (depositInfo[i].amount === 0) return setDisable(true)
+      if (Number(depositInfo[i].amount) !== 0) return setDisable(false)
     }
-    setDisable(false)
+    setDisable(true)
   }, [depositInfo])
 
   useEffect(() => {
     ;(async () => {
       const noneZeroAmouts = depositInfo.filter((value) => {
-        return !!value.amount
+        return !!value.amount && Number(value.amount) !== 0
       })
 
-      if (noneZeroAmouts.length === 0) return setTotalValue(0)
+      setImpactPrice('0')
+
+      if (noneZeroAmouts.length === 0) return setLpOutTotal(0)
 
       const mintInfos = []
 
       for (let i = 0; i < noneZeroAmouts.length; i++) {
         const mintInfo = getMintInfo(poolData, noneZeroAmouts[i].address)
         if (!mintInfo?.reserve || !mintInfo.normalizedWeight) {
-          return setTotalValue(0)
+          return setLpOutTotal(0)
         }
         mintInfos.push(mintInfo.reserve)
       }
@@ -93,33 +92,55 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
 
       const totalSuply = calcTotalSupplyPool(poolReverses, poolWeights)
 
-      const amountsBN = await Promise.all(
-        noneZeroAmouts.map(async (value) => {
-          const amountBN = await decimalizeMintAmount(
-            value.amount,
-            value.address,
-          )
-          return amountBN
-        }),
+      let amountIns = []
+      let balanceIns = []
+      let weightIns = []
+
+      for (let i = 0; i < depositInfo.length; i++) {
+        const blance = await undecimalizeMintAmount(
+          poolData.reserves[i],
+          depositInfo[i].address,
+        )
+        const normalizeWeight = calcNormalizedWeight(
+          poolData.weights,
+          poolData.weights[i],
+        )
+        balanceIns.push(Number(blance))
+        weightIns.push(normalizeWeight)
+
+        amountIns.push(Number(depositInfo[i].amount))
+      }
+
+      let LpOut = calcBptOutGivenExactTokensIn(
+        amountIns,
+        balanceIns,
+        weightIns,
+        totalSuply,
+        poolData.fee.toNumber() / GENERAL_NORMALIZED_NUMBER,
       )
 
-      // const totalSupplyBN = await decimalizeMintAmount(
-      //   totalSuply,
-      //   poolData.mintLpt.toBase58(),
-      // )
-      const newTotalValue = calcLpOutMultiGivenIn(
-        amountsBN,
-        mintInfos,
+      const LpOutZeroPriceImpact = caclLpForTokensZeroPriceImpact(
+        amountIns,
+        balanceIns,
+        weightIns,
         totalSuply,
+        poolData.fee.toNumber() / GENERAL_NORMALIZED_NUMBER,
       )
-      setTotalValue(newTotalValue)
+
+      setLpOutTotal(LpOut)
+      // Need to double check again later
+      if (LpOut > LpOutZeroPriceImpact) {
+        return setImpactPrice('0')
+      }
+      const impactPrice = ((1 - LpOut / LpOutZeroPriceImpact) * 100).toFixed(2)
+      setImpactPrice(impactPrice)
     })()
   }, [decimalizeMintAmount, depositInfo, poolData, undecimalizeMintAmount])
 
   const onChange = (mint: string, value: string) => {
     const depositeInfoClone = depositInfo.map((info, idx) => {
       if (info.address === mint) {
-        return { address: info.address, amount: Number(value) }
+        return { address: info.address, amount: value }
       }
       return info
     })
@@ -151,6 +172,15 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
       setLoading(false)
     }
   }
+
+  const lpOutDisplay = useMemo(() => {
+    const clonedLp = lpOutTotal.toFixed(4)
+    console.log(clonedLp, 'clonedLp')
+    if (Number(clonedLp) < 0.0001) {
+      return 'LP < 0.0001'
+    }
+    return clonedLp
+  }, [lpOutTotal])
 
   return (
     <Fragment>
@@ -189,7 +219,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
                             <MintSymbol mintAddress={mintAddress || ''} />
                           </Typography.Text>
                           <Typography.Text type="secondary">
-                            {normalizedWeight}
+                            {normalizedWeight * 100} %
                           </Typography.Text>
                         </Fragment>
                       }
@@ -209,7 +239,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
                     </Typography.Text>
                   </Col>
                   <Col>
-                    <span style={{ color: '#03A326' }}>{} %</span>
+                    <span style={{ color: '#03A326' }}>{impactPrice} %</span>
                   </Col>
                 </Row>
               </Col>
@@ -222,7 +252,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
                   </Col>
                   <Col>
                     <Typography.Title level={4}>
-                      {totalValue} LP
+                      {lpOutDisplay} LP
                     </Typography.Title>
                   </Col>
                 </Row>

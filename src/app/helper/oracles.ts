@@ -59,41 +59,39 @@ export const calcLpOutGivenIn = (
   return (amountIn / balanceIn - 1) * totalSupply - totalSupply
 }
 
-export const calcOutGivenIn = (
-  lpAmount: BN,
-  balanceIn: BN,
-  totalSupply: BN,
-) => {
-  const lpAmountNumber = lpAmount.toNumber()
-  const balanceInNumber = balanceIn.toNumber()
-  const totalSupplyNumber = totalSupply.toNumber()
-
-  return (lpAmountNumber / totalSupplyNumber) * balanceInNumber
-}
-
-export const calcLpOutMultiGivenIn = (
-  amountIns: BN[],
-  balanceIns: BN[],
+export const calcBptOutGivenExactTokensIn = (
+  tokenAmountIns: number[],
+  balanceIns: number[],
+  weightIns: number[],
   totalSupply: number,
+  swapFee: number,
 ) => {
-  const amountInSum = amountIns.reduce((a, b) => a + b.toNumber(), 0)
-  const balanceInSum = balanceIns.reduce((a, b) => a + b.toNumber(), 0)
+  const balanceRatiosWithFee = new Array(tokenAmountIns.length)
 
-  return (amountInSum / balanceInSum) * totalSupply
-}
+  let invariantRatioWithFees = 0
+  for (let i = 0; i < tokenAmountIns.length; i++) {
+    balanceRatiosWithFee[i] =
+      (balanceIns[i] + tokenAmountIns[i]) / balanceIns[i]
+    invariantRatioWithFees =
+      invariantRatioWithFees + balanceRatiosWithFee[i] * weightIns[i]
+  }
 
-export const calcLpSingleGivenIn = (
-  tokenAmount: BN,
-  balanceIn: BN,
-  weightIn: number,
-  totalSupply: number,
-) => {
-  const tokenAmountNumber = tokenAmount.toNumber()
-  const balanceInNumber = balanceIn.toNumber()
+  let invariantRatio = 1
 
-  return (
-    totalSupply * ((1 + tokenAmountNumber / balanceInNumber) ** weightIn - 1)
-  )
+  for (let i = 0; i < tokenAmountIns.length; i++) {
+    let amountInWithoutFee = tokenAmountIns[i]
+
+    if (balanceRatiosWithFee[i] > invariantRatioWithFees) {
+      let nonTaxableAmount = balanceIns[i] * (invariantRatioWithFees - 1)
+      let taxableAmount = tokenAmountIns[i] - nonTaxableAmount
+      amountInWithoutFee = nonTaxableAmount + taxableAmount * (1 - swapFee)
+    }
+
+    let balanceRatio = (balanceIns[i] + amountInWithoutFee) / balanceIns[i]
+    invariantRatio = invariantRatio * balanceRatio ** weightIns[i]
+  }
+  if (invariantRatio > 1) return totalSupply * (invariantRatio - 1)
+  return 0
 }
 
 export const calcOptimizedDepositedAmount = (
@@ -171,9 +169,78 @@ export const calcSpotPrice = (
   balanceOut: BN,
   weightOut: number,
 ): number => {
-  const numBalanceIn = balanceIn?.toNumber()
+  const numBalanceIn = balanceIn.toNumber()
 
-  const numBalanceOut = balanceOut?.toNumber()
+  const numBalanceOut = balanceOut.toNumber()
 
   return numBalanceIn / weightIn / (numBalanceOut / weightOut)
+}
+
+export const calcSpotPrice2 = (
+  balanceIn: number,
+  weightIn: number,
+  balanceOut: number,
+  weightOut: number,
+): number => {
+  const numBalanceIn = balanceIn
+
+  const numBalanceOut = balanceOut
+
+  return numBalanceIn / weightIn / (numBalanceOut / weightOut)
+}
+
+export const calcSpotPriceDueFee = (
+  balanceIn: number,
+  weightIn: number,
+  balanceOut: number,
+  weightOut: number,
+  fee: number,
+) => {
+  const normalSpotPrice = calcSpotPrice2(
+    balanceIn,
+    weightIn,
+    balanceOut,
+    weightOut,
+  )
+  const BNFee = fee / GENERAL_NORMALIZED_NUMBER
+  return normalSpotPrice / (1 - (BNFee - BNFee * weightIn))
+}
+
+export const spotPriceAfterSwapTokenInForExactBPTOut = (
+  amount: number,
+  poolPairData: any,
+) => {
+  return (
+    (Math.pow(
+      (amount + poolPairData.balanceOut) / poolPairData.balanceOut,
+      1 / poolPairData.weightIn,
+    ) *
+      poolPairData.balanceIn) /
+    ((amount + poolPairData.balanceOut) *
+      (1 + poolPairData.swapFee * (-1 + poolPairData.weightIn)) *
+      poolPairData.weightIn)
+  )
+}
+
+export const caclLpForTokensZeroPriceImpact = (
+  tokenAmountIns: number[],
+  balanceIns: number[],
+  weightIns: number[],
+  totalSupply: number,
+  swapFee: number,
+) => {
+  const amountLpOut = tokenAmountIns.reduce((totalBptOut, amountIn, i) => {
+    // Calculate amount of BPT gained per token in
+    const poolPairData = {
+      balanceIn: balanceIns[i],
+      balanceOut: totalSupply,
+      weightIn: weightIns[i],
+      swapFee: swapFee,
+    }
+    const LpPrice = spotPriceAfterSwapTokenInForExactBPTOut(0, poolPairData)
+    // Multiply by amountIn to get contribution to total bpt out
+    const LpOut = amountIn / LpPrice
+    return totalBptOut + LpOut
+  }, 0)
+  return amountLpOut
 }

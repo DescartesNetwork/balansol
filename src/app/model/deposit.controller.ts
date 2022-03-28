@@ -5,7 +5,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
  * Interface & Utility
  */
 export type DepositInfo = {
-  amount: number
+  amount: string
   address: string
 }
 export type DepositState = {
