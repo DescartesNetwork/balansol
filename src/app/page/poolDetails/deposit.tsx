@@ -13,21 +13,20 @@ import { useOracles } from 'app/hooks/useOracles'
 import { calcNormalizedWeight } from 'app/helper/oracles'
 
 const Deposit = ({ poolAddress }: { poolAddress: string }) => {
-  const [visible, setVisible] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [disable, setDisable] = useState(true)
-  const dispatch = useDispatch()
   const {
     pools: { [poolAddress]: poolData },
     deposits: { depositInfo },
   } = useSelector((state: AppState) => state)
+
+  const [visible, setVisible] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [disable, setDisable] = useState(true)
+  const dispatch = useDispatch()
   const { decimalizeMintAmount } = useOracles()
 
   useEffect(() => {
-    const initialData: DepositInfo[] = []
-    poolData.mints.map((value) => {
-      initialData.push({ address: value.toBase58(), amount: '' })
-      return null
+    const initialData: DepositInfo[] = poolData.mints.map((value) => {
+      return { address: value.toBase58(), amount: '' }
     })
     dispatch(setDepositState({ poolAddress, depositInfo: initialData }))
   }, [dispatch, poolAddress, poolData.mints])
@@ -40,10 +39,8 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   }, [depositInfo])
 
   const onChange = (mint: string, value: string) => {
-    const depositeInfoClone = depositInfo.map((info, idx) => {
-      if (info.address === mint) {
-        return { address: info.address, amount: value }
-      }
+    const depositeInfoClone = depositInfo.map((info) => {
+      if (info.address === mint) return { address: info.address, amount: value }
       return info
     })
 
@@ -63,11 +60,11 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
             await decimalizeMintAmount(value.amount, value.address),
         ),
       )
-
       const { txId } = await window.balansol.addLiquidity(
         poolAddress,
         amountsIn,
       )
+
       notifySuccess('Deposit', txId)
     } catch (error) {
       notifyError(error)
