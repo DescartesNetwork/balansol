@@ -1,5 +1,6 @@
+import { BN } from '@project-serum/anchor'
 import { Col, Row, Space, Typography } from 'antd'
-import { useWithdrawToken } from 'app/hooks/useWithdrawToken'
+import MintAmount from 'app/components/mint/mintAmount'
 import { MintAvatar, MintSymbol } from 'shared/antd/mint'
 
 const TokenWillReceive = ({
@@ -7,9 +8,8 @@ const TokenWillReceive = ({
   amount,
 }: {
   mintAddress: string
-  amount?: string
+  amount: BN
 }) => {
-  const amountWithdrawToken = useWithdrawToken(amount || '')
   return (
     <Col span={24}>
       <Row>
@@ -22,7 +22,9 @@ const TokenWillReceive = ({
           </Space>
         </Col>
         <Col>
-          <Typography.Text>{amountWithdrawToken}</Typography.Text>
+          <Typography.Text>
+            <MintAmount mintAddress={mintAddress} amount={amount} />
+          </Typography.Text>
         </Col>
       </Row>
     </Col>
