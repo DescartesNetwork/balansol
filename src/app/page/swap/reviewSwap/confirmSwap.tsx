@@ -41,8 +41,7 @@ const ConfirmSwap = ({
   const { decimalizeMintAmount } = useOracles()
 
   useEffect(() => {
-    if (Number(priceImpact) > PriceImpact.GoodImpact)
-      return setIsDisplayWarning(true)
+    if (priceImpact > PriceImpact.GoodImpact) return setIsDisplayWarning(true)
     setIsDisplayWarning(false)
   }, [priceImpact])
 

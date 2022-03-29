@@ -3,7 +3,7 @@ import { PoolData } from '@senswap/sen-js'
 
 import { Col, Row, Skeleton, Typography } from 'antd'
 import RouteAvatar from './routeAvatar'
-import Price from './price'
+import SpotPrice from './spotPrice'
 
 import { numeric } from 'shared/util'
 import { useRouteSwap } from 'app/hooks/useRouteSwap'
@@ -54,14 +54,18 @@ const SwapInfo = ({ extraStyle }: { extraStyle?: CSSProperties }) => {
           label="Price impact"
           content={
             <Typography.Text style={{ color: 'red' }}>
-              {numeric(Number(priceImpact)).format('0.[0000]%')}
+              {numeric(priceImpact).format('0.[0000]%')}
             </Typography.Text>
           }
           loading={false}
         />
       </Col>
       <Col span={24}>
-        <ExtraTypography label="Price" content={<Price />} loading={false} />
+        <ExtraTypography
+          label="Price"
+          content={<SpotPrice />}
+          loading={false}
+        />
       </Col>
       <Col span={24}>
         <ExtraTypography

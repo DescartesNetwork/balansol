@@ -68,21 +68,17 @@ const AddLiquidty = ({
 
     return setDepositedAmounts(autoDepositedAmount)
   }
-  const onChangeAmount = async (
+  const onUpdateAmount = async (
     value: string,
     idx: number,
-    balance: number,
+    invalid?: boolean,
   ) => {
     setBaseTokenIndex(idx)
 
     const valueInNumber = Number(value)
 
-    if (valueInNumber < balance && valueInNumber !== 0) setDisable(false)
-    if (
-      valueInNumber > balance ||
-      valueInNumber === 0 ||
-      depositedAmounts.includes('0')
-    )
+    if (!invalid && valueInNumber !== 0) setDisable(false)
+    if (invalid || valueInNumber === 0 || depositedAmounts.includes('0'))
       setDisable(true)
 
     const newState = [...depositedAmounts]
@@ -138,8 +134,8 @@ const AddLiquidty = ({
               <MintInput
                 amount={depositedAmounts[idx]}
                 selectedMint={value.addressToken}
-                onChangeAmount={(value: string, balance: number) =>
-                  onChangeAmount(value, idx, balance)
+                onChangeAmount={(value: string, invalid?: boolean) =>
+                  onUpdateAmount(value, idx, invalid)
                 }
               />
             </Col>
