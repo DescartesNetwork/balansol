@@ -3,6 +3,13 @@ import { PoolData } from '@senswap/balancer'
 
 import { GENERAL_NORMALIZED_NUMBER } from 'app/constant'
 
+export type PoolPairData = {
+  balanceIn: BN
+  balanceOut: BN
+  weightIn: number
+  swapFee: BN
+}
+
 export type MintInfo = {
   reserve: BN
   normalizedWeight: number
@@ -44,10 +51,7 @@ export const valueFunction = (
   return result
 }
 
-export const calTotalSupplyPool = (
-  reserves: string[],
-  weights: string[],
-): number => {
+export const calcTotalSupplyPool = (reserves: string[], weights: string[]) => {
   return valueFunction(reserves, weights) * reserves.length
 }
 
@@ -207,40 +211,47 @@ export const calcSpotPriceDueFee = (
 }
 
 export const spotPriceAfterSwapTokenInForExactBPTOut = (
-  amount: number,
-  poolPairData: any,
+  amount: BN,
+  poolPairData: PoolPairData,
 ) => {
+  const Bo = poolPairData.balanceOut.toNumber() / 10 ** 9
+  const Ao = amount.toNumber() / 10 ** 9
+  const wi = poolPairData.weightIn
+  const Bi = poolPairData.balanceIn.toNumber() / 10 ** 9
+  const f = poolPairData.swapFee.toNumber() / 10 ** 9
+  console.log(Bo, Ao, wi, Bi, f, 'stat in cal spot price')
+
   return (
-    (Math.pow(
-      (amount + poolPairData.balanceOut) / poolPairData.balanceOut,
-      1 / poolPairData.weightIn,
-    ) *
-      poolPairData.balanceIn) /
-    ((amount + poolPairData.balanceOut) *
-      (1 + poolPairData.swapFee * (-1 + poolPairData.weightIn)) *
-      poolPairData.weightIn)
+    (Math.pow((Ao + Bo) / Bo, 1 / wi) * Bi) /
+    ((Ao + Bo) * (1 + f * (-1 + wi)) * wi)
   )
 }
 
 export const caclLpForTokensZeroPriceImpact = (
-  tokenAmountIns: number[],
-  balanceIns: number[],
-  weightIns: number[],
-  totalSupply: number,
-  swapFee: number,
-) => {
+  tokenAmountIns: BN[],
+  balanceIns: BN[],
+  weightIns: BN[],
+  totalSupply: BN,
+  swapFee: BN,
+): BN => {
   const amountLpOut = tokenAmountIns.reduce((totalBptOut, amountIn, i) => {
     // Calculate amount of BPT gained per token in
-    const poolPairData = {
+    console.log(weightIns[i].toNumber(), 'amount in ')
+    const nomalizedWeight = calcNormalizedWeight(weightIns, weightIns[i])
+    const poolPairData: PoolPairData = {
       balanceIn: balanceIns[i],
       balanceOut: totalSupply,
-      weightIn: weightIns[i],
+      weightIn: nomalizedWeight,
       swapFee: swapFee,
     }
-    const LpPrice = spotPriceAfterSwapTokenInForExactBPTOut(0, poolPairData)
+    const LpPrice = spotPriceAfterSwapTokenInForExactBPTOut(
+      new BN(0),
+      poolPairData,
+    )
+    console.log(LpPrice, 'Lp pricess ')
     // Multiply by amountIn to get contribution to total bpt out
-    const LpOut = amountIn / LpPrice
+    const LpOut = amountIn.toNumber() / LpPrice
     return totalBptOut + LpOut
   }, 0)
-  return amountLpOut
+  return new BN(amountLpOut)
 }

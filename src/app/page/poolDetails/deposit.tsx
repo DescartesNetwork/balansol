@@ -13,11 +13,12 @@ import {
   caclLpForTokensZeroPriceImpact,
   calcBptOutGivenExactTokensIn,
   calcNormalizedWeight,
-  calTotalSupplyPool as calcTotalSupplyPool,
+  calcTotalSupplyPool,
   getMintInfo,
 } from 'app/helper/oracles'
 import { useOracles } from 'app/hooks/useOracles'
 import { GENERAL_NORMALIZED_NUMBER } from 'app/constant'
+import { BN } from '@project-serum/anchor'
 
 const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   const {
@@ -91,48 +92,51 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
       )
 
       const totalSuply = calcTotalSupplyPool(poolReverses, poolWeights)
+      const totalSupplyBN = await decimalizeMintAmount(
+        totalSuply,
+        poolData.mintLpt,
+      )
 
-      let amountIns = []
-      let balanceIns = []
-      let weightIns = []
+      let amountIns: BN[] = []
+      let balanceIns: BN[] = []
+      let weightIns: BN[] = []
 
       for (let i = 0; i < depositInfo.length; i++) {
-        const blance = await undecimalizeMintAmount(
-          poolData.reserves[i],
+        console.log(poolData.reserves[i].toNumber(), 'poolData.reserves[i]')
+
+        const amountBn = await decimalizeMintAmount(
+          depositInfo[i].amount,
           depositInfo[i].address,
         )
-        const normalizeWeight = calcNormalizedWeight(
-          poolData.weights,
-          poolData.weights[i],
-        )
-        balanceIns.push(Number(blance))
-        weightIns.push(normalizeWeight)
+        balanceIns.push(poolData.reserves[i])
+        weightIns.push(poolData.weights[i])
 
-        amountIns.push(Number(depositInfo[i].amount))
+        amountIns.push(amountBn)
       }
 
-      let LpOut = calcBptOutGivenExactTokensIn(
-        amountIns,
-        balanceIns,
-        weightIns,
-        totalSuply,
-        poolData.fee.toNumber() / GENERAL_NORMALIZED_NUMBER,
-      )
+      // let LpOut = calcBptOutGivenExactTokensIn(
+      //   amountIns,
+      //   balanceIns,
+      //   weightIns,
+      //   totalSuply,
+      //   poolData.fee.toNumber() / GENERAL_NORMALIZED_NUMBER,
+      // )
 
       const LpOutZeroPriceImpact = caclLpForTokensZeroPriceImpact(
         amountIns,
         balanceIns,
         weightIns,
-        totalSuply,
-        poolData.fee.toNumber() / GENERAL_NORMALIZED_NUMBER,
+        totalSupplyBN,
+        poolData.fee,
       )
 
-      setLpOutTotal(LpOut)
+      // setLpOutTotal(LpOut)
       // Need to double check again later
-      if (LpOut > LpOutZeroPriceImpact) {
-        return setImpactPrice('0')
-      }
-      const impactPrice = ((1 - LpOut / LpOutZeroPriceImpact) * 100).toFixed(2)
+      console.log(LpOutZeroPriceImpact.toNumber(), 'balanceIns')
+      // if (LpOut > LpOutZeroPriceImpact) {
+      //   return setImpactPrice('0')
+      // }
+      // const impactPrice = ((1 - LpOut / LpOutZeroPriceImpact) * 100).toFixed(2)
       setImpactPrice(impactPrice)
     })()
   }, [decimalizeMintAmount, depositInfo, poolData, undecimalizeMintAmount])
