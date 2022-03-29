@@ -190,37 +190,3 @@ export const calcMintReceivesRemoveFullSide = (
   })
   return amounts_out
 }
-
-export const calcBptOutGivenExactTokensIn = (
-  tokenAmountIns: number[],
-  balanceIns: number[],
-  weightIns: number[],
-  totalSupply: number,
-  swapFee: number,
-) => {
-  const balanceRatiosWithFee = new Array(tokenAmountIns.length)
-
-  let invariantRatioWithFees = 0
-  for (let i = 0; i < tokenAmountIns.length; i++) {
-    balanceRatiosWithFee[i] =
-      (balanceIns[i] + tokenAmountIns[i]) / balanceIns[i]
-    invariantRatioWithFees =
-      invariantRatioWithFees + balanceRatiosWithFee[i] * weightIns[i]
-  }
-
-  let invariantRatio = 1
-  for (let i = 0; i < tokenAmountIns.length; i++) {
-    let amountInWithoutFee = tokenAmountIns[i]
-
-    if (balanceRatiosWithFee[i] > invariantRatioWithFees) {
-      let nonTaxableAmount = balanceIns[i] * (invariantRatioWithFees - 1)
-      let taxableAmount = tokenAmountIns[i] - nonTaxableAmount
-      amountInWithoutFee = nonTaxableAmount + taxableAmount * (1 - swapFee)
-    }
-
-    let balanceRatio = (balanceIns[i] + amountInWithoutFee) / balanceIns[i]
-    invariantRatio = invariantRatio * balanceRatio ** weightIns[i]
-  }
-  if (invariantRatio > 1) return totalSupply * (invariantRatio - 1)
-  return 0
-}
