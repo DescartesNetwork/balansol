@@ -15,19 +15,39 @@ import {
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
 export const options = {
-  responsive: true,
+  maintainAspectRatio: false,
+  scales: {
+    y: {
+      stacked: true,
+      grid: {
+        display: true,
+        color: 'rgba(255,99,132,0.2)',
+      },
+    },
+    x: {
+      grid: {
+        display: false,
+      },
+    },
+  },
   plugins: {
     legend: {
-      position: 'top' as const,
-    },
-    title: {
-      display: true,
-      text: 'Chart.js Bar Chart',
+      display: false,
+      position: 'bottom' as const,
     },
   },
 }
 
-const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July']
+const labels = [
+  '18/11',
+  '19/11',
+  '20/11',
+  '21/11',
+  '22/11',
+  '23/11',
+  '24/11',
+  '25/11',
+]
 
 export const data = {
   labels,
@@ -35,19 +55,14 @@ export const data = {
     {
       label: 'Dataset 1',
       data: labels.map(() => Math.random()),
-      backgroundColor: 'rgba(255, 99, 132, 0.5)',
-    },
-    {
-      label: 'Dataset 2',
-      data: labels.map(() => Math.random()),
-      backgroundColor: 'rgba(53, 162, 235, 0.5)',
+      backgroundColor: '#61DBAF',
     },
   ],
 }
 
 const BarChart = () => {
   return (
-    <Row justify="center">
+    <Row justify="center" className="barchart-container">
       <Bar options={options} data={data} />
     </Row>
   )

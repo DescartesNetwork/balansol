@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from 'react'
 
-import { Card, Col, Image, Row, Space, Typography } from 'antd'
+import { Card, Col, Row, Space, Typography } from 'antd'
 import Deposit from './deposit'
 import Withdraw from './withdraw'
 
@@ -15,6 +15,8 @@ import { BN } from '@project-serum/anchor'
 import { useMint } from '@senhub/providers'
 import DoughnutChart from './charts/doughnutChart'
 import BarChart from './charts/barChart'
+import { useTVL } from 'app/hooks/useTVL'
+import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
 
 const PoolDetails = () => {
   const { getQuery } = useAppRouter()
@@ -22,41 +24,28 @@ const PoolDetails = () => {
   const {
     pools: { [poolAddress || '']: poolData },
   } = useSelector((state: AppState) => state)
-  const [TVL, setTVL] = useState(0)
-  const [LP, setLP] = useState('')
-  const { getTokenPrice } = useMintPrice()
-  const { undecimalizeMintAmount } = useOracles()
-  const { getMint } = useMint()
+  const TVL = useTVL(poolAddress || '')
+  const { balance } = useAccountBalanceByMintAddress(
+    poolData.mintLpt.toBase58(),
+  )
 
-  useEffect(() => {
-    ;(async () => {
-      if (!!poolData) {
-        let totalValueLocked = 0
+  // useEffect(() => {
+  //   ;(async () => {
+  //     if (!!poolData) {
+  //       const {
+  //         [poolData.mintLpt.toBase58()]: { supply },
+  //       } = await getMint({
+  //         address: poolData.mintLpt.toBase58(),
+  //       })
+  //       const numSupply = await undecimalizeMintAmount(
+  //         new BN(supply.toString()),
+  //         poolData.mintLpt,
+  //       )
 
-        for (let i = 0; i < poolData.reserves.length; i++) {
-          const tokenPrice = await getTokenPrice(poolData.mints[i].toBase58())
-          const numReserver = await undecimalizeMintAmount(
-            poolData.reserves[i],
-            poolData.mints[i],
-          )
-          totalValueLocked += tokenPrice * Number(numReserver)
-        }
-
-        const {
-          [poolData.mintLpt.toBase58()]: { supply },
-        } = await getMint({
-          address: poolData.mintLpt.toBase58(),
-        })
-        const numSupply = await undecimalizeMintAmount(
-          new BN(supply.toString()),
-          poolData.mintLpt,
-        )
-
-        setLP(numSupply)
-        setTVL(Number(totalValueLocked.toFixed(2)))
-      }
-    })()
-  }, [getMint, getTokenPrice, poolData, undecimalizeMintAmount])
+  //       setLP(numSupply)
+  //     }
+  //   })()
+  // }, [getMint, getTokenPrice, poolData, undecimalizeMintAmount])
 
   if (!poolAddress) return null
 
@@ -105,7 +94,7 @@ const PoolDetails = () => {
                   title="My Contribution"
                   content={
                     <Fragment>
-                      <Typography.Title level={3}>{LP}</Typography.Title>
+                      <Typography.Title level={3}>{balance}</Typography.Title>
                       <Typography.Text type="secondary"> LP</Typography.Text>
                     </Fragment>
                   }
@@ -127,14 +116,16 @@ const PoolDetails = () => {
                         className="chart-title"
                       >
                         <Col flex={'auto'}>
-                          <Typography.Text>24h Volume</Typography.Text>
+                          <Typography.Title level={4}>
+                            24h Volume
+                          </Typography.Title>
                         </Col>
                         <Col>
-                          <Typography.Title level={3}>$3m</Typography.Title>
+                          <Typography.Title level={2}>$3m</Typography.Title>
                         </Col>
                       </Row>
                     </Col>
-                    <Col span={24}>
+                    <Col span={24} flex="auto">
                       <BarChart />
                     </Col>
                   </Row>
@@ -151,7 +142,9 @@ const PoolDetails = () => {
                         className="chart-title"
                       >
                         <Col flex={'auto'}>
-                          <Typography.Text>Pool balance</Typography.Text>
+                          <Typography.Title level={4}>
+                            Pool balance
+                          </Typography.Title>
                         </Col>
                       </Row>
                     </Col>
