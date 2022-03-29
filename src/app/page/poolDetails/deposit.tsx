@@ -1,7 +1,5 @@
-import { Fragment, useEffect, useMemo, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { BN } from '@project-serum/anchor'
-import { utils } from '@senswap/sen-js'
 
 import { Button, Col, Modal, Row, Typography } from 'antd'
 import MintInput from 'app/components/mintInput'
@@ -10,30 +8,20 @@ import { MintSymbol } from 'shared/antd/mint'
 
 import { notifyError, notifySuccess } from 'app/helper'
 import { AppState } from 'app/model'
-import { useMint } from '@senhub/providers'
 import { DepositInfo, setDepositState } from 'app/model/deposit.controller'
 import { useOracles } from 'app/hooks/useOracles'
-import {
-  calcBptOutGivenExactTokensIn,
-  calcNormalizedWeight,
-  calcTotalSupplyPool,
-  getMintInfo,
-} from 'app/helper/oracles'
-import { GENERAL_NORMALIZED_NUMBER } from 'app/constant'
+import { calcNormalizedWeight } from 'app/helper/oracles'
 
 const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   const [visible, setVisible] = useState(false)
-  const [mintsAmount, setMintAmount] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(false)
-  const [lpOutTotal, setLpOutTotal] = useState('')
   const [disable, setDisable] = useState(true)
   const dispatch = useDispatch()
   const {
     pools: { [poolAddress]: poolData },
     deposits: { depositInfo },
   } = useSelector((state: AppState) => state)
-  const { getDecimals } = useMint()
-  const { decimalizeMintAmount, undecimalizeMintAmount } = useOracles()
+  const { decimalizeMintAmount } = useOracles()
 
   useEffect(() => {
     const initialData: DepositInfo[] = []
@@ -50,74 +38,6 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
     }
     setDisable(true)
   }, [depositInfo])
-
-  useEffect(() => {
-    ;(async () => {
-      const noneZeroAmouts = depositInfo.filter((value) => {
-        return !!value.amount && Number(value.amount) !== 0
-      })
-
-      if (noneZeroAmouts.length === 0) return setLpOutTotal('0')
-
-      const poolReverses = await Promise.all(
-        poolData.reserves.map(async (value, idx) => {
-          const undecilizedReserves = await undecimalizeMintAmount(
-            value,
-            poolData.mints[idx],
-          )
-          return undecilizedReserves
-        }),
-      )
-
-      const poolWeights = await Promise.all(
-        poolData.weights.map(async (value, idx) => {
-          const undecilizedWeights = await undecimalizeMintAmount(
-            value,
-            poolData.mints[idx],
-          )
-          return undecilizedWeights
-        }),
-      )
-
-      let amountIns = []
-      let balanceIns = []
-      let weightIns = []
-      const totalSuply = calcTotalSupplyPool(poolReverses, poolWeights)
-
-      for (let i = 0; i < depositInfo.length; i++) {
-        const balanceIn = await undecimalizeMintAmount(
-          poolData.reserves[i],
-          poolData.mints[i],
-        )
-
-        const normalizedWeight = calcNormalizedWeight(
-          poolData.weights,
-          poolData.weights[i],
-        )
-        balanceIns.push(Number(balanceIn))
-        weightIns.push(normalizedWeight)
-
-        amountIns.push(Number(depositInfo[i].amount))
-      }
-
-      let LpOut = calcBptOutGivenExactTokensIn(
-        amountIns,
-        balanceIns,
-        weightIns,
-        totalSuply,
-        poolData.fee.toNumber() / GENERAL_NORMALIZED_NUMBER,
-      )
-
-      setLpOutTotal(String(LpOut))
-    })()
-  }, [
-    depositInfo,
-    poolData.fee,
-    poolData.mints,
-    poolData.reserves,
-    poolData.weights,
-    undecimalizeMintAmount,
-  ])
 
   const onChange = (mint: string, value: string) => {
     const depositeInfoClone = depositInfo.map((info, idx) => {
@@ -143,6 +63,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
             await decimalizeMintAmount(value.amount, value.address),
         ),
       )
+
       const { txId } = await window.balansol.addLiquidity(
         poolAddress,
         amountsIn,
@@ -154,14 +75,6 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
       setLoading(false)
     }
   }
-
-  const lpOutDisplay = useMemo(() => {
-    const clonedLp = Number(lpOutTotal).toFixed(4)
-    if (clonedLp && Number(clonedLp) < 0.0001) {
-      return 'LP < 0.0001'
-    }
-    return clonedLp
-  }, [lpOutTotal])
 
   return (
     <Fragment>
@@ -233,9 +146,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
                     </Typography.Text>
                   </Col>
                   <Col>
-                    <Typography.Title level={4}>
-                      {lpOutDisplay} LP
-                    </Typography.Title>
+                    <Typography.Title level={4}>2 LP</Typography.Title>
                   </Col>
                 </Row>
               </Col>
