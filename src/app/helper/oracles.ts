@@ -46,7 +46,7 @@ export const valueFunction = (
   return result
 }
 
-export const calTotalSupplyPool = (
+export const calcTotalSupplyPool = (
   reserves: string[],
   weights: string[],
 ): number => {
