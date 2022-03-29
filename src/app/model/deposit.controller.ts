@@ -29,14 +29,10 @@ const initialState: DepositState = {
 
 export const setDepositState = createAsyncThunk<
   Partial<DepositState>,
-  Partial<DepositState>,
-  { state: any }
->(
-  `${NAME}/setDepositState`,
-  async (newState: Partial<DepositState>, { getState }) => {
-    return newState
-  },
-)
+  Partial<DepositState>
+>(`${NAME}/setDepositState`, async (newState: Partial<DepositState>) => {
+  return newState
+})
 
 /**
  * Usual procedure
