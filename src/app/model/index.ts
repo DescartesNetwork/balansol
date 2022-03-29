@@ -4,7 +4,6 @@ import { devTools } from 'shared/devTools'
 import main from 'app/model/main.controller'
 import pools from 'app/model/pools.controller'
 import swap from 'app/model/swap.controller'
-import deposits from 'app/model/deposit.controller'
 
 /**
  * Isolated store
@@ -19,7 +18,6 @@ const model = configureStore({
     main,
     pools,
     swap,
-    deposits,
   },
 })
 
