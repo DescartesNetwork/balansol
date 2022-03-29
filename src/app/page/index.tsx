@@ -64,12 +64,14 @@ const SwapAndPools = () => {
 const Page = () => {
   const { appRoute } = useAppRouter()
   return (
-    <AppWatcher>
-      <Switch>
-        <Route exact path={appRoute} component={SwapAndPools} />
-        <Route path={`${appRoute}/details`} component={PoolDetails} />
-      </Switch>
-    </AppWatcher>
+    <div className="balansol-background">
+      <AppWatcher>
+        <Switch>
+          <Route exact path={appRoute} component={SwapAndPools} />
+          <Route path={`${appRoute}/details`} component={PoolDetails} />
+        </Switch>
+      </AppWatcher>
+    </div>
   )
 }
 
