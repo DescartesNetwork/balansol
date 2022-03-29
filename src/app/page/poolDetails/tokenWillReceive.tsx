@@ -1,4 +1,6 @@
+import { BN } from '@project-serum/anchor'
 import { Col, Row, Space, Typography } from 'antd'
+import MintAmount from 'app/components/mint/mintAmount'
 import { MintAvatar, MintSymbol } from 'shared/antd/mint'
 
 const TokenWillReceive = ({
@@ -6,7 +8,7 @@ const TokenWillReceive = ({
   amount,
 }: {
   mintAddress: string
-  amount?: string | number
+  amount: BN
 }) => {
   return (
     <Col span={24}>
@@ -20,7 +22,9 @@ const TokenWillReceive = ({
           </Space>
         </Col>
         <Col>
-          <Typography.Text>{amount}</Typography.Text>
+          <Typography.Text>
+            <MintAmount mintAddress={mintAddress} amount={amount} />
+          </Typography.Text>
         </Col>
       </Row>
     </Col>

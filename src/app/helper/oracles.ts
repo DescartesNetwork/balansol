@@ -162,6 +162,7 @@ export const calcMintReceiveRemoveSingleSide = (
   balance: BN,
   fee: BN,
 ) => {
+  if (lptAmount.gt(lptSupply)) return new BN(0)
   const numLptAmount = lptAmount.toNumber()
   const numLptSupply = lptSupply.toNumber()
   const numFee = fee.toNumber()
