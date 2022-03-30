@@ -11,21 +11,34 @@ export default function Pools() {
 
   return (
     <Row gutter={[24, 24]} justify="center" align="middle">
-      <Col span={16}>
-        <Row justify="center" gutter={12}>
-          <Col flex="auto">
-            <Search />
-          </Col>
-          <Col>
-            <New />
+      <Col xs={24} md={24} lg={20}>
+        <Row gutter={12}>
+          <Col span={24}>
+            <Row
+              gutter={[24, 24]}
+              align={'middle'}
+              justify="end"
+              className="chart-title"
+            >
+              <Col xs={24} md={12}>
+                <Search />
+              </Col>
+              <Col xs={24} md={12}>
+                <Row justify={'end'}>
+                  <Col xs={24} md={8}>
+                    <New />
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
           </Col>
         </Row>
       </Col>
-      <Col span={16}>
+      <Col xs={24} md={24} lg={20}>
         <Row gutter={[24, 24]}>
           {Object.keys(pools).map((poolAddress) => {
             return (
-              <Col span={12} key={poolAddress}>
+              <Col xs={24} md={12} key={poolAddress}>
                 <DetailsCard poolAddress={poolAddress} />
               </Col>
             )

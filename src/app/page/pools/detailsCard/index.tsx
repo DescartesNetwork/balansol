@@ -14,7 +14,7 @@ export default function DetailsCard({ poolAddress }: { poolAddress: string }) {
     <Card style={{ boxShadow: 'unset' }}>
       <Row style={{ marginBottom: '16px' }}>
         <Col flex="auto">
-          <PoolAvatar poolAddress={poolAddress} />
+          <PoolAvatar size={32} poolAddress={poolAddress} />
         </Col>
         <Col>
           <WalletAddress />
@@ -33,7 +33,7 @@ export default function DetailsCard({ poolAddress }: { poolAddress: string }) {
                 <Col span={24}>
                   <Space>
                     <Typography.Text type="secondary">TVL:</Typography.Text>
-                    <Typography.Title level={5}> $299.11$</Typography.Title>
+                    <Typography.Title level={5}> $299.11k</Typography.Title>
                   </Space>
                 </Col>
                 <Col span={24}>
