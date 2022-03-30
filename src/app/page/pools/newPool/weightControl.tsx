@@ -1,10 +1,10 @@
 import React from 'react'
 
-import { Button, Col, Input, Row } from 'antd'
+import { Button, Col, Row } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
 
-import { allowedKeyCode } from 'app/constant'
 import { TokenInfo } from './index'
+import NumericInput from 'shared/antd/numericInput'
 
 export default function WeightControl({
   tokenInfo,
@@ -22,19 +22,18 @@ export default function WeightControl({
   return (
     <Row justify="end" align="middle">
       <Col>
-        <Input
+        <NumericInput
           value={weight}
-          size="small"
+          size="large"
           bordered={false}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            if (allowedKeyCode.includes((e.nativeEvent as any).data)) {
-              onChangeWeight(e.target.value)
-            }
+          onValue={(value) => {
+            onChangeWeight(value)
           }}
           suffix={'%'}
           disabled={isLocked}
           maxLength={5}
           className="input-weight"
+          placeholder="0"
         />
       </Col>
       <Col>

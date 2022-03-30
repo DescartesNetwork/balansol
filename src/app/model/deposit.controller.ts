@@ -1,4 +1,3 @@
-import { Address } from '@project-serum/anchor'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
 /**
