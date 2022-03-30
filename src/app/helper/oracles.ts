@@ -32,11 +32,16 @@ export const getMintInfo = (poolData: PoolData, mint: Address) => {
 }
 
 export const valueFunction = (
-  reserves: string[],
-  weights: string[],
+  reserves: BN[],
+  weights: BN[],
+  decimals: number[],
 ): number => {
-  const numReserves = reserves.map((value) => Number(value))
-  const numWeights = weights.map((value) => Number(value))
+  const numReserves = reserves.map((value, idx) =>
+    Number(util.undecimalize(BigInt(value.toString()), decimals[idx])),
+  )
+  const numWeights = weights.map((value) =>
+    Number(util.undecimalize(BigInt(value.toString()), GENERAL_DECIMALS)),
+  )
   const sumWeight = numWeights.reduce((a, b) => a + b, 0)
   let result = 1
   for (let i = 0; i < numReserves.length; i++) {
@@ -47,10 +52,12 @@ export const valueFunction = (
 }
 
 export const calcTotalSupplyPool = (
-  reserves: string[],
-  weights: string[],
+  reserves: BN[],
+  weights: BN[],
+  decimals: number[],
 ): number => {
-  return valueFunction(reserves, weights) * reserves.length
+  if (decimals.length === 0) return 0
+  return valueFunction(reserves, weights, decimals) * reserves.length
 }
 
 export const calcLpOutGivenIn = (
@@ -291,4 +298,38 @@ export const calcMintReceivesRemoveFullSide = (
     return new BN(lpt_rate * Number(reserve))
   })
   return amounts_out
+}
+
+export const calcDepositPriceImpact = (
+  amountIns: BN[],
+  balanceIns: BN[],
+  weightIns: BN[],
+  totalSupply: BN,
+  decimalIns: number[],
+  swapFee: BN,
+) => {
+  if (decimalIns.length === 0) return { lpOut: 0, impactPrice: '0' }
+  let newLpOut = calcBptOutGivenExactTokensIn(
+    amountIns,
+    balanceIns,
+    weightIns,
+    totalSupply,
+    decimalIns,
+    swapFee,
+  ).toFixed(9)
+
+  const newLpOutZeroPriceImpact = caclLpForTokensZeroPriceImpact(
+    amountIns,
+    balanceIns,
+    weightIns,
+    totalSupply,
+    decimalIns,
+  ).toFixed(9)
+
+  const newImpactPrice = (
+    (1 - Number(newLpOut) / Number(newLpOutZeroPriceImpact)) *
+    100
+  ).toFixed(2)
+
+  return { lpOut: Number(newLpOut), impactPrice: newImpactPrice }
 }

@@ -1,7 +1,10 @@
 import { BN } from '@project-serum/anchor'
+import { PoolData } from '@senswap/balancer'
 import { utils } from '@senswap/sen-js'
+import { DepositInfo } from 'app/constant'
 
 import { explorer } from 'shared/util'
+import { getMintInfo } from './oracles'
 
 export const notifySuccess = (content: string, txId: string) => {
   return window.notify({
@@ -22,4 +25,22 @@ export const undecimalizeWrapper = (value: BN, decimals: number) => {
   const valueInBigInt = BigInt(value.toString())
 
   return utils.undecimalize(valueInBigInt, decimals)
+}
+
+export const checkDepositInfo = (
+  deposits: DepositInfo[],
+  poolData: PoolData,
+) => {
+  const noneZeroAmouts = deposits.filter((value) => {
+    return !!value.amount && Number(value.amount) !== 0
+  })
+
+  if (noneZeroAmouts.length === 0) return false
+
+  for (let i = 0; i < noneZeroAmouts.length; i++) {
+    const mintInfo = getMintInfo(poolData, noneZeroAmouts[i].address)
+    if (!mintInfo?.reserve || !mintInfo.normalizedWeight) return false
+  }
+
+  return true
 }

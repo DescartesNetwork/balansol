@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useState } from 'react'
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { BN } from '@project-serum/anchor'
 
@@ -7,14 +7,12 @@ import MintInput from 'app/components/mintInput'
 import IonIcon from 'shared/antd/ionicon'
 import { MintSymbol } from 'shared/antd/mint'
 
-import { notifyError, notifySuccess } from 'app/helper'
+import { checkDepositInfo, notifyError, notifySuccess } from 'app/helper'
 import { AppState } from 'app/model'
 import {
-  caclLpForTokensZeroPriceImpact,
-  calcBptOutGivenExactTokensIn,
+  calcDepositPriceImpact,
   calcNormalizedWeight,
   calcTotalSupplyPool,
-  getMintInfo,
 } from 'app/helper/oracles'
 import { useOracles } from 'app/hooks/useOracles'
 import { useMint } from '@senhub/providers'
@@ -33,7 +31,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   const [loading, setLoading] = useState(false)
   const dispatch = useDispatch()
   const { getDecimals } = useMint()
-  const { decimalizeMintAmount, undecimalizeMintAmount } = useOracles()
+  const { decimalizeMintAmount } = useOracles()
 
   useEffect(() => {
     const initialData: DepositInfo[] = poolData.mints.map((value) => {
@@ -49,94 +47,48 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
     setDisable(true)
   }, [deposits])
 
+  const estimateImpactPriceAndLP = useCallback(async () => {
+    setImpactPrice('0')
+    if (!checkDepositInfo(deposits, poolData)) return setLpOutTotal(0)
+
+    let amountIns: BN[] = []
+    let decimalIns: number[] = []
+
+    for (let i = 0; i < deposits.length; i++) {
+      const decimalIn = await getDecimals(deposits[i].address)
+      const amountBn = await decimalizeMintAmount(
+        deposits[i].amount,
+        deposits[i].address,
+      )
+      amountIns.push(amountBn)
+      decimalIns.push(decimalIn)
+    }
+
+    const totalSuply = calcTotalSupplyPool(
+      poolData.reserves,
+      poolData.weights,
+      decimalIns,
+    )
+    const totalSupplyBN = await decimalizeMintAmount(
+      totalSuply,
+      poolData.mintLpt,
+    )
+    const { lpOut, impactPrice } = calcDepositPriceImpact(
+      amountIns,
+      poolData.reserves,
+      poolData.weights,
+      totalSupplyBN,
+      decimalIns,
+      poolData.fee,
+    )
+
+    setLpOutTotal(lpOut)
+    setImpactPrice(impactPrice)
+  }, [decimalizeMintAmount, deposits, getDecimals, poolData])
+
   useEffect(() => {
-    ;(async () => {
-      const noneZeroAmouts = deposits.filter((value) => {
-        return !!value.amount && Number(value.amount) !== 0
-      })
-
-      setImpactPrice('0')
-
-      if (noneZeroAmouts.length === 0) return setLpOutTotal(0)
-
-      for (let i = 0; i < noneZeroAmouts.length; i++) {
-        const mintInfo = getMintInfo(poolData, noneZeroAmouts[i].address)
-        if (!mintInfo?.reserve || !mintInfo.normalizedWeight)
-          return setLpOutTotal(0)
-      }
-
-      const poolReverses = await Promise.all(
-        poolData.reserves.map(async (value, idx) => {
-          const undecilizedReserves = await undecimalizeMintAmount(
-            value,
-            poolData.mints[idx],
-          )
-          return undecilizedReserves
-        }),
-      )
-
-      const poolWeights = await Promise.all(
-        poolData.weights.map(async (value, idx) => {
-          const undecilizedWeights = await undecimalizeMintAmount(
-            value,
-            poolData.mints[idx],
-          )
-          return undecilizedWeights
-        }),
-      )
-
-      const totalSuply = calcTotalSupplyPool(poolReverses, poolWeights)
-      const totalSupplyBN = await decimalizeMintAmount(
-        totalSuply,
-        poolData.mintLpt,
-      )
-
-      let amountIns: BN[] = []
-      let decimalIns: number[] = []
-
-      for (let i = 0; i < deposits.length; i++) {
-        const decimalIn = await getDecimals(deposits[i].address)
-        const amountBn = await decimalizeMintAmount(
-          deposits[i].amount,
-          deposits[i].address,
-        )
-        amountIns.push(amountBn)
-        decimalIns.push(decimalIn)
-      }
-
-      let LpOut = calcBptOutGivenExactTokensIn(
-        amountIns,
-        poolData.reserves,
-        poolData.weights,
-        totalSupplyBN,
-        decimalIns,
-        poolData.fee,
-      ).toFixed(9)
-
-      const LpOutZeroPriceImpact = caclLpForTokensZeroPriceImpact(
-        amountIns,
-        poolData.reserves,
-        poolData.weights,
-        totalSupplyBN,
-        decimalIns,
-      ).toFixed(9)
-
-      setLpOutTotal(Number(LpOut))
-
-      const newImpactPrice = (
-        (1 - Number(LpOut) / Number(LpOutZeroPriceImpact)) *
-        100
-      ).toFixed(2)
-
-      setImpactPrice(newImpactPrice)
-    })()
-  }, [
-    decimalizeMintAmount,
-    deposits,
-    getDecimals,
-    poolData,
-    undecimalizeMintAmount,
-  ])
+    estimateImpactPriceAndLP()
+  }, [estimateImpactPriceAndLP])
 
   const onChange = (mint: string, value: string) => {
     const depositeInfoClone = deposits.map((info) => {
