@@ -6,7 +6,6 @@ import { Button, Col, Modal, Row, Typography } from 'antd'
 import MintInput from 'app/components/mintInput'
 import IonIcon from 'shared/antd/ionicon'
 import { MintSymbol } from 'shared/antd/mint'
-import { DepositInfo, setDepositState } from 'app/model/deposit.controller'
 
 import { notifyError, notifySuccess } from 'app/helper'
 import { AppState } from 'app/model'
@@ -19,6 +18,7 @@ import {
 } from 'app/helper/oracles'
 import { useOracles } from 'app/hooks/useOracles'
 import { useMint } from '@senhub/providers'
+import { DepositInfo } from 'app/constant'
 
 const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   const {
@@ -26,6 +26,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
     deposits: { depositInfo },
   } = useSelector((state: AppState) => state)
 
+  const [deposits, setDeposits] = useState<DepositInfo[]>([])
   const [visible, setVisible] = useState(false)
   const [disable, setDisable] = useState(true)
   const [impactPrice, setImpactPrice] = useState('0')
@@ -33,24 +34,42 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   const [loading, setLoading] = useState(false)
   const dispatch = useDispatch()
   const { getDecimals } = useMint()
-
   const { decimalizeMintAmount, undecimalizeMintAmount } = useOracles()
+  // const [visible, setVisible] = useState(false)
+  // const [loading, setLoading] = useState(false)
+  // const [disable, setDisable] = useState(true)
+  // const dispatch = useDispatch()
+  // const { decimalizeMintAmount } = useOracles()
 
   useEffect(() => {
-    const initialData: DepositInfo[] = []
-    poolData.mints.map((value) => {
-      initialData.push({ address: value.toBase58(), amount: '' })
-      return null
+    const initialData: DepositInfo[] = poolData.mints.map((value) => {
+      return { address: value.toBase58(), amount: '' }
     })
-    dispatch(setDepositState({ poolAddress, depositInfo: initialData }))
+    setDeposits(initialData)
   }, [dispatch, poolAddress, poolData.mints])
 
   useEffect(() => {
-    for (let i = 0; i < depositInfo.length; i++) {
-      if (Number(depositInfo[i].amount) !== 0) return setDisable(false)
+    for (let i = 0; i < deposits.length; i++) {
+      if (Number(deposits[i].amount) !== 0) return setDisable(false)
     }
     setDisable(true)
-  }, [depositInfo])
+  }, [deposits])
+
+  // useEffect(() => {
+  //   const initialData: DepositInfo[] = []
+  //   poolData.mints.map((value) => {
+  //     initialData.push({ address: value.toBase58(), amount: '' })
+  //     return null
+  //   })
+  //   dispatch(setDepositState({ poolAddress, depositInfo: initialData }))
+  // }, [dispatch, poolAddress, poolData.mints])
+
+  // useEffect(() => {
+  //   for (let i = 0; i < depositInfo.length; i++) {
+  //     if (Number(depositInfo[i].amount) !== 0) return setDisable(false)
+  //   }
+  //   setDisable(true)
+  // }, [depositInfo])
 
   useEffect(() => {
     ;(async () => {
@@ -145,24 +164,20 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   ])
 
   const onChange = (mint: string, value: string) => {
-    const depositeInfoClone = depositInfo.map((info, idx) => {
-      if (info.address === mint) return { address: info.address, amount: value }
+    const depositeInfoClone = deposits.map((info) => {
+      if (info.address !== mint) return info
 
-      return info
+      return { address: info?.address, amount: value }
     })
 
-    dispatch(
-      setDepositState({
-        depositInfo: depositeInfoClone,
-      }),
-    )
+    setDeposits(depositeInfoClone)
   }
 
   const onSubmit = async () => {
     setLoading(true)
     try {
       const amountsIn = await Promise.all(
-        depositInfo.map(
+        deposits.map(
           async (value) =>
             await decimalizeMintAmount(value.amount, value.address),
         ),
@@ -171,6 +186,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
         poolAddress,
         amountsIn,
       )
+
       notifySuccess('Deposit', txId)
     } catch (error) {
       notifyError(error)
@@ -215,7 +231,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
                   <Col span={24} key={mint.toBase58()}>
                     <MintInput
                       selectedMint={mintAddress}
-                      amount={String(depositInfo[index]?.amount)}
+                      amount={String(deposits[index]?.amount)}
                       onChangeAmount={(amount) => onChange(mintAddress, amount)}
                       mintLabel={
                         <Fragment>

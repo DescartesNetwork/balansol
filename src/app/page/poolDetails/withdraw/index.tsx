@@ -57,7 +57,7 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
                       ? 'selected'
                       : ''
                     return (
-                      <Col>
+                      <Col key={mintAddress}>
                         <Button
                           className={`btn-toke-name ${selected}`}
                           onClick={() => setSelectedMints([mintAddress])}

@@ -52,3 +52,9 @@ export enum PriceImpact {
   GoodImpact = 0.01,
   AcceptableImpact = 0.05,
 }
+
+// Deposit types
+export type DepositInfo = {
+  amount: string
+  address: string
+}
