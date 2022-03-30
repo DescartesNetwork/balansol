@@ -1,3 +1,5 @@
+import { BN, web3 } from '@project-serum/anchor'
+
 export enum PoolTabs {
   Sentre = 'sentre-pools',
   Deposited = 'deposited-pools',
@@ -57,4 +59,18 @@ export enum PriceImpact {
 export type DepositInfo = {
   amount: string
   address: string
+}
+
+export type PoolPairData = {
+  balanceIn: BN
+  balanceOut: BN
+  weightIn: number
+  decimalIn: number
+  swapFee: BN
+}
+
+export type MintInfo = {
+  reserve: BN
+  normalizedWeight: number
+  treasury: web3.PublicKey
 }

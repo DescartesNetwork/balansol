@@ -34,11 +34,6 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   const dispatch = useDispatch()
   const { getDecimals } = useMint()
   const { decimalizeMintAmount, undecimalizeMintAmount } = useOracles()
-  // const [visible, setVisible] = useState(false)
-  // const [loading, setLoading] = useState(false)
-  // const [disable, setDisable] = useState(true)
-  // const dispatch = useDispatch()
-  // const { decimalizeMintAmount } = useOracles()
 
   useEffect(() => {
     const initialData: DepositInfo[] = poolData.mints.map((value) => {
@@ -64,14 +59,10 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
 
       if (noneZeroAmouts.length === 0) return setLpOutTotal(0)
 
-      const mintInfos = []
-
       for (let i = 0; i < noneZeroAmouts.length; i++) {
         const mintInfo = getMintInfo(poolData, noneZeroAmouts[i].address)
         if (!mintInfo?.reserve || !mintInfo.normalizedWeight)
           return setLpOutTotal(0)
-
-        mintInfos.push(mintInfo.reserve)
       }
 
       const poolReverses = await Promise.all(
@@ -136,6 +127,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
         (1 - Number(LpOut) / Number(LpOutZeroPriceImpact)) *
         100
       ).toFixed(2)
+
       setImpactPrice(newImpactPrice)
     })()
   }, [

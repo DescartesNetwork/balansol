@@ -1,22 +1,9 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback } from 'react'
 import { useSelector } from 'react-redux'
 
-import {
-  calcInGivenOutSwap,
-  calcOutGivenInSwap,
-  getMintInfo,
-} from 'app/helper/oracles'
+import { calcInGivenOutSwap, getMintInfo } from 'app/helper/oracles'
 import { AppState } from 'app/model'
 import { useOracles } from './useOracles'
-import { useRouteSwap } from './useRouteSwap'
-
-type Route = {
-  pool: string
-  bidMint: string
-  bidAmount: string
-  askMint: string
-  askAmount: string
-}
 
 export const useReversedSwap = () => {
   const {

@@ -5,23 +5,10 @@ import {
   GENERAL_DECIMALS,
   GENERAL_NORMALIZED_NUMBER,
   LPTDECIMALS,
+  PoolPairData,
 } from 'app/constant'
 import { PRECISION } from 'app/constant/index'
 import util from '@senswap/sen-js/dist/utils'
-
-export type PoolPairData = {
-  balanceIn: BN
-  balanceOut: BN
-  weightIn: number
-  decimalIn: number
-  swapFee: BN
-}
-
-export type MintInfo = {
-  reserve: BN
-  normalizedWeight: number
-  treasury: web3.PublicKey
-}
 
 export const findMintIndex = (poolData: PoolData, mint: Address): number => {
   return poolData.mints
@@ -234,19 +221,20 @@ export const calcBptOutGivenExactTokensIn = (
   const numTotalSupply = Number(
     util.undecimalize(BigInt(totalSupply.toString()), LPTDECIMALS),
   )
+  const numBalanceIns = balanceIns.map((value, idx) =>
+    Number(util.undecimalize(BigInt(value.toString()), decimalIns[idx])),
+  )
+  const numAmountIns = tokenAmountIns.map((value, idx) =>
+    Number(util.undecimalize(BigInt(value.toString()), decimalIns[idx])),
+  )
   const balanceRatiosWithFee = new Array(tokenAmountIns.length)
 
   let invariantRatioWithFees = 0
   for (let i = 0; i < tokenAmountIns.length; i++) {
-    const balanceIn = Number(
-      util.undecimalize(BigInt(balanceIns[i].toString()), decimalIns[i]),
-    )
-    const amountIn = Number(
-      util.undecimalize(BigInt(tokenAmountIns[i].toString()), decimalIns[i]),
-    )
     const nomalizedWeight = calcNormalizedWeight(weightIns, weightIns[i])
 
-    balanceRatiosWithFee[i] = (balanceIn + amountIn) / balanceIn
+    balanceRatiosWithFee[i] =
+      (numBalanceIns[i] + numAmountIns[i]) / numBalanceIns[i]
 
     invariantRatioWithFees += balanceRatiosWithFee[i] * nomalizedWeight
   }
@@ -254,20 +242,15 @@ export const calcBptOutGivenExactTokensIn = (
   let invariantRatio = 1
 
   for (let i = 0; i < tokenAmountIns.length; i++) {
-    const balanceIn = Number(
-      util.undecimalize(BigInt(balanceIns[i].toString()), decimalIns[i]),
-    )
-    const amountIn = Number(
-      util.undecimalize(BigInt(tokenAmountIns[i].toString()), decimalIns[i]),
-    )
     const nomalizedWeight = calcNormalizedWeight(weightIns, weightIns[i])
-    let amountInWithoutFee = amountIn
+    let amountInWithoutFee = numAmountIns[i]
     if (balanceRatiosWithFee[i] > invariantRatioWithFees) {
-      let nonTaxableAmount = balanceIn * (invariantRatioWithFees - 1)
-      let taxableAmount = amountIn - nonTaxableAmount
+      let nonTaxableAmount = numBalanceIns[i] * (invariantRatioWithFees - 1)
+      let taxableAmount = numAmountIns[i] - nonTaxableAmount
       amountInWithoutFee = nonTaxableAmount + taxableAmount * (1 - fee)
     }
-    let balanceRatio = (balanceIn + amountInWithoutFee) / balanceIn
+    let balanceRatio =
+      (numBalanceIns[i] + amountInWithoutFee) / numBalanceIns[i]
     invariantRatio = invariantRatio * balanceRatio ** nomalizedWeight
   }
   if (invariantRatio > 1) return numTotalSupply * (invariantRatio - 1)
