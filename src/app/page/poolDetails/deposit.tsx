@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 import { Button, Col, Modal, Row, Typography } from 'antd'
 import MintInput from 'app/components/mintInput'
@@ -10,58 +10,43 @@ import { notifyError, notifySuccess } from 'app/helper'
 import { AppState } from 'app/model'
 import { useOracles } from 'app/hooks/useOracles'
 import { calcNormalizedWeight } from 'app/helper/oracles'
-import { DepositInfo } from 'app/constant'
 
 const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   const {
     pools: { [poolAddress]: poolData },
   } = useSelector((state: AppState) => state)
 
-  const [deposits, setDeposits] = useState<DepositInfo[]>([])
+  const [amounts, setAmounts] = useState<string[]>([])
   const [visible, setVisible] = useState(false)
   const [loading, setLoading] = useState(false)
   const [disable, setDisable] = useState(true)
-  const dispatch = useDispatch()
   const { decimalizeMintAmount } = useOracles()
 
+  // TODO: check balance
   useEffect(() => {
-    const initialData: DepositInfo[] = poolData.mints.map((value) => {
-      return { address: value.toBase58(), amount: '' }
-    })
-    setDeposits(initialData)
-  }, [dispatch, poolAddress, poolData.mints])
-
-  useEffect(() => {
-    for (let i = 0; i < deposits.length; i++) {
-      if (Number(deposits[i].amount) !== 0) return setDisable(false)
-    }
+    for (let i = 0; i < amounts.length; i++)
+      if (!!Number(amounts[i])) return setDisable(false)
     setDisable(true)
-  }, [deposits])
+  }, [amounts])
 
-  const onChange = (mint: string, value: string) => {
-    const depositeInfoClone = deposits.map((info) => {
-      if (info.address !== mint) return info
-
-      return { address: info?.address, amount: value }
-    })
-
-    setDeposits(depositeInfoClone)
+  const onChange = (idx: number, value: string) => {
+    let newAmounts = [...amounts]
+    newAmounts[idx] = value
+    setAmounts(newAmounts)
   }
 
   const onSubmit = async () => {
     setLoading(true)
     try {
       const amountsIn = await Promise.all(
-        deposits.map(
-          async (value) =>
-            await decimalizeMintAmount(value.amount, value.address),
+        poolData.mints.map(
+          async (mint, idx) => await decimalizeMintAmount(amounts[idx], mint),
         ),
       )
       const { txId } = await window.balansol.addLiquidity(
         poolAddress,
         amountsIn,
       )
-
       notifySuccess('Deposit', txId)
     } catch (error) {
       notifyError(error)
@@ -100,8 +85,8 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
                   <Col span={24} key={mint.toBase58()}>
                     <MintInput
                       selectedMint={mintAddress}
-                      amount={String(deposits[index]?.amount)}
-                      onChangeAmount={(amount) => onChange(mintAddress, amount)}
+                      amount={amounts[index]}
+                      onChangeAmount={(amount) => onChange(index, amount)}
                       mintLabel={
                         <Fragment>
                           <Typography.Text type="secondary">
