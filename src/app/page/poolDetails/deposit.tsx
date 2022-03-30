@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { BN } from '@project-serum/anchor'
 
 import { Button, Col, Modal, Row, Typography } from 'antd'
 import MintInput from 'app/components/mintInput'
@@ -17,8 +18,7 @@ import {
   getMintInfo,
 } from 'app/helper/oracles'
 import { useOracles } from 'app/hooks/useOracles'
-import { GENERAL_NORMALIZED_NUMBER } from 'app/constant'
-import { BN } from '@project-serum/anchor'
+import { useMint } from '@senhub/providers'
 
 const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   const {
@@ -32,6 +32,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   const [lpOutTotal, setLpOutTotal] = useState(0)
   const [loading, setLoading] = useState(false)
   const dispatch = useDispatch()
+  const { getDecimals } = useMint()
 
   const { decimalizeMintAmount, undecimalizeMintAmount } = useOracles()
 
@@ -65,9 +66,9 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
 
       for (let i = 0; i < noneZeroAmouts.length; i++) {
         const mintInfo = getMintInfo(poolData, noneZeroAmouts[i].address)
-        if (!mintInfo?.reserve || !mintInfo.normalizedWeight) {
+        if (!mintInfo?.reserve || !mintInfo.normalizedWeight)
           return setLpOutTotal(0)
-        }
+
         mintInfos.push(mintInfo.reserve)
       }
 
@@ -98,54 +99,55 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
       )
 
       let amountIns: BN[] = []
-      let balanceIns: BN[] = []
-      let weightIns: BN[] = []
+      let decimalIns: number[] = []
 
       for (let i = 0; i < depositInfo.length; i++) {
-        console.log(poolData.reserves[i].toNumber(), 'poolData.reserves[i]')
-
+        const decimalIn = await getDecimals(depositInfo[i].address)
         const amountBn = await decimalizeMintAmount(
           depositInfo[i].amount,
           depositInfo[i].address,
         )
-        balanceIns.push(poolData.reserves[i])
-        weightIns.push(poolData.weights[i])
-
         amountIns.push(amountBn)
+        decimalIns.push(decimalIn)
       }
 
-      // let LpOut = calcBptOutGivenExactTokensIn(
-      //   amountIns,
-      //   balanceIns,
-      //   weightIns,
-      //   totalSuply,
-      //   poolData.fee.toNumber() / GENERAL_NORMALIZED_NUMBER,
-      // )
+      let LpOut = calcBptOutGivenExactTokensIn(
+        amountIns,
+        poolData.reserves,
+        poolData.weights,
+        totalSupplyBN,
+        decimalIns,
+        poolData.fee,
+      ).toFixed(9)
 
       const LpOutZeroPriceImpact = caclLpForTokensZeroPriceImpact(
         amountIns,
-        balanceIns,
-        weightIns,
+        poolData.reserves,
+        poolData.weights,
         totalSupplyBN,
-        poolData.fee,
-      )
+        decimalIns,
+      ).toFixed(9)
 
-      // setLpOutTotal(LpOut)
-      // Need to double check again later
-      console.log(LpOutZeroPriceImpact.toNumber(), 'balanceIns')
-      // if (LpOut > LpOutZeroPriceImpact) {
-      //   return setImpactPrice('0')
-      // }
-      // const impactPrice = ((1 - LpOut / LpOutZeroPriceImpact) * 100).toFixed(2)
-      setImpactPrice(impactPrice)
+      setLpOutTotal(Number(LpOut))
+
+      const newImpactPrice = (
+        (1 - Number(LpOut) / Number(LpOutZeroPriceImpact)) *
+        100
+      ).toFixed(2)
+      setImpactPrice(newImpactPrice)
     })()
-  }, [decimalizeMintAmount, depositInfo, poolData, undecimalizeMintAmount])
+  }, [
+    decimalizeMintAmount,
+    depositInfo,
+    getDecimals,
+    poolData,
+    undecimalizeMintAmount,
+  ])
 
   const onChange = (mint: string, value: string) => {
     const depositeInfoClone = depositInfo.map((info, idx) => {
-      if (info.address === mint) {
-        return { address: info.address, amount: value }
-      }
+      if (info.address === mint) return { address: info.address, amount: value }
+
       return info
     })
 
@@ -179,10 +181,8 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
 
   const lpOutDisplay = useMemo(() => {
     const clonedLp = lpOutTotal.toFixed(4)
-    console.log(clonedLp, 'clonedLp')
-    if (Number(clonedLp) < 0.0001) {
-      return 'LP < 0.0001'
-    }
+    if (lpOutTotal > 0 && lpOutTotal < 0.0001) return 'LP < 0.0001'
+
     return clonedLp
   }, [lpOutTotal])
 

@@ -45,6 +45,7 @@ export const allowedKeyCode = [
 
 export const GENERAL_NORMALIZED_NUMBER = 10 ** 9
 export const LPTDECIMALS = 9
+export const GENERAL_DECIMALS = 9
 export const PRECISION = 1000000000
 
 export enum PriceImpact {

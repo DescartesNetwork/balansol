@@ -1,13 +1,19 @@
 import { Address, BN, web3 } from '@project-serum/anchor'
 import { PoolData } from '@senswap/balancer'
 
-import { GENERAL_NORMALIZED_NUMBER } from 'app/constant'
+import {
+  GENERAL_DECIMALS,
+  GENERAL_NORMALIZED_NUMBER,
+  LPTDECIMALS,
+} from 'app/constant'
 import { PRECISION } from 'app/constant/index'
+import util from '@senswap/sen-js/dist/utils'
 
 export type PoolPairData = {
   balanceIn: BN
   balanceOut: BN
   weightIn: number
+  decimalIn: number
   swapFee: BN
 }
 
@@ -63,41 +69,6 @@ export const calcLpOutGivenIn = (
   totalSupply: number,
 ) => {
   return (amountIn / balanceIn - 1) * totalSupply - totalSupply
-}
-
-export const calcBptOutGivenExactTokensIn = (
-  tokenAmountIns: number[],
-  balanceIns: number[],
-  weightIns: number[],
-  totalSupply: number,
-  swapFee: number,
-) => {
-  const balanceRatiosWithFee = new Array(tokenAmountIns.length)
-
-  let invariantRatioWithFees = 0
-  for (let i = 0; i < tokenAmountIns.length; i++) {
-    balanceRatiosWithFee[i] =
-      (balanceIns[i] + tokenAmountIns[i]) / balanceIns[i]
-    invariantRatioWithFees =
-      invariantRatioWithFees + balanceRatiosWithFee[i] * weightIns[i]
-  }
-
-  let invariantRatio = 1
-
-  for (let i = 0; i < tokenAmountIns.length; i++) {
-    let amountInWithoutFee = tokenAmountIns[i]
-
-    if (balanceRatiosWithFee[i] > invariantRatioWithFees) {
-      let nonTaxableAmount = balanceIns[i] * (invariantRatioWithFees - 1)
-      let taxableAmount = tokenAmountIns[i] - nonTaxableAmount
-      amountInWithoutFee = nonTaxableAmount + taxableAmount * (1 - swapFee)
-    }
-
-    let balanceRatio = (balanceIns[i] + amountInWithoutFee) / balanceIns[i]
-    invariantRatio = invariantRatio * balanceRatio ** weightIns[i]
-  }
-  if (invariantRatio > 1) return totalSupply * (invariantRatio - 1)
-  return 0
 }
 
 export const calcOptimizedDepositedAmount = (
@@ -163,8 +134,12 @@ export const calcNormalizedWeight = (
   weights: BN[],
   weightToken: BN,
 ): number => {
-  const numWeightsIn = weights.map((value) => value?.toNumber())
-  const numWeightToken = weightToken?.toNumber()
+  const numWeightsIn = weights.map((value) =>
+    Number(util.undecimalize(BigInt(value.toString()), GENERAL_DECIMALS)),
+  )
+  const numWeightToken = Number(
+    util.undecimalize(BigInt(weightToken.toString()), GENERAL_DECIMALS),
+  )
   const weightSum = numWeightsIn.reduce((pre, curr) => pre + curr, 0)
   return numWeightToken / weightSum
 }
@@ -216,12 +191,23 @@ export const spotPriceAfterSwapTokenInForExactBPTOut = (
   amount: BN,
   poolPairData: PoolPairData,
 ) => {
-  const Bo = poolPairData.balanceOut.toNumber() / 10 ** 9
-  const Ao = amount.toNumber() / 10 ** 9
+  const Bo = Number(
+    util.undecimalize(BigInt(poolPairData.balanceOut.toString()), LPTDECIMALS),
+  )
+  const Ao = Number(util.undecimalize(BigInt(amount.toString()), LPTDECIMALS))
   const wi = poolPairData.weightIn
-  const Bi = poolPairData.balanceIn.toNumber() / 10 ** 9
-  const f = poolPairData.swapFee.toNumber() / 10 ** 9
-  console.log(Bo, Ao, wi, Bi, f, 'stat in cal spot price')
+  const Bi = Number(
+    util.undecimalize(
+      BigInt(poolPairData.balanceIn.toString()),
+      poolPairData.decimalIn,
+    ),
+  )
+  const f = Number(
+    util.undecimalize(
+      BigInt(poolPairData.swapFee.toString()),
+      GENERAL_DECIMALS,
+    ),
+  )
 
   return (
     (Math.pow((Ao + Bo) / Bo, 1 / wi) * Bi) /
@@ -234,28 +220,85 @@ export const caclLpForTokensZeroPriceImpact = (
   balanceIns: BN[],
   weightIns: BN[],
   totalSupply: BN,
-  swapFee: BN,
-): BN => {
-  const amountLpOut = tokenAmountIns.reduce((totalBptOut, amountIn, i) => {
+  decimalIns: number[],
+) => {
+  const numTokenAmountIns = tokenAmountIns.map((value, idx) => {
+    return Number(util.undecimalize(BigInt(value.toString()), decimalIns[idx]))
+  })
+
+  const amountLpOut = numTokenAmountIns.reduce((totalBptOut, amountIn, i) => {
     // Calculate amount of BPT gained per token in
-    console.log(weightIns[i].toNumber(), 'amount in ')
     const nomalizedWeight = calcNormalizedWeight(weightIns, weightIns[i])
     const poolPairData: PoolPairData = {
       balanceIn: balanceIns[i],
       balanceOut: totalSupply,
       weightIn: nomalizedWeight,
-      swapFee: swapFee,
+      decimalIn: decimalIns[i],
+      swapFee: new BN(0),
     }
     const LpPrice = spotPriceAfterSwapTokenInForExactBPTOut(
       new BN(0),
       poolPairData,
     )
-    console.log(LpPrice, 'Lp pricess ')
     // Multiply by amountIn to get contribution to total bpt out
-    const LpOut = amountIn.toNumber() / LpPrice
+    const LpOut = amountIn / LpPrice
     return totalBptOut + LpOut
   }, 0)
-  return new BN(amountLpOut)
+  return amountLpOut
+}
+
+export const calcBptOutGivenExactTokensIn = (
+  tokenAmountIns: BN[],
+  balanceIns: BN[],
+  weightIns: BN[],
+  totalSupply: BN,
+  decimalIns: number[],
+  swapFee: BN,
+) => {
+  const fee = Number(
+    util.undecimalize(BigInt(swapFee.toString()), GENERAL_DECIMALS),
+  )
+  const numTotalSupply = Number(
+    util.undecimalize(BigInt(totalSupply.toString()), LPTDECIMALS),
+  )
+  const balanceRatiosWithFee = new Array(tokenAmountIns.length)
+
+  let invariantRatioWithFees = 0
+  for (let i = 0; i < tokenAmountIns.length; i++) {
+    const balanceIn = Number(
+      util.undecimalize(BigInt(balanceIns[i].toString()), decimalIns[i]),
+    )
+    const amountIn = Number(
+      util.undecimalize(BigInt(tokenAmountIns[i].toString()), decimalIns[i]),
+    )
+    const nomalizedWeight = calcNormalizedWeight(weightIns, weightIns[i])
+
+    balanceRatiosWithFee[i] = (balanceIn + amountIn) / balanceIn
+
+    invariantRatioWithFees += balanceRatiosWithFee[i] * nomalizedWeight
+  }
+
+  let invariantRatio = 1
+
+  for (let i = 0; i < tokenAmountIns.length; i++) {
+    const balanceIn = Number(
+      util.undecimalize(BigInt(balanceIns[i].toString()), decimalIns[i]),
+    )
+    const amountIn = Number(
+      util.undecimalize(BigInt(tokenAmountIns[i].toString()), decimalIns[i]),
+    )
+    const nomalizedWeight = calcNormalizedWeight(weightIns, weightIns[i])
+    let amountInWithoutFee = amountIn
+    if (balanceRatiosWithFee[i] > invariantRatioWithFees) {
+      let nonTaxableAmount = balanceIn * (invariantRatioWithFees - 1)
+      let taxableAmount = amountIn - nonTaxableAmount
+      amountInWithoutFee = nonTaxableAmount + taxableAmount * (1 - fee)
+    }
+    let balanceRatio = (balanceIn + amountInWithoutFee) / balanceIn
+    invariantRatio = invariantRatio * balanceRatio ** nomalizedWeight
+  }
+  if (invariantRatio > 1) return numTotalSupply * (invariantRatio - 1)
+  return 0
 }
 
 export const calcMintReceiveRemoveSingleSide = (
