@@ -160,36 +160,6 @@ export const calcSpotPrice = (
   return numBalanceIn / weightIn / (numBalanceOut / weightOut)
 }
 
-export const calcSpotPrice2 = (
-  balanceIn: number,
-  weightIn: number,
-  balanceOut: number,
-  weightOut: number,
-): number => {
-  const numBalanceIn = balanceIn
-
-  const numBalanceOut = balanceOut
-
-  return numBalanceIn / weightIn / (numBalanceOut / weightOut)
-}
-
-export const calcSpotPriceDueFee = (
-  balanceIn: number,
-  weightIn: number,
-  balanceOut: number,
-  weightOut: number,
-  fee: number,
-) => {
-  const normalSpotPrice = calcSpotPrice2(
-    balanceIn,
-    weightIn,
-    balanceOut,
-    weightOut,
-  )
-  const BNFee = fee / GENERAL_NORMALIZED_NUMBER
-  return normalSpotPrice / (1 - (BNFee - BNFee * weightIn))
-}
-
 export const spotPriceAfterSwapTokenInForExactBPTOut = (
   amount: BN,
   poolPairData: PoolPairData,

@@ -23,7 +23,6 @@ import { DepositInfo } from 'app/constant'
 const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   const {
     pools: { [poolAddress]: poolData },
-    deposits: { depositInfo },
   } = useSelector((state: AppState) => state)
 
   const [deposits, setDeposits] = useState<DepositInfo[]>([])
@@ -55,25 +54,9 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
     setDisable(true)
   }, [deposits])
 
-  // useEffect(() => {
-  //   const initialData: DepositInfo[] = []
-  //   poolData.mints.map((value) => {
-  //     initialData.push({ address: value.toBase58(), amount: '' })
-  //     return null
-  //   })
-  //   dispatch(setDepositState({ poolAddress, depositInfo: initialData }))
-  // }, [dispatch, poolAddress, poolData.mints])
-
-  // useEffect(() => {
-  //   for (let i = 0; i < depositInfo.length; i++) {
-  //     if (Number(depositInfo[i].amount) !== 0) return setDisable(false)
-  //   }
-  //   setDisable(true)
-  // }, [depositInfo])
-
   useEffect(() => {
     ;(async () => {
-      const noneZeroAmouts = depositInfo.filter((value) => {
+      const noneZeroAmouts = deposits.filter((value) => {
         return !!value.amount && Number(value.amount) !== 0
       })
 
@@ -120,11 +103,11 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
       let amountIns: BN[] = []
       let decimalIns: number[] = []
 
-      for (let i = 0; i < depositInfo.length; i++) {
-        const decimalIn = await getDecimals(depositInfo[i].address)
+      for (let i = 0; i < deposits.length; i++) {
+        const decimalIn = await getDecimals(deposits[i].address)
         const amountBn = await decimalizeMintAmount(
-          depositInfo[i].amount,
-          depositInfo[i].address,
+          deposits[i].amount,
+          deposits[i].address,
         )
         amountIns.push(amountBn)
         decimalIns.push(decimalIn)
@@ -157,7 +140,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
     })()
   }, [
     decimalizeMintAmount,
-    depositInfo,
+    deposits,
     getDecimals,
     poolData,
     undecimalizeMintAmount,
