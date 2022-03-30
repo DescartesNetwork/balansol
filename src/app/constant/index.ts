@@ -57,7 +57,3 @@ export type DepositInfo = {
   amount: string
   address: string
 }
-export type DepositState = {
-  poolAddress: string
-  depositInfo: DepositInfo[]
-}
