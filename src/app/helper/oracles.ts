@@ -1,6 +1,5 @@
 import { Address, BN, web3 } from '@project-serum/anchor'
 import { PoolData } from '@senswap/balancer'
-
 import {
   GENERAL_DECIMALS,
   GENERAL_NORMALIZED_NUMBER,
@@ -324,10 +323,8 @@ export const calcDepositPriceImpact = (
     decimalIns,
   ).toFixed(9)
 
-  const newImpactPrice = (
-    (1 - Number(newLpOut) / Number(newLpOutZeroPriceImpact)) *
-    100
-  ).toFixed(2)
+  const newImpactPrice =
+    (1 - Number(newLpOut) / Number(newLpOutZeroPriceImpact)) * 100
 
   return { lpOut: Number(newLpOut), impactPrice: newImpactPrice }
 }

@@ -2,7 +2,6 @@ import { BN } from '@project-serum/anchor'
 import { PoolData } from '@senswap/balancer'
 import { utils } from '@senswap/sen-js'
 import { DepositInfo } from 'app/constant'
-
 import { explorer } from 'shared/util'
 import { getMintInfo } from './oracles'
 
@@ -37,7 +36,7 @@ export const checkDepositInfo = (
 
   if (noneZeroAmouts.length === 0) return false
 
-  for (let i = 0; i < noneZeroAmouts.length; i++) {
+  for (let i in noneZeroAmouts) {
     const mintInfo = getMintInfo(poolData, noneZeroAmouts[i].address)
     if (!mintInfo?.reserve || !mintInfo.normalizedWeight) return false
   }

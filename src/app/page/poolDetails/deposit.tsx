@@ -17,6 +17,7 @@ import {
 import { useOracles } from 'app/hooks/useOracles'
 import { useMint } from '@senhub/providers'
 import { DepositInfo } from 'app/constant'
+import { numeric } from 'shared/util'
 
 const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   const {
@@ -26,7 +27,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   const [deposits, setDeposits] = useState<DepositInfo[]>([])
   const [visible, setVisible] = useState(false)
   const [disable, setDisable] = useState(true)
-  const [impactPrice, setImpactPrice] = useState('0')
+  const [impactPrice, setImpactPrice] = useState(0)
   const [lpOutTotal, setLpOutTotal] = useState(0)
   const [loading, setLoading] = useState(false)
   const dispatch = useDispatch()
@@ -48,7 +49,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   }, [deposits])
 
   const estimateImpactPriceAndLP = useCallback(async () => {
-    setImpactPrice('0')
+    setImpactPrice(0)
     if (!checkDepositInfo(deposits, poolData)) return setLpOutTotal(0)
 
     let amountIns: BN[] = []
@@ -123,7 +124,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   }
 
   const lpOutDisplay = useMemo(() => {
-    const clonedLp = lpOutTotal.toFixed(4)
+    const clonedLp = numeric(lpOutTotal).format('0,0.[00]')
     if (lpOutTotal > 0 && lpOutTotal < 0.0001) return 'LP < 0.0001'
 
     return clonedLp
@@ -186,7 +187,9 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
                     </Typography.Text>
                   </Col>
                   <Col>
-                    <span style={{ color: '#03A326' }}>{impactPrice} %</span>
+                    <span style={{ color: '#03A326' }}>
+                      {impactPrice.toFixed(2)} %
+                    </span>
                   </Col>
                 </Row>
               </Col>

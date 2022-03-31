@@ -2,9 +2,9 @@ import React from 'react'
 
 import { Button, Col, Row } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
+import NumericInput from 'shared/antd/numericInput'
 
 import { TokenInfo } from './index'
-import NumericInput from 'shared/antd/numericInput'
 
 export default function WeightControl({
   tokenInfo,
