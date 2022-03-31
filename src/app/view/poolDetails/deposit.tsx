@@ -7,7 +7,7 @@ import MintInput from 'app/components/mintInput'
 import IonIcon from 'shared/antd/ionicon'
 import { MintSymbol } from 'shared/antd/mint'
 
-import { notifyError, notifySuccess } from 'app/helper'
+import { checkValidAmounts, notifyError, notifySuccess } from 'app/helper'
 import { AppState } from 'app/model'
 import {
   calcDepositPriceImpact,
@@ -24,7 +24,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   } = useSelector((state: AppState) => state)
 
   const [amounts, setAmounts] = useState<string[]>(
-    new Array(poolData.mints.length),
+    new Array(poolData.mints.length).fill('0'),
   )
   const [visible, setVisible] = useState(false)
   const [disable, setDisable] = useState(true)
@@ -43,7 +43,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
 
   const estimateImpactPriceAndLP = useCallback(async () => {
     setImpactPrice(0)
-    if (amounts.length === 0) return setLpOutTotal(0)
+    if (!checkValidAmounts(amounts)) return setLpOutTotal(0)
 
     let amountIns: BN[] = []
     let decimalIns: number[] = []

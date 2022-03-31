@@ -55,6 +55,7 @@ export const calcTotalSupplyPool = (
   weights: BN[],
   decimals: number[],
 ): number => {
+  if (decimals.length === 0) return 0
   return valueFunction(reserves, weights, decimals) * reserves.length
 }
 
@@ -229,6 +230,7 @@ export const calcBptOutGivenExactTokensIn = (
   const numBalanceIns = balanceIns.map((value, idx) =>
     Number(util.undecimalize(BigInt(value.toString()), decimalIns[idx])),
   )
+  console.log(numBalanceIns, 'numbalance in')
   const numAmountIns = tokenAmountIns.map((value, idx) =>
     Number(util.undecimalize(BigInt(value.toString()), decimalIns[idx])),
   )
@@ -306,6 +308,7 @@ export const calcDepositPriceImpact = (
   decimalIns: number[],
   swapFee: BN,
 ) => {
+  if (decimalIns.length === 0) return { lpOut: 0, impactPrice: 0 }
   let newLpOut = calcBptOutGivenExactTokensIn(
     amountIns,
     balanceIns,
