@@ -1,10 +1,8 @@
-import React from 'react'
-
-import MintPool from 'app/components/mintPool'
 import { Button, Card, Col, Row, Space, Typography } from 'antd'
+
 import { PoolAvatar } from 'app/components/pools/poolAvatar'
 import { useAppRouter } from 'app/hooks/useAppRoute'
-
+import PercentGroupMints from './percentGroupMints'
 import WalletAddress from './walletAddress'
 
 export default function DetailsCard({ poolAddress }: { poolAddress: string }) {
@@ -22,9 +20,7 @@ export default function DetailsCard({ poolAddress }: { poolAddress: string }) {
       </Row>
       <Row gutter={[0, 24]}>
         <Col span={24}>
-          <Space>
-            <MintPool address="" />
-          </Space>
+          <PercentGroupMints poolAddress={poolAddress} />
         </Col>
         <Col span={24}>
           <Row align="bottom">

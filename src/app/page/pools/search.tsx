@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import { Button, Card, Col, Input, Row, Select, Space } from 'antd'
+import { Button, Col, Input, Row, Select } from 'antd'
 import { SearchOutlined } from '@ant-design/icons'
 
 import './search.less'
