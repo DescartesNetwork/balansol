@@ -9,7 +9,6 @@ import {
 import { AppState } from 'app/model'
 import { useOracles } from './useOracles'
 import { BN } from '@project-serum/anchor'
-import { GENERAL_NORMALIZED_NUMBER } from 'app/constant'
 
 type Route = {
   pool: string

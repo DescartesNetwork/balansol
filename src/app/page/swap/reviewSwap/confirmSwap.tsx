@@ -35,7 +35,6 @@ const ConfirmSwap = ({
   } = useSelector((state: AppState) => state)
 
   const [checked, setChecked] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
   const [isDisplayWarning, setIsDisplayWarning] = useState(false)
   const { askAmount, priceImpact, pool } = useRouteSwap()
   const { decimalizeMintAmount } = useOracles()
@@ -128,8 +127,8 @@ const ConfirmSwap = ({
           <Button
             type="primary"
             onClick={onSwap}
-            disabled={isLoading}
-            loading={isLoading}
+            disabled={false}
+            loading={false}
             block
           >
             Swap

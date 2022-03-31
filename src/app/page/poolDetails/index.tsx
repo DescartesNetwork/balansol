@@ -70,7 +70,7 @@ const PoolDetails = () => {
                   title="TVL"
                   content={
                     <Typography.Title level={3}>
-                      $ {numeric(TVL).format('0,0.[00]')}
+                      $ {numeric(TVL).format('0,0.[00]a')}
                     </Typography.Title>
                   }
                   styles={{
