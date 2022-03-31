@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+
 import { useMintPrice } from './useMintPrice'
 import { useOracles } from './useOracles'
 
@@ -26,7 +27,7 @@ export const useTVL = (poolAddress: string) => {
       totalValueLocked += tokenPrice * Number(reserver)
     }
 
-    setTVL(Number(totalValueLocked))
+    setTVL(totalValueLocked)
   }, [getTokenPrice, poolData, undecimalizeMintAmount])
 
   useEffect(() => {
