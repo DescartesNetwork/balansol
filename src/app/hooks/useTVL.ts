@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { useMint } from '@senhub/providers'
 
 import { fetchCGK } from 'shared/util'
-import { useSelector } from 'react-redux'
 import { AppState } from 'app/model'
 import { useMintPrice } from './useMintPrice'
 import { useOracles } from './useOracles'
