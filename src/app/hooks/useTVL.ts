@@ -1,15 +1,14 @@
 import { useCallback, useEffect, useState } from 'react'
-import { useMint } from '@senhub/providers'
-
-import { fetchCGK } from 'shared/util'
 import { useSelector } from 'react-redux'
-import { AppState } from 'app/model'
+
 import { useMintPrice } from './useMintPrice'
 import { useOracles } from './useOracles'
 
+import { AppState } from 'app/model'
+
 export const useTVL = (poolAddress: string) => {
   const {
-    pools: { [poolAddress || '']: poolData },
+    pools: { [poolAddress]: poolData },
   } = useSelector((state: AppState) => state)
 
   const [TVL, setTVL] = useState(0)
@@ -17,18 +16,18 @@ export const useTVL = (poolAddress: string) => {
   const { undecimalizeMintAmount } = useOracles()
 
   const getTVL = useCallback(async () => {
-    if (!poolData) return
+    if (!poolData) return setTVL(0)
     let totalValueLocked = 0
-    for (let i = 0; i < poolData.reserves.length; i++) {
+    for (let i in poolData.reserves) {
       const tokenPrice = await getTokenPrice(poolData.mints[i].toBase58())
-      const numReserver = await undecimalizeMintAmount(
+      const reserver = await undecimalizeMintAmount(
         poolData.reserves[i],
         poolData.mints[i],
       )
-      totalValueLocked += tokenPrice * Number(numReserver)
+      totalValueLocked += tokenPrice * Number(reserver)
     }
 
-    setTVL(Number(totalValueLocked.toFixed(2)))
+    setTVL(Number(totalValueLocked))
   }, [getTokenPrice, poolData, undecimalizeMintAmount])
 
   useEffect(() => {

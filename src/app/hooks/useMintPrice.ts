@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
-import { useMint } from '@senhub/providers'
 
+import { useMint } from '@senhub/providers'
 import { fetchCGK } from 'shared/util'
 
 export const useMintPrice = () => {
@@ -13,8 +13,10 @@ export const useMintPrice = () => {
       if (!ticket) return 0
 
       const CGKTokenInfo = await fetchCGK(ticket)
+      const price = CGKTokenInfo.price
+      if (!price) return 0
 
-      return CGKTokenInfo?.price
+      return price
     },
     [tokenProvider],
   )

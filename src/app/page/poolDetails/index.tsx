@@ -1,4 +1,5 @@
 import { Fragment } from 'react'
+import { useSelector } from 'react-redux'
 
 import { Card, Col, Row, Space, Typography } from 'antd'
 import Deposit from './deposit'
@@ -10,21 +11,21 @@ import BarChart from './charts/barChart'
 import IonIcon from 'shared/antd/ionicon'
 
 import { useAppRouter } from 'app/hooks/useAppRoute'
-import { useSelector } from 'react-redux'
 import { AppState } from 'app/model'
 import { useTVL } from 'app/hooks/useTVL'
 import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
+
 import tvlBg from 'app/static/images/tvl.svg'
 import apyBg from 'app/static/images/apy.svg'
 import myContributeBg from 'app/static/images/my-contribution.svg'
 
 const PoolDetails = () => {
   const { getQuery } = useAppRouter()
-  const poolAddress = getQuery('pool')
+  const poolAddress = getQuery('pool') || ''
   const {
-    pools: { [poolAddress || '']: poolData },
+    pools: { [poolAddress]: poolData },
   } = useSelector((state: AppState) => state)
-  const TVL = useTVL(poolAddress || '')
+  const TVL = useTVL(poolAddress)
   const { balance } = useAccountBalanceByMintAddress(
     poolData.mintLpt.toBase58(),
   )
@@ -67,7 +68,9 @@ const PoolDetails = () => {
                 <CardPoolDetail
                   title="TVL"
                   content={
-                    <Typography.Title level={3}>$ {TVL}</Typography.Title>
+                    <Typography.Title level={3}>
+                      $ {TVL.toFixed(2)}
+                    </Typography.Title>
                   }
                   styles={{
                     background: `url(${tvlBg})`,
@@ -92,7 +95,9 @@ const PoolDetails = () => {
                   title="My Contribution"
                   content={
                     <Fragment>
-                      <Typography.Title level={3}>{balance}</Typography.Title>
+                      <Typography.Title level={3}>
+                        {balance.toFixed(2)}
+                      </Typography.Title>
                       <Typography.Text type="secondary"> LP</Typography.Text>
                     </Fragment>
                   }
