@@ -30,7 +30,9 @@ const PercentGroupMints = ({ poolAddress }: { poolAddress: string }) => {
           )
           return (
             <Fragment>
-              {normalizedWeight * 100 + '% '}
+              {Number(normalizedWeight * 100)
+                .toFixed(2)
+                .replace(/[.,]00$/, '') + '% '}
               <MintSymbol mintAddress={mintAddress || ''} />
               {index < poolData.mints.length - 1 ? '- ' : null}
             </Fragment>

@@ -6,12 +6,13 @@ import DetailsCard from './detailsCard'
 import New from './newPool'
 import Search from './search'
 
-export default function Pools() {
+const Pools = () => {
   const { pools } = useSelector((state: AppState) => state)
+  console.log('pools: ', pools)
 
   return (
     <Row gutter={[24, 24]} justify="center" align="middle">
-      <Col xs={24} md={24} lg={20}>
+      <Col xs={24} md={20} lg={16}>
         <Row gutter={12}>
           <Col span={24}>
             <Row
@@ -34,7 +35,7 @@ export default function Pools() {
           </Col>
         </Row>
       </Col>
-      <Col xs={24} md={24} lg={20}>
+      <Col xs={24} md={20} lg={16}>
         <Row gutter={[24, 24]}>
           {Object.keys(pools).map((poolAddress) => {
             return (
@@ -48,3 +49,4 @@ export default function Pools() {
     </Row>
   )
 }
+export default Pools

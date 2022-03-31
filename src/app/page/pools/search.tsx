@@ -12,6 +12,8 @@ const Search = () => {
       <Col span={8}>
         <Select defaultValue={{ value: 'All pools' }} style={{ width: '100%' }}>
           <Select.Option value="All pools">All pools</Select.Option>
+          <Select.Option value="Deposited pools">Deposited pools</Select.Option>
+          <Select.Option value="Your pools">Your pools</Select.Option>
         </Select>
       </Col>
       <Col flex={'1 0'}>
@@ -20,9 +22,7 @@ const Search = () => {
           value={search}
           prefix={
             <Button
-              type="text"
               size="small"
-              onClick={() => {}}
               icon={<SearchOutlined style={{ fontSize: '24px' }} />}
             />
           }
