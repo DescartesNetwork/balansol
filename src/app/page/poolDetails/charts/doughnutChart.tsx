@@ -1,51 +1,78 @@
 import React from 'react'
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
+import ReactEChartsCore from 'echarts-for-react/lib/core'
+import * as echarts from 'echarts/core'
+import { PieChart } from 'echarts/charts'
+import {
+  GridComponent,
+  TooltipComponent,
+  TitleComponent,
+  LegendComponent,
+} from 'echarts/components'
+import { CanvasRenderer } from 'echarts/renderers'
 
-import { Doughnut } from 'react-chartjs-2'
 import { Row, Space } from 'antd'
 
-ChartJS.register(ArcElement, Tooltip, Legend)
+echarts.use([
+  TitleComponent,
+  TooltipComponent,
+  GridComponent,
+  PieChart,
+  CanvasRenderer,
+  LegendComponent,
+])
 
-export const data = {
-  labels: ['USDC', 'SOL', 'SNTR'],
-  datasets: [
-    {
-      label: '# of Votes',
-      data: [12, 19, 3],
-      backgroundColor: [
-        'rgba(255, 99, 132)',
-        'rgba(54, 162, 235)',
-        'rgba(255, 206, 86)',
-      ],
-      borderColor: [
-        'rgba(255, 99, 132, 1)',
-        'rgba(54, 162, 235, 1)',
-        'rgba(255, 206, 86, 1)',
-      ],
-      innerWidth: '10px',
-      borderWidth: 0.1,
-    },
-  ],
-}
-
-export const options = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: 'bottom' as const,
-      labels: {
-        usePointStyle: true,
-        pointStyle: 'circle',
-      },
+const options = {
+  tooltip: {
+    trigger: 'item',
+  },
+  legend: {
+    bottom: 0,
+    icon: 'circle',
+    textStyle: {
+      color: '#F3F3F5',
     },
   },
+  series: [
+    {
+      name: 'Access From',
+      type: 'pie',
+      radius: ['40%', '70%'],
+      avoidLabelOverlap: false,
+      label: {
+        show: false,
+        position: 'center',
+      },
+      emphasis: {
+        label: {
+          show: true,
+          fontSize: '40',
+          fontWeight: 'bold',
+        },
+      },
+      labelLine: {
+        show: false,
+      },
+      data: [
+        { value: 1048, name: 'Search Engine' },
+        { value: 735, name: 'Direct' },
+        { value: 580, name: 'Email' },
+        { value: 484, name: 'Union Ads' },
+        { value: 300, name: 'Video Ads' },
+      ],
+    },
+  ],
 }
 
 const DoughnutChart = () => {
   return (
     <Row justify="center">
       <Space className="doughnut-container">
-        <Doughnut data={data} options={options} />
+        <ReactEChartsCore
+          echarts={echarts}
+          option={options}
+          notMerge={true}
+          lazyUpdate={true}
+        />
       </Space>
     </Row>
   )
