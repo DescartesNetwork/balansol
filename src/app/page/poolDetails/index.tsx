@@ -1,24 +1,47 @@
 import { Fragment } from 'react'
+import { useSelector } from 'react-redux'
 
-import { Card, Col, Image, Row, Space, Typography } from 'antd'
+import { Card, Col, Row, Space, Typography } from 'antd'
 import Deposit from './deposit'
 import Withdraw from './withdraw'
-
-import { useAppRouter } from 'app/hooks/useAppRoute'
 import { PoolAvatar } from 'app/components/pools/poolAvatar'
 import CardPoolDetail from './cardPoolDetail'
-import BarChart from 'app/static/images/bar-chart.png'
-import DoughnutChart from 'app/static/images/doughnut-chart.png'
+import DoughnutChart from './charts/doughnutChart'
+import BarChart from './charts/barChart'
+import IonIcon from 'shared/antd/ionicon'
+
+import { useAppRouter } from 'app/hooks/useAppRoute'
+import { AppState } from 'app/model'
+import { useTVL } from 'app/hooks/useTVL'
+import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
+
+import tvlBg from 'app/static/images/tvl.svg'
+import apyBg from 'app/static/images/apy.svg'
+import myContributeBg from 'app/static/images/my-contribution.svg'
 
 const PoolDetails = () => {
   const { getQuery } = useAppRouter()
-  const poolAddress = getQuery('pool')
+  const poolAddress = getQuery('pool') || ''
+  const {
+    pools: { [poolAddress]: poolData },
+  } = useSelector((state: AppState) => state)
+  const TVL = useTVL(poolAddress)
+  const { balance } = useAccountBalanceByMintAddress(
+    poolData.mintLpt.toBase58(),
+  )
 
   if (!poolAddress) return null
+
   return (
     <Row justify="center">
-      <Col lg={20} md={24}>
+      <Col lg={20} md={24} style={{ maxWidth: 930 }}>
         <Row gutter={[24, 24]}>
+          <Col span={24}>
+            <Space size={10}>
+              <IonIcon name="arrow-back-outline" />
+              <Typography.Text strong={true}>Back</Typography.Text>
+            </Space>
+          </Col>
           <Col span={24}>
             <Row gutter={[24, 24]} justify="center">
               <Col lg={18} md={18} xs={24}>
@@ -45,14 +68,26 @@ const PoolDetails = () => {
                 <CardPoolDetail
                   title="TVL"
                   content={
-                    <Typography.Title level={3}>$245.98m</Typography.Title>
+                    <Typography.Title level={3}>
+                      $ {TVL.toFixed(2)}
+                    </Typography.Title>
                   }
+                  styles={{
+                    background: `url(${tvlBg})`,
+                    backgroundPosition: 'center',
+                    backgroundSize: 'cover',
+                  }}
                 />
               </Col>
               <Col lg={8} md={8} xs={24}>
                 <CardPoolDetail
                   title="APY"
                   content={<Typography.Title level={3}>9%</Typography.Title>}
+                  styles={{
+                    background: `url(${apyBg})`,
+                    backgroundPosition: 'center',
+                    backgroundSize: 'cover',
+                  }}
                 />
               </Col>
               <Col lg={8} md={8} xs={24}>
@@ -60,10 +95,17 @@ const PoolDetails = () => {
                   title="My Contribution"
                   content={
                     <Fragment>
-                      <Typography.Title level={3}>62.7052</Typography.Title>
+                      <Typography.Title level={3}>
+                        {balance.toFixed(2)}
+                      </Typography.Title>
                       <Typography.Text type="secondary"> LP</Typography.Text>
                     </Fragment>
                   }
+                  styles={{
+                    background: `url(${myContributeBg})`,
+                    backgroundPosition: 'center',
+                    backgroundSize: 'cover',
+                  }}
                 />
               </Col>
             </Row>
@@ -82,17 +124,17 @@ const PoolDetails = () => {
                         className="chart-title"
                       >
                         <Col flex={'auto'}>
-                          <Typography.Text>24h Volume</Typography.Text>
+                          <Typography.Title level={4}>
+                            24h Volume
+                          </Typography.Title>
                         </Col>
                         <Col>
-                          <Typography.Title level={3}>$3m</Typography.Title>
+                          <Typography.Title level={2}>$3m</Typography.Title>
                         </Col>
                       </Row>
                     </Col>
-                    <Col span={24}>
-                      <Row justify="center">
-                        <Image width="50%" src={BarChart} />
-                      </Row>
+                    <Col span={24} flex="auto">
+                      <BarChart />
                     </Col>
                   </Row>
                 </Card>
@@ -108,14 +150,14 @@ const PoolDetails = () => {
                         className="chart-title"
                       >
                         <Col flex={'auto'}>
-                          <Typography.Text>Pool balance</Typography.Text>
+                          <Typography.Title level={4}>
+                            Pool balance
+                          </Typography.Title>
                         </Col>
                       </Row>
                     </Col>
                     <Col span={24}>
-                      <Row justify="center">
-                        <Image width="50%" src={DoughnutChart} />
-                      </Row>
+                      <DoughnutChart />
                     </Col>
                   </Row>
                 </Card>
