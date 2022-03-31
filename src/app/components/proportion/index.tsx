@@ -1,6 +1,6 @@
 import { Fragment } from 'react'
 
-import { TokenInfo } from 'app/page/pools/newPool'
+import { TokenInfo } from 'app/view/pools/newPool'
 import { MintAvatar } from 'shared/antd/mint'
 import { randomColor } from 'shared/util'
 
