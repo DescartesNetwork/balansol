@@ -4,9 +4,11 @@ import { Button, Card, Col, Row, Space, Typography } from 'antd'
 
 import { PoolAvatar } from 'app/components/pools/poolAvatar'
 import { useAppRouter } from 'app/hooks/useAppRoute'
+import { useTVL } from 'app/hooks/useTVL'
 import { AppState } from 'app/model'
 import PercentGroupMints from './percentGroupMints'
 import WalletAddress from './walletAddress'
+import { numeric } from 'shared/util'
 
 const DetailsCard = ({ poolAddress }: { poolAddress: string }) => {
   const { pushHistory } = useAppRouter()
@@ -14,6 +16,7 @@ const DetailsCard = ({ poolAddress }: { poolAddress: string }) => {
     pools: { [poolAddress]: poolData },
   } = useSelector((state: AppState) => state)
   const poolState: any = poolData.state
+  const TVL = useTVL(poolAddress)
 
   return (
     <Card
@@ -39,13 +42,16 @@ const DetailsCard = ({ poolAddress }: { poolAddress: string }) => {
                 <Col span={24}>
                   <Space>
                     <Typography.Text type="secondary">TVL:</Typography.Text>
-                    <Typography.Title level={5}> $299.11k</Typography.Title>
+                    <Typography.Title level={5}>
+                      {' '}
+                      {numeric(TVL).formatCurrency('($0.00a)')}
+                    </Typography.Title>
                   </Space>
                 </Col>
                 <Col span={24}>
                   <Space>
                     <Typography.Text type="secondary">APY:</Typography.Text>
-                    <Typography.Title level={5}> 9%</Typography.Title>
+                    <Typography.Title level={5}> 0%</Typography.Title>
                   </Space>
                 </Col>
               </Row>
