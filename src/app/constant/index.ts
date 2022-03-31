@@ -56,10 +56,6 @@ export enum PriceImpact {
 }
 
 // Deposit types
-export type DepositInfo = {
-  amount: string
-  address: string
-}
 
 export type PoolPairData = {
   balanceIn: BN

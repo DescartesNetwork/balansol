@@ -172,7 +172,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
                   </Col>
                   <Col>
                     <span style={{ color: '#03A326' }}>
-                      {impactPrice.toFixed(2)} %
+                      {numeric(impactPrice).format('0,0.[00]')} %
                     </span>
                   </Col>
                 </Row>
