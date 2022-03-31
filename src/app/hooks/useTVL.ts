@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-
 import { useMintPrice } from './useMintPrice'
 import { useOracles } from './useOracles'
 
