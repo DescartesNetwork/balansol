@@ -16,7 +16,6 @@ import {
 } from 'app/helper/oracles'
 import { useOracles } from 'app/hooks/useOracles'
 import { useMint } from '@senhub/providers'
-import { DepositInfo } from 'app/constant'
 import { numeric } from 'shared/util'
 
 const Deposit = ({ poolAddress }: { poolAddress: string }) => {
@@ -76,7 +75,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
 
     setLpOutTotal(lpOut)
     setImpactPrice(impactPrice)
-  }, [])
+  }, [amounts, decimalizeMintAmount, getDecimals, poolData])
 
   useEffect(() => {
     estimateImpactPriceAndLP()
@@ -87,8 +86,6 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
     newAmounts[idx] = value
     setAmounts(newAmounts)
   }
-
-  console.log(amounts, 'amountttsss')
 
   const onSubmit = async () => {
     setLoading(true)
