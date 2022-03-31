@@ -18,6 +18,7 @@ import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
 import tvlBg from 'app/static/images/tvl.svg'
 import apyBg from 'app/static/images/apy.svg'
 import myContributeBg from 'app/static/images/my-contribution.svg'
+import { numeric } from 'shared/util'
 
 const PoolDetails = () => {
   const { getQuery } = useAppRouter()
@@ -69,7 +70,7 @@ const PoolDetails = () => {
                   title="TVL"
                   content={
                     <Typography.Title level={3}>
-                      $ {TVL.toFixed(2)}
+                      $ {numeric(TVL).format('0,0.[00]a')}
                     </Typography.Title>
                   }
                   styles={{
@@ -96,7 +97,7 @@ const PoolDetails = () => {
                   content={
                     <Fragment>
                       <Typography.Title level={3}>
-                        {balance.toFixed(2)}
+                        {numeric(balance).format('0,0.[00]')}
                       </Typography.Title>
                       <Typography.Text type="secondary"> LP</Typography.Text>
                     </Fragment>
