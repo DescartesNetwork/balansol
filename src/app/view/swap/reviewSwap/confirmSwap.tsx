@@ -22,7 +22,6 @@ import { useOracles } from 'app/hooks/useOracles'
 
 import './index.less'
 import { PriceImpact } from 'app/constant'
-import { setVisible } from 'os/store/search.reducer'
 
 const ConfirmSwap = ({
   visible = false,
