@@ -1,23 +1,41 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
-import { Button, Col, Row, Typography } from 'antd'
+import { Button, Card, Col, Row, Space, Typography } from 'antd'
 
-const Options = [0.5, 1, 2, 3]
+const options = [0.5, 1, 2, 0]
 
 const Setting = () => {
+  const [selected, setSelected] = useState(0.5)
   return (
-    <Row gutter={[8, 8]}>
-      <Col span={24}>
-        <Typography.Title level={3}>Slippage tolerance</Typography.Title>
-      </Col>
-      <Col>
-        {Options.map((value) => (
-          <Button>
-            <Typography.Text>{value}%</Typography.Text>
-          </Button>
-        ))}
-      </Col>
-    </Row>
+    <Card
+      bodyStyle={{
+        padding: 16,
+      }}
+    >
+      <Row gutter={[0, 24]}>
+        <Col span={24}>
+          <Typography.Title level={5}>Slippage tolerance</Typography.Title>
+        </Col>
+        <Col>
+          <Space size={12}>
+            {options.map((value) => {
+              const slippageSelected = value === selected ? 'selected' : ''
+              return (
+                <Button
+                  className={`btn-slippage ${slippageSelected}`}
+                  onClick={() => {
+                    setSelected(value)
+                  }}
+                  key={value}
+                >
+                  {value === 0 ? 'Freely' : `${value} %`}
+                </Button>
+              )
+            })}
+          </Space>
+        </Col>
+      </Row>
+    </Card>
   )
 }
 

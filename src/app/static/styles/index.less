@@ -52,6 +52,15 @@
   }
 }
 
+.btn-slippage {
+  padding: 5px 16px;
+  border-radius: 8px !important;
+  &.selected {
+    background: rgba(99, 224, 179, 0.1) !important;
+    color: #63e0b3 !important;
+  }
+}
+
 .balansol-background {
   &:after {
     content: '';
@@ -99,5 +108,11 @@
     color: #63e0b3 !important;
     background: inherit !important;
     border: 1px solid #63e0b3 !important;
+  }
+}
+
+.slippage {
+  .balansol-popover-inner-content {
+    padding: 0px;
   }
 }
