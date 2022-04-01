@@ -5,11 +5,11 @@ import {
   calcOutGivenInSwap,
   calcSpotPrice,
   getMintInfo,
-  MintInfo,
 } from 'app/helper/oracles'
 import { AppState } from 'app/model'
 import { useOracles } from './useOracles'
 import { BN } from '@project-serum/anchor'
+import { MintInfo } from 'app/constant'
 
 type Route = {
   pool: string

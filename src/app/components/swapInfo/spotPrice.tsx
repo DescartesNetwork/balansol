@@ -43,9 +43,7 @@ const MintRatio = ({ reversed = false }: { reversed?: boolean }) => {
     <Space>
       <MintSymbol mintAddress={actualBid} />
       <Typography.Text>=</Typography.Text>
-      <Typography.Text>
-        {!reversed ? spotPrice : 1 / spotPrice || 0}
-      </Typography.Text>
+      <Typography.Text>{!reversed ? spotPrice : 1 / spotPrice}</Typography.Text>
       <MintSymbol mintAddress={actualAsk} />
     </Space>
   )

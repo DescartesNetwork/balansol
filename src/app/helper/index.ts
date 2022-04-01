@@ -23,3 +23,9 @@ export const undecimalizeWrapper = (value: BN, decimals: number) => {
 
   return utils.undecimalize(valueInBigInt, decimals)
 }
+
+export const checkValidDepositAmountIns = (amounts: string[]) => {
+  const amountsSum = amounts.reduce((a, b) => a + Number(b), 0)
+  if (amountsSum !== 0) return true
+  return false
+}
