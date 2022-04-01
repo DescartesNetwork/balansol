@@ -15,6 +15,7 @@ export default function SettingArea() {
         content={<Setting />}
         trigger="click"
         overlayClassName="slippage"
+        overlayInnerStyle={{ borderRadius: 24 }}
       >
         <Button
           type="text"

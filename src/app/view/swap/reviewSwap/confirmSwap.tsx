@@ -31,7 +31,7 @@ const ConfirmSwap = ({
   onCancel?: (visible: boolean) => void
 }) => {
   const {
-    swap: { bidAmount, bidMint, askMint },
+    swap: { bidAmount, bidMint, askMint, slippageTolerance },
   } = useSelector((state: AppState) => state)
 
   const [checked, setChecked] = useState(false)
@@ -51,13 +51,17 @@ const ConfirmSwap = ({
 
   const onSwap = async () => {
     try {
-      const BidAmountBN = await decimalizeMintAmount(bidAmount, bidMint)
+      const bidAmountBN = await decimalizeMintAmount(bidAmount, bidMint)
+
+      const limit = Number(askAmount) * (1 - slippageTolerance / 100)
+      const limitBN = await decimalizeMintAmount(limit, askMint)
 
       const { txId } = await window.balansol.swap(
-        BidAmountBN,
+        bidAmountBN,
         bidMint,
         askMint,
         pool,
+        limitBN,
       )
       notifySuccess('Swap', txId)
     } catch (error) {

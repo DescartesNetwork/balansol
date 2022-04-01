@@ -1,40 +1,54 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 
-import { Button, Card, Col, Row, Space, Typography } from 'antd'
+import { Button, Card, Space, Typography } from 'antd'
 
-const options = [0.5, 1, 2, 0]
+import { setSwapState } from 'app/model/swap.controller'
+import { AppState } from 'app/model'
+
+const slippageOptions = [0.5, 1, 2, 100]
 
 const Setting = () => {
-  const [selected, setSelected] = useState(0.5)
+  const {
+    swap: { slippageTolerance },
+  } = useSelector((state: AppState) => state)
+  const dispatch = useDispatch()
+
+  const onChange = (value: number) => {
+    dispatch(
+      setSwapState({
+        slippageTolerance: value,
+      }),
+    )
+  }
+
   return (
     <Card
       bodyStyle={{
         padding: 16,
       }}
+      style={{ boxShadow: 'none' }}
     >
-      <Row gutter={[0, 24]}>
-        <Col span={24}>
-          <Typography.Title level={5}>Slippage tolerance</Typography.Title>
-        </Col>
-        <Col>
-          <Space size={12}>
-            {options.map((value) => {
-              const slippageSelected = value === selected ? 'selected' : ''
-              return (
-                <Button
-                  className={`btn-slippage ${slippageSelected}`}
-                  onClick={() => {
-                    setSelected(value)
-                  }}
-                  key={value}
-                >
-                  {value === 0 ? 'Freely' : `${value} %`}
-                </Button>
-              )
-            })}
-          </Space>
-        </Col>
-      </Row>
+      <Space size={24} direction="vertical">
+        <Typography.Title level={5}>Slippage tolerance</Typography.Title>
+        <Space size={12}>
+          {slippageOptions.map((value) => {
+            const slippageSelected =
+              value === slippageTolerance ? 'selected' : ''
+            return (
+              <Button
+                className={`btn-slippage ${slippageSelected}`}
+                onClick={() => {
+                  onChange(value)
+                }}
+                key={value}
+              >
+                {value === 100 ? 'Freely' : `${value} %`}
+              </Button>
+            )
+          })}
+        </Space>
+      </Space>
     </Card>
   )
 }

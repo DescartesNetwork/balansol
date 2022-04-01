@@ -1,5 +1,6 @@
 import { ReactNode, CSSProperties } from 'react'
 import { PoolData } from '@senswap/sen-js'
+import { useSelector } from 'react-redux'
 
 import { Col, Row, Skeleton, Typography } from 'antd'
 import RouteAvatar from './routeAvatar'
@@ -7,6 +8,7 @@ import SpotPrice from './spotPrice'
 
 import { numeric } from 'shared/util'
 import { useRouteSwap } from 'app/hooks/useRouteSwap'
+import { AppState } from 'app/model'
 
 export type LiteMintInfo = {
   address: string
@@ -45,6 +47,10 @@ const ExtraTypography = ({
 }
 
 const SwapInfo = ({ extraStyle }: { extraStyle?: CSSProperties }) => {
+  const {
+    swap: { slippageTolerance },
+  } = useSelector((state: AppState) => state)
+
   const { priceImpact } = useRouteSwap()
 
   return (
@@ -70,7 +76,7 @@ const SwapInfo = ({ extraStyle }: { extraStyle?: CSSProperties }) => {
       <Col span={24}>
         <ExtraTypography
           label="Slippage Tolerance"
-          content={numeric('11').format('0.[00]%')}
+          content={`${slippageTolerance} %`}
           loading={false}
         />
       </Col>

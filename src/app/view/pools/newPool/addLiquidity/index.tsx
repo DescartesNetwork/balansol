@@ -130,7 +130,7 @@ const AddLiquidty = ({
       <Col span={24}>
         <Row justify="center" gutter={[8, 8]}>
           {tokenList.map((value, idx) => (
-            <Col span={24}>
+            <Col span={24} key={`${value.addressToken}${idx}`}>
               <MintInput
                 amount={depositedAmounts[idx]}
                 selectedMint={value.addressToken}
