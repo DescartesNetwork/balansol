@@ -48,6 +48,6 @@ export const LPTDECIMALS = 9
 export const PRECISION = 1000000000
 
 export enum PriceImpact {
-  GoodImpact = 0.01,
-  AcceptableImpact = 0.05,
+  goodSwap = 0.01,
+  acceptableSwap = 0.05,
 }

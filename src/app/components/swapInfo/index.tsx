@@ -9,6 +9,7 @@ import SpotPrice from './spotPrice'
 import { numeric } from 'shared/util'
 import { useRouteSwap } from 'app/hooks/useRouteSwap'
 import { AppState } from 'app/model'
+import { priceImpactColor } from 'app/helper'
 
 export type LiteMintInfo = {
   address: string
@@ -59,7 +60,7 @@ const SwapInfo = ({ extraStyle }: { extraStyle?: CSSProperties }) => {
         <ExtraTypography
           label="Price impact"
           content={
-            <Typography.Text style={{ color: 'red' }}>
+            <Typography.Text style={{ color: priceImpactColor(priceImpact) }}>
               {numeric(priceImpact).format('0.[0000]%')}
             </Typography.Text>
           }

@@ -22,6 +22,7 @@ import { useOracles } from 'app/hooks/useOracles'
 
 import './index.less'
 import { PriceImpact } from 'app/constant'
+import { setVisible } from 'os/store/search.reducer'
 
 const ConfirmSwap = ({
   visible = false,
@@ -40,7 +41,7 @@ const ConfirmSwap = ({
   const { decimalizeMintAmount } = useOracles()
 
   useEffect(() => {
-    if (priceImpact > PriceImpact.GoodImpact) return setIsDisplayWarning(true)
+    if (priceImpact > PriceImpact.goodSwap) return setIsDisplayWarning(true)
     setIsDisplayWarning(false)
   }, [priceImpact])
 
@@ -63,6 +64,8 @@ const ConfirmSwap = ({
         pool,
         limitBN,
       )
+
+      onCancel(false)
       notifySuccess('Swap', txId)
     } catch (error) {
       notifyError(error)
@@ -130,7 +133,7 @@ const ConfirmSwap = ({
           <Button
             type="primary"
             onClick={onSwap}
-            disabled={false}
+            disabled={isDisplayWarning && !checked}
             loading={false}
             block
           >
