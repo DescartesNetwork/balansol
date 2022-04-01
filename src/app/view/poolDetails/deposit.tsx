@@ -1,25 +1,41 @@
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { BN } from '@project-serum/anchor'
 
 import { Button, Col, Modal, Row, Typography } from 'antd'
 import MintInput from 'app/components/mintInput'
 import IonIcon from 'shared/antd/ionicon'
 import { MintSymbol } from 'shared/antd/mint'
 
-import { notifyError, notifySuccess } from 'app/helper'
+import {
+  checkValidDepositAmountIns,
+  notifyError,
+  notifySuccess,
+} from 'app/helper'
 import { AppState } from 'app/model'
+import {
+  calcDepositPriceImpact,
+  calcNormalizedWeight,
+  calcTotalSupplyPool,
+} from 'app/helper/oracles'
 import { useOracles } from 'app/hooks/useOracles'
-import { calcNormalizedWeight } from 'app/helper/oracles'
+import { useMint } from '@senhub/providers'
+import { numeric } from 'shared/util'
 
 const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   const {
     pools: { [poolAddress]: poolData },
   } = useSelector((state: AppState) => state)
 
-  const [amounts, setAmounts] = useState<string[]>([])
+  const [amounts, setAmounts] = useState<string[]>(
+    new Array(poolData.mints.length).fill('0'),
+  )
   const [visible, setVisible] = useState(false)
-  const [loading, setLoading] = useState(false)
   const [disable, setDisable] = useState(true)
+  const [impactPrice, setImpactPrice] = useState(0)
+  const [lpOutTotal, setLpOutTotal] = useState(0)
+  const [loading, setLoading] = useState(false)
+  const { getDecimals } = useMint()
   const { decimalizeMintAmount } = useOracles()
 
   // TODO: check balance
@@ -28,6 +44,46 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
       if (!!Number(amounts[i])) return setDisable(false)
     setDisable(true)
   }, [amounts])
+
+  const estimateImpactPriceAndLP = useCallback(async () => {
+    setImpactPrice(0)
+    if (!checkValidDepositAmountIns(amounts)) return setLpOutTotal(0)
+
+    let amountIns: BN[] = []
+    let decimalIns: number[] = []
+
+    for (let i in amounts) {
+      const decimalIn = await getDecimals(poolData.mints[i].toBase58())
+      const amountBn = await decimalizeMintAmount(amounts[i], poolData.mints[i])
+      amountIns.push(amountBn)
+      decimalIns.push(decimalIn)
+    }
+
+    const totalSuply = calcTotalSupplyPool(
+      poolData.reserves,
+      poolData.weights,
+      decimalIns,
+    )
+    const totalSupplyBN = await decimalizeMintAmount(
+      totalSuply,
+      poolData.mintLpt,
+    )
+    const { lpOut, impactPrice } = calcDepositPriceImpact(
+      amountIns,
+      poolData.reserves,
+      poolData.weights,
+      totalSupplyBN,
+      decimalIns,
+      poolData.fee,
+    )
+
+    setLpOutTotal(lpOut)
+    setImpactPrice(impactPrice)
+  }, [amounts, decimalizeMintAmount, getDecimals, poolData])
+
+  useEffect(() => {
+    estimateImpactPriceAndLP()
+  }, [estimateImpactPriceAndLP])
 
   const onChange = (idx: number, value: string) => {
     let newAmounts = [...amounts]
@@ -55,6 +111,13 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
     }
   }
 
+  const lpOutDisplay = useMemo(() => {
+    const clonedLp = numeric(lpOutTotal).format('0,0.[0000]')
+    if (lpOutTotal > 0 && lpOutTotal < 0.0001) return 'LP < 0.0001'
+
+    return clonedLp
+  }, [lpOutTotal])
+
   return (
     <Fragment>
       <Button type="primary" onClick={() => setVisible(true)} block>
@@ -80,7 +143,6 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
                   poolData.weights,
                   poolData.weights[index],
                 )
-
                 return (
                   <Col span={24} key={mint.toBase58()}>
                     <MintInput
@@ -113,7 +175,9 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
                     </Typography.Text>
                   </Col>
                   <Col>
-                    <span style={{ color: '#03A326' }}>0 %</span>
+                    <span style={{ color: '#03A326' }}>
+                      {numeric(impactPrice).format('0,0.[0000]')} %
+                    </span>
                   </Col>
                 </Row>
               </Col>
@@ -121,11 +185,13 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
                 <Row align="middle">
                   <Col flex="auto">
                     <Typography.Text type="secondary">
-                      You will reveice
+                      You will receive
                     </Typography.Text>
                   </Col>
                   <Col>
-                    <Typography.Title level={4}>2 LP</Typography.Title>
+                    <Typography.Title level={4}>
+                      {lpOutDisplay} LP
+                    </Typography.Title>
                   </Col>
                 </Row>
               </Col>
