@@ -31,7 +31,7 @@ const DetailsCard = ({ poolAddress }: { poolAddress: string }) => {
           <WalletAddress poolAddress={poolAddress} />
         </Col>
       </Row>
-      <Row gutter={[0, 24]}>
+      <Row gutter={[0, 10]}>
         <Col span={24}>
           <PercentGroupMints poolAddress={poolAddress} />
         </Col>
