@@ -26,9 +26,7 @@ export default function WeightControl({
           value={weight}
           size="large"
           bordered={false}
-          onValue={(value) => {
-            onChangeWeight(value)
-          }}
+          onValue={onChangeWeight}
           suffix={'%'}
           disabled={isLocked}
           maxLength={5}
@@ -52,9 +50,7 @@ export default function WeightControl({
       </Col>
       <Col>
         <Button
-          onClick={() => {
-            onRemoveToken()
-          }}
+          onClick={onRemoveToken}
           shape="circle"
           icon={<IonIcon name="trash-outline" />}
         />

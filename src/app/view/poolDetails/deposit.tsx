@@ -7,7 +7,11 @@ import MintInput from 'app/components/mintInput'
 import IonIcon from 'shared/antd/ionicon'
 import { MintSymbol } from 'shared/antd/mint'
 
-import { checkValidAmounts, notifyError, notifySuccess } from 'app/helper'
+import {
+  checkValidDepositAmountIns,
+  notifyError,
+  notifySuccess,
+} from 'app/helper'
 import { AppState } from 'app/model'
 import {
   calcDepositPriceImpact,
@@ -43,7 +47,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
 
   const estimateImpactPriceAndLP = useCallback(async () => {
     setImpactPrice(0)
-    if (!checkValidAmounts(amounts)) return setLpOutTotal(0)
+    if (!checkValidDepositAmountIns(amounts)) return setLpOutTotal(0)
 
     let amountIns: BN[] = []
     let decimalIns: number[] = []
@@ -108,7 +112,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   }
 
   const lpOutDisplay = useMemo(() => {
-    const clonedLp = numeric(lpOutTotal).format('0,0.[00]')
+    const clonedLp = numeric(lpOutTotal).format('0,0.[0000]')
     if (lpOutTotal > 0 && lpOutTotal < 0.0001) return 'LP < 0.0001'
 
     return clonedLp
@@ -172,7 +176,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
                   </Col>
                   <Col>
                     <span style={{ color: '#03A326' }}>
-                      {numeric(impactPrice).format('0,0.[00]')} %
+                      {numeric(impactPrice).format('0,0.[0000]')} %
                     </span>
                   </Col>
                 </Row>
