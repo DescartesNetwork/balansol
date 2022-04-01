@@ -1,6 +1,5 @@
 import React, { Dispatch, Fragment, useEffect, useState } from 'react'
 import { BN, web3 } from '@project-serum/anchor'
-import { MintActionStates } from '@senswap/balancer'
 
 import { Button, Col, Row } from 'antd'
 import Proportion from 'app/components/proportion'
@@ -10,6 +9,7 @@ import TokenSetup from '../tokenSetup'
 import { GENERAL_NORMALIZED_NUMBER, PoolCreatingStep } from 'app/constant'
 import { notifyError, notifySuccess } from 'app/helper'
 import { TokenInfo } from '../index'
+import { MintActionStates } from '@senswap/balancer'
 
 const SelectToken = ({
   tokenList,
