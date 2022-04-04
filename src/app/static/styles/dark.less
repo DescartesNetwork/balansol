@@ -2,7 +2,7 @@
  * Available vars: https://github.com/ant-design/ant-design/blob/master/components/style/themes/default.less
  */
 
-@import '~antd/dist/antd.dark.less';
+@import '~antd/dist/antd.less';
 @import './common/vars.less';
 @import './index.less';
 
@@ -13,9 +13,9 @@
 @warning-color: @WARNING;
 @error-color: @ERROR;
 @popover-background: @NEUTRAL100;
-@body-background: @NEUTRAL100;
-@component-background: @NEUTRAL100;
-@disabled-bg: @NEUTRAL90;
+@body-background: @NEUTRAL05;
+@component-background: @NEUTRAL05;
+@disabled-bg: @NEUTRAL10;
 
 // Typography
 @font-family: 'Nunito', sans-serif;
@@ -28,16 +28,16 @@
 
 // Border
 @border-radius-base: 8px;
-@border-color-base: @NEUTRAL80;
+@border-color-base: @NEUTRAL20;
 @border-width-base: 1px;
-@border-color-split: @border-color-base;
 @popover-customize-border-color: @border-color-base;
+@border-color-split: @border-color-base;
 
 // Card
 @card-radius: @border-radius-base * 3;
-@card-actions-background: @NEUTRAL100;
+@card-actions-background: @NEUTRAL90;
 @card-background: @NEUTRAL90;
-@card-shadow: @DARK_SHADOW2;
+@card-shadow: @LIGHT_SHADOW2;
 
 // Modal
 @modal-header-bg: @NEUTRAL90;
@@ -46,26 +46,24 @@
 @modal-footer-padding-horizontal: 24px;
 
 // Drawer
-@drawer-bg: @NEUTRAL100;
+@drawer-bg: @NEUTRAL05;
 
 // Button
 @btn-font-weight: 700;
 @btn-shadow: unset;
 @btn-primary-shadow: unset;
 @btn-text-shadow: unset;
-@btn-default-border: @NEUTRAL80;
-@btn-default-ghost-color: @NEUTRAL10;
-@btn-default-ghost-border: @NEUTRAL10;
+@btn-default-border: @NEUTRAL20;
+@btn-default-ghost-color: @primary-color;
+@btn-default-ghost-border: @primary-color;
+@btn-border-radius-base: 24px;
 @btn-primary-color: #081438;
-@btn-disable-color: @DISABLED_COLOR;
-@btn-disable-bg: @DISABLED_BG;
-@btn-disable-border: @BORDER_COLOR_BASE;
 
 // Input
-@input-placeholder-color: @NEUTRAL40;
+@input-placeholder-color: @NEUTRAL60;
 
 // Divider
-@divider-color: @NEUTRAL90;
+@divider-color: @NEUTRAL10;
 @divider-orientation-margin: 0;
 
 // Checkbox
@@ -76,12 +74,9 @@
   background: unset;
 }
 .@{ant-prefix}-card {
-  box-shadow: @DARK_SHADOW1;
+  box-shadow: @LIGHT_SHADOW1;
   .glass {
     background-color: color(~`('@{card-background}99') `);
     backdrop-filter: blur(4px);
   }
 }
-
-//Table
-@table-bg: @TRANSPARENT;
