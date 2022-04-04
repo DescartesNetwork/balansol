@@ -70,3 +70,9 @@ export type MintInfo = {
   normalizedWeight: number
   treasury: web3.PublicKey
 }
+
+export enum SearchSelection {
+  AllPools = 'all-pools',
+  DepositedPools = 'deposited-pools',
+  YourPools = 'your-pools',
+}

@@ -1,25 +1,51 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 import { Button, Col, Input, Row, Select } from 'antd'
 import { SearchOutlined } from '@ant-design/icons'
 
+import { SearchSelection } from 'app/constant'
+
 import './search.less'
+import { useDispatch, useSelector } from 'react-redux'
+import { AppDispatch, AppState } from 'app/model'
+
+import {
+  setSearchInput,
+  setSearchSelection,
+} from 'app/model/searchPools.controller'
 
 const Search = () => {
-  const [search, setSearch] = useState('')
+  const {
+    searchPools: { searchInput, selectionSearch },
+  } = useSelector((state: AppState) => state)
+
+  const dispatch = useDispatch<AppDispatch>()
+
   return (
     <Row className="search-pools" gutter={[12, 12]}>
       <Col span={8}>
-        <Select defaultValue={{ value: 'All pools' }} style={{ width: '100%' }}>
-          <Select.Option value="All pools">All pools</Select.Option>
-          <Select.Option value="Deposited pools">Deposited pools</Select.Option>
-          <Select.Option value="Your pools">Your pools</Select.Option>
+        <Select
+          value={selectionSearch}
+          onChange={(value: SearchSelection) => {
+            dispatch(setSearchSelection({ selectSearch: value }))
+          }}
+          style={{ width: '100%' }}
+        >
+          <Select.Option value={SearchSelection.AllPools}>
+            All pools
+          </Select.Option>
+          <Select.Option value={SearchSelection.DepositedPools}>
+            Deposited pools
+          </Select.Option>
+          <Select.Option value={SearchSelection.YourPools}>
+            Your pools
+          </Select.Option>
         </Select>
       </Col>
       <Col flex={'1 0'}>
         <Input
           placeholder="Search"
-          value={search}
+          value={searchInput}
           prefix={
             <Button
               size="small"
@@ -27,7 +53,7 @@ const Search = () => {
             />
           }
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setSearch(e.target.value)
+            dispatch(setSearchInput({ searchText: e.target.value }))
           }}
           style={{ borderRadius: '24px' }}
         />

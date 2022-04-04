@@ -10,11 +10,13 @@ import PercentGroupMints from './percentGroupMints'
 import WalletAddress from './walletAddress'
 import { numeric } from 'shared/util'
 
+
 const DetailsCard = ({ poolAddress }: { poolAddress: string }) => {
   const { pushHistory } = useAppRouter()
   const {
     pools: { [poolAddress]: poolData },
   } = useSelector((state: AppState) => state)
+
   const poolState: any = poolData.state
   const TVL = useTVL(poolAddress)
 
