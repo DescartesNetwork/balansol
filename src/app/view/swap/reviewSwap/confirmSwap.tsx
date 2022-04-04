@@ -22,6 +22,7 @@ import { useOracles } from 'app/hooks/useOracles'
 
 import './index.less'
 import { PriceImpact } from 'app/constant'
+import { BN } from '@project-serum/anchor'
 
 const ConfirmSwap = ({
   visible = false,
@@ -58,6 +59,8 @@ const ConfirmSwap = ({
         bidMint,
         askMint,
         pool,
+        // temp to run
+        new BN(0),
       )
       notifySuccess('Swap', txId)
     } catch (error) {

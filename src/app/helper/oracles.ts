@@ -300,7 +300,8 @@ export const calcMintReceivesRemoveFullSide = (
   return amounts_out
 }
 
-export const calcDepositPriceImpact = (
+export const calcPriceImpact = (
+  action: string,
   amountIns: BN[],
   balanceIns: BN[],
   weightIns: BN[],
@@ -309,25 +310,32 @@ export const calcDepositPriceImpact = (
   swapFee: BN,
 ) => {
   if (decimalIns.length === 0) return { lpOut: 0, impactPrice: 0 }
-  let newLpOut = calcBptOutGivenExactTokensIn(
-    amountIns,
-    balanceIns,
-    weightIns,
-    totalSupply,
-    decimalIns,
-    swapFee,
-  ).toFixed(9)
 
-  const newLpOutZeroPriceImpact = caclLpForTokensZeroPriceImpact(
-    amountIns,
-    balanceIns,
-    weightIns,
-    totalSupply,
-    decimalIns,
-  ).toFixed(9)
+  let lpOut, lpOutZeroPriceImpact, impactPrice
+  if (action === 'join') {
+    lpOut = Number(
+      calcBptOutGivenExactTokensIn(
+        amountIns,
+        balanceIns,
+        weightIns,
+        totalSupply,
+        decimalIns,
+        swapFee,
+      ).toFixed(9),
+    )
 
-  const newImpactPrice =
-    (1 - Number(newLpOut) / Number(newLpOutZeroPriceImpact)) * 100
+    lpOutZeroPriceImpact = Number(
+      caclLpForTokensZeroPriceImpact(
+        amountIns,
+        balanceIns,
+        weightIns,
+        totalSupply,
+        decimalIns,
+      ).toFixed(9),
+    )
 
-  return { lpOut: Number(newLpOut), impactPrice: newImpactPrice }
+    impactPrice = (1 - lpOut / lpOutZeroPriceImpact) * 100
+
+    return { lpOut, impactPrice }
+  }
 }
