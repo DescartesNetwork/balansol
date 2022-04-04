@@ -1,4 +1,4 @@
-import React from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { Button, Card, Col, Row } from 'antd'
 import AskInput from './askInput'
@@ -8,7 +8,6 @@ import SettingArea from './settingArea'
 import IonIcon from 'shared/antd/ionicon'
 import SwapInfo from 'app/components/swapInfo'
 
-import { useDispatch, useSelector } from 'react-redux'
 import { setSwapState } from 'app/model/swap.controller'
 import { AppState } from 'app/model'
 import { useRouteSwap } from 'app/hooks/swap/useRouteSwap'
@@ -29,7 +28,7 @@ export default function Swap() {
       setSwapState({
         askMint: bidMint,
         bidMint: askMint,
-        bidAmount: askAmount,
+        bidAmount: askAmount.toString(),
       }),
     )
   }

@@ -28,7 +28,7 @@ const ConfirmSwap = ({
   onCancel = () => {},
 }: {
   visible?: boolean
-  onCancel?: (visible: boolean) => void
+  onCancel?: () => void
 }) => {
   const {
     swap: { bidAmount, bidMint, askMint, slippageTolerance },
@@ -36,7 +36,7 @@ const ConfirmSwap = ({
 
   const [checked, setChecked] = useState(false)
   const [isDisplayWarning, setIsDisplayWarning] = useState(false)
-  const { askAmount, priceImpact, pool } = useRouteSwap()
+  const { askAmount, priceImpact, route } = useRouteSwap()
   const { decimalizeMintAmount } = useOracles()
 
   useEffect(() => {
@@ -45,26 +45,19 @@ const ConfirmSwap = ({
   }, [priceImpact])
 
   const onCloseModal = useCallback(() => {
-    onCancel(false)
+    onCancel()
     setChecked(false)
   }, [onCancel])
 
   const onSwap = async () => {
     try {
       const bidAmountBN = await decimalizeMintAmount(bidAmount, bidMint)
-
       const limit = Number(askAmount) * (1 - slippageTolerance / 100)
       const limitBN = await decimalizeMintAmount(limit, askMint)
 
-      const { txId } = await window.balansol.swap(
-        bidAmountBN,
-        bidMint,
-        askMint,
-        pool,
-        limitBN,
-      )
+      const { txId } = await window.balansol.route(bidAmountBN, route, limitBN)
 
-      onCancel(false)
+      onCancel()
       notifySuccess('Swap', txId)
     } catch (error) {
       notifyError(error)

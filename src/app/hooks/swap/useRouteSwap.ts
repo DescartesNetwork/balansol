@@ -1,15 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 
-import {
-  calcOutGivenInSwap,
-  calcSpotPrice,
-  getMintInfo,
-} from 'app/helper/oracles'
+import { getMintInfo } from 'app/helper/oracles'
 import { AppState } from 'app/model'
-import { useOracles } from '../useOracles'
-import { BN } from '@project-serum/anchor'
-import { MintDataFromPool } from 'app/constant'
+// import { useOracles } from '../useOracles'
 
 type Route = {
   pool: string
@@ -18,34 +12,18 @@ type Route = {
   askMint: string
   askAmount: string
   priceImpact: number
-}
+}[]
 
 export const useRouteSwap = () => {
   const {
     swap: { bidAmount, askMint, bidMint },
     pools,
   } = useSelector((state: AppState) => state)
-  const [bestRoute, setBestRoute] = useState<Route>({
-    pool: '',
-    bidMint,
-    bidAmount,
-    askMint,
-    askAmount: '',
-    priceImpact: 0,
-  })
-  const { decimalizeMintAmount, undecimalizeMintAmount } = useOracles()
+  const [bestRoute, setBestRoute] = useState<Route>([])
+  // const { decimalizeMintAmount } = useOracles()
 
   const findRoute = useCallback(async () => {
-    let newRoute = {
-      pool: '',
-      bidMint,
-      bidAmount,
-      askMint,
-      askAmount: '',
-      priceImpact: 0,
-    }
-
-    if (!bidMint || !askMint) return setBestRoute(newRoute)
+    if (!bidMint || !askMint) return setBestRoute([])
 
     for (const pool in pools) {
       const poolData = pools[pool]
@@ -53,68 +31,66 @@ export const useRouteSwap = () => {
         const bidMintInfo = getMintInfo(poolData, bidMint)
         const askMintInfo = getMintInfo(poolData, askMint)
         if (!bidMintInfo || !askMintInfo) continue
-        const bidAmountBN = await decimalizeMintAmount(bidAmount, bidMint)
+        //const bidAmountBN = await decimalizeMintAmount(bidAmount, bidMint)
 
-        const tokenOutAmount = calcOutGivenInSwap(
-          bidAmountBN,
-          askMintInfo.reserve,
-          bidMintInfo.reserve,
-          askMintInfo.normalizedWeight,
-          bidMintInfo.normalizedWeight,
-          poolData.fee,
-        )
-        const askAmount = await undecimalizeMintAmount(tokenOutAmount, askMint)
-        if (Number(askAmount) > Number(newRoute.askAmount)) {
-          const priceImpact = calcPriceImpact(
-            bidMintInfo,
-            askMintInfo,
-            bidAmountBN,
-            tokenOutAmount,
-          )
+        // const tokenOutAmount = calcOutGivenInSwap(
+        //   bidAmountBN,
+        //   askMintInfo.reserve,
+        //   bidMintInfo.reserve,
+        //   askMintInfo.normalizedWeight,
+        //   bidMintInfo.normalizedWeight,
+        //   poolData.fee,
+        // )
+        // const askAmount = await undecimalizeMintAmount(tokenOutAmount, askMint)
+        // if (Number(askAmount) > Number(newRoute.askAmount)) {
+        //   const priceImpact = calcPriceImpact(
+        //     bidMintInfo,
+        //     askMintInfo,
+        //     bidAmountBN,
+        //     tokenOutAmount,
+        //   )
 
-          newRoute.askAmount = askAmount
-          newRoute.priceImpact = priceImpact
-          newRoute.pool = pool
-        }
+        //   newRoute.askAmount = askAmount
+        //   newRoute.priceImpact = priceImpact
+        //   newRoute.pool = pool
+        // }
 
-        setBestRoute(newRoute)
+        setBestRoute([])
       } catch {
         continue
       }
     }
-  }, [
-    askMint,
-    bidAmount,
-    bidMint,
-    decimalizeMintAmount,
-    pools,
-    undecimalizeMintAmount,
-  ])
+  }, [askMint, bidMint, pools])
 
-  const calcPriceImpact = (
-    bidMintInfo: MintDataFromPool,
-    askMintInfo: MintDataFromPool,
-    bidAmountBN: BN,
-    tokenOutAmount: BN,
-  ) => {
-    const beforeSpotPrice = calcSpotPrice(
-      bidMintInfo.reserve,
-      bidMintInfo.normalizedWeight,
-      askMintInfo.reserve,
-      askMintInfo.normalizedWeight,
-    )
-    const afterSpotPrice = calcSpotPrice(
-      new BN(bidMintInfo.reserve.toNumber() + bidAmountBN.toNumber()),
-      bidMintInfo.normalizedWeight,
-      new BN(askMintInfo.reserve.toNumber() - tokenOutAmount.toNumber()),
-      askMintInfo.normalizedWeight,
-    )
-    return (afterSpotPrice - beforeSpotPrice) / beforeSpotPrice
-  }
+  // const calcPriceImpact = (
+  //   bidMintInfo: MintDataFromPool,
+  //   askMintInfo: MintDataFromPool,
+  //   bidAmountBN: BN,
+  //   tokenOutAmount: BN,
+  // ) => {
+  //   const beforeSpotPrice = calcSpotPrice(
+  //     bidMintInfo.reserve,
+  //     bidMintInfo.normalizedWeight,
+  //     askMintInfo.reserve,
+  //     askMintInfo.normalizedWeight,
+  //   )
+  //   const afterSpotPrice = calcSpotPrice(
+  //     new BN(bidMintInfo.reserve.toNumber() + bidAmountBN.toNumber()),
+  //     bidMintInfo.normalizedWeight,
+  //     new BN(askMintInfo.reserve.toNumber() - tokenOutAmount.toNumber()),
+  //     askMintInfo.normalizedWeight,
+  //   )
+  //   return (afterSpotPrice - beforeSpotPrice) / beforeSpotPrice
+  // }
 
   useEffect(() => {
     findRoute()
   }, [findRoute])
 
-  return { ...bestRoute }
+  return {
+    route: bestRoute,
+    bidAmount: Number(bidAmount),
+    askAmount: 0,
+    priceImpact: 0,
+  }
 }
