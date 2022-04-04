@@ -1,7 +1,7 @@
-import { Fragment } from 'react'
+import { Fragment, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 
-import { Card, Col, Row, Space, Typography } from 'antd'
+import { Button, Card, Col, Row, Space, Typography } from 'antd'
 import Deposit from './deposit'
 import Withdraw from './withdraw'
 import { PoolAvatar } from 'app/components/pools/poolAvatar'
@@ -19,17 +19,27 @@ import tvlBg from 'app/static/images/tvl.svg'
 import apyBg from 'app/static/images/apy.svg'
 import myContributeBg from 'app/static/images/my-contribution.svg'
 import { numeric } from 'shared/util'
+import PoolManagement from './management'
+import { useWallet } from '@senhub/providers'
 
 const PoolDetails = () => {
-  const { getQuery } = useAppRouter()
+  const { getQuery, pushHistory } = useAppRouter()
   const poolAddress = getQuery('pool') || ''
   const {
     pools: { [poolAddress]: poolData },
   } = useSelector((state: AppState) => state)
+  const {
+    wallet: { address: walletAddress },
+  } = useWallet()
+  
   const TVL = useTVL(poolAddress)
   const { balance } = useAccountBalanceByMintAddress(
     poolData.mintLpt.toBase58(),
   )
+
+  const isOwner = useMemo(() => {
+    return walletAddress === poolData?.authority.toBase58()
+  }, [poolData, walletAddress])
 
   if (!poolAddress) return null
 
@@ -38,10 +48,14 @@ const PoolDetails = () => {
       <Col lg={20} md={24} style={{ maxWidth: 930 }}>
         <Row gutter={[24, 24]}>
           <Col span={24}>
-            <Space size={10}>
-              <IonIcon name="arrow-back-outline" />
-              <Typography.Text strong={true}>Back</Typography.Text>
-            </Space>
+            <Button
+              type="text"
+              icon={<IonIcon name="arrow-back-outline" />}
+              onClick={() => pushHistory(`/?tab=pools`)}
+              style={{ margin: -12 }}
+            >
+              Back
+            </Button>
           </Col>
           <Col span={24}>
             <Row gutter={[24, 24]} justify="center">
@@ -163,6 +177,11 @@ const PoolDetails = () => {
                   </Row>
                 </Card>
               </Col>
+              {isOwner && (
+                <Col lg={12} md={12} xs={24}>
+                  <PoolManagement poolAddress={poolAddress} />
+                </Col>
+              )}
             </Row>
           </Col>
         </Row>
