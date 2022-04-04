@@ -5,14 +5,14 @@ import MintInput from 'app/components/mintInput'
 
 import { AppState } from 'app/model'
 import { setSwapState } from 'app/model/swap.controller'
-import { useMintsSwap } from 'app/hooks/useMintsSwap'
+import { useMintsCanSwap } from 'app/hooks/swap/useMintsCanSwap'
 
 export default function BidInput() {
   const {
     swap: { bidAmount, bidMint, askMint },
   } = useSelector((state: AppState) => state)
   const dispatch = useDispatch()
-  const mintsSwap = useMintsSwap()
+  const mintsSwap = useMintsCanSwap()
 
   useEffect(() => {
     dispatch(setSwapState({ bidMint: mintsSwap[0] }))

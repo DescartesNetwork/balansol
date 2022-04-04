@@ -2,7 +2,7 @@ import { AppState } from 'app/model'
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 
-export const useMintsSwap = (): string[] => {
+export const useMintsCanSwap = (): string[] => {
   const { pools } = useSelector((state: AppState) => state)
 
   const mintsSwap = useMemo(() => {
