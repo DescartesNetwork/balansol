@@ -49,34 +49,39 @@ export const useRouteSwap = () => {
 
     for (const pool in pools) {
       const poolData = pools[pool]
-      const bidMintInfo = getMintInfo(poolData, bidMint)
-      const askMintInfo = getMintInfo(poolData, askMint)
-      if (!bidMintInfo || !askMintInfo) continue
-      const bidAmountBN = await decimalizeMintAmount(bidAmount, bidMint)
+      try {
+        const bidMintInfo = getMintInfo(poolData, bidMint)
+        const askMintInfo = getMintInfo(poolData, askMint)
+        if (!bidMintInfo || !askMintInfo) continue
+        const bidAmountBN = await decimalizeMintAmount(bidAmount, bidMint)
 
-      const tokenOutAmount = calcOutGivenInSwap(
-        bidAmountBN,
-        askMintInfo.reserve,
-        bidMintInfo.reserve,
-        askMintInfo.normalizedWeight,
-        bidMintInfo.normalizedWeight,
-        poolData.fee,
-      )
-      const askAmount = await undecimalizeMintAmount(tokenOutAmount, askMint)
-      if (Number(askAmount) > Number(newRoute.askAmount)) {
-        const priceImpact = calcPriceImpact(
-          bidMintInfo,
-          askMintInfo,
+        const tokenOutAmount = calcOutGivenInSwap(
           bidAmountBN,
-          tokenOutAmount,
+          askMintInfo.reserve,
+          bidMintInfo.reserve,
+          askMintInfo.normalizedWeight,
+          bidMintInfo.normalizedWeight,
+          poolData.fee,
         )
+        const askAmount = await undecimalizeMintAmount(tokenOutAmount, askMint)
+        if (Number(askAmount) > Number(newRoute.askAmount)) {
+          const priceImpact = calcPriceImpact(
+            bidMintInfo,
+            askMintInfo,
+            bidAmountBN,
+            tokenOutAmount,
+          )
 
-        newRoute.askAmount = askAmount
-        newRoute.priceImpact = priceImpact
-        newRoute.pool = pool
+          newRoute.askAmount = askAmount
+          newRoute.priceImpact = priceImpact
+          newRoute.pool = pool
+        }
+
+        setBestRoute(newRoute)
+      } catch {
+        continue
       }
     }
-    setBestRoute(newRoute)
   }, [
     askMint,
     bidAmount,

@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux'
 import { AppState } from 'app/model'
 import { calcSpotPrice, getMintInfo } from 'app/helper/oracles'
 import { useRouteSwap } from 'app/hooks/useRouteSwap'
+import { numeric } from 'shared/util'
 
 const MintRatio = ({ reversed = false }: { reversed?: boolean }) => {
   const {
@@ -43,7 +44,9 @@ const MintRatio = ({ reversed = false }: { reversed?: boolean }) => {
     <Space>
       <MintSymbol mintAddress={actualBid} />
       <Typography.Text>=</Typography.Text>
-      <Typography.Text>{!reversed ? spotPrice : 1 / spotPrice}</Typography.Text>
+      <Typography.Text>
+        {numeric(!reversed ? spotPrice : 1 / spotPrice).format('0.[0000]')}
+      </Typography.Text>
       <MintSymbol mintAddress={actualAsk} />
     </Space>
   )

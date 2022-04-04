@@ -12,9 +12,10 @@ export default function SettingArea() {
       <Divider type="vertical" style={{ padding: 0, margin: 0 }} />
       <Popover
         placement="bottomRight"
-        overlayInnerStyle={{ width: 300 }}
         content={<Setting />}
         trigger="click"
+        overlayClassName="slippage"
+        overlayInnerStyle={{ borderRadius: 24 }}
       >
         <Button
           type="text"

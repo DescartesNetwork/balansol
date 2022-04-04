@@ -31,7 +31,7 @@ const ConfirmSwap = ({
   onCancel?: (visible: boolean) => void
 }) => {
   const {
-    swap: { bidAmount, bidMint, askMint },
+    swap: { bidAmount, bidMint, askMint, slippageTolerance },
   } = useSelector((state: AppState) => state)
 
   const [checked, setChecked] = useState(false)
@@ -40,7 +40,7 @@ const ConfirmSwap = ({
   const { decimalizeMintAmount } = useOracles()
 
   useEffect(() => {
-    if (priceImpact > PriceImpact.GoodImpact) return setIsDisplayWarning(true)
+    if (priceImpact > PriceImpact.goodSwap) return setIsDisplayWarning(true)
     setIsDisplayWarning(false)
   }, [priceImpact])
 
@@ -51,14 +51,20 @@ const ConfirmSwap = ({
 
   const onSwap = async () => {
     try {
-      const BidAmountBN = await decimalizeMintAmount(bidAmount, bidMint)
+      const bidAmountBN = await decimalizeMintAmount(bidAmount, bidMint)
+
+      const limit = Number(askAmount) * (1 - slippageTolerance / 100)
+      const limitBN = await decimalizeMintAmount(limit, askMint)
 
       const { txId } = await window.balansol.swap(
-        BidAmountBN,
+        bidAmountBN,
         bidMint,
         askMint,
         pool,
+        limitBN,
       )
+
+      onCancel(false)
       notifySuccess('Swap', txId)
     } catch (error) {
       notifyError(error)
@@ -126,7 +132,7 @@ const ConfirmSwap = ({
           <Button
             type="primary"
             onClick={onSwap}
-            disabled={false}
+            disabled={isDisplayWarning && !checked}
             loading={false}
             block
           >
