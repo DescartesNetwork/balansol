@@ -65,7 +65,7 @@ export type PoolPairData = {
   swapFee: BN
 }
 
-export type MintInfo = {
+export type MintDataFromPool = {
   reserve: BN
   normalizedWeight: number
   treasury: web3.PublicKey
