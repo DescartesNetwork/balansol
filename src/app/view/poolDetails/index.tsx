@@ -31,15 +31,14 @@ const PoolDetails = () => {
   const {
     wallet: { address: walletAddress },
   } = useWallet()
+  
   const TVL = useTVL(poolAddress)
   const { balance } = useAccountBalanceByMintAddress(
     poolData.mintLpt.toBase58(),
   )
 
   const isOwner = useMemo(() => {
-    const { authority } = poolData
-    if (walletAddress === authority.toBase58()) return true
-    return false
+    return walletAddress === poolData?.authority.toBase58()
   }, [poolData, walletAddress])
 
   if (!poolAddress) return null
