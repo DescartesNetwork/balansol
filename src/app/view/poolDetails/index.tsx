@@ -1,5 +1,6 @@
-import { Fragment, useMemo } from 'react'
+import { Fragment } from 'react'
 import { useSelector } from 'react-redux'
+import { useWallet } from '@senhub/providers'
 
 import { Button, Card, Col, Row, Space, Typography } from 'antd'
 import Deposit from './deposit'
@@ -9,18 +10,17 @@ import CardPoolDetail from './cardPoolDetail'
 import DoughnutChart from './charts/doughnutChart'
 import BarChart from './charts/barChart'
 import IonIcon from 'shared/antd/ionicon'
+import PoolManagement from './management'
 
 import { useAppRouter } from 'app/hooks/useAppRouter'
 import { AppState } from 'app/model'
 import { useTVL } from 'app/hooks/useTVL'
 import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
+import { numeric } from 'shared/util'
 
 import tvlBg from 'app/static/images/tvl.svg'
 import apyBg from 'app/static/images/apy.svg'
 import myContributeBg from 'app/static/images/my-contribution.svg'
-import { numeric } from 'shared/util'
-import PoolManagement from './management'
-import { useWallet } from '@senhub/providers'
 
 const PoolDetails = () => {
   const { getQuery, pushHistory } = useAppRouter()
@@ -31,16 +31,13 @@ const PoolDetails = () => {
   const {
     wallet: { address: walletAddress },
   } = useWallet()
-  
+
   const TVL = useTVL(poolAddress)
   const { balance } = useAccountBalanceByMintAddress(
     poolData.mintLpt.toBase58(),
   )
 
-  const isOwner = useMemo(() => {
-    return walletAddress === poolData?.authority.toBase58()
-  }, [poolData, walletAddress])
-
+  const isOwner = walletAddress === poolData?.authority.toBase58()
   if (!poolAddress) return null
 
   return (
