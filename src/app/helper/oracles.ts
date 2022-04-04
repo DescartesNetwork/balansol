@@ -300,6 +300,60 @@ export const calcMintReceivesRemoveFullSide = (
   return amounts_out
 }
 
+const calcLpInForExactTokensOut = (
+  tokenAmountOuts: BN[],
+  balanceOuts: BN[],
+  weightIns: BN[],
+  totalSupply: BN,
+  decimalIns: number[],
+  swapFee: BN,
+) => {
+  const fee = Number(
+    util.undecimalize(BigInt(swapFee.toString()), GENERAL_DECIMALS),
+  )
+  const numTotalSupply = Number(
+    util.undecimalize(BigInt(totalSupply.toString()), LPTDECIMALS),
+  )
+  const numBalanceOuts = balanceOuts.map((value, idx) =>
+    Number(util.undecimalize(BigInt(value.toString()), decimalIns[idx])),
+  )
+  const numAmountOuts = tokenAmountOuts.map((value, idx) =>
+    Number(util.undecimalize(BigInt(value.toString()), decimalIns[idx])),
+  )
+
+  const complement = (value: number) => {
+    return value < 1 ? 1 - value : 0
+  }
+
+  const balanceRatiosWithoutFee = new Array(tokenAmountOuts.length)
+  let invariantRatioWithoutFees = 0
+  for (let i = 0; i < tokenAmountOuts.length; i++) {
+    const normalizedWeight = calcNormalizedWeight(weightIns, weightIns[i])
+    balanceRatiosWithoutFee[i] =
+      (numBalanceOuts[i] - numAmountOuts[i]) / numBalanceOuts[i]
+    invariantRatioWithoutFees += balanceRatiosWithoutFee[i] * normalizedWeight
+  }
+  let invariantRatio = 1
+  for (let i = 0; i < tokenAmountOuts.length; i++) {
+    // Swap fees are typically charged on 'tokenIn', but there is no 'tokenIn' here, so we apply it to
+    // 'tokenOut' - this results in slightly larger price impact
+    const normalizedWeight = calcNormalizedWeight(weightIns, weightIns[i])
+    let amountOutWithFee
+    if (invariantRatioWithoutFees > balanceRatiosWithoutFee[i]) {
+      const nonTaxableAmount =
+        numBalanceOuts[i] * complement(invariantRatioWithoutFees)
+      const taxableAmount = numAmountOuts[i] - nonTaxableAmount
+      amountOutWithFee = nonTaxableAmount + taxableAmount / complement(fee)
+    } else {
+      amountOutWithFee = numAmountOuts[i]
+    }
+    const balanceRatio =
+      (numBalanceOuts[i] - amountOutWithFee) / numBalanceOuts[i]
+    invariantRatio = invariantRatio * balanceRatio ** normalizedWeight
+  }
+  return numTotalSupply * complement(invariantRatio)
+}
+
 export const calcPriceImpact = (
   action: string,
   amountIns: BN[],
@@ -338,4 +392,31 @@ export const calcPriceImpact = (
 
     return { lpOut, impactPrice }
   }
+
+  const actualAmountIns = amountIns.filter((value) => !value.isZero())
+  // if (actualAmountIns.length === 1) {
+  const singleTokenIndex = amountIns.indexOf(actualAmountIns[0])
+  if (balanceIns[singleTokenIndex] === amountIns[singleTokenIndex]) {
+    return { lpOut: 10, impactPrice: 0.01 }
+  }
+  lpOut = calcLpInForExactTokensOut(
+    amountIns,
+    balanceIns,
+    weightIns,
+    totalSupply,
+    decimalIns,
+    swapFee,
+  )
+  lpOutZeroPriceImpact = Number(
+    caclLpForTokensZeroPriceImpact(
+      amountIns,
+      balanceIns,
+      weightIns,
+      totalSupply,
+      decimalIns,
+    ).toFixed(9),
+  )
+  impactPrice = lpOut / lpOutZeroPriceImpact - 1
+  // }
+  return { lpOut, impactPrice }
 }

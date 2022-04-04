@@ -16,6 +16,7 @@ import { LPTDECIMALS } from 'app/constant/index'
 import { useOracles } from 'app/hooks/useOracles'
 import { useLptSupply } from 'app/hooks/useLptSupply'
 import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
+import { numeric } from 'shared/util'
 
 const WithdrawSingleSide = ({
   poolAddress,
@@ -27,6 +28,7 @@ const WithdrawSingleSide = ({
   mintAddress: string
 }) => {
   const [amountReserve, setAmountReserve] = useState<BN>(new BN(0))
+  const [impactPrice, setImpactPrice] = useState(0)
 
   const {
     pools: { [poolAddress]: poolData },
@@ -91,16 +93,71 @@ const WithdrawSingleSide = ({
     return setAmountReserve(amountReserver)
   }, [decimalize, lptAmount, mintAddress, poolData, supply])
 
+  const estimateImpactPriceAndLP = useCallback(async () => {
+    setImpactPrice(0)
+    if (Number(lptAmount) === 0) return setLpOutTotal(0)
+
+    let amountIns: BN[] = []
+    let decimalIns: number[] = []
+
+    for (let i in amounts) {
+      const decimalIn = await getDecimals(poolData.mints[i].toBase58())
+      const amountBn = await decimalizeMintAmount(amounts[i], poolData.mints[i])
+      amountIns.push(amountBn)
+      decimalIns.push(decimalIn)
+    }
+
+    const totalSuply = calcTotalSupplyPool(
+      poolData.reserves,
+      poolData.weights,
+      decimalIns,
+    )
+    const totalSupplyBN = await decimalizeMintAmount(
+      totalSuply,
+      poolData.mintLpt,
+    )
+    const { lpOut, impactPrice } = calcPriceImpact(
+      'join',
+      amountIns,
+      poolData.reserves,
+      poolData.weights,
+      totalSupplyBN,
+      decimalIns,
+      poolData.fee,
+    )
+
+    setLpOutTotal(lpOut)
+    setImpactPrice(impactPrice)
+  }, [amounts, decimalizeMintAmount, getDecimals, poolData])
+
+  useEffect(() => {
+    estimateImpactPriceAndLP()
+  }, [estimateImpactPriceAndLP])
+
   useEffect(() => {
     calcMintReceiveSingleSide()
   }, [calcMintReceiveSingleSide])
 
   return (
-    <Row gutter={[0, 24]} className="withdraw">
+    <Row gutter={[0, 12]} className="withdraw">
+      <Col span={24}>
+        <Row>
+          <Col flex="auto">
+            <Typography.Text type="secondary" style={{ fontSize: '14px' }}>
+              Price impact
+            </Typography.Text>
+          </Col>
+          <Col>
+            <span style={{ color: '#03A326' }}>
+              {numeric(impactPrice).format('0,0.[0000]')} %
+            </span>
+          </Col>
+        </Row>
+      </Col>
       <Col span={24}>
         <Row gutter={[0, 14]}>
           <Col span={24}>
-            <Typography.Text type="secondary" style={{ fontSize: '12px' }}>
+            <Typography.Text type="secondary" style={{ fontSize: '14px' }}>
               You will receive
             </Typography.Text>
           </Col>

@@ -59,8 +59,6 @@ const ConfirmSwap = ({
         bidMint,
         askMint,
         pool,
-        // temp to run
-        new BN(0),
       )
       notifySuccess('Swap', txId)
     } catch (error) {
