@@ -1,13 +1,16 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { BN, utils, web3 } from '@project-serum/anchor'
-import { useAccount, useWallet } from '@senhub/providers'
 
 import { Button, Col, Row, Typography } from 'antd'
 import TokenWillReceive from '../tokenWillReceive'
 
+import { BN, utils, web3 } from '@project-serum/anchor'
+import { useAccount, useMint, useWallet } from '@senhub/providers'
+
 import {
   calcMintReceiveRemoveSingleSide,
+  calcTotalSupplyPool,
+  calcWithdrawPriceImpact,
   getMintInfo,
 } from 'app/helper/oracles'
 import { notifyError, notifySuccess } from 'app/helper'
@@ -17,6 +20,7 @@ import { useOracles } from 'app/hooks/useOracles'
 import { useLptSupply } from 'app/hooks/useLptSupply'
 import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
 import { numeric } from 'shared/util'
+import { publicKey } from '@project-serum/anchor/dist/cjs/utils'
 
 const WithdrawSingleSide = ({
   poolAddress,
@@ -29,6 +33,7 @@ const WithdrawSingleSide = ({
 }) => {
   const [amountReserve, setAmountReserve] = useState<BN>(new BN(0))
   const [impactPrice, setImpactPrice] = useState(0)
+  const { getDecimals } = useMint()
 
   const {
     pools: { [poolAddress]: poolData },
@@ -37,7 +42,8 @@ const WithdrawSingleSide = ({
     wallet: { address: walletAddress },
   } = useWallet()
   const { accounts } = useAccount()
-  const { decimalize } = useOracles()
+  const { decimalize, decimalizeMintAmount } = useOracles()
+
   const { supply } = useLptSupply(poolData.mintLpt)
   const { balance } = useAccountBalanceByMintAddress(
     poolData.mintLpt.toBase58(),
@@ -83,52 +89,64 @@ const WithdrawSingleSide = ({
   const calcMintReceiveSingleSide = useCallback(async () => {
     let amount = decimalize(lptAmount, LPTDECIMALS)
     const mintPoolInfo = getMintInfo(poolData, mintAddress)
+    const decimalOut = await getDecimals(mintAddress)
     let amountReserver = calcMintReceiveRemoveSingleSide(
       new BN(String(amount)),
       supply,
       Number(mintPoolInfo.normalizedWeight),
       mintPoolInfo.reserve,
-      new BN(String(poolData.fee)),
+      decimalOut,
+      poolData.fee,
     )
     return setAmountReserve(amountReserver)
-  }, [decimalize, lptAmount, mintAddress, poolData, supply])
+  }, [decimalize, getDecimals, lptAmount, mintAddress, poolData, supply])
 
   const estimateImpactPriceAndLP = useCallback(async () => {
+    let amount = decimalize(lptAmount, LPTDECIMALS)
     setImpactPrice(0)
-    if (Number(lptAmount) === 0) return setLpOutTotal(0)
+    // if (Number(lptAmount) === 0) return setLpOutTotal(0)
+    let decimals: number[] = []
 
-    let amountIns: BN[] = []
-    let decimalIns: number[] = []
-
-    for (let i in amounts) {
+    for (let i in poolData.reserves) {
       const decimalIn = await getDecimals(poolData.mints[i].toBase58())
-      const amountBn = await decimalizeMintAmount(amounts[i], poolData.mints[i])
-      amountIns.push(amountBn)
-      decimalIns.push(decimalIn)
+      decimals.push(decimalIn)
     }
-
+    const indexTokenOut = poolData.mints
+      .map((value) => value.toBase58())
+      .indexOf(mintAddress)
     const totalSuply = calcTotalSupplyPool(
       poolData.reserves,
       poolData.weights,
-      decimalIns,
+      decimals,
     )
     const totalSupplyBN = await decimalizeMintAmount(
       totalSuply,
       poolData.mintLpt,
     )
-    const { lpOut, impactPrice } = calcPriceImpact(
-      'join',
-      amountIns,
+    calcWithdrawPriceImpact(
+      amount,
+      indexTokenOut,
       poolData.reserves,
       poolData.weights,
       totalSupplyBN,
-      decimalIns,
+      decimals,
       poolData.fee,
     )
 
-    setLpOutTotal(lpOut)
-    setImpactPrice(impactPrice)
-  }, [amounts, decimalizeMintAmount, getDecimals, poolData])
+    // setLpOutTotal(lpOut)
+    setImpactPrice(0)
+  }, [
+    decimalize,
+    decimalizeMintAmount,
+    getDecimals,
+    lptAmount,
+    mintAddress,
+    poolData.fee,
+    poolData.mintLpt,
+    poolData.mints,
+    poolData.reserves,
+    poolData.weights,
+  ])
 
   useEffect(() => {
     estimateImpactPriceAndLP()

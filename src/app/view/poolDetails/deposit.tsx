@@ -14,7 +14,7 @@ import {
 } from 'app/helper'
 import { AppState } from 'app/model'
 import {
-  calcPriceImpact,
+  calcDepositPriceImpact,
   calcNormalizedWeight,
   calcTotalSupplyPool,
 } from 'app/helper/oracles'
@@ -68,8 +68,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
       totalSuply,
       poolData.mintLpt,
     )
-    const { lpOut, impactPrice } = calcPriceImpact(
-      'join',
+    const { lpOut, impactPrice } = calcDepositPriceImpact(
       amountIns,
       poolData.reserves,
       poolData.weights,
