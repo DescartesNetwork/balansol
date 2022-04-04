@@ -1,30 +1,39 @@
-import React from 'react'
+import { useSelector } from 'react-redux'
 
-import MintPool from 'app/components/mintPool'
 import { Button, Card, Col, Row, Space, Typography } from 'antd'
+
 import { PoolAvatar } from 'app/components/pools/poolAvatar'
 import { useAppRouter } from 'app/hooks/useAppRoute'
-
+import { useTVL } from 'app/hooks/useTVL'
+import { AppState } from 'app/model'
+import PercentGroupMints from './percentGroupMints'
 import WalletAddress from './walletAddress'
+import { numeric } from 'shared/util'
 
-export default function DetailsCard({ poolAddress }: { poolAddress: string }) {
+const DetailsCard = ({ poolAddress }: { poolAddress: string }) => {
   const { pushHistory } = useAppRouter()
+  const {
+    pools: { [poolAddress]: poolData },
+  } = useSelector((state: AppState) => state)
+  const poolState: any = poolData.state
+  const TVL = useTVL(poolAddress)
 
   return (
-    <Card style={{ boxShadow: 'unset' }}>
+    <Card
+      className={`${poolState['initialized'] ? '' : 'disableDiv'}`}
+      style={{ boxShadow: 'unset' }}
+    >
       <Row style={{ marginBottom: '16px' }}>
         <Col flex="auto">
-          <PoolAvatar poolAddress={poolAddress} />
+          <PoolAvatar size={32} poolAddress={poolAddress} />
         </Col>
         <Col>
-          <WalletAddress />
+          <WalletAddress poolAddress={poolAddress} />
         </Col>
       </Row>
-      <Row gutter={[0, 24]}>
+      <Row gutter={[0, 10]}>
         <Col span={24}>
-          <Space>
-            <MintPool address="" />
-          </Space>
+          <PercentGroupMints poolAddress={poolAddress} />
         </Col>
         <Col span={24}>
           <Row align="bottom">
@@ -33,13 +42,16 @@ export default function DetailsCard({ poolAddress }: { poolAddress: string }) {
                 <Col span={24}>
                   <Space>
                     <Typography.Text type="secondary">TVL:</Typography.Text>
-                    <Typography.Title level={5}> $299.11$</Typography.Title>
+                    <Typography.Title level={5}>
+                      {' '}
+                      {numeric(TVL).formatCurrency('($0.00a)')}
+                    </Typography.Title>
                   </Space>
                 </Col>
                 <Col span={24}>
                   <Space>
                     <Typography.Text type="secondary">APY:</Typography.Text>
-                    <Typography.Title level={5}> 9%</Typography.Title>
+                    <Typography.Title level={5}> 0%</Typography.Title>
                   </Space>
                 </Col>
               </Row>
@@ -58,3 +70,5 @@ export default function DetailsCard({ poolAddress }: { poolAddress: string }) {
     </Card>
   )
 }
+
+export default DetailsCard
