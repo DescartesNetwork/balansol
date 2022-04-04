@@ -11,7 +11,7 @@ import SwapInfo from 'app/components/swapInfo'
 import { useDispatch, useSelector } from 'react-redux'
 import { setSwapState } from 'app/model/swap.controller'
 import { AppState } from 'app/model'
-import { useRouteSwap } from 'app/hooks/useRouteSwap'
+import { useRouteSwap } from 'app/hooks/swap/useRouteSwap'
 
 import './index.less'
 

@@ -6,7 +6,7 @@ import MintInput from 'app/components/mintInput'
 
 import { AppState } from 'app/model'
 import { setSwapState } from 'app/model/swap.controller'
-import { useRouteSwap } from 'app/hooks/useRouteSwap'
+import { useRouteSwap } from 'app/hooks/swap/useRouteSwap'
 import { useMintsSwap } from 'app/hooks/useMintsSwap'
 import { useReversedSwap } from 'app/hooks/useReversedSwap'
 

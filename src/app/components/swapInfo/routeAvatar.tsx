@@ -4,7 +4,7 @@ import { Space } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
 
 import { MintAvatar } from 'shared/antd/mint'
-import { useRouteSwap } from 'app/hooks/useRouteSwap'
+import { useRouteSwap } from 'app/hooks/swap/useRouteSwap'
 
 const RouteAvatar = () => {
   const { askMint, bidMint } = useRouteSwap()

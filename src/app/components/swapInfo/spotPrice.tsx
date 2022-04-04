@@ -6,7 +6,7 @@ import { MintSymbol } from 'shared/antd/mint'
 import { useSelector } from 'react-redux'
 import { AppState } from 'app/model'
 import { calcSpotPrice, getMintInfo } from 'app/helper/oracles'
-import { useRouteSwap } from 'app/hooks/useRouteSwap'
+import { useRouteSwap } from 'app/hooks/swap/useRouteSwap'
 import { numeric } from 'shared/util'
 
 const MintRatio = ({ reversed = false }: { reversed?: boolean }) => {

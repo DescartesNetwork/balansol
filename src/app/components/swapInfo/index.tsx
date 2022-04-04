@@ -7,7 +7,7 @@ import RouteAvatar from './routeAvatar'
 import SpotPrice from './spotPrice'
 
 import { numeric } from 'shared/util'
-import { useRouteSwap } from 'app/hooks/useRouteSwap'
+import { useRouteSwap } from 'app/hooks/swap/useRouteSwap'
 import { AppState } from 'app/model'
 import { priceImpactColor } from 'app/helper'
 

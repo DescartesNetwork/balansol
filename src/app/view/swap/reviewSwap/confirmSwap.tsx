@@ -17,7 +17,7 @@ import PreviewSwap from 'app/components/swapInfo'
 
 import { AppState } from 'app/model'
 import { notifyError, notifySuccess } from 'app/helper'
-import { useRouteSwap } from 'app/hooks/useRouteSwap'
+import { useRouteSwap } from 'app/hooks/swap/useRouteSwap'
 import { useOracles } from 'app/hooks/useOracles'
 
 import './index.less'

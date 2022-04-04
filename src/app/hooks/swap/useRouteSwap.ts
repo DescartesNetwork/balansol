@@ -7,7 +7,7 @@ import {
   getMintInfo,
 } from 'app/helper/oracles'
 import { AppState } from 'app/model'
-import { useOracles } from './useOracles'
+import { useOracles } from '../useOracles'
 import { BN } from '@project-serum/anchor'
 import { MintDataFromPool } from 'app/constant'
 

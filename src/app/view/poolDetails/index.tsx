@@ -10,7 +10,7 @@ import DoughnutChart from './charts/doughnutChart'
 import BarChart from './charts/barChart'
 import IonIcon from 'shared/antd/ionicon'
 
-import { useAppRouter } from 'app/hooks/useAppRoute'
+import { useAppRouter } from 'app/hooks/useAppRouter'
 import { AppState } from 'app/model'
 import { useTVL } from 'app/hooks/useTVL'
 import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
