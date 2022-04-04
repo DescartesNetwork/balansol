@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 
 import { getMintInfo } from 'app/helper/oracles'
 import { AppState } from 'app/model'
-import { getTokenRoute } from 'app/helper/swap'
+import { useMintRoutes } from './useMintRoutes'
 // import { useOracles } from '../useOracles'
 
 type Route = {
@@ -22,8 +22,8 @@ export const useRouteSwap = () => {
   } = useSelector((state: AppState) => state)
   const [bestRoute, setBestRoute] = useState<Route>([])
 
-  const tokenRoutes = getTokenRoute(pools)
-
+  const tokenRoutes = useMintRoutes()
+  console.log('tokenRoutes', tokenRoutes)
   // const { decimalizeMintAmount } = useOracles()
 
   const findRoute = useCallback(async () => {
