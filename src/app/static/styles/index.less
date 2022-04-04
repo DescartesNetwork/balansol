@@ -24,11 +24,6 @@
   font-size: 12px;
 }
 
-.balansol-btn {
-  border-radius: 24px !important;
-  border-color: transparent;
-}
-
 .mint-select {
   background: #394360 !important;
   border-radius: 16px !important;
@@ -49,6 +44,15 @@
       background: rgba(99, 224, 179, 0.1) !important;
       color: #63e0b3 !important;
     }
+  }
+}
+
+.btn-slippage {
+  padding: 5px 16px;
+  border-radius: 8px !important;
+  &.selected {
+    background: rgba(99, 224, 179, 0.1) !important;
+    color: #63e0b3 !important;
   }
 }
 
@@ -100,4 +104,26 @@
     background: inherit !important;
     border: 1px solid #63e0b3 !important;
   }
+}
+
+.slippage {
+  padding-top: 0px;
+  .balansol-popover-inner-content {
+    padding: 0px;
+  }
+}
+
+.search-pools {
+  background: transparent !important;
+  box-shadow: none !important;
+  .balansol-select {
+    .balansol-select-selector {
+      border-radius: 24px !important;
+    }
+  }
+}
+
+.disableDiv {
+  pointer-events: none;
+  opacity: 0.4;
 }

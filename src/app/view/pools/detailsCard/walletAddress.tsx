@@ -5,13 +5,9 @@ import IconButton from 'os/view/actionCenter/applications/walletIntro/iconButton
 import CopyToClipboard from 'react-copy-to-clipboard'
 
 import { explorer, shortenAddress } from 'shared/util'
-import { useWallet } from '@senhub/providers'
 
-export default function WalletAddress() {
+const WalletAddress = ({ poolAddress }: { poolAddress: string }) => {
   const [copied, setCopied] = useState(false)
-  const {
-    wallet: { address },
-  } = useWallet()
 
   const onCopy = async () => {
     setCopied(true)
@@ -22,16 +18,18 @@ export default function WalletAddress() {
   return (
     <Space size={10}>
       <Typography.Text
-        style={{ color: '#E9E9EB', cursor: 'pointer' }}
-        onClick={() => window.open(explorer(address), '_blank')}
+        type="secondary"
+        style={{ cursor: 'pointer' }}
+        onClick={() => window.open(explorer(poolAddress), '_blank')}
       >
-        {shortenAddress(address, 3, '...')}
+        {shortenAddress(poolAddress, 3, '...')}
       </Typography.Text>
       <Tooltip title="Copied" visible={copied}>
-        <CopyToClipboard text={address} onCopy={onCopy}>
+        <CopyToClipboard text={poolAddress} onCopy={onCopy}>
           <IconButton name="copy-outline" onClick={onCopy} />
         </CopyToClipboard>
       </Tooltip>
     </Space>
   )
 }
+export default WalletAddress

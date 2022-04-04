@@ -9,7 +9,7 @@ import './index.less'
 
 import { AppWatcher } from 'app/components/watcher'
 import { QueryParams, HOMEPAGE_TABS } from 'app/constant'
-import { useAppRouter } from 'app/hooks/useAppRoute'
+import { useAppRouter } from 'app/hooks/useAppRouter'
 
 const SwapAndPools = () => {
   const { getQuery, pushHistory } = useAppRouter()

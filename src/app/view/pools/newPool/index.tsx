@@ -148,6 +148,7 @@ const NewPool = () => {
         icon={<IonIcon name="add-outline" />}
         onClick={() => setVisible(!visible)}
         style={{ borderRadius: 40 }}
+        block
       >
         New pool
       </Button>
