@@ -30,6 +30,10 @@ export const getMintInfo = (poolData: PoolData, mint: Address) => {
   }
 }
 
+const complement = (value: number) => {
+  return value < 1 ? 1 - value : 0
+}
+
 export const valueFunction = (
   reserves: BN[],
   weights: BN[],
@@ -306,60 +310,6 @@ export const calcMintReceivesRemoveFullSide = (
   return amounts_out
 }
 
-const calcLpInForExactTokensOut = (
-  tokenAmountOuts: BN[],
-  balanceOuts: BN[],
-  weightIns: BN[],
-  totalSupply: BN,
-  decimalIns: number[],
-  swapFee: BN,
-) => {
-  const fee = Number(
-    util.undecimalize(BigInt(swapFee.toString()), GENERAL_DECIMALS),
-  )
-  const numTotalSupply = Number(
-    util.undecimalize(BigInt(totalSupply.toString()), LPTDECIMALS),
-  )
-  const numBalanceOuts = balanceOuts.map((value, idx) =>
-    Number(util.undecimalize(BigInt(value.toString()), decimalIns[idx])),
-  )
-  const numAmountOuts = tokenAmountOuts.map((value, idx) =>
-    Number(util.undecimalize(BigInt(value.toString()), decimalIns[idx])),
-  )
-
-  const complement = (value: number) => {
-    return value < 1 ? 1 - value : 0
-  }
-
-  const balanceRatiosWithoutFee = new Array(tokenAmountOuts.length)
-  let invariantRatioWithoutFees = 0
-  for (let i = 0; i < tokenAmountOuts.length; i++) {
-    const normalizedWeight = calcNormalizedWeight(weightIns, weightIns[i])
-    balanceRatiosWithoutFee[i] =
-      (numBalanceOuts[i] - numAmountOuts[i]) / numBalanceOuts[i]
-    invariantRatioWithoutFees += balanceRatiosWithoutFee[i] * normalizedWeight
-  }
-  let invariantRatio = 1
-  for (let i = 0; i < tokenAmountOuts.length; i++) {
-    // Swap fees are typically charged on 'tokenIn', but there is no 'tokenIn' here, so we apply it to
-    // 'tokenOut' - this results in slightly larger price impact
-    const normalizedWeight = calcNormalizedWeight(weightIns, weightIns[i])
-    let amountOutWithFee
-    if (invariantRatioWithoutFees > balanceRatiosWithoutFee[i]) {
-      const nonTaxableAmount =
-        numBalanceOuts[i] * complement(invariantRatioWithoutFees)
-      const taxableAmount = numAmountOuts[i] - nonTaxableAmount
-      amountOutWithFee = nonTaxableAmount + taxableAmount / complement(fee)
-    } else {
-      amountOutWithFee = numAmountOuts[i]
-    }
-    const balanceRatio =
-      (numBalanceOuts[i] - amountOutWithFee) / numBalanceOuts[i]
-    invariantRatio = invariantRatio * balanceRatio ** normalizedWeight
-  }
-  return numTotalSupply * complement(invariantRatio)
-}
-
 export const calcDepositPriceImpact = (
   amountIns: BN[],
   balanceIns: BN[],
@@ -394,10 +344,6 @@ export const calcDepositPriceImpact = (
   const impactPrice = (1 - lpOut / lpOutZeroPriceImpact) * 100
 
   return { lpOut, impactPrice }
-}
-
-const complement = (value: number) => {
-  return value < 1 ? 1 - value : 0
 }
 
 const calcTokenOutGivenExactLpIn = (
@@ -449,7 +395,8 @@ export const calcWithdrawPriceImpact = (
   decimalOuts: number[],
   swapFee: BN,
 ) => {
-  if (decimalOuts.length === 0) return { lpOut: 0, impactPrice: 0 }
+  if (decimalOuts.length === 0 || lpAmount.isZero())
+    return { lpOut: 0, impactPrice: 0 }
   let tokenAmountOut = new BN(0)
   const tokenAmounts = balanceOuts.map((_, idx) => {
     if (indexTokenOut !== idx) {

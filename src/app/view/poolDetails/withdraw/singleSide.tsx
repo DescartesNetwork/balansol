@@ -1,18 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { BN, utils, web3 } from '@project-serum/anchor'
 
 import { Button, Col, Row, Typography } from 'antd'
 import TokenWillReceive from '../tokenWillReceive'
 
-import { BN, utils, web3 } from '@project-serum/anchor'
 import { useAccount, useMint, useWallet } from '@senhub/providers'
-
-import {
-  calcMintReceiveRemoveSingleSide,
-  calcTotalSupplyPool,
-  calcWithdrawPriceImpact,
-  getMintInfo,
-} from 'app/helper/oracles'
+import { calcWithdrawPriceImpact } from 'app/helper/oracles'
 import { notifyError, notifySuccess, priceImpactColor } from 'app/helper'
 import { AppState } from 'app/model'
 import { LPTDECIMALS } from 'app/constant/index'
@@ -20,7 +14,6 @@ import { useOracles } from 'app/hooks/useOracles'
 import { useLptSupply } from 'app/hooks/useLptSupply'
 import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
 import { numeric } from 'shared/util'
-import { publicKey } from '@project-serum/anchor/dist/cjs/utils'
 
 const WithdrawSingleSide = ({
   poolAddress,
@@ -42,7 +35,7 @@ const WithdrawSingleSide = ({
     wallet: { address: walletAddress },
   } = useWallet()
   const { accounts } = useAccount()
-  const { decimalize, decimalizeMintAmount } = useOracles()
+  const { decimalize } = useOracles()
 
   const { supply } = useLptSupply(poolData.mintLpt)
   const { balance } = useAccountBalanceByMintAddress(
@@ -86,21 +79,6 @@ const WithdrawSingleSide = ({
     }
   }
 
-  const calcMintReceiveSingleSide = useCallback(async () => {
-    let amount = decimalize(lptAmount, LPTDECIMALS)
-    const mintPoolInfo = getMintInfo(poolData, mintAddress)
-    const decimalOut = await getDecimals(mintAddress)
-    let amountReserver = calcMintReceiveRemoveSingleSide(
-      new BN(String(amount)),
-      supply,
-      Number(mintPoolInfo.normalizedWeight),
-      mintPoolInfo.reserve,
-      decimalOut,
-      poolData.fee,
-    )
-    return setAmountReserve(amountReserver)
-  }, [decimalize, getDecimals, lptAmount, mintAddress, poolData, supply])
-
   const estimateImpactPriceAndLP = useCallback(async () => {
     let amount = decimalize(lptAmount, LPTDECIMALS)
     setImpactPrice(0)
@@ -114,48 +92,23 @@ const WithdrawSingleSide = ({
     const indexTokenOut = poolData.mints
       .map((value) => value.toBase58())
       .indexOf(mintAddress)
-    const totalSuply = calcTotalSupplyPool(
-      poolData.reserves,
-      poolData.weights,
-      decimals,
-    )
-    const totalSupplyBN = await decimalizeMintAmount(
-      totalSuply,
-      poolData.mintLpt,
-    )
+
     const { tokenAmountOut, impactPrice } = calcWithdrawPriceImpact(
       amount,
       indexTokenOut,
       poolData.reserves,
       poolData.weights,
-      totalSupplyBN,
+      supply,
       decimals,
       poolData.fee,
     )
     if (!!tokenAmountOut) setAmountReserve(tokenAmountOut)
     setImpactPrice(impactPrice)
-  }, [
-    decimalize,
-    decimalizeMintAmount,
-    getDecimals,
-    lptAmount,
-    mintAddress,
-    poolData.fee,
-    poolData.mintLpt,
-    poolData.mints,
-    poolData.reserves,
-    poolData.weights,
-  ])
+  }, [decimalize, getDecimals, lptAmount, mintAddress, poolData, supply])
 
   useEffect(() => {
     estimateImpactPriceAndLP()
   }, [estimateImpactPriceAndLP])
-
-  useEffect(() => {
-    calcMintReceiveSingleSide()
-  }, [calcMintReceiveSingleSide])
-
-  console.log(amountReserve, amountReserve.isZero(), 'amoun is zero')
 
   return (
     <Row gutter={[0, 12]} className="withdraw">
