@@ -192,8 +192,6 @@ export const caclLpForTokensZeroPriceImpact = (
     return Number(util.undecimalize(BigInt(value.toString()), decimalIns[idx]))
   })
 
-  console.log(numTokenAmountIns, 'numTokenAmountIns')
-
   const amountLpOut = numTokenAmountIns.reduce((totalBptOut, amountIn, i) => {
     // Calculate amount of BPT gained per token in
     const nomalizedWeight = calcNormalizedWeight(weightIns, weightIns[i])
@@ -212,7 +210,6 @@ export const caclLpForTokensZeroPriceImpact = (
     const LpOut = amountIn / LpPrice
     return totalBptOut + LpOut
   }, 0)
-  console.log(amountLpOut, 'amountLpOut')
   return amountLpOut
 }
 
@@ -233,7 +230,6 @@ export const calcBptOutGivenExactTokensIn = (
   const numBalanceIns = balanceIns.map((value, idx) =>
     Number(util.undecimalize(BigInt(value.toString()), decimalIns[idx])),
   )
-  console.log(numBalanceIns, 'numbalance in')
   const numAmountIns = tokenAmountIns.map((value, idx) =>
     Number(util.undecimalize(BigInt(value.toString()), decimalIns[idx])),
   )
@@ -291,7 +287,6 @@ export const calcMintReceiveRemoveSingleSide = (
   let amount_out = numBalance * (1 - Math.pow(tbl, 1 / normalizeWeight))
   let fee_rate = numFee / PRECISION
   let feeWithdraw = amount_out * (1 - (normalizeWeight * (fee_rate - 1) + 1))
-  console.log(amount_out - feeWithdraw, 'amount_out - feeWithdraw')
 
   return new BN(amount_out - feeWithdraw)
 }
@@ -413,18 +408,6 @@ const calcTokenOutGivenExactLpIn = (
   decimal: number,
   swapFee: BN,
 ) => {
-  /*****************************************************************************************
-  // exactBptInForTokenOut                                                                //
-  // a = amountOut                                                                        //
-  // b = balance                     /      /    bpt - bptIn    \    (1 / w)  \           //
-  // bptIn = bptAmountIn    a = b * |  1 - | ------------------- | ^           |          //
-  // bpt = bptTotalSupply            \      \        bpt        /             /           //
-  // w = weight                                                                           //
-  *****************************************************************************************/
-  // Token out, so we round down overall
-  // The multiplication rounds down, but the power rounds up (so the base rounds up)
-  // Because (bpt - bptIn) / bpt <= 1, the exponent rounds down
-  // Calculate the factor by which the invariant will decrease after burning `bptAmountIn`
   const numBalance = Number(
     util.undecimalize(BigInt(balance.toString()), decimal),
   )
@@ -440,7 +423,7 @@ const calcTokenOutGivenExactLpIn = (
   )
 
   const invariantRatio = (numTotalSupply - numAmountIn) / numTotalSupply
-  if (invariantRatio > 0.7) {
+  if (invariantRatio < 0.7) {
     throw new Error('MIN_BPT_IN_FOR_TOKEN_OUT')
   }
   // Calculate by how much the token balance has to increase to cause `invariantRatio`
@@ -467,7 +450,7 @@ export const calcWithdrawPriceImpact = (
   swapFee: BN,
 ) => {
   if (decimalOuts.length === 0) return { lpOut: 0, impactPrice: 0 }
-  let tokenAmountOut = 0
+  let tokenAmountOut = new BN(0)
   const tokenAmounts = balanceOuts.map((_, idx) => {
     if (indexTokenOut !== idx) {
       return new BN(0)
@@ -479,35 +462,31 @@ export const calcWithdrawPriceImpact = (
       lpAmount,
       totalSupply,
       decimalOuts[idx],
-      new BN(10000000),
+      swapFee,
     )
-    console.log(tokenAmount, 'tokenAmount')
-    // tokenAmountOut = Number(
-    //   util.undecimalize(BigInt(tokenAmount.toString()), decimalOuts[idx]),
-    // )
-    return tokenAmount
+
+    tokenAmountOut = new BN(
+      util.decimalize(tokenAmount, decimalOuts[idx]).toString(),
+    )
+    return tokenAmountOut
   })
 
-  // const lpOutZeroPriceImpact = Number(
-  //   caclLpForTokensZeroPriceImpact(
-  //     tokenAmounts,
-  //     balanceOuts,
-  //     weightOuts,
-  //     totalSupply,
-  //     decimalOuts,
-  //   ).toFixed(9),
-  // )
+  const lpOutZeroPriceImpact = Number(
+    caclLpForTokensZeroPriceImpact(
+      tokenAmounts,
+      balanceOuts,
+      weightOuts,
+      totalSupply,
+      decimalOuts,
+    ).toFixed(9),
+  )
 
-  // const numLpAmount = Number(
-  //   util.undecimalize(BigInt(lpAmount.toString()), LPTDECIMALS),
-  // )
-  // console.log(
-  //   'lpOutZeroPriceImpact',
-  //   lpOutZeroPriceImpact,
-  //   'numLpAmount',
-  //   numLpAmount,
-  // )
-  // const impactPrice = numLpAmount / lpOutZeroPriceImpact - 1
+  const numLpAmount = Number(
+    util.undecimalize(BigInt(lpAmount.toString()), LPTDECIMALS),
+  )
+  if (numLpAmount < lpOutZeroPriceImpact)
+    return { tokenAmountOut, impactPrice: 0 }
+  const impactPrice = (numLpAmount / lpOutZeroPriceImpact - 1) * 100
 
-  // return { tokenAmountOut, impactPrice }
+  return { tokenAmountOut, impactPrice }
 }

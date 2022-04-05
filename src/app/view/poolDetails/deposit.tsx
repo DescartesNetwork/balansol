@@ -11,6 +11,7 @@ import {
   checkValidDepositAmountIns,
   notifyError,
   notifySuccess,
+  priceImpactColor,
 } from 'app/helper'
 import { AppState } from 'app/model'
 import {
@@ -175,7 +176,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
                     </Typography.Text>
                   </Col>
                   <Col>
-                    <span style={{ color: '#03A326' }}>
+                    <span style={{ color: priceImpactColor(impactPrice) }}>
                       {numeric(impactPrice).format('0,0.[0000]')} %
                     </span>
                   </Col>

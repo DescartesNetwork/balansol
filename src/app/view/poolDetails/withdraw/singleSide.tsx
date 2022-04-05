@@ -13,7 +13,7 @@ import {
   calcWithdrawPriceImpact,
   getMintInfo,
 } from 'app/helper/oracles'
-import { notifyError, notifySuccess } from 'app/helper'
+import { notifyError, notifySuccess, priceImpactColor } from 'app/helper'
 import { AppState } from 'app/model'
 import { LPTDECIMALS } from 'app/constant/index'
 import { useOracles } from 'app/hooks/useOracles'
@@ -104,7 +104,7 @@ const WithdrawSingleSide = ({
   const estimateImpactPriceAndLP = useCallback(async () => {
     let amount = decimalize(lptAmount, LPTDECIMALS)
     setImpactPrice(0)
-    // if (Number(lptAmount) === 0) return setLpOutTotal(0)
+
     let decimals: number[] = []
 
     for (let i in poolData.reserves) {
@@ -123,7 +123,7 @@ const WithdrawSingleSide = ({
       totalSuply,
       poolData.mintLpt,
     )
-    calcWithdrawPriceImpact(
+    const { tokenAmountOut, impactPrice } = calcWithdrawPriceImpact(
       amount,
       indexTokenOut,
       poolData.reserves,
@@ -132,9 +132,8 @@ const WithdrawSingleSide = ({
       decimals,
       poolData.fee,
     )
-
-    // setLpOutTotal(lpOut)
-    setImpactPrice(0)
+    if (!!tokenAmountOut) setAmountReserve(tokenAmountOut)
+    setImpactPrice(impactPrice)
   }, [
     decimalize,
     decimalizeMintAmount,
@@ -156,6 +155,8 @@ const WithdrawSingleSide = ({
     calcMintReceiveSingleSide()
   }, [calcMintReceiveSingleSide])
 
+  console.log(amountReserve, amountReserve.isZero(), 'amoun is zero')
+
   return (
     <Row gutter={[0, 12]} className="withdraw">
       <Col span={24}>
@@ -166,7 +167,7 @@ const WithdrawSingleSide = ({
             </Typography.Text>
           </Col>
           <Col>
-            <span style={{ color: '#03A326' }}>
+            <span style={{ color: priceImpactColor(impactPrice) }}>
               {numeric(impactPrice).format('0,0.[0000]')} %
             </span>
           </Col>
@@ -188,7 +189,7 @@ const WithdrawSingleSide = ({
           type="primary"
           block
           onClick={onSubmit}
-          disabled={amountReserve.isZero() || Number(lptAmount) > balance}
+          disabled={amountReserve.isZero() || Number(lptAmount) > balance * 0.3}
         >
           Withdraw
         </Button>
