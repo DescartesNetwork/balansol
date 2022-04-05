@@ -4,7 +4,7 @@ import { Button, Col, Row } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
 import NumericInput from 'shared/antd/numericInput'
 
-import { TokenInfo } from './index'
+import { TokenInfo } from '../index'
 
 export default function WeightControl({
   tokenInfo,

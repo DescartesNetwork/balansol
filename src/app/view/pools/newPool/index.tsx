@@ -4,7 +4,7 @@ import { useMint } from '@senhub/providers'
 
 import { Button, Col, Modal, Row, Steps, Typography } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
-import SelectToken from './selectToken'
+import ListTokenSetup from './listTokenSetup'
 import AddLiquidty from './addLiquidity'
 import ConfirmPoolInfo from './confirmPoolInfo'
 
@@ -106,7 +106,7 @@ const NewPool = () => {
     switch (currentStep) {
       case PoolCreatingStep.setGradient:
         return (
-          <SelectToken
+          <ListTokenSetup
             tokenList={tokenList}
             onSetTokenList={setTokenList}
             setCurrentStep={setCurrentStep}

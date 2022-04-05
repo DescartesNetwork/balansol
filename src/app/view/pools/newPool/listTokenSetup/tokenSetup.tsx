@@ -5,7 +5,7 @@ import { Col, Row } from 'antd'
 import WeightControl from './weightControl'
 import Selection from 'app/components/selection'
 
-import { TokenInfo } from './index'
+import { TokenInfo } from '../index'
 import { useAccount, useMint } from '@senhub/providers'
 import { AppState } from 'app/model'
 
