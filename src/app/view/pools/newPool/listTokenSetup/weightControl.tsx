@@ -45,7 +45,6 @@ export default function WeightControl({
               name={isLocked ? 'lock-closed-outline' : 'lock-open-outline'}
             />
           }
-          style={{ background: 'unset' }}
         />
       </Col>
       <Col>

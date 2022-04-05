@@ -51,6 +51,17 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
               </Col>
               <Col span={24}>
                 <Row gutter={[12, 12]}>
+                  {/* Button select all */}
+                  <Col>
+                    <Button
+                      className={`btn-toke-name ${
+                        isSelectedAll ? 'selected' : ''
+                      }`}
+                      onClick={() => setSelectedMints(mints)}
+                    >
+                      <span className="title">All</span>
+                    </Button>
+                  </Col>
                   {/* Mints Symbol Button */}
                   {mints.map((mintAddress) => {
                     let selected = selectedMints.includes(mintAddress)
@@ -69,17 +80,6 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
                       </Col>
                     )
                   })}
-                  {/* Button select all */}
-                  <Col>
-                    <Button
-                      className={`btn-toke-name ${
-                        isSelectedAll ? 'selected' : ''
-                      }`}
-                      onClick={() => setSelectedMints(mints)}
-                    >
-                      <span className="title">All</span>
-                    </Button>
-                  </Col>
                 </Row>
               </Col>
             </Row>

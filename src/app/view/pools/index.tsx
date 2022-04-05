@@ -8,7 +8,6 @@ import Search from './search'
 
 const Pools = () => {
   const { pools } = useSelector((state: AppState) => state)
-  console.log('pools: ', pools)
 
   return (
     <Row gutter={[24, 24]} justify="center" align="middle">
