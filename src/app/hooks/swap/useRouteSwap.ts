@@ -1,100 +1,55 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { BN } from '@project-serum/anchor'
 
-import { getMintInfo } from 'app/helper/oracles'
 import { AppState } from 'app/model'
-import { useMintRoutes } from './useMintRoutes'
-// import { useOracles } from '../useOracles'
+import { useMetaRoutes } from './useMetaRoutes'
+import { Route, useAllRoutes } from './useAllRoutes'
+import { useOracles } from '../useOracles'
 
-type Route = {
-  pool: string
-  bidMint: string
-  bidAmount: string
-  askMint: string
-  askAmount: string
+type RouteSwapInfo = {
+  route: Route
+  bidAmount: number
+  askAmount: number
   priceImpact: number
-}[]
+}
 
-export const useRouteSwap = () => {
+export const useRouteSwap = (): RouteSwapInfo => {
   const {
-    swap: { bidAmount, askMint, bidMint },
-    pools,
+    swap: { bidAmount, askMint },
   } = useSelector((state: AppState) => state)
-  const [bestRoute, setBestRoute] = useState<Route>([])
-
-  const tokenRoutes = useMintRoutes()
-  console.log('tokenRoutes', tokenRoutes)
-  // const { decimalizeMintAmount } = useOracles()
-
-  const findRoute = useCallback(async () => {
-    if (!bidMint || !askMint) return setBestRoute([])
-
-    for (const pool in pools) {
-      const poolData = pools[pool]
-      try {
-        const bidMintInfo = getMintInfo(poolData, bidMint)
-        const askMintInfo = getMintInfo(poolData, askMint)
-        if (!bidMintInfo || !askMintInfo) continue
-        //const bidAmountBN = await decimalizeMintAmount(bidAmount, bidMint)
-
-        // const tokenOutAmount = calcOutGivenInSwap(
-        //   bidAmountBN,
-        //   askMintInfo.reserve,
-        //   bidMintInfo.reserve,
-        //   askMintInfo.normalizedWeight,
-        //   bidMintInfo.normalizedWeight,
-        //   poolData.fee,
-        // )
-        // const askAmount = await undecimalizeMintAmount(tokenOutAmount, askMint)
-        // if (Number(askAmount) > Number(newRoute.askAmount)) {
-        //   const priceImpact = calcPriceImpact(
-        //     bidMintInfo,
-        //     askMintInfo,
-        //     bidAmountBN,
-        //     tokenOutAmount,
-        //   )
-
-        //   newRoute.askAmount = askAmount
-        //   newRoute.priceImpact = priceImpact
-        //   newRoute.pool = pool
-        // }
-
-        setBestRoute([])
-      } catch {
-        continue
-      }
-    }
-  }, [askMint, bidMint, pools])
-
-  // const calcPriceImpact = (
-  //   bidMintInfo: MintDataFromPool,
-  //   askMintInfo: MintDataFromPool,
-  //   bidAmountBN: BN,
-  //   tokenOutAmount: BN,
-  // ) => {
-  //   const beforeSpotPrice = calcSpotPrice(
-  //     bidMintInfo.reserve,
-  //     bidMintInfo.normalizedWeight,
-  //     askMintInfo.reserve,
-  //     askMintInfo.normalizedWeight,
-  //   )
-  //   const afterSpotPrice = calcSpotPrice(
-  //     new BN(bidMintInfo.reserve.toNumber() + bidAmountBN.toNumber()),
-  //     bidMintInfo.normalizedWeight,
-  //     new BN(askMintInfo.reserve.toNumber() - tokenOutAmount.toNumber()),
-  //     askMintInfo.normalizedWeight,
-  //   )
-  //   return (afterSpotPrice - beforeSpotPrice) / beforeSpotPrice
-  // }
-
-  useEffect(() => {
-    findRoute()
-  }, [findRoute])
-
-  return {
-    route: bestRoute,
-    bidAmount: Number(bidAmount),
+  const { undecimalizeMintAmount } = useOracles()
+  const metaRoutes = useMetaRoutes()
+  const routes = useAllRoutes(metaRoutes)
+  const [routeSwapInfo, setRouteSwapInfo] = useState<RouteSwapInfo>({
+    route: [],
+    bidAmount: 0,
     askAmount: 0,
     priceImpact: 0,
-  }
+  })
+
+  const getBestRoute = useCallback(async () => {
+    let sortedRoute = routes.sort((routeA, routeB) => {
+      let askAmountA = routeA[routeA.length - 1].askAmount
+      let askAmountB: BN = routeB[routeB.length - 1].askAmount
+      return askAmountB.gt(askAmountA) ? 1 : -1
+    })
+    const bestRoute = sortedRoute[0] || []
+    const askAmount = await undecimalizeMintAmount(
+      bestRoute[bestRoute.length - 1]?.askAmount,
+      askMint,
+    )
+    return setRouteSwapInfo({
+      route: bestRoute,
+      bidAmount: Number(bidAmount),
+      askAmount: Number(askAmount),
+      priceImpact: 0,
+    })
+  }, [askMint, bidAmount, routes, undecimalizeMintAmount])
+
+  useEffect(() => {
+    getBestRoute()
+  }, [getBestRoute])
+
+  return routeSwapInfo
 }
