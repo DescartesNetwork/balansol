@@ -1,5 +1,7 @@
 import { Address, BN, web3 } from '@project-serum/anchor'
 import { PoolData } from '@senswap/balancer'
+import util from '@senswap/sen-js/dist/utils'
+
 import {
   GENERAL_DECIMALS,
   GENERAL_NORMALIZED_NUMBER,
@@ -7,7 +9,6 @@ import {
   PoolPairData,
 } from 'app/constant'
 import { PRECISION } from 'app/constant/index'
-import util from '@senswap/sen-js/dist/utils'
 
 export const findMintIndex = (poolData: PoolData, mint: Address): number => {
   return poolData.mints
@@ -32,35 +33,6 @@ export const getMintInfo = (poolData: PoolData, mint: Address) => {
 
 const complement = (value: number) => {
   return value < 1 ? 1 - value : 0
-}
-
-export const valueFunction = (
-  reserves: BN[],
-  weights: BN[],
-  decimals: number[],
-): number => {
-  const numReserves = reserves.map((value, idx) =>
-    Number(util.undecimalize(BigInt(value.toString()), decimals[idx])),
-  )
-  const numWeights = weights.map((value) =>
-    Number(util.undecimalize(BigInt(value.toString()), GENERAL_DECIMALS)),
-  )
-  const sumWeight = numWeights.reduce((a, b) => a + b, 0)
-  let result = 1
-  for (let i = 0; i < numReserves.length; i++) {
-    const nomalizeWeight = numWeights[i] / sumWeight
-    result *= numReserves[i] ** nomalizeWeight
-  }
-  return result
-}
-
-export const calcTotalSupplyPool = (
-  reserves: BN[],
-  weights: BN[],
-  decimals: number[],
-): number => {
-  if (decimals.length === 0) return 0
-  return valueFunction(reserves, weights, decimals) * reserves.length
 }
 
 export const calcLpOutGivenIn = (
