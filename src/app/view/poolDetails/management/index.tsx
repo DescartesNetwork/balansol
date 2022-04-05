@@ -1,5 +1,6 @@
 import { Card, Tabs } from 'antd'
 import FreezeAndThaw from './freezeAndThaw'
+import TransferOwner from './transferOwner'
 import Weight from './weight'
 
 const PoolManagement = ({ poolAddress }: { poolAddress: string }) => {
@@ -16,7 +17,7 @@ const PoolManagement = ({ poolAddress }: { poolAddress: string }) => {
           fee
         </Tabs.TabPane>
         <Tabs.TabPane key="transfer-owner" tab="Transfer Owner">
-          weight
+          <TransferOwner poolAddress={poolAddress} />
         </Tabs.TabPane>
       </Tabs>
     </Card>
