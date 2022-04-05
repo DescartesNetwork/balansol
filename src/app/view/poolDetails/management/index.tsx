@@ -1,12 +1,13 @@
 import { Card, Tabs } from 'antd'
 import FreezeAndThaw from './freezeAndThaw'
+import Weight from './weight'
 
 const PoolManagement = ({ poolAddress }: { poolAddress: string }) => {
   return (
     <Card>
       <Tabs>
         <Tabs.TabPane key="weight" tab="Weight">
-          weight
+          <Weight poolAddress={poolAddress} />
         </Tabs.TabPane>
         <Tabs.TabPane key="freeze-thaw" tab="Freeze/Thaw">
           <FreezeAndThaw poolAddress={poolAddress} />
