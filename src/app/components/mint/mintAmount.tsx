@@ -14,6 +14,7 @@ const MintAmount = ({
   const { undecimalizeMintAmount } = useOracles()
 
   const decimalizeAmount = useCallback(async () => {
+    if (!amount) return setAmountUI('0')
     const newAmountUI = await undecimalizeMintAmount(amount, mintAddress)
     setAmountUI(newAmountUI)
   }, [amount, mintAddress, undecimalizeMintAmount])

@@ -45,18 +45,18 @@ const Weight = ({ poolAddress }: { poolAddress: string }) => {
   }, [mints, weights])
 
   const onWeightChange = (val: string, mint: string) => {
-    const newWeights = { ...tokensInfo }
-    newWeights[mint] = { ...newWeights[mint], weight: val }
+    const newTokensInfo = { ...tokensInfo }
+    newTokensInfo[mint] = { ...newTokensInfo[mint], weight: val }
     let remainingPercent = TOTAL_PERCENT - Number(val)
 
-    const amountTokenNotLock = Object.values(newWeights).filter(
+    const amountTokenNotLock = Object.values(newTokensInfo).filter(
       (token) => !token.isLocked && token.addressToken !== mint,
     ).length
     let firstTime = true
 
     for (const mintAddress of mints) {
       const { isLocked, weight, addressToken } =
-        newWeights[mintAddress.toBase58()]
+        newTokensInfo[mintAddress.toBase58()]
 
       if (mint === addressToken) continue
       if (isLocked) {
@@ -64,30 +64,27 @@ const Weight = ({ poolAddress }: { poolAddress: string }) => {
         continue
       }
 
-      const nextWeight = numeric(remainingPercent / amountTokenNotLock).format(
-        '0,0.[00]',
-      )
+      const nextWeight = (remainingPercent / amountTokenNotLock).toFixed(2)
 
       if (firstTime) {
         const newWeight =
           remainingPercent - Number(nextWeight) * (amountTokenNotLock - 1)
 
-        newWeights[addressToken] = {
-          ...newWeights[addressToken],
+        newTokensInfo[addressToken] = {
+          ...newTokensInfo[addressToken],
           weight: numeric(newWeight).format('0,0.[00]'),
         }
-
         firstTime = false
         continue
       }
 
-      newWeights[addressToken] = {
-        ...newWeights[addressToken],
-        weight: nextWeight,
+      newTokensInfo[addressToken] = {
+        ...newTokensInfo[addressToken],
+        weight: numeric(nextWeight).format('0,0.[00]'),
       }
     }
 
-    return setTokensInfo(newWeights)
+    return setTokensInfo(newTokensInfo)
   }
 
   const lockWeight = (mint: string) => {
