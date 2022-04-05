@@ -4,14 +4,14 @@ import { BN, web3 } from '@project-serum/anchor'
 import { Button, Col, Row } from 'antd'
 import Proportion from 'app/components/proportion'
 import IonIcon from 'shared/antd/ionicon'
-import TokenSetup from '../tokenSetup'
+import TokenSetup from './tokenSetup'
 
 import { GENERAL_NORMALIZED_NUMBER, PoolCreatingStep } from 'app/constant'
 import { notifyError, notifySuccess } from 'app/helper'
 import { TokenInfo } from '../index'
 import { MintActionStates } from '@senswap/balancer'
 
-const SelectToken = ({
+const ListTokenSetup = ({
   tokenList,
   onSetTokenList,
   setCurrentStep,
@@ -273,4 +273,4 @@ const SelectToken = ({
   )
 }
 
-export default SelectToken
+export default ListTokenSetup
