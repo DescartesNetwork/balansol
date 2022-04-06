@@ -13,9 +13,6 @@ const PoolManagement = ({ poolAddress }: { poolAddress: string }) => {
         <Tabs.TabPane key="freeze-thaw" tab="Freeze/Thaw">
           <FreezeAndThaw poolAddress={poolAddress} />
         </Tabs.TabPane>
-        <Tabs.TabPane key="fee" tab="Fee">
-          fee
-        </Tabs.TabPane>
         <Tabs.TabPane key="transfer-owner" tab="Transfer Owner">
           <TransferOwner poolAddress={poolAddress} />
         </Tabs.TabPane>

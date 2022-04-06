@@ -1,8 +1,9 @@
+import { account } from '@senswap/sen-js'
 import { ChangeEvent, useState } from 'react'
 
 import { Button, Col, Input, Row, Space, Typography } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
-import { account } from '@senswap/sen-js'
+
 import { notifyError, notifySuccess } from 'app/helper'
 
 const TransferOwner = ({ poolAddress }: { poolAddress: string }) => {
