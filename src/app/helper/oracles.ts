@@ -230,7 +230,7 @@ export const calcBptOutGivenExactTokensIn = (
   const numBalanceIns = balanceIns.map((value, idx) =>
     Number(util.undecimalize(BigInt(value.toString()), decimalIns[idx])),
   )
-  console.log(numBalanceIns, 'numbalance in')
+
   const numAmountIns = tokenAmountIns.map((value, idx) =>
     Number(util.undecimalize(BigInt(value.toString()), decimalIns[idx])),
   )

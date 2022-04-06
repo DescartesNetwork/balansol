@@ -4,14 +4,15 @@ import { useMint } from '@senhub/providers'
 import { Col, Row, Space, Switch, Tooltip, Typography } from 'antd'
 import { InfoCircleOutlined } from '@ant-design/icons'
 import { TokenInfo } from '../index'
-import LiquidityInfo from '../liquidityInfo'
+import LiquidityInfo from './liquidityInfo'
 import MintInput from 'app/components/mintInput'
 
 import { fetchCGK } from 'shared/util'
 import { PoolCreatingStep } from 'app/constant'
 import { calcOptimizedDepositedAmount } from 'app/helper/oracles'
+import { useMintBalance } from 'app/hooks/useMintBalance'
 
-const AddLiquidty = ({
+const AddLiquidity = ({
   tokenList,
   setCurrentStep,
   poolAddress,
@@ -30,6 +31,18 @@ const AddLiquidty = ({
   const { tokenProvider } = useMint()
   const [disable, setDisable] = useState(true)
   const [baseTokenIndex, setBaseTokenIndex] = useState(0)
+  const { getMintBalance } = useMintBalance()
+
+  const checkExceedBalance = async (amountIns: string[]) => {
+    const sum = amountIns.reduce((a, b) => a + Number(b), 0)
+    if (sum <= 0) return true
+
+    for (let i in tokenList) {
+      const { balance } = await getMintBalance(tokenList[i].addressToken)
+      if (Number(amountIns[i]) > balance) return true
+    }
+    return false
+  }
 
   const onSwitchOptimize = async (checked: boolean) => {
     setIsOptimizeLiquidity(checked)
@@ -65,9 +78,12 @@ const AddLiquidty = ({
         )
       }),
     )
+    const checkAmountIns = await checkExceedBalance(autoDepositedAmount)
+    setDisable(checkAmountIns)
 
     return setDepositedAmounts(autoDepositedAmount)
   }
+
   const onUpdateAmount = async (
     value: string,
     idx: number,
@@ -87,6 +103,8 @@ const AddLiquidty = ({
 
     if (!isOptimizeLiquidity) {
       newState[idx] = value
+      const checkAmountIns = await checkExceedBalance(newState)
+      setDisable(checkAmountIns)
       return setDepositedAmounts(newState)
     }
 
@@ -99,12 +117,12 @@ const AddLiquidty = ({
     const CGKEnteredTokenInfo = await fetchCGK(ticket)
 
     const autoDepositedAmount = await Promise.all(
-      tokenList.map(async ({ addressToken, weight }, calcedIdx) => {
+      tokenList.map(async ({ addressToken, weight }, index) => {
         const token = await tokenProvider.findByAddress(addressToken)
         const ticket = token?.extensions?.coingeckoId
         if (!ticket) return '0'
         const CGKTokenInfo = await fetchCGK(ticket)
-        if (idx === calcedIdx) return value
+        if (idx === index) return value
         if (
           !!restoredDepositedAmounts[idx] &&
           restoredDepositedAmounts[idx] !== '0'
@@ -116,11 +134,13 @@ const AddLiquidty = ({
             CGKTokenInfo,
             value,
             weight,
-            tokenList[calcedIdx].weight,
+            tokenList[index].weight,
           ),
         )
       }),
     )
+    const checkAmountIns = await checkExceedBalance(autoDepositedAmount)
+    setDisable(checkAmountIns)
 
     return setDepositedAmounts(autoDepositedAmount)
   }
@@ -171,4 +191,4 @@ const AddLiquidty = ({
   )
 }
 
-export default AddLiquidty
+export default AddLiquidity
