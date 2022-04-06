@@ -37,8 +37,8 @@ export const GENERAL_DECIMALS = 9
 export const PRECISION = 1000000000
 
 export enum PriceImpact {
-  goodSwap = 0.01,
-  acceptableSwap = 0.05,
+  goodSwap = 1,
+  acceptableSwap = 5,
 }
 
 // Deposit types

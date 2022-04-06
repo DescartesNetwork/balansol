@@ -7,79 +7,59 @@ import MintInput from 'app/components/mintInput'
 import IonIcon from 'shared/antd/ionicon'
 import { MintSymbol } from 'shared/antd/mint'
 
-import {
-  checkValidDepositAmountIns,
-  notifyError,
-  notifySuccess,
-} from 'app/helper'
+import { notifyError, notifySuccess, priceImpactColor } from 'app/helper'
 import { AppState } from 'app/model'
 import {
   calcDepositPriceImpact,
   calcNormalizedWeight,
-  calcTotalSupplyPool,
 } from 'app/helper/oracles'
 import { useOracles } from 'app/hooks/useOracles'
 import { useMint } from '@senhub/providers'
 import { numeric } from 'shared/util'
+import { useLptSupply } from 'app/hooks/useLptSupply'
 
 const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   const {
     pools: { [poolAddress]: poolData },
   } = useSelector((state: AppState) => state)
+  const { supply } = useLptSupply(poolData.mintLpt)
 
   const [amounts, setAmounts] = useState<string[]>(
     new Array(poolData.mints.length).fill('0'),
   )
   const [visible, setVisible] = useState(false)
-  const [disable, setDisable] = useState(true)
   const [impactPrice, setImpactPrice] = useState(0)
   const [lpOutTotal, setLpOutTotal] = useState(0)
   const [loading, setLoading] = useState(false)
   const { getDecimals } = useMint()
   const { decimalizeMintAmount } = useOracles()
 
-  // TODO: check balance
-  useEffect(() => {
-    for (let i = 0; i < amounts.length; i++)
-      if (!!Number(amounts[i])) return setDisable(false)
-    setDisable(true)
-  }, [amounts])
-
   const estimateImpactPriceAndLP = useCallback(async () => {
+    const { reserves, weights, fee, mints } = poolData
     setImpactPrice(0)
-    if (!checkValidDepositAmountIns(amounts)) return setLpOutTotal(0)
 
     let amountIns: BN[] = []
     let decimalIns: number[] = []
 
     for (let i in amounts) {
-      const decimalIn = await getDecimals(poolData.mints[i].toBase58())
-      const amountBn = await decimalizeMintAmount(amounts[i], poolData.mints[i])
+      const decimalIn = await getDecimals(mints[i].toBase58())
+      const amountBn = await decimalizeMintAmount(amounts[i], mints[i])
       amountIns.push(amountBn)
       decimalIns.push(decimalIn)
     }
 
-    const totalSuply = calcTotalSupplyPool(
-      poolData.reserves,
-      poolData.weights,
-      decimalIns,
-    )
-    const totalSupplyBN = await decimalizeMintAmount(
-      totalSuply,
-      poolData.mintLpt,
-    )
     const { lpOut, impactPrice } = calcDepositPriceImpact(
       amountIns,
-      poolData.reserves,
-      poolData.weights,
-      totalSupplyBN,
+      reserves,
+      weights,
+      supply,
       decimalIns,
-      poolData.fee,
+      fee,
     )
 
     setLpOutTotal(lpOut)
     setImpactPrice(impactPrice)
-  }, [amounts, decimalizeMintAmount, getDecimals, poolData])
+  }, [amounts, decimalizeMintAmount, getDecimals, poolData, supply])
 
   useEffect(() => {
     estimateImpactPriceAndLP()
@@ -175,7 +155,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
                     </Typography.Text>
                   </Col>
                   <Col>
-                    <span style={{ color: '#03A326' }}>
+                    <span style={{ color: priceImpactColor(impactPrice) }}>
                       {numeric(impactPrice).format('0,0.[0000]')} %
                     </span>
                   </Col>
@@ -204,7 +184,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
               block
               onClick={onSubmit}
               loading={loading}
-              disabled={disable}
+              disabled={!lpOutTotal}
             >
               Deposit
             </Button>

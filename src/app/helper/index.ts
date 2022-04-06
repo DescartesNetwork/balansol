@@ -30,9 +30,3 @@ export const priceImpactColor = (priceImpact: number) => {
   if (priceImpact > PriceImpact.acceptableSwap) return '#D72311'
   return '#FA8C16'
 }
-
-export const checkValidDepositAmountIns = (amounts: string[]) => {
-  const amountsSum = amounts.reduce((a, b) => a + Number(b), 0)
-  if (amountsSum !== 0) return true
-  return false
-}

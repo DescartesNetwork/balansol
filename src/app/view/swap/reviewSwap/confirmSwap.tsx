@@ -19,9 +19,9 @@ import { AppState } from 'app/model'
 import { notifyError, notifySuccess } from 'app/helper'
 import { useRouteSwap } from 'app/hooks/swap/useRouteSwap'
 import { useOracles } from 'app/hooks/useOracles'
+import { PriceImpact } from 'app/constant'
 
 import './index.less'
-import { PriceImpact } from 'app/constant'
 
 const ConfirmSwap = ({
   visible = false,
