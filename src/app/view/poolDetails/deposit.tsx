@@ -127,16 +127,14 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
     const { mints } = poolData
     for (let i in amounts) {
       const { balance } = await getMintBalance(mints[i].toBase58())
-      if (Number(amounts[i]) > balance) {
-        return setDisable(true)
-      }
+      if (Number(amounts[i]) > balance) return setDisable(true)
     }
     if (
       (impactPrice !== 0 && isAcceptHighPrice) ||
       (impactPrice === 0 && !!lpOutTotal)
-    ) {
+    )
       return setDisable(false)
-    }
+
     setDisable(true)
   }, [
     amounts,
