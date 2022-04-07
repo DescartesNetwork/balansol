@@ -5,7 +5,7 @@ import { useMint } from '@senhub/providers'
 import { Button, Col, Modal, Row, Steps, Typography } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
 import ListTokenSetup from './listTokenSetup'
-import AddLiquidty from './addLiquidity'
+import AddLiquidity from './addLiquidity'
 import ConfirmPoolInfo from './confirmPoolInfo'
 
 import { AppState } from 'app/model'
@@ -115,7 +115,7 @@ const NewPool = () => {
         )
       case PoolCreatingStep.addLiquidity:
         return (
-          <AddLiquidty
+          <AddLiquidity
             tokenList={tokenList}
             setCurrentStep={setCurrentStep}
             poolAddress={poolAddress}
@@ -153,6 +153,7 @@ const NewPool = () => {
         New pool
       </Button>
       <Modal
+        title={<Typography.Title level={4}>New Pool</Typography.Title>}
         visible={visible}
         onCancel={() => {
           setVisible(false)
@@ -165,9 +166,6 @@ const NewPool = () => {
         className="modal-balansol"
       >
         <Row gutter={[24, 24]}>
-          <Col span={24}>
-            <Typography.Title level={4}>New Pool</Typography.Title>
-          </Col>
           <Col span={24}>
             <Steps size="small" current={currentStep}>
               <Step title="Select tokens & weights" />

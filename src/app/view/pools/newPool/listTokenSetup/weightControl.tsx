@@ -45,6 +45,8 @@ export default function WeightControl({
               name={isLocked ? 'lock-closed-outline' : 'lock-open-outline'}
             />
           }
+          style={{ background: 'unset' }}
+          type="text"
         />
       </Col>
       <Col>
@@ -52,6 +54,7 @@ export default function WeightControl({
           onClick={onRemoveToken}
           shape="circle"
           icon={<IonIcon name="trash-outline" />}
+          type="text"
         />
       </Col>
     </Row>
