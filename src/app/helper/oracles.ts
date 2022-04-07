@@ -157,7 +157,7 @@ export const spotPriceAfterSwapTokenInForExactBPTOut = (
   )
 }
 
-export const caclLpForTokensZeroPriceImpact = (
+export const calcLpForTokensZeroPriceImpact = (
   tokenAmountIns: BN[],
   balanceIns: BN[],
   weightIns: BN[],
@@ -304,7 +304,7 @@ export const calcDepositPriceImpact = (
   )
 
   const lpOutZeroPriceImpact = Number(
-    caclLpForTokensZeroPriceImpact(
+    calcLpForTokensZeroPriceImpact(
       amountIns,
       balanceIns,
       weightIns,
@@ -315,7 +315,7 @@ export const calcDepositPriceImpact = (
 
   const impactPrice = (1 - lpOut / lpOutZeroPriceImpact) * 100
 
-  return { lpOut, impactPrice }
+  return { lpOut, impactPrice: impactPrice || 0 }
 }
 
 const calcTokenOutGivenExactLpIn = (
@@ -391,7 +391,7 @@ export const calcWithdrawPriceImpact = (
   })
 
   const lpOutZeroPriceImpact = Number(
-    caclLpForTokensZeroPriceImpact(
+    calcLpForTokensZeroPriceImpact(
       tokenAmounts,
       balanceOuts,
       weightOuts,
