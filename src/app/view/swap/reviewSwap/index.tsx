@@ -37,12 +37,7 @@ const ReviewSwap = () => {
           Review
         </Button>
       </Col>
-      <ConfirmSwap
-        visible={visible}
-        onCancel={() => {
-          setVisivle(false)
-        }}
-      />
+      <ConfirmSwap visible={visible} onCancel={() => setVisivle(false)} />
     </Row>
   )
 }

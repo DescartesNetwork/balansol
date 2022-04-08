@@ -31,28 +31,14 @@ export enum PoolCreatingStep {
   confirmCreatePool = 2,
 }
 
-export const allowedKeyCode = [
-  '1',
-  '2',
-  '3',
-  '4',
-  '5',
-  '6',
-  '7',
-  '8',
-  '9',
-  '0',
-  null,
-]
-
 export const GENERAL_NORMALIZED_NUMBER = 10 ** 9
 export const LPTDECIMALS = 9
 export const GENERAL_DECIMALS = 9
 export const PRECISION = 1000000000
 
 export enum PriceImpact {
-  GoodImpact = 0.01,
-  AcceptableImpact = 0.05,
+  goodSwap = 1,
+  acceptableSwap = 5,
 }
 
 // Deposit types
@@ -65,7 +51,7 @@ export type PoolPairData = {
   swapFee: BN
 }
 
-export type MintInfo = {
+export type MintDataFromPool = {
   reserve: BN
   normalizedWeight: number
   treasury: web3.PublicKey

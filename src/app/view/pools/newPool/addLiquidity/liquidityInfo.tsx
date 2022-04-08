@@ -8,7 +8,7 @@ import { MintSymbol } from 'shared/antd/mint'
 
 import { notifyError, notifySuccess } from 'app/helper'
 import { fetchCGK } from 'shared/util'
-import { TokenInfo } from './index'
+import { TokenInfo } from '../index'
 import { PoolCreatingStep } from 'app/constant'
 
 type TokenPrice = {

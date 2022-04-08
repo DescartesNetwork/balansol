@@ -17,48 +17,47 @@ import PreviewSwap from 'app/components/swapInfo'
 
 import { AppState } from 'app/model'
 import { notifyError, notifySuccess } from 'app/helper'
-import { useRouteSwap } from 'app/hooks/useRouteSwap'
+import { useRouteSwap } from 'app/hooks/swap/useRouteSwap'
 import { useOracles } from 'app/hooks/useOracles'
+import { PriceImpact } from 'app/constant'
 
 import './index.less'
-import { PriceImpact } from 'app/constant'
 
 const ConfirmSwap = ({
   visible = false,
   onCancel = () => {},
 }: {
   visible?: boolean
-  onCancel?: (visible: boolean) => void
+  onCancel?: () => void
 }) => {
   const {
-    swap: { bidAmount, bidMint, askMint },
+    swap: { bidAmount, bidMint, askMint, slippageTolerance },
   } = useSelector((state: AppState) => state)
 
   const [checked, setChecked] = useState(false)
   const [isDisplayWarning, setIsDisplayWarning] = useState(false)
-  const { askAmount, priceImpact, pool } = useRouteSwap()
+  const { askAmount, priceImpact, route } = useRouteSwap()
   const { decimalizeMintAmount } = useOracles()
 
   useEffect(() => {
-    if (priceImpact > PriceImpact.GoodImpact) return setIsDisplayWarning(true)
+    if (priceImpact > PriceImpact.goodSwap) return setIsDisplayWarning(true)
     setIsDisplayWarning(false)
   }, [priceImpact])
 
   const onCloseModal = useCallback(() => {
-    onCancel(false)
+    onCancel()
     setChecked(false)
   }, [onCancel])
 
   const onSwap = async () => {
     try {
-      const BidAmountBN = await decimalizeMintAmount(bidAmount, bidMint)
+      const bidAmountBN = await decimalizeMintAmount(bidAmount, bidMint)
+      const limit = Number(askAmount) * (1 - slippageTolerance / 100)
+      const limitBN = await decimalizeMintAmount(limit, askMint)
 
-      const { txId } = await window.balansol.swap(
-        BidAmountBN,
-        bidMint,
-        askMint,
-        pool,
-      )
+      const { txId } = await window.balansol.route(bidAmountBN, route, limitBN)
+
+      onCancel()
       notifySuccess('Swap', txId)
     } catch (error) {
       notifyError(error)
@@ -126,7 +125,7 @@ const ConfirmSwap = ({
           <Button
             type="primary"
             onClick={onSwap}
-            disabled={false}
+            disabled={isDisplayWarning && !checked}
             loading={false}
             block
           >

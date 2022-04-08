@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { Button, Card, Col, Row, Space, Typography } from 'antd'
 
 import { PoolAvatar } from 'app/components/pools/poolAvatar'
-import { useAppRouter } from 'app/hooks/useAppRoute'
+import { useAppRouter } from 'app/hooks/useAppRouter'
 import { useTVL } from 'app/hooks/useTVL'
 import { AppState } from 'app/model'
 import PercentGroupMints from './percentGroupMints'

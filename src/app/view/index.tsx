@@ -9,7 +9,10 @@ import './index.less'
 
 import { AppWatcher } from 'app/components/watcher'
 import { QueryParams, HOMEPAGE_TABS } from 'app/constant'
-import { useAppRouter } from 'app/hooks/useAppRoute'
+import { useAppRouter } from 'app/hooks/useAppRouter'
+import { useUI } from '@senhub/providers'
+
+import BG from 'app/static/images/balansol-background.png'
 
 const SwapAndPools = () => {
   const { getQuery, pushHistory } = useAppRouter()
@@ -63,6 +66,12 @@ const SwapAndPools = () => {
 
 const Page = () => {
   const { appRoute } = useAppRouter()
+  const { setBackground } = useUI()
+
+  useEffect(() => {
+    setBackground({ light: BG, dark: BG })
+  }, [setBackground])
+
   return (
     <div className="balansol-background">
       <AppWatcher>

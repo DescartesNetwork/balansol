@@ -4,7 +4,7 @@ import { Button, Col, Row } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
 import NumericInput from 'shared/antd/numericInput'
 
-import { TokenInfo } from './index'
+import { TokenInfo } from '../index'
 
 export default function WeightControl({
   tokenInfo,
@@ -46,6 +46,7 @@ export default function WeightControl({
             />
           }
           style={{ background: 'unset' }}
+          type="text"
         />
       </Col>
       <Col>
@@ -53,6 +54,7 @@ export default function WeightControl({
           onClick={onRemoveToken}
           shape="circle"
           icon={<IonIcon name="trash-outline" />}
+          type="text"
         />
       </Col>
     </Row>

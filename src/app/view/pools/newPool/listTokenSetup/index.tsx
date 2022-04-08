@@ -4,14 +4,15 @@ import { BN, web3 } from '@project-serum/anchor'
 import { Button, Col, Row } from 'antd'
 import Proportion from 'app/components/proportion'
 import IonIcon from 'shared/antd/ionicon'
-import TokenSetup from '../tokenSetup'
+import TokenSetup from './tokenSetup'
 
 import { GENERAL_NORMALIZED_NUMBER, PoolCreatingStep } from 'app/constant'
 import { notifyError, notifySuccess } from 'app/helper'
 import { TokenInfo } from '../index'
 import { MintActionStates } from '@senswap/balancer'
+import { numeric } from 'shared/util'
 
-const SelectToken = ({
+const ListTokenSetup = ({
   tokenList,
   onSetTokenList,
   setCurrentStep,
@@ -32,7 +33,7 @@ const SelectToken = ({
 
     if (currentWeightTotal !== 100) return setDisable(true)
 
-    for (let index = 0; index < tokenList.length; index++) {
+    for (let index in tokenList) {
       const token = tokenList[index]
       if (token.addressToken === '' || Number(token.weight) === 0)
         return setDisable(true)
@@ -81,9 +82,8 @@ const SelectToken = ({
 
     if (tokensNotLock.length === 1) {
       const newTokenList = tokenList.map((token, idx) => {
-        if (idx === index) {
-          return value
-        }
+        if (idx === index) return value
+
         return token
       })
 
@@ -91,19 +91,23 @@ const SelectToken = ({
     }
 
     if (tokenList[index].weight !== value.weight) {
-      const lockedTokenWeight = lockedTokens.reduce(
+      const lockedWeight = lockedTokens.reduce(
         (previousSum, currentValue) =>
           previousSum + Number(currentValue.weight),
         0,
       )
 
       const portionWeight =
-        (100 - Number(value.weight) - lockedTokenWeight) /
-        (tokensNotLock.length - 1)
+        (100 - Number(value.weight) - lockedWeight) / (tokensNotLock.length - 1)
 
       const newTokenList: TokenInfo[] = tokenList.map((tokenIn, ind) => {
         if (index !== ind && !tokenIn.isLocked)
-          return { ...tokenIn, weight: String(portionWeight) }
+          return {
+            ...tokenIn,
+            weight: String(
+              portionWeight < 0 ? 0 : numeric(portionWeight).format('0.[000]'),
+            ),
+          }
 
         if (index === ind) return value
 
@@ -124,18 +128,18 @@ const SelectToken = ({
     if (tokenList.length >= 8) return
 
     const tokensNotLock = tokenList.filter((value) => value.isLocked === false)
-    const remainingWeight = tokensNotLock.reduce(
-      (previousSum, currentValue) => previousSum + Number(currentValue.weight),
-      0,
-    )
-    const newProportionalWeight = (
-      remainingWeight /
-      (tokensNotLock.length + 1)
-    ).toFixed(2)
+    const lockedWeight = tokenList
+      .filter((value) => value.isLocked === true)
+      .reduce((a, b) => a + Number(b.weight), 0)
+    const remainingWeight = 100 - lockedWeight
+    const newProportionalWeight = numeric(
+      remainingWeight / (tokensNotLock.length + 1),
+    ).format('0,0.[00]')
+
     let flag = false
     let newTokenList: TokenInfo[] = []
 
-    for (let i = 0; i < tokenList.length; i++) {
+    for (let i in tokenList) {
       if (tokenList[i].isLocked) {
         newTokenList.push(tokenList[i])
         continue
@@ -143,12 +147,14 @@ const SelectToken = ({
       if (flag === false) {
         newTokenList.push({
           ...tokenList[i],
-          weight: (
+          weight: numeric(
             remainingWeight -
-            Number(
-              (Number(newProportionalWeight) * tokensNotLock.length).toFixed(2),
-            )
-          ).toFixed(2),
+              Number(
+                numeric(
+                  Number(newProportionalWeight) * tokensNotLock.length,
+                ).format('0,0.[00]'),
+              ),
+          ).format('0,0.[00]'),
         })
         flag = true
         continue
@@ -184,13 +190,13 @@ const SelectToken = ({
         0,
       )
 
-    const newProportionalWeight = (
-      remainingWeight / tokensNotLock.length
-    ).toFixed(2)
+    const newProportionalWeight = numeric(
+      remainingWeight / tokensNotLock.length,
+    ).format('0,0.[00]')
     let flag = false
     let newRecalculatedTokenList: TokenInfo[] = []
 
-    for (let i = 0; i < newTokenList.length; i++) {
+    for (let i in newTokenList) {
       if (newTokenList[i].isLocked) {
         newRecalculatedTokenList.push(newTokenList[i])
         continue
@@ -199,15 +205,14 @@ const SelectToken = ({
       if (flag === false) {
         newRecalculatedTokenList.push({
           ...newTokenList[i],
-          weight: (
+          weight: numeric(
             remainingWeight -
-            Number(
-              (
-                Number(newProportionalWeight) *
-                (tokensNotLock.length - 1)
-              ).toFixed(2),
-            )
-          ).toFixed(2),
+              Number(
+                numeric(
+                  Number(newProportionalWeight) * (tokensNotLock.length - 1),
+                ).format('0,0.[00]'),
+              ),
+          ).format('0,0.[00]'),
         })
         flag = true
         continue
@@ -224,38 +229,39 @@ const SelectToken = ({
   return (
     <Fragment>
       <Col span={24}>
-        <Row>
+        <Row gutter={[0, 12]}>
           <Col flex="auto">Token</Col>
           <Col>Weight</Col>
+          {tokenList.map((value, index) => (
+            <Col span={24} key={index}>
+              <TokenSetup
+                tokenList={tokenList}
+                tokenInfo={value}
+                onChangeTokenInfo={onChangeTokenInfo}
+                onRemoveToken={onRemoveToken}
+                index={index}
+                key={index}
+              />
+            </Col>
+          ))}
+          <Col span={24}>
+            <Button
+              type="primary"
+              icon={<IonIcon name="add-outline" />}
+              onClick={() => {
+                onAddNewToken()
+              }}
+              style={{
+                borderRadius: 40,
+                background: 'transparent',
+                color: '#63E0B3',
+                borderColor: '#63E0B3',
+              }}
+            >
+              Add a token
+            </Button>
+          </Col>
         </Row>
-      </Col>
-      {tokenList.map((value, index) => (
-        <Col span={24} key={index}>
-          <TokenSetup
-            tokenList={tokenList}
-            tokenInfo={value}
-            onChangeTokenInfo={onChangeTokenInfo}
-            onRemoveToken={onRemoveToken}
-            index={index}
-          />
-        </Col>
-      ))}
-      <Col span={24}>
-        <Button
-          type="primary"
-          icon={<IonIcon name="add-outline" />}
-          onClick={() => {
-            onAddNewToken()
-          }}
-          style={{
-            borderRadius: 40,
-            background: 'transparent',
-            color: '#63E0B3',
-            borderColor: '#63E0B3',
-          }}
-        >
-          Add a token
-        </Button>
       </Col>
       <Col span={24}>
         <Proportion tokenList={tokenList} />
@@ -273,4 +279,4 @@ const SelectToken = ({
   )
 }
 
-export default SelectToken
+export default ListTokenSetup

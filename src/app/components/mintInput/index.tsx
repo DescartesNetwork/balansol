@@ -23,7 +23,7 @@ export default function MintInput({
   ratioButton,
   unit,
 }: {
-  amount: string
+  amount: string | number
   onChangeAmount?: (val: string, invalid?: boolean) => void
   selectedMint: string
   onSelect?: (mint: string) => void

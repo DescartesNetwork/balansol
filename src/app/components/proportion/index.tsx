@@ -13,7 +13,7 @@ export default function Proportion({ tokenList }: { tokenList: TokenInfo[] }) {
   const remainingPortion = 100 - weightTotal
 
   return (
-    <div style={{ display: 'flex' }} className="progress">
+    <div style={{ display: 'flex', marginTop: 8 }}>
       {tokenList.map((value, index) => {
         if (Number(value.weight) !== 0) {
           return (
@@ -32,6 +32,7 @@ export default function Proportion({ tokenList }: { tokenList: TokenInfo[] }) {
                 marginRight: '-8px',
                 alignItems: 'center',
               }}
+              key={`${value.addressToken}${index}`}
             >
               <MintAvatar mintAddress={value.addressToken} />
             </div>

@@ -6,8 +6,8 @@ import MintInput from 'app/components/mintInput'
 
 import { AppState } from 'app/model'
 import { setSwapState } from 'app/model/swap.controller'
-import { useRouteSwap } from 'app/hooks/useRouteSwap'
-import { useMintsSwap } from 'app/hooks/useMintsSwap'
+import { useRouteSwap } from 'app/hooks/swap/useRouteSwap'
+import { useMintsCanSwap } from 'app/hooks/swap/useMintsCanSwap'
 import { useReversedSwap } from 'app/hooks/useReversedSwap'
 
 export default function AskInput() {
@@ -18,7 +18,7 @@ export default function AskInput() {
   const { askAmount } = useRouteSwap()
 
   const { estimateTokenOut } = useReversedSwap()
-  const mintsSwap = useMintsSwap()
+  const mintsSwap = useMintsCanSwap()
 
   useEffect(() => {
     const newMintSwap = mintsSwap.filter((value) => value !== bidMint)

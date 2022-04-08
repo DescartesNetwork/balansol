@@ -1,6 +1,7 @@
 import { BN } from '@project-serum/anchor'
-import { utils } from '@senswap/sen-js'
 
+import { utils } from '@senswap/sen-js'
+import { PriceImpact } from 'app/constant'
 import { explorer } from 'shared/util'
 
 export const notifySuccess = (content: string, txId: string) => {
@@ -24,8 +25,8 @@ export const undecimalizeWrapper = (value: BN, decimals: number) => {
   return utils.undecimalize(valueInBigInt, decimals)
 }
 
-export const checkValidDepositAmountIns = (amounts: string[]) => {
-  const amountsSum = amounts.reduce((a, b) => a + Number(b), 0)
-  if (amountsSum !== 0) return true
-  return false
+export const priceImpactColor = (priceImpact: number) => {
+  if (priceImpact < PriceImpact.goodSwap) return '#14E041'
+  if (priceImpact > PriceImpact.acceptableSwap) return '#D72311'
+  return '#FA8C16'
 }
