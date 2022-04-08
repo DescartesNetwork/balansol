@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Button, Col, Input, Row, Select } from 'antd'
+import { Col, Input, Row, Select } from 'antd'
 import { SearchOutlined } from '@ant-design/icons'
 
 import { SearchSelection } from 'app/constant'
@@ -23,7 +23,7 @@ const Search = () => {
 
   return (
     <Row className="search-pools" gutter={[12, 12]}>
-      <Col span={8}>
+      <Col md={8} xs={10}>
         <Select
           value={selectionSearch}
           onChange={(value: SearchSelection) => {
@@ -46,12 +46,7 @@ const Search = () => {
         <Input
           placeholder="Search"
           value={searchInput}
-          prefix={
-            <Button
-              size="small"
-              icon={<SearchOutlined style={{ fontSize: '24px' }} />}
-            />
-          }
+          prefix={<SearchOutlined style={{ fontSize: '24px' }} />}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             dispatch(setSearchInput({ searchText: e.target.value }))
           }}
