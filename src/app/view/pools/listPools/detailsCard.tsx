@@ -50,12 +50,12 @@ const DetailsCard = ({ poolAddress }: { poolAddress: string }) => {
                     </Typography.Title>
                   </Space>
                 </Col>
-                <Col span={24}>
+                {/* <Col span={24}>
                   <Space>
                     <Typography.Text type="secondary">APY:</Typography.Text>
                     <Typography.Title level={5}> 0%</Typography.Title>
                   </Space>
-                </Col>
+                </Col> */}
               </Row>
             </Col>
             <Col>

@@ -57,7 +57,7 @@ export type MintDataFromPool = {
   treasury: web3.PublicKey
 }
 
-export enum SearchSelection {
+export enum FilterPools {
   AllPools = 'all-pools',
   DepositedPools = 'deposited-pools',
   YourPools = 'your-pools',

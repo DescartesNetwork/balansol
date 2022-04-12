@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { PoolData } from '@senswap/sen-js'
-import { SearchSelection } from 'app/constant'
+import { FilterPools } from 'app/constant'
 
 /**
  * Interface & Utility
@@ -8,7 +8,7 @@ import { SearchSelection } from 'app/constant'
 
 export type SearchState = {
   searchInput: string
-  selectionSearch: SearchSelection
+  filterPool: FilterPools
 }
 
 /**
@@ -18,18 +18,18 @@ export type SearchState = {
 const NAME = 'searchPools'
 const initialState: SearchState = {
   searchInput: '',
-  selectionSearch: SearchSelection.AllPools,
+  filterPool: FilterPools.AllPools,
 }
 
 /**
  * Actions
  */
 
-export const setSearchSelection = createAsyncThunk(
+export const setFilterPool = createAsyncThunk(
   `${NAME}/setSearchSelection`,
-  async ({ selectSearch }: { selectSearch: SearchSelection }) => {
+  async ({ filterPool }: { filterPool: FilterPools }) => {
     return {
-      selectionSearch: selectSearch,
+      filterPool: filterPool,
     }
   },
 )
@@ -54,7 +54,7 @@ const slice = createSlice({
   extraReducers: (builder) =>
     void builder
       .addCase(
-        setSearchSelection.fulfilled,
+        setFilterPool.fulfilled,
         (state, { payload }) => void Object.assign(state, payload),
       )
       .addCase(
