@@ -1,13 +1,11 @@
 import React from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { Button, Col, Input, Row, Select } from 'antd'
-import { SearchOutlined, CloseOutlined } from '@ant-design/icons'
+import IonIcon from 'shared/antd/ionicon'
 
 import { FilterPools } from 'app/constant'
-
-import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, AppState } from 'app/model'
-
 import { setSearchInput, setFilterPool } from 'app/model/searchPools.controller'
 
 const Search = () => {
@@ -29,7 +27,7 @@ const Search = () => {
           onChange={(value: FilterPools) => {
             dispatch(setFilterPool({ filterPool: value }))
           }}
-          style={{ width: '100%' }}
+          style={{ width: '100%', height: '32px' }}
         >
           <Select.Option value={FilterPools.AllPools}>All pools</Select.Option>
           <Select.Option value={FilterPools.DepositedPools}>
@@ -54,16 +52,16 @@ const Search = () => {
                   background: 'transparent',
                 }}
                 onClick={() => onSearch('')}
-                icon={<CloseOutlined />}
+                icon={<IonIcon name="close-outline" />}
               />
             ) : (
-              <SearchOutlined style={{ fontSize: '24px' }} />
+              <IonIcon style={{ fontSize: '24px' }} name="search-outline" />
             )
           }
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             onSearch(e.target.value)
           }}
-          style={{ borderRadius: '24px' }}
+          style={{ borderRadius: '24px', height: '32px' }}
         />
       </Col>
     </Row>

@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { PoolData } from '@senswap/sen-js'
 import { FilterPools } from 'app/constant'
 
 /**
