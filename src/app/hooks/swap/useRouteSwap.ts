@@ -6,6 +6,7 @@ import { AppState } from 'app/model'
 import { useMetaRoutes } from './useMetaRoutes'
 import { Route, useAllRoutes } from './useAllRoutes'
 import { useOracles } from '../useOracles'
+import { calcPriceImpact } from 'app/helper/oracles'
 
 type RouteSwapInfo = {
   route: Route
@@ -17,6 +18,7 @@ type RouteSwapInfo = {
 export const useRouteSwap = (): RouteSwapInfo => {
   const {
     swap: { bidAmount, askMint },
+    pools,
   } = useSelector((state: AppState) => state)
   const { undecimalizeMintAmount } = useOracles()
   const metaRoutes = useMetaRoutes()
@@ -36,16 +38,24 @@ export const useRouteSwap = (): RouteSwapInfo => {
     })
     const bestRoute = sortedRoute[0] || []
     const askAmount = await undecimalizeMintAmount(
-      bestRoute[bestRoute.length - 1]?.askAmount,
+      bestRoute[bestRoute.length - 1]?.askAmount || new BN(0),
       askMint,
     )
+
+    const bestRouteFullInfo = bestRoute.map((value, idx) => {
+      const poolData = pools[value.pool]
+      return { ...bestRoute[idx], poolData }
+    })
+
+    const newPriceImpact = calcPriceImpact(bestRouteFullInfo)
+
     return setRouteSwapInfo({
       route: bestRoute,
       bidAmount: Number(bidAmount),
       askAmount: Number(askAmount),
-      priceImpact: 0,
+      priceImpact: newPriceImpact,
     })
-  }, [askMint, bidAmount, routes, undecimalizeMintAmount])
+  }, [askMint, bidAmount, pools, routes, undecimalizeMintAmount])
 
   useEffect(() => {
     getBestRoute()
