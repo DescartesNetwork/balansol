@@ -1,15 +1,16 @@
 import { useSelector } from 'react-redux'
+import { useWallet } from '@senhub/providers'
 
 import { Button, Card, Col, Row, Space, Typography } from 'antd'
 
-import { useWallet } from '@senhub/providers'
 import { PoolAvatar } from 'app/components/pools/poolAvatar'
 import { useAppRouter } from 'app/hooks/useAppRouter'
 import { useTVL } from 'app/hooks/useTVL'
 import { AppState } from 'app/model'
+import { numeric } from 'shared/util'
+import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
 import PercentGroupMints from './percentGroupMints'
 import WalletAddress from './walletAddress'
-import { numeric } from 'shared/util'
 
 const DetailsCard = ({ poolAddress }: { poolAddress: string }) => {
   const { pushHistory } = useAppRouter()
@@ -22,6 +23,9 @@ const DetailsCard = ({ poolAddress }: { poolAddress: string }) => {
 
   const poolState: any = poolData.state
   const TVL = useTVL(poolAddress)
+  const { balance } = useAccountBalanceByMintAddress(
+    poolData.mintLpt.toBase58(),
+  )
 
   const checkIsValidPool = () => {
     let isValid = false
@@ -54,7 +58,7 @@ const DetailsCard = ({ poolAddress }: { poolAddress: string }) => {
           <PercentGroupMints poolAddress={poolAddress} />
         </Col>
         <Col span={24}>
-          <Row align="bottom">
+          <Row align="bottom" wrap={false}>
             <Col flex="auto">
               <Row>
                 <Col span={24}>
@@ -66,12 +70,17 @@ const DetailsCard = ({ poolAddress }: { poolAddress: string }) => {
                     </Typography.Title>
                   </Space>
                 </Col>
-                {/* <Col span={24}>
+                <Col span={24}>
                   <Space>
-                    <Typography.Text type="secondary">APY:</Typography.Text>
-                    <Typography.Title level={5}> 0%</Typography.Title>
+                    <Typography.Text type="secondary">
+                      My Contribution:
+                    </Typography.Text>
+                    <Typography.Title level={5}>
+                      {' '}
+                      {numeric(balance).format('0,0.[00]')} LP
+                    </Typography.Title>
                   </Space>
-                </Col> */}
+                </Col>
               </Row>
             </Col>
             <Col>
