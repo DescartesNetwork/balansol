@@ -2,6 +2,7 @@ import { useSelector } from 'react-redux'
 
 import { Button, Card, Col, Row, Space, Typography } from 'antd'
 
+import { useWallet } from '@senhub/providers'
 import { PoolAvatar } from 'app/components/pools/poolAvatar'
 import { useAppRouter } from 'app/hooks/useAppRouter'
 import { useTVL } from 'app/hooks/useTVL'
@@ -10,19 +11,34 @@ import PercentGroupMints from './percentGroupMints'
 import WalletAddress from './walletAddress'
 import { numeric } from 'shared/util'
 
-
 const DetailsCard = ({ poolAddress }: { poolAddress: string }) => {
   const { pushHistory } = useAppRouter()
   const {
     pools: { [poolAddress]: poolData },
   } = useSelector((state: AppState) => state)
+  const {
+    wallet: { address: walletAddress },
+  } = useWallet()
 
   const poolState: any = poolData.state
   const TVL = useTVL(poolAddress)
 
+  const checkIsValidPool = () => {
+    let isValid = false
+    if (
+      poolData.authority.toBase58() === walletAddress ||
+      poolState['initialized']
+    )
+      isValid = true
+
+    if (poolState['uninitialized']) isValid = false
+
+    return isValid
+  }
+
   return (
     <Card
-      className={`${poolState['initialized'] ? '' : 'disableDiv'}`}
+      className={`${checkIsValidPool() ? '' : 'disableDiv'}`}
       style={{ boxShadow: 'unset' }}
     >
       <Row style={{ marginBottom: '16px' }}>
