@@ -114,13 +114,9 @@ const LiquidityInfo = ({
           <Col>
             <Typography.Title level={3}>
               $
-              {numeric(
-                tokenPrice.reduce(
-                  (previousSum, currentValue) =>
-                    previousSum + currentValue?.valuation,
-                  0,
-                ),
-              ).format('0,0.[0000]')}
+              {numeric(tokenPrice.reduce((a, b) => a + b?.valuation, 0)).format(
+                '0,0.[0000]',
+              )}
             </Typography.Title>
           </Col>
         </Row>

@@ -6,13 +6,13 @@ import { Button, Card, Col, Row, Table, Typography } from 'antd'
 import { fetchCGK, numeric } from 'shared/util'
 import { TokenInfo } from '../index'
 import { WORMHOLE_COLUMNS } from './column'
-
-import './index.less'
 import { AppState } from 'app/model'
 import { useSelector } from 'react-redux'
 import { useOracles } from 'app/hooks/useOracles'
 import { GENERAL_DECIMALS } from 'app/constant'
 import util from '@senswap/sen-js/dist/utils'
+
+import './index.less'
 
 type PoolInfo = {
   token: TokenInfo
