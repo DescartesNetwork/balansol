@@ -43,11 +43,21 @@ export enum PriceImpact {
 
 // Deposit types
 
-export type PoolPairData = {
+export type PoolPairLpData = {
   balanceIn: BN
   balanceOut: BN
   weightIn: number
   decimalIn: number
+  swapFee: BN
+}
+
+export type PoolPairData = {
+  balanceIn: BN
+  balanceOut: BN
+  weightIn: number
+  weightOut: number
+  decimalIn: number
+  decimalOut: number
   swapFee: BN
 }
 
