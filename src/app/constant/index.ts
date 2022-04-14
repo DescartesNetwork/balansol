@@ -56,3 +56,9 @@ export type MintDataFromPool = {
   normalizedWeight: number
   treasury: web3.PublicKey
 }
+
+export enum FilterPools {
+  AllPools = 'all-pools',
+  DepositedPools = 'deposited-pools',
+  YourPools = 'your-pools',
+}

@@ -35,10 +35,14 @@ export const useRouteSwap = (): RouteSwapInfo => {
       return askAmountB.gt(askAmountA) ? 1 : -1
     })
     const bestRoute = sortedRoute[0] || []
-    const askAmount = await undecimalizeMintAmount(
-      bestRoute[bestRoute.length - 1]?.askAmount,
-      askMint,
-    )
+
+    let askAmount =
+      bestRoute.length && askMint
+        ? await undecimalizeMintAmount(
+            bestRoute[bestRoute.length - 1]?.askAmount,
+            askMint,
+          )
+        : ''
     return setRouteSwapInfo({
       route: bestRoute,
       bidAmount: Number(bidAmount),
