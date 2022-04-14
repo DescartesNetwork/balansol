@@ -1,5 +1,6 @@
 import React, { Dispatch, Fragment, useEffect, useState } from 'react'
 import { BN, web3 } from '@project-serum/anchor'
+import { MintActionStates } from '@senswap/balancer'
 
 import { Button, Col, Row } from 'antd'
 import Proportion from 'app/components/proportion'
@@ -8,9 +9,9 @@ import TokenSetup from './tokenSetup'
 
 import { GENERAL_NORMALIZED_NUMBER, PoolCreatingStep } from 'app/constant'
 import { notifyError, notifySuccess } from 'app/helper'
-import { TokenInfo } from '../index'
-import { MintActionStates } from '@senswap/balancer'
 import { numeric } from 'shared/util'
+import { TokenInfo } from '../index'
+import configs from 'app/configs'
 
 const ListTokenSetup = ({
   tokenList,
@@ -44,7 +45,9 @@ const ListTokenSetup = ({
 
   const onCreate = async () => {
     try {
-      const fee = new BN(500_000_000)
+      const fee = new BN(2_500_000) // 0.25%
+      const taxFee = new BN(500_000) // 0.05%
+
       const mintsConfig = tokenList.map((e) => {
         const normalizeWeight = Number(e.weight) * GENERAL_NORMALIZED_NUMBER
         return {
@@ -56,7 +59,9 @@ const ListTokenSetup = ({
       })
       const { txId, poolAddress } = await window.balansol.initializePool(
         fee,
+        taxFee,
         mintsConfig,
+        configs.sol.taxmanAddress,
       )
 
       setPoolAddress(poolAddress)

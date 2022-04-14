@@ -7,8 +7,12 @@ import {
   GENERAL_NORMALIZED_NUMBER,
   LPTDECIMALS,
   PoolPairData,
+  PoolPairLpData,
 } from 'app/constant'
 import { PRECISION } from 'app/constant/index'
+import { RouteInfo } from 'app/hooks/swap/useAllRoutes'
+
+export type routeFullInfo = RouteInfo & { poolData: PoolData }
 
 export const findMintIndex = (poolData: PoolData, mint: Address): number => {
   return poolData.mints
@@ -119,19 +123,25 @@ export const calcNormalizedWeight = (
 export const calcSpotPrice = (
   balanceIn: BN,
   weightIn: number,
+  decimalIn: number,
   balanceOut: BN,
   weightOut: number,
+  decimalOut: number,
 ): number => {
-  const numBalanceIn = balanceIn.toNumber()
+  const numBalanceIn = Number(
+    util.undecimalize(BigInt(balanceIn.toString()), decimalIn),
+  )
 
-  const numBalanceOut = balanceOut.toNumber()
+  const numBalanceOut = Number(
+    util.undecimalize(BigInt(balanceOut.toString()), decimalOut),
+  )
 
   return numBalanceIn / weightIn / (numBalanceOut / weightOut)
 }
 
 export const spotPriceAfterSwapTokenInForExactBPTOut = (
   amount: BN,
-  poolPairData: PoolPairData,
+  poolPairData: PoolPairLpData,
 ) => {
   const Bo = Number(
     util.undecimalize(BigInt(poolPairData.balanceOut.toString()), LPTDECIMALS),
@@ -157,6 +167,51 @@ export const spotPriceAfterSwapTokenInForExactBPTOut = (
   )
 }
 
+function calcSpotPriceAfterSwap(amount: BN, poolPairData: PoolPairData) {
+  const {
+    balanceIn,
+    decimalIn,
+    balanceOut,
+    decimalOut,
+    weightIn,
+    weightOut,
+    swapFee,
+  } = poolPairData
+  const Bi = Number(util.undecimalize(BigInt(balanceIn.toString()), decimalIn))
+  const Bo = Number(
+    util.undecimalize(BigInt(balanceOut.toString()), decimalOut),
+  )
+  const wi = weightIn
+  const wo = weightOut
+  const Ai = Number(util.undecimalize(BigInt(amount.toString()), decimalIn))
+  const f = Number(
+    util.undecimalize(BigInt(swapFee.toString()), GENERAL_DECIMALS),
+  )
+  return (
+    (Bi * wo) /
+    (Bo * (-1 + f) * (Bi / (Ai + Bi - Ai * f)) ** ((wi + wo) / wo) * wi)
+  )
+}
+
+export const calcPriceImpactSwap = (
+  bidAmount: BN,
+  askAmount: BN,
+  poolPairData: PoolPairData,
+) => {
+  const { decimalIn, decimalOut } = poolPairData
+  const numBidAmount = Number(
+    util.undecimalize(BigInt(bidAmount.toString()), decimalIn),
+  )
+  const numAskAmount = Number(
+    util.undecimalize(BigInt(askAmount.toString()), decimalOut),
+  )
+  const spotPriceAfterSwap = calcSpotPriceAfterSwap(bidAmount, poolPairData)
+  let impactPrice = numBidAmount / numAskAmount / -spotPriceAfterSwap - 1
+  if (impactPrice < 0) return 0
+
+  return impactPrice
+}
+
 export const calcLpForTokensZeroPriceImpact = (
   tokenAmountIns: BN[],
   balanceIns: BN[],
@@ -171,7 +226,7 @@ export const calcLpForTokensZeroPriceImpact = (
   const amountLpOut = numTokenAmountIns.reduce((totalBptOut, amountIn, i) => {
     // Calculate amount of BPT gained per token in
     const nomalizedWeight = calcNormalizedWeight(weightIns, weightIns[i])
-    const poolPairData: PoolPairData = {
+    const poolPairData: PoolPairLpData = {
       balanceIn: balanceIns[i],
       balanceOut: totalSupply,
       weightIn: nomalizedWeight,
@@ -408,4 +463,13 @@ export const calcWithdrawPriceImpact = (
   const impactPrice = (numLpAmount / lpOutZeroPriceImpact - 1) * 100
 
   return { tokenAmountOut, impactPrice }
+}
+
+export const calcPriceImpact = (route: routeFullInfo[]) => {
+  let p = 1
+  route.forEach((elmInfo) => {
+    const s = elmInfo.priceImpact
+    p = p * (1 - s)
+  })
+  return 1 - p
 }
