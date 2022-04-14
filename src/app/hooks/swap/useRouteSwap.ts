@@ -36,21 +36,23 @@ export const useRouteSwap = (): RouteSwapInfo => {
       let askAmountB: BN = routeB[routeB.length - 1].askAmount
       return askAmountB.gt(askAmountA) ? 1 : -1
     })
-    const bestRoute = sortedRoute[0] || []
+    const bestRoute = sortedRoute[0]
+    if (!bestRoute?.length || !askMint)
+      return setRouteSwapInfo({
+        route: [],
+        bidAmount: Number(bidAmount),
+        askAmount: 0,
+        priceImpact: 0,
+      })
 
-    let askAmount =
-      bestRoute.length && askMint
-        ? await undecimalizeMintAmount(
-            bestRoute[bestRoute.length - 1]?.askAmount,
-            askMint,
-          )
-        : ''
-
+    let askAmount = await undecimalizeMintAmount(
+      bestRoute[bestRoute.length - 1]?.askAmount,
+      askMint,
+    )
     const bestRouteFullInfo = bestRoute.map((value, idx) => {
       const poolData = pools[value.pool]
       return { ...bestRoute[idx], poolData }
     })
-
     const newPriceImpact = calcPriceImpact(bestRouteFullInfo)
 
     return setRouteSwapInfo({

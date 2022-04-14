@@ -167,10 +167,7 @@ export const spotPriceAfterSwapTokenInForExactBPTOut = (
   )
 }
 
-export function _spotPriceAfterSwapExactTokenInForTokenOut(
-  amount: BN,
-  poolPairData: PoolPairData,
-) {
+function calcSpotPriceAfterSwap(amount: BN, poolPairData: PoolPairData) {
   const {
     balanceIn,
     decimalIn,
@@ -208,10 +205,7 @@ export const calcPriceImpactSwap = (
   const numAskAmount = Number(
     util.undecimalize(BigInt(askAmount.toString()), decimalOut),
   )
-  const spotPriceAfterSwap = _spotPriceAfterSwapExactTokenInForTokenOut(
-    bidAmount,
-    poolPairData,
-  )
+  const spotPriceAfterSwap = calcSpotPriceAfterSwap(bidAmount, poolPairData)
   let impactPrice = numBidAmount / numAskAmount / -spotPriceAfterSwap - 1
   if (impactPrice < 0) return 0
 
@@ -471,13 +465,6 @@ export const calcWithdrawPriceImpact = (
   return { tokenAmountOut, impactPrice }
 }
 
-/**
- * Calculate price impact
- * @param best
- * @param bid
- * @param ask
- * @returns
- */
 export const calcPriceImpact = (route: routeFullInfo[]) => {
   let p = 1
   route.forEach((elmInfo) => {

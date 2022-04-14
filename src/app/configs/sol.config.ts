@@ -8,6 +8,7 @@ type Conf = {
   spltAddress: string
   splataAddress: string
   balancerAddress: string
+  taxmanAddress: string
 }
 
 const conf: Record<Net, Conf> = {
@@ -18,7 +19,8 @@ const conf: Record<Net, Conf> = {
     node: 'https://api.devnet.solana.com',
     spltAddress: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
     splataAddress: 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL',
-    balancerAddress: 'GprFm1ntezwiicKqdVTzfgyKkEhqnbKcyAMAKBqmyCay',
+    balancerAddress: '2eYx6YAQJJ1B2Fro98QjBchWYw9Q1kXJ6jtMdq47wGzz',
+    taxmanAddress: 'GJLqpmDxxrV9xruee2vFvEoTho7VVQHRtuHH8nfoAE54',
   },
 
   /**
@@ -29,6 +31,7 @@ const conf: Record<Net, Conf> = {
     spltAddress: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
     splataAddress: 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL',
     balancerAddress: '',
+    taxmanAddress: '',
   },
 
   /**
@@ -39,6 +42,7 @@ const conf: Record<Net, Conf> = {
     spltAddress: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
     splataAddress: 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL',
     balancerAddress: '',
+    taxmanAddress: '',
   },
 }
 
