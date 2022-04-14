@@ -169,7 +169,7 @@ const PoolDetails = () => {
                       </Row>
                     </Col>
                     <Col span={24}>
-                      <DoughnutChart />
+                      <DoughnutChart poolAddress={poolAddress} />
                     </Col>
                   </Row>
                 </Card>
