@@ -125,13 +125,7 @@ const NewPool = () => {
           />
         )
       case PoolCreatingStep.confirmCreatePool:
-        return (
-          <ConfirmPoolInfo
-            tokenList={tokenList}
-            depositedAmounts={depositedAmounts}
-            onReset={onReset}
-          />
-        )
+        return <ConfirmPoolInfo onReset={onReset} poolAddress={poolAddress} />
     }
   }, [
     currentStep,
