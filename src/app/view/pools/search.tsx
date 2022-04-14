@@ -1,35 +1,67 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { Button, Col, Input, Row, Select } from 'antd'
-import { SearchOutlined } from '@ant-design/icons'
+import IonIcon from 'shared/antd/ionicon'
 
-import './search.less'
+import { FilterPools } from 'app/constant'
+import { AppDispatch, AppState } from 'app/model'
+import { setSearchInput, setFilterPool } from 'app/model/searchPools.controller'
 
 const Search = () => {
-  const [search, setSearch] = useState('')
+  const {
+    searchPools: { searchInput, filterPool },
+  } = useSelector((state: AppState) => state)
+
+  const dispatch = useDispatch<AppDispatch>()
+
+  const onSearch = (value: string) => {
+    dispatch(setSearchInput({ searchText: value }))
+  }
+
   return (
     <Row className="search-pools" gutter={[12, 12]}>
-      <Col span={8}>
-        <Select defaultValue={{ value: 'All pools' }} style={{ width: '100%' }}>
-          <Select.Option value="All pools">All pools</Select.Option>
-          <Select.Option value="Deposited pools">Deposited pools</Select.Option>
-          <Select.Option value="Your pools">Your pools</Select.Option>
+      <Col md={8} xs={10}>
+        <Select
+          value={filterPool}
+          onChange={(value: FilterPools) => {
+            dispatch(setFilterPool({ filterPool: value }))
+          }}
+          style={{ width: '100%', height: '32px' }}
+        >
+          <Select.Option value={FilterPools.AllPools}>All pools</Select.Option>
+          <Select.Option value={FilterPools.DepositedPools}>
+            Deposited pools
+          </Select.Option>
+          <Select.Option value={FilterPools.YourPools}>
+            Your pools
+          </Select.Option>
         </Select>
       </Col>
       <Col flex={'1 0'}>
         <Input
           placeholder="Search"
-          value={search}
+          value={searchInput}
           prefix={
-            <Button
-              size="small"
-              icon={<SearchOutlined style={{ fontSize: '24px' }} />}
-            />
+            searchInput ? (
+              <Button
+                type="text"
+                style={{
+                  width: 'auto',
+                  height: 'auto',
+                  background: 'transparent',
+                }}
+                onClick={() => onSearch('')}
+                icon={<IonIcon name="close-outline" />}
+              />
+            ) : (
+              <IonIcon style={{ fontSize: '24px' }} name="search-outline" />
+            )
           }
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setSearch(e.target.value)
+            onSearch(e.target.value)
           }}
-          style={{ borderRadius: '24px' }}
+          style={{ borderRadius: '24px', height: '32px' }}
         />
       </Col>
     </Row>
