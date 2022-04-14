@@ -11,7 +11,8 @@ import './index.less'
 import { AppState } from 'app/model'
 import { useSelector } from 'react-redux'
 import { useOracles } from 'app/hooks/useOracles'
-import { calcNormalizedWeight } from 'app/helper/oracles'
+import { GENERAL_DECIMALS } from 'app/constant'
+import util from '@senswap/sen-js/dist/utils'
 
 type PoolInfo = {
   token: TokenInfo
@@ -42,7 +43,10 @@ const ConfirmPoolInfo = ({
           reserves[idx],
           value.toBase58(),
         )
-        const normalizedWeight = calcNormalizedWeight(weights, weights[idx])
+        const normalizedWeight = util.undecimalize(
+          BigInt(weights[idx].toString()),
+          GENERAL_DECIMALS,
+        )
         if (!ticket)
           return {
             token: {
