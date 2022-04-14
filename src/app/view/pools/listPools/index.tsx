@@ -1,11 +1,11 @@
 import { Col, Row } from 'antd'
 import { useFilterPools } from 'app/hooks/pools/useFilterPools'
-import { useSearchPools } from 'app/hooks/pools/useSearchPools'
+import { useSearchedPools } from 'app/hooks/pools/useSearchedPools'
 import DetailsCard from './detailsCard'
 
 const ListPools = () => {
   const { poolsFilter } = useFilterPools()
-  const listPools = useSearchPools(poolsFilter)
+  const listPools = useSearchedPools(poolsFilter)
 
   return (
     <Row gutter={[24, 24]}>

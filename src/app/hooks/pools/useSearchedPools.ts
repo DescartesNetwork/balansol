@@ -8,17 +8,17 @@ import { PoolsState } from 'app/model/pools.controller'
 
 const KEY_SIZE = 3
 
-export const useSearchPools = (pools: PoolsState) => {
+export const useSearchedPools = (pools: PoolsState) => {
   const { tokenProvider } = useMint()
 
   const {
     searchPools: { searchInput },
   } = useSelector((state: AppState) => state)
 
-  const [poolsFilter, setPoolsFilter] = useState<PoolsState>({})
+  const [poolsSearched, setPoolsSearched] = useState<PoolsState>({})
 
   const search = useCallback(async () => {
-    const newPoolsFilter: PoolsState = {}
+    const newPoolsSearch: PoolsState = {}
     const listTokenInfo = await tokenProvider.find(searchInput)
     const listTokenAddress = listTokenInfo.map((info) => info.address)
 
@@ -40,8 +40,8 @@ export const useSearchPools = (pools: PoolsState) => {
     })
     listPoolsAddress
       .sort()
-      .map((poolAddress) => (newPoolsFilter[poolAddress] = pools[poolAddress]))
-    setPoolsFilter(newPoolsFilter)
+      .map((poolAddress) => (newPoolsSearch[poolAddress] = pools[poolAddress]))
+    setPoolsSearched(newPoolsSearch)
   }, [pools, searchInput, tokenProvider])
 
   useEffect(() => {
@@ -53,5 +53,5 @@ export const useSearchPools = (pools: PoolsState) => {
     })
   }, [search])
 
-  return poolsFilter
+  return poolsSearched
 }
