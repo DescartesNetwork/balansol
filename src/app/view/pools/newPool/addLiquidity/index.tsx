@@ -70,12 +70,12 @@ const AddLiquidity = ({
         if (!ticket) return '0'
         const CGKTokenInfo = await fetchCGK(ticket)
         if (calcedIdx === baseTokenIndex) return newState[baseTokenIndex]
-        return String(
+        return (
           (CGKEnteredTokenInfo?.price *
             Number(newState[baseTokenIndex]) *
             Number(weight)) /
-            (CGKTokenInfo?.price * Number(tokenList[calcedIdx].weight)),
-        )
+          (CGKTokenInfo?.price * Number(tokenList[calcedIdx].weight))
+        ).toFixed(9)
       }),
     )
     const checkAmountIns = await checkExceedBalance(autoDepositedAmount)
@@ -128,15 +128,13 @@ const AddLiquidity = ({
           restoredDepositedAmounts[idx] !== '0'
         )
           return restoredDepositedAmounts[idx]
-        return String(
-          calcOptimizedDepositedAmount(
-            CGKEnteredTokenInfo,
-            CGKTokenInfo,
-            value,
-            weight,
-            tokenList[index].weight,
-          ),
-        )
+        return calcOptimizedDepositedAmount(
+          CGKEnteredTokenInfo,
+          CGKTokenInfo,
+          value,
+          weight,
+          tokenList[index].weight,
+        ).toFixed(9)
       }),
     )
     const checkAmountIns = await checkExceedBalance(autoDepositedAmount)

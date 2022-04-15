@@ -6,6 +6,11 @@ import { Button, Card, Col, Row, Table, Typography } from 'antd'
 import { fetchCGK, numeric } from 'shared/util'
 import { TokenInfo } from '../index'
 import { WORMHOLE_COLUMNS } from './column'
+import { AppState } from 'app/model'
+import { useSelector } from 'react-redux'
+import { useOracles } from 'app/hooks/useOracles'
+import { GENERAL_DECIMALS } from 'app/constant'
+import util from '@senswap/sen-js/dist/utils'
 
 import './index.less'
 
@@ -16,32 +21,53 @@ type PoolInfo = {
 }
 
 const ConfirmPoolInfo = ({
-  tokenList,
-  depositedAmounts,
   onReset,
+  poolAddress,
 }: {
-  tokenList: TokenInfo[]
-  depositedAmounts: string[]
   onReset: () => void
+  poolAddress: string
 }) => {
+  const { pools } = useSelector((state: AppState) => state)
   const [poolInfo, setPoolInfo] = useState<PoolInfo[]>([])
   const [poolTotalValue, setPoolTotalValue] = useState(0)
   const { tokenProvider } = useMint()
+  const { undecimalizeMintAmount } = useOracles()
 
   const getPoolInfo = useCallback(async () => {
+    const { mints, reserves, weights } = pools[poolAddress]
     const poolElements: PoolInfo[] = await Promise.all(
-      tokenList.map(async (value, idx) => {
-        const tokenInfo = await tokenProvider.findByAddress(value.addressToken)
+      mints.map(async (value, idx) => {
+        const tokenInfo = await tokenProvider.findByAddress(value.toBase58())
         const ticket = tokenInfo?.extensions?.coingeckoId
-        if (!ticket) return { token: value, amount: 0, value: 0 }
+        let balance = await undecimalizeMintAmount(
+          reserves[idx],
+          value.toBase58(),
+        )
+        const normalizedWeight = util.undecimalize(
+          BigInt(weights[idx].toString()),
+          GENERAL_DECIMALS,
+        )
+        if (!ticket)
+          return {
+            token: {
+              addressToken: value.toBase58(),
+              weight: String(normalizedWeight),
+              isLocked: true,
+            },
+            amount: Number(balance),
+            value: 0,
+          }
+
         const CGKTokenInfo = await fetchCGK(ticket)
         return {
-          token: value,
-          amount: Number(depositedAmounts[idx]),
+          token: {
+            addressToken: value.toBase58(),
+            weight: String(normalizedWeight),
+            isLocked: true,
+          },
+          amount: Number(balance),
           value: Number(
-            numeric(CGKTokenInfo?.price * Number(depositedAmounts[idx])).format(
-              '0,0.[00]',
-            ),
+            numeric(CGKTokenInfo?.price * Number(balance)).format('0,0.[00]'),
           ),
         }
       }),
@@ -53,11 +79,11 @@ const ConfirmPoolInfo = ({
 
     setPoolTotalValue(totalValue)
     setPoolInfo(poolElements)
-  }, [depositedAmounts, tokenList, tokenProvider])
+  }, [poolAddress, pools, tokenProvider, undecimalizeMintAmount])
 
   useEffect(() => {
     getPoolInfo()
-  }, [getPoolInfo, tokenList])
+  }, [getPoolInfo])
 
   return (
     <Fragment>
