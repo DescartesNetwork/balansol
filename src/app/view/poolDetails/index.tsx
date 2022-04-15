@@ -154,7 +154,7 @@ const PoolDetails = () => {
               <Col lg={12} md={12} xs={24}>
                 {/* Doughnut Chart */}
                 <Card className="chart-card">
-                  <Row gutter={[24, 24]}>
+                  <Row gutter={[0, 0]}>
                     <Col span={24}>
                       <Row
                         justify="center"

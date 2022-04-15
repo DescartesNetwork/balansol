@@ -1,10 +1,9 @@
-import React, { useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import ReactEChartsCore from 'echarts-for-react/lib/core'
 import * as echarts from 'echarts/core'
 import { PieChart } from 'echarts/charts'
 import {
   GridComponent,
-  TooltipComponent,
   TitleComponent,
   LegendComponent,
 } from 'echarts/components'
@@ -13,7 +12,6 @@ import { CanvasRenderer } from 'echarts/renderers'
 import { Row, Space } from 'antd'
 import { useSelector } from 'react-redux'
 import { AppState } from 'app/model'
-import { PoolData } from '@senswap/balancer'
 import util from '@senswap/sen-js/dist/utils'
 import { GENERAL_DECIMALS } from 'app/constant'
 import { useMint } from '@senhub/providers'
@@ -26,7 +24,7 @@ echarts.use([
   LegendComponent,
 ])
 
-type DoughnutData = { symbol: string; weight: string }
+type DoughnutData = { symbol: string; weight: string; logo: string }
 
 const options = (data: DoughnutData[]) => {
   return {
@@ -39,27 +37,47 @@ const options = (data: DoughnutData[]) => {
     },
     series: [
       {
-        name: 'Access From',
         type: 'pie',
         radius: ['40%', '70%'],
         avoidLabelOverlap: false,
+        top: 0,
         label: {
           show: false,
           position: 'center',
         },
-        emphasis: {
-          label: {
-            show: true,
-            fontSize: '40',
-            fontWeight: 'bold',
-          },
-        },
         labelLine: {
-          show: false,
+          show: true,
         },
-        data: data.map((value, idx) => {
-          console.log(value, 'valllsksksksks')
-          return { value: value.weight, name: value.symbol }
+        bottom: 0,
+        data: data.map((value) => {
+          return {
+            name: value.symbol,
+            value: value.weight,
+            tooltip: {
+              show: false,
+              borderWidth: '0',
+            },
+            emphasis: {
+              label: {
+                show: true,
+                formatter: ['{a| }', '{c|{c}%}'].join('\n\n'),
+                rich: {
+                  a: {
+                    backgroundColor: {
+                      image: value.logo,
+                    },
+                    borderRadius: 45,
+                    height: 32,
+                    width: 32,
+                  },
+                  c: {
+                    fontSize: 20,
+                    color: '#F3F3F5',
+                  },
+                },
+              },
+            },
+          }
         }),
       },
     ],
@@ -71,30 +89,36 @@ const DoughnutChart = ({ poolAddress }: { poolAddress: string }) => {
     pools: { [poolAddress]: poolData },
   } = useSelector((state: AppState) => state)
   const { tokenProvider } = useMint()
-  const [data, setData] = useState<DoughnutData[]>()
+  const [data, setData] = useState<DoughnutData[]>([])
 
-  const doughnutChartData = useMemo(async () => {
+  const doughnutChartData = useCallback(async () => {
     const { mints, weights } = poolData
-    const data = Promise.all(
+    const newData = await Promise.all(
       mints.map(async (value, idx) => {
         const tokenInfo = await tokenProvider.findByAddress(value.toBase58())
         const weight = util.undecimalize(
           BigInt(weights[idx].toString()),
           GENERAL_DECIMALS,
         )
-        if (!tokenInfo) return { symbol: 'TOKN', weight }
-        return { symbol: tokenInfo.symbol, weight }
+        if (!tokenInfo) return { symbol: 'TOKN', weight, logo: '' }
+        if (!tokenInfo.logoURI)
+          return { symbol: tokenInfo.symbol, weight, logo: '' }
+        return { symbol: tokenInfo.symbol, weight, logo: tokenInfo.logoURI }
       }),
     )
-    return data
+    setData(newData)
   }, [poolData, tokenProvider])
+
+  useEffect(() => {
+    doughnutChartData()
+  }, [doughnutChartData])
 
   return (
     <Row justify="center">
       <Space className="doughnut-container">
         <ReactEChartsCore
           echarts={echarts}
-          option={options(doughnutChartData)}
+          option={options(data)}
           notMerge={true}
           lazyUpdate={true}
         />
