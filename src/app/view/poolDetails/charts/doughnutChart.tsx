@@ -26,7 +26,7 @@ echarts.use([
 
 type DoughnutData = { symbol: string; weight: string; logo: string }
 
-const options = (data: DoughnutData[]) => {
+const buildOptions = (data: DoughnutData[]) => {
   return {
     legend: {
       bottom: 0,
@@ -118,7 +118,7 @@ const DoughnutChart = ({ poolAddress }: { poolAddress: string }) => {
       <Space className="doughnut-container">
         <ReactEChartsCore
           echarts={echarts}
-          option={options(data)}
+          option={buildOptions(data)}
           notMerge={true}
           lazyUpdate={true}
         />
