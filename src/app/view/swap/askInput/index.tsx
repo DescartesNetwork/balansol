@@ -1,14 +1,14 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import { Card } from 'antd'
 import MintInput from 'app/components/mintInput'
 
 import { AppState } from 'app/model'
 import { setSwapState } from 'app/model/swap.controller'
-import { useRouteSwap } from 'app/hooks/swap/useRouteSwap'
 import { useMintsCanSwap } from 'app/hooks/swap/useMintsCanSwap'
-import { useReversedSwap } from 'app/hooks/useReversedSwap'
+import { useRouteReversedSwap } from 'app/hooks/swap/useRouteReversedSwap'
+import { useRouteSwap } from 'app/hooks/swap/useRouteSwap'
 
 export default function AskInput() {
   const {
@@ -17,7 +17,9 @@ export default function AskInput() {
   const dispatch = useDispatch()
   const { askAmount } = useRouteSwap()
 
-  const { estimateTokenOut } = useReversedSwap()
+  const [askAmountReverse, setAskAmountReverse] = useState('')
+  const { getBestRoute } = useRouteReversedSwap()
+
   const mintsSwap = useMintsCanSwap()
 
   useEffect(() => {
@@ -26,20 +28,34 @@ export default function AskInput() {
   }, [bidMint, dispatch, mintsSwap])
 
   const onChange = async (val: string) => {
-    // Temp to fix later. Currently, estimateTokenOut don't go right
-    const newBidAmount = await estimateTokenOut(val)
-
-    dispatch(
-      setSwapState({
-        bidAmount: newBidAmount,
-      }),
-    )
+    // let isDiff = Number(val) !== Number(askAmountReverse)
+    // setAskAmountReverse(val);
+    // if(isDiff){
+    //   // dispatch(
+    //   //   setSwapState({
+    //   //     bidAmount: (Number(val)*2).toString(),
+    //   //   }),
+    //   // )
+    // }
+    await setAskAmountReverse(val)
+    let routeSwapInfo = await getBestRoute(val)
+    console.log('routeSwapInfo: ', val, routeSwapInfo)
   }
+
+  const clearAskAmountReverse = useCallback(() => {
+    if (Number(askAmount) === Number(askAmountReverse)) {
+      setAskAmountReverse('')
+    }
+  }, [askAmount, askAmountReverse])
+
+  useEffect(() => {
+    clearAskAmountReverse()
+  }, [clearAskAmountReverse])
 
   return (
     <Card bordered={false} className="card-swap" bodyStyle={{ padding: 0 }}>
       <MintInput
-        amount={askAmount}
+        amount={askAmountReverse ? askAmountReverse : askAmount}
         selectedMint={askMint}
         onSelect={(mint) => dispatch(setSwapState({ askMint: mint }))}
         onChangeAmount={onChange}

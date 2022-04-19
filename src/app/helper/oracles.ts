@@ -99,6 +99,24 @@ export const calcInGivenOutSwap = (
   const ratioBeforeAfterBalance = numBalanceOut / (numBalanceOut - numAmountOut)
 
   const ratioInOutWeight = weightOut / weightIn
+  // console.log(
+  //   'calcInGivenOutSwap',
+  //   'numBalanceOut',
+  //   numBalanceOut,
+  //   'numAmountOut',
+  //   numAmountOut,
+  //   'numBalanceIn',
+  //   numBalanceIn,
+  //   'weightOut',
+  //   weightOut,
+  //   'weightIn',
+  //   weightIn,
+  //   'numSwapFee',
+  //   numSwapFee,
+  //   numBalanceIn *
+  //     (ratioBeforeAfterBalance ** ratioInOutWeight - 1) *
+  //     (1 - numSwapFee),
+  // )
   return new BN(
     numBalanceIn *
       (ratioBeforeAfterBalance ** ratioInOutWeight - 1) *
