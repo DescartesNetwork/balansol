@@ -11,6 +11,7 @@ import {
 import { CanvasRenderer } from 'echarts/renderers'
 
 import { Row } from 'antd'
+import { VolumeData } from '../volume24h'
 
 echarts.use([
   TitleComponent,
@@ -21,28 +22,40 @@ echarts.use([
   LegendComponent,
 ])
 
-const options = {
+const buildOptions = (data: VolumeData[]) => ({
   xAxis: {
     type: 'category',
-    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    data: data.map((value) => value.label),
+    axisLine: {
+      show: false,
+    },
+    axisTick: {
+      show: false,
+    },
   },
   yAxis: {
     type: 'value',
+    splitLine: {
+      show: false,
+    },
   },
   series: [
     {
-      data: [120, 200, 150, 80, 70, 110, 130],
+      data: data.map((value) => value.data),
       type: 'bar',
     },
   ],
-}
+  grid: {
+    show: false,
+  },
+})
 
-const BarChart = () => {
+const BarChart = ({ data }: { data: VolumeData[] }) => {
   return (
     <Row justify="center" className="barchart-container">
       <ReactEChartsCore
         echarts={echarts}
-        option={options}
+        option={buildOptions(data)}
         notMerge={true}
         lazyUpdate={true}
       />

@@ -1,10 +1,9 @@
-import React from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import ReactEChartsCore from 'echarts-for-react/lib/core'
 import * as echarts from 'echarts/core'
 import { PieChart } from 'echarts/charts'
 import {
   GridComponent,
-  TooltipComponent,
   TitleComponent,
   LegendComponent,
 } from 'echarts/components'
@@ -14,62 +13,79 @@ import { Row, Space } from 'antd'
 
 echarts.use([
   TitleComponent,
-  TooltipComponent,
   GridComponent,
   PieChart,
   CanvasRenderer,
   LegendComponent,
 ])
 
-const options = {
-  tooltip: {
-    trigger: 'item',
-  },
-  legend: {
-    bottom: 0,
-    icon: 'circle',
-    textStyle: {
-      color: '#F3F3F5',
-    },
-  },
-  series: [
-    {
-      name: 'Access From',
-      type: 'pie',
-      radius: ['40%', '70%'],
-      avoidLabelOverlap: false,
-      label: {
-        show: false,
-        position: 'center',
+export type PoolBalanceData = { symbol: string; weight: string; logo: string }
+
+const buildOptions = (data: PoolBalanceData[]) => {
+  return {
+    legend: {
+      bottom: 0,
+      icon: 'circle',
+      textStyle: {
+        color: '#F3F3F5',
       },
-      emphasis: {
+    },
+    series: [
+      {
+        type: 'pie',
+        radius: ['40%', '70%'],
+        avoidLabelOverlap: false,
+        top: 0,
         label: {
-          show: true,
-          fontSize: '40',
-          fontWeight: 'bold',
+          show: false,
+          position: 'center',
         },
+        labelLine: {
+          show: true,
+        },
+        bottom: 0,
+        data: data.map((value) => {
+          return {
+            name: value.symbol,
+            value: value.weight,
+            tooltip: {
+              show: false,
+              borderWidth: '0',
+            },
+            emphasis: {
+              label: {
+                show: true,
+                formatter: ['{a| }', '{c|{c}%}'].join('\n\n'),
+                rich: {
+                  a: {
+                    backgroundColor: {
+                      image: value.logo,
+                    },
+                    borderRadius: 45,
+                    height: 32,
+                    width: 32,
+                  },
+                  c: {
+                    fontSize: 20,
+                    color: '#F3F3F5',
+                  },
+                },
+              },
+            },
+          }
+        }),
       },
-      labelLine: {
-        show: false,
-      },
-      data: [
-        { value: 1048, name: 'Search Engine' },
-        { value: 735, name: 'Direct' },
-        { value: 580, name: 'Email' },
-        { value: 484, name: 'Union Ads' },
-        { value: 300, name: 'Video Ads' },
-      ],
-    },
-  ],
+    ],
+  }
 }
 
-const DoughnutChart = () => {
+const DoughnutChart = ({ data }: { data: PoolBalanceData[] }) => {
   return (
     <Row justify="center">
       <Space className="doughnut-container">
         <ReactEChartsCore
           echarts={echarts}
-          option={options}
+          option={buildOptions(data)}
           notMerge={true}
           lazyUpdate={true}
         />
