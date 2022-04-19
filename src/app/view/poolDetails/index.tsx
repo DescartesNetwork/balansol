@@ -128,27 +128,7 @@ const PoolDetails = () => {
               <Col lg={12} md={12} xs={24}>
                 {/* Bar Chart */}
                 <Card className="chart-card">
-                  <Row gutter={[24, 24]}>
-                    <Col span={24}>
-                      <Row
-                        justify="center"
-                        align="middle"
-                        className="chart-title"
-                      >
-                        <Col flex={'auto'}>
-                          <Typography.Title level={4}>
-                            24h Volume
-                          </Typography.Title>
-                        </Col>
-                        <Col>
-                          <Typography.Title level={2}>$3m</Typography.Title>
-                        </Col>
-                      </Row>
-                    </Col>
-                    <Col span={24} flex="auto">
-                      <Volume24h poolAddress={poolAddress} />
-                    </Col>
-                  </Row>
+                  <Volume24h poolAddress={poolAddress} />
                 </Card>
               </Col>
               <Col lg={12} md={12} xs={24}>
