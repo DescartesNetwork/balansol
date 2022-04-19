@@ -24,7 +24,7 @@ export type Route = RouteInfo[]
 
 export const useAllRoutes = (metaRoutes: MetaRoute[]): Route[] => {
   const {
-    swap: { bidAmount },
+    swap: { bidAmount, bidMint },
     pools,
   } = useSelector((state: AppState) => state)
   const { decimalizeMintAmount } = useOracles()
@@ -34,57 +34,57 @@ export const useAllRoutes = (metaRoutes: MetaRoute[]): Route[] => {
   const computeRouteInfos = useCallback(async () => {
     const routes = []
     for (const metaRoute of metaRoutes) {
-      const route = await Promise.all(
-        metaRoute.map(async (market) => {
-          const { bidMint, askMint, pool } = market
-          const poolData = pools[pool]
-          const bidMintInfo = getMintInfo(poolData, bidMint)
-          const askMintInfo = getMintInfo(poolData, askMint)
-          const decimalIn = await getDecimals(bidMint)
-          const decimalOut = await getDecimals(askMint)
+      const route = []
+      let bidAmountBN = await decimalizeMintAmount(bidAmount, bidMint)
+      for (const market of metaRoute) {
+        const { bidMint, askMint, pool } = market
+        const poolData = pools[pool]
+        const bidMintInfo = getMintInfo(poolData, bidMint)
+        const askMintInfo = getMintInfo(poolData, askMint)
+        const decimalIn = await getDecimals(bidMint)
+        const decimalOut = await getDecimals(askMint)
 
-          const bidAmountBN = await decimalizeMintAmount(bidAmount, bidMint)
-          const tokenOutAmount = calcOutGivenInSwap(
-            bidAmountBN,
-            askMintInfo.reserve,
-            bidMintInfo.reserve,
-            askMintInfo.normalizedWeight,
-            bidMintInfo.normalizedWeight,
-            poolData.fee,
-          )
+        const tokenOutAmount = calcOutGivenInSwap(
+          bidAmountBN,
+          askMintInfo.reserve,
+          bidMintInfo.reserve,
+          askMintInfo.normalizedWeight,
+          bidMintInfo.normalizedWeight,
+          poolData.fee,
+        )
 
-          const dataForSlippage = {
-            balanceIn: bidMintInfo.reserve,
-            balanceOut: askMintInfo.reserve,
-            weightIn: bidMintInfo.normalizedWeight,
-            weightOut: askMintInfo.normalizedWeight,
-            decimalIn: decimalIn,
-            decimalOut: decimalOut,
-            swapFee: poolData.fee,
-          }
+        const dataForSlippage = {
+          balanceIn: bidMintInfo.reserve,
+          balanceOut: askMintInfo.reserve,
+          weightIn: bidMintInfo.normalizedWeight,
+          weightOut: askMintInfo.normalizedWeight,
+          decimalIn: decimalIn,
+          decimalOut: decimalOut,
+          swapFee: poolData.fee,
+        }
 
-          let priceImpact = calcPriceImpactSwap(
-            bidAmountBN,
-            tokenOutAmount,
-            dataForSlippage,
-          )
+        let priceImpact = calcPriceImpactSwap(
+          bidAmountBN,
+          tokenOutAmount,
+          dataForSlippage,
+        )
 
-          if (priceImpact < 0) priceImpact = 0
-          const routeInfo: RouteInfo = {
-            pool: market.pool,
-            bidMint,
-            askMint,
-            bidAmount: bidAmountBN,
-            askAmount: tokenOutAmount,
-            priceImpact: priceImpact,
-          }
-          return routeInfo
-        }),
-      )
+        if (priceImpact < 0) priceImpact = 0
+        const routeInfo: RouteInfo = {
+          pool: market.pool,
+          bidMint,
+          askMint,
+          bidAmount: bidAmountBN,
+          askAmount: tokenOutAmount,
+          priceImpact: priceImpact,
+        }
+        route.push(routeInfo)
+        bidAmountBN = tokenOutAmount
+      }
       routes.push(route)
     }
     return setRoutes(routes)
-  }, [bidAmount, decimalizeMintAmount, getDecimals, metaRoutes, pools])
+  }, [bidAmount, bidMint, decimalizeMintAmount, getDecimals, metaRoutes, pools])
 
   useEffect(() => {
     computeRouteInfos()

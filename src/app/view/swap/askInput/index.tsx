@@ -23,23 +23,23 @@ export default function AskInput() {
   const mintsSwap = useMintsCanSwap()
 
   useEffect(() => {
+    if (askMint && askMint !== bidMint) return
     const newMintSwap = mintsSwap.filter((value) => value !== bidMint)
     dispatch(setSwapState({ askMint: newMintSwap[0] }))
-  }, [bidMint, dispatch, mintsSwap])
+  }, [askMint, bidMint, dispatch, mintsSwap])
 
-  const onChange = async (val: string) => {
-    // let isDiff = Number(val) !== Number(askAmountReverse)
-    // setAskAmountReverse(val);
-    // if(isDiff){
-    //   // dispatch(
-    //   //   setSwapState({
-    //   //     bidAmount: (Number(val)*2).toString(),
-    //   //   }),
-    //   // )
-    // }
-    await setAskAmountReverse(val)
-    let routeSwapInfo = await getBestRoute(val)
-    console.log('routeSwapInfo: ', val, routeSwapInfo)
+  const onChange = async (askAmount: string) => {
+    await setAskAmountReverse(askAmount)
+    let isDiff = Number(askAmount) !== Number(askAmountReverse)
+    if (!isDiff) return
+
+    let routeSwapInfo = await getBestRoute(askAmount)
+    await dispatch(
+      setSwapState({
+        bidAmount: routeSwapInfo.bidAmount.toString(),
+      }),
+    )
+    return setAskAmountReverse('')
   }
 
   const clearAskAmountReverse = useCallback(() => {

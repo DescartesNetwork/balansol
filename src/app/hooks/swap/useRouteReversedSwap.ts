@@ -31,25 +31,18 @@ export const useRouteReversedSwap = () => {
         priceImpact: 0,
       }
       const routes: Route[] = await computeRouteInfos(askAmountInput)
-      let sortedRoute = routes
-        .sort((routeA, routeB) => {
-          let bidAmountA: BN = routeA[routeA.length - 1].bidAmount
-          let bidAmountB: BN = routeB[routeB.length - 1].bidAmount
-          return bidAmountA.gt(bidAmountB) ? 1 : -1
-        })
-        .filter(
-          (value) =>
-            value.length === 1 &&
-            value[0].pool === '3hB88tzjBoK5JUcudLzuReX1U7rMomin7uH2zj7jW5ey',
-        )
+
+      let sortedRoute = routes.sort((routeA, routeB) => {
+        let bidAmountA: BN = routeA[0].bidAmount
+        let bidAmountB: BN = routeB[0].bidAmount
+        return bidAmountA.gt(bidAmountB) ? 1 : -1
+      })
+
       const bestRoute = sortedRoute[0] || []
 
       let bidAmount =
         bestRoute.length && bidMint
-          ? await undecimalizeMintAmount(
-              bestRoute[bestRoute.length - 1]?.bidAmount,
-              bidMint,
-            )
+          ? await undecimalizeMintAmount(bestRoute[0]?.bidAmount, bidMint)
           : ''
       routeSwapInfo = {
         route: bestRoute,

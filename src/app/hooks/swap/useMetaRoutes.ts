@@ -19,6 +19,11 @@ export const useMetaRoutes = () => {
   const tokenRoutes = useMintRoutes()
 
   const validRoute = (route: MetaRoute) => {
+    const pools = route.map((e) => e.pool)
+    for (const idx in pools) {
+      // Check duplicate pool address
+      if (pools.indexOf(pools[idx]) !== Number(idx)) return false
+    }
     for (const marketBid of route) {
       for (const marketAsk of route) {
         if (
@@ -64,10 +69,10 @@ export const useMetaRoutes = () => {
     [tokenRoutes],
   )
 
-  const metaRoutes = useMemo(
-    () => computeMetaRoutes(bidMint, askMint),
-    [askMint, bidMint, computeMetaRoutes],
-  )
+  const metaRoutes = useMemo(() => {
+    const metaRoute = computeMetaRoutes(bidMint, askMint)
+    return metaRoute
+  }, [askMint, bidMint, computeMetaRoutes])
 
   return metaRoutes
 }
