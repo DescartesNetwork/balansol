@@ -1,13 +1,13 @@
 import { Space, Typography } from 'antd'
 import { MintAvatar, MintSymbol } from 'shared/antd/mint'
 
-import { TokenInfo } from '../index'
+import { MintSetup } from '../index'
 
 export const WORMHOLE_COLUMNS = [
   {
     title: 'TOKEN',
     dataIndex: 'token',
-    render: (token: TokenInfo) => {
+    render: (token: MintSetup) => {
       return (
         <Typography.Text>
           <Space size={8}>
@@ -21,7 +21,7 @@ export const WORMHOLE_COLUMNS = [
   {
     title: 'WEIGHT',
     dataIndex: 'token',
-    render: (token: TokenInfo) => {
+    render: (token: MintSetup) => {
       return (
         <Typography.Text style={{ fontWeight: 700 }}>
           {Number(token.weight)} %

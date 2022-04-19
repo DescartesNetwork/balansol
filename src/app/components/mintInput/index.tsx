@@ -22,6 +22,7 @@ export default function MintInput({
   mintAvatar,
   ratioButton,
   unit,
+  force, // validate input with max = balance
 }: {
   amount: string | number
   onChangeAmount?: (val: string, invalid?: boolean) => void
@@ -32,6 +33,7 @@ export default function MintInput({
   mintAvatar?: ReactNode
   ratioButton?: ReactNode
   unit?: string
+  force?: boolean
 }) {
   const { balance } = useAccountBalanceByMintAddress(selectedMint)
 
@@ -74,6 +76,7 @@ export default function MintInput({
               }}
               placeholder="0"
               value={amount}
+              max={force ? balance : undefined}
               onValue={onInput}
               disabled={!onChangeAmount}
             />

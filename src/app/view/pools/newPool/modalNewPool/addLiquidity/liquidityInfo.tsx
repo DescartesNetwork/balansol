@@ -8,7 +8,7 @@ import { MintSymbol } from 'shared/antd/mint'
 
 import { notifyError, notifySuccess } from 'app/helper'
 import { fetchCGK, numeric } from 'shared/util'
-import { TokenInfo } from '../index'
+import { TokenInfo } from '../../index'
 import { PoolCreatingStep } from 'app/constant'
 
 type TokenPrice = {
@@ -32,7 +32,8 @@ const LiquidityInfo = ({
   restoredDepositedAmounts: string[]
 }) => {
   const [tokenPrice, setTokenPrice] = useState<TokenPrice[]>([])
-
+  const [loadingAdd, setLoadingAdd] = useState(false)
+  const [loadingClose, setLoadingClose] = useState(false)
   const { tokenProvider, getDecimals } = useMint()
 
   const getTokensPrice = useCallback(async () => {
@@ -61,6 +62,8 @@ const LiquidityInfo = ({
 
   const onAddLiquidity = async () => {
     try {
+      setLoadingAdd(true)
+      let lastTxID = ''
       for (let i = 0; i < tokenList.length; i++) {
         if (
           isNaN(Number(restoredDepositedAmounts[i])) !== true &&
@@ -69,19 +72,34 @@ const LiquidityInfo = ({
           continue
 
         let decimals = await getDecimals(tokenList[i].addressToken)
-        let mintAmmount = utils.decimalize(depositedAmounts[i], decimals)
+        let mintAmount = utils.decimalize(depositedAmounts[i], decimals)
 
-        await window.balansol.initializeJoin(
+        const { txId } = await window.balansol.initializeJoin(
           poolAddress,
           new web3.PublicKey(tokenList[i].addressToken),
-          new BN(String(mintAmmount)),
+          new BN(String(mintAmount)),
         )
+        lastTxID = txId
       }
 
       setCurrentStep(PoolCreatingStep.confirmCreatePool)
-      notifySuccess('Fund pool', '')
+      notifySuccess('Fund pool', lastTxID)
     } catch (error) {
       notifyError(error)
+    } finally {
+      setLoadingAdd(false)
+    }
+  }
+
+  const onClosePool = async () => {
+    try {
+      setLoadingClose(true)
+      const { txId } = await window.balansol.closePool(poolAddress)
+      notifySuccess('Close pool', txId)
+    } catch (error) {
+      notifyError(error)
+    } finally {
+      setLoadingClose(false)
     }
   }
 
@@ -121,11 +139,23 @@ const LiquidityInfo = ({
           </Col>
         </Row>
       </Col>
-      <Col span={24}>
+      <Col span={12}>
+        <Button
+          type="ghost"
+          disabled={loadingAdd}
+          loading={loadingClose}
+          onClick={onClosePool}
+          block
+        >
+          Delete pool
+        </Button>
+      </Col>
+      <Col span={12}>
         <Button
           type="primary"
           onClick={onAddLiquidity}
-          disabled={disableBtnSupply}
+          disabled={disableBtnSupply || loadingClose}
+          loading={loadingAdd}
           block
         >
           Supply
