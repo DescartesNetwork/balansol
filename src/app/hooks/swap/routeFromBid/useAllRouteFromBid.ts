@@ -10,7 +10,7 @@ import {
 import { AppState } from 'app/model'
 import { useOracles } from '../../useOracles'
 import { MetaRoute } from '../useMetaRoutes'
-import { Route, RouteInfo } from '../useRouteSwap'
+import { Route } from '../useRouteSwap'
 
 export const useAllRouteFromBid = (metaRoutes: MetaRoute[]): Route[] => {
   const {
@@ -60,17 +60,15 @@ export const useAllRouteFromBid = (metaRoutes: MetaRoute[]): Route[] => {
           tokenOutAmount,
           dataForSlippage,
         )
-
         if (priceImpact < 0) priceImpact = 0
-        const routeInfo: RouteInfo = {
+        route.push({
           pool: market.pool,
           bidMint,
           askMint,
           bidAmount: bidAmountBN,
           askAmount: tokenOutAmount,
           priceImpact: priceImpact,
-        }
-        route.push(routeInfo)
+        })
         bidAmountBN = tokenOutAmount
       }
       routes.push(route)
