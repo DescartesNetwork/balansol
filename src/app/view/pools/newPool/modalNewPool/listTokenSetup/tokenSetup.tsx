@@ -11,13 +11,13 @@ import { MintSetup } from '../index'
 
 const TokenSetup = ({
   tokenList,
-  tokenInfo,
+  mintSetup,
   onChangeTokenInfo,
   onRemoveToken,
   id,
 }: {
   tokenList: MintSetup[]
-  tokenInfo: MintSetup
+  mintSetup: MintSetup
   onChangeTokenInfo: (value: MintSetup, index: number) => void
   onRemoveToken: (index: number) => void
   id: number
@@ -49,7 +49,7 @@ const TokenSetup = ({
   const onChangeToken = (addressToken: string) => {
     onChangeTokenInfo(
       {
-        ...tokenInfo,
+        ...mintSetup,
         addressToken,
       },
       id,
@@ -59,7 +59,7 @@ const TokenSetup = ({
   const onChangeWeight = (weight: string) => {
     onChangeTokenInfo(
       {
-        ...tokenInfo,
+        ...mintSetup,
         weight,
       },
       id,
@@ -69,7 +69,7 @@ const TokenSetup = ({
   const onChangeLock = (isLocked: boolean) => {
     onChangeTokenInfo(
       {
-        ...tokenInfo,
+        ...mintSetup,
         isLocked,
       },
       id,
@@ -84,14 +84,14 @@ const TokenSetup = ({
     <Row>
       <Col flex="auto">
         <Selection
-          selectedMint={tokenInfo.addressToken}
+          selectedMint={mintSetup.addressToken}
           onChange={onChangeToken}
           mints={sourceMint}
         />
       </Col>
       <Col>
         <WeightControl
-          tokenInfo={tokenInfo}
+          tokenInfo={mintSetup}
           onChangeWeight={onChangeWeight}
           onChangeLock={onChangeLock}
           onRemoveToken={onRemove}

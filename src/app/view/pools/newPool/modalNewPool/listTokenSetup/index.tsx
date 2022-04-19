@@ -130,15 +130,14 @@ const ListTokenSetup = ({
         <Row gutter={[0, 12]}>
           <Col flex="auto">Token</Col>
           <Col>Weight</Col>
-          {listMintSetting.map((value, index) => (
-            <Col span={24} key={index}>
+          {listMintSetting.map((mintSetup, index) => (
+            <Col span={24} key={mintSetup.addressToken + index}>
               <TokenSetup
                 tokenList={listMintSetting}
-                tokenInfo={value}
+                mintSetup={mintSetup}
                 onChangeTokenInfo={onChangeTokenInfo}
                 onRemoveToken={onRemoveToken}
                 id={index}
-                key={index}
               />
             </Col>
           ))}
