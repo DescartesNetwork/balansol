@@ -7,10 +7,10 @@ import Deposit from './deposit'
 import Withdraw from './withdraw'
 import { PoolAvatar } from 'app/components/pools/poolAvatar'
 import CardPoolDetail from './cardPoolDetail'
-import DoughnutChart from './charts/doughnutChart'
-import BarChart from './charts/barChart'
 import IonIcon from 'shared/antd/ionicon'
 import PoolManagement from './management'
+import PoolBalance from './poolBalance'
+import Volume24h from './volume24h'
 
 import { useAppRouter } from 'app/hooks/useAppRouter'
 import { AppState } from 'app/model'
@@ -128,33 +128,13 @@ const PoolDetails = () => {
               <Col lg={12} md={12} xs={24}>
                 {/* Bar Chart */}
                 <Card className="chart-card">
-                  <Row gutter={[24, 24]}>
-                    <Col span={24}>
-                      <Row
-                        justify="center"
-                        align="middle"
-                        className="chart-title"
-                      >
-                        <Col flex={'auto'}>
-                          <Typography.Title level={4}>
-                            24h Volume
-                          </Typography.Title>
-                        </Col>
-                        <Col>
-                          <Typography.Title level={2}>$3m</Typography.Title>
-                        </Col>
-                      </Row>
-                    </Col>
-                    <Col span={24} flex="auto">
-                      <BarChart />
-                    </Col>
-                  </Row>
+                  <Volume24h poolAddress={poolAddress} />
                 </Card>
               </Col>
               <Col lg={12} md={12} xs={24}>
                 {/* Doughnut Chart */}
                 <Card className="chart-card">
-                  <Row gutter={[24, 24]}>
+                  <Row gutter={[0, 0]}>
                     <Col span={24}>
                       <Row
                         justify="center"
@@ -169,7 +149,7 @@ const PoolDetails = () => {
                       </Row>
                     </Col>
                     <Col span={24}>
-                      <DoughnutChart />
+                      <PoolBalance poolAddress={poolAddress} />
                     </Col>
                   </Row>
                 </Card>
