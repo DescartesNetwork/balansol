@@ -7,7 +7,7 @@ import { Button, Col, Row, Typography } from 'antd'
 import { MintSymbol } from 'shared/antd/mint'
 
 import { notifyError, notifySuccess } from 'app/helper'
-import { fetchCGK } from 'shared/util'
+import { fetchCGK, numeric } from 'shared/util'
 import { TokenInfo } from '../index'
 import { PoolCreatingStep } from 'app/constant'
 
@@ -94,10 +94,14 @@ const LiquidityInfo = ({
               <Typography.Text type="secondary">
                 <MintSymbol mintAddress={value.addressToken} />
               </Typography.Text>
-              <Typography.Text>({tokenPrice[idx]?.price})</Typography.Text>
+              <Typography.Text>
+                ({numeric(tokenPrice[idx]?.price).format('0,0.[0000]')})
+              </Typography.Text>
             </Col>
             <Col>
-              <Typography.Text>${tokenPrice[idx]?.valuation}</Typography.Text>
+              <Typography.Text>
+                ${numeric(tokenPrice[idx]?.valuation).format('0,0.[0000]')}
+              </Typography.Text>
             </Col>
           </Row>
         ))}
@@ -110,11 +114,9 @@ const LiquidityInfo = ({
           <Col>
             <Typography.Title level={3}>
               $
-              {tokenPrice.reduce(
-                (previousSum, currentValue) =>
-                  previousSum + currentValue?.valuation,
-                0,
-              )}{' '}
+              {numeric(tokenPrice.reduce((a, b) => a + b?.valuation, 0)).format(
+                '0,0.[0000]',
+              )}
             </Typography.Title>
           </Col>
         </Row>
