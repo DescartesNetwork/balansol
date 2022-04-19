@@ -30,22 +30,29 @@ export const useAllRoutesReverse = (metaRoutes: MetaRoute[]) => {
       for (const metaRoute of metaRoutes) {
         let route: RouteInfo[] = []
         let isValidRoute = true
-        let askAmountBN = await decimalizeMintAmount(askAmountInput, askMint)
+        let currentAskAmount = await decimalizeMintAmount(
+          askAmountInput,
+          askMint,
+        )
+
         for (const market of [...metaRoute].reverse()) {
           const { bidMint, askMint, pool } = market
           const poolData = pools[pool]
           const bidMintInfo = getMintInfo(poolData, bidMint)
           const askMintInfo = getMintInfo(poolData, askMint)
 
+          if (currentAskAmount.gt(askMintInfo.reserve)) {
+            isValidRoute = false
+            break
+          }
           const tokenInAmount = calcInGivenOutSwap(
-            askAmountBN,
+            currentAskAmount,
             askMintInfo.reserve,
             bidMintInfo.reserve,
             askMintInfo.normalizedWeight,
             bidMintInfo.normalizedWeight,
-            poolData.fee,
+            poolData.fee.add(poolData.taxFee),
           )
-
           if (tokenInAmount.lten(0)) {
             isValidRoute = false
             break
@@ -56,11 +63,11 @@ export const useAllRoutesReverse = (metaRoutes: MetaRoute[]) => {
               bidMint,
               askMint,
               bidAmount: tokenInAmount,
-              askAmount: askAmountBN,
+              askAmount: currentAskAmount,
               priceImpact: 0,
             },
           ].concat(route)
-          askAmountBN = tokenInAmount
+          currentAskAmount = tokenInAmount
         }
         if (isValidRoute) routes.push(route)
       }

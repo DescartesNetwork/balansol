@@ -94,15 +94,14 @@ export const calcInGivenOutSwap = (
 ): BN => {
   const numBalanceOut = balanceOut.toNumber()
   const numBalanceIn = balanceIn.toNumber()
-  const numAmountOut = amountOut.toNumber()
   const numSwapFee = swapFee.toNumber() / GENERAL_NORMALIZED_NUMBER
+  const numAmountOut = amountOut.toNumber() / (1 - numSwapFee)
   const ratioBeforeAfterBalance = numBalanceOut / (numBalanceOut - numAmountOut)
 
   const ratioInOutWeight = weightOut / weightIn
+
   return new BN(
-    numBalanceIn *
-      (ratioBeforeAfterBalance ** ratioInOutWeight - 1) *
-      (1 - numSwapFee),
+    numBalanceIn * (ratioBeforeAfterBalance ** ratioInOutWeight - 1),
   )
 }
 
