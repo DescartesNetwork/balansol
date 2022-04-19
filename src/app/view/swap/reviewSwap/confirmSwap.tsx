@@ -36,6 +36,7 @@ const ConfirmSwap = ({
 
   const [checked, setChecked] = useState(false)
   const [isDisplayWarning, setIsDisplayWarning] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const { askAmount, priceImpact, route } = useRouteSwap()
   const { decimalizeMintAmount } = useOracles()
 
@@ -50,6 +51,7 @@ const ConfirmSwap = ({
   }, [onCancel])
 
   const onSwap = async () => {
+    setIsLoading(true)
     try {
       const bidAmountBN = await decimalizeMintAmount(bidAmount, bidMint)
       const limit = Number(askAmount) * (1 - slippageTolerance / 100)
@@ -61,6 +63,8 @@ const ConfirmSwap = ({
       notifySuccess('Swap', txId)
     } catch (error) {
       notifyError(error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -126,7 +130,7 @@ const ConfirmSwap = ({
             type="primary"
             onClick={onSwap}
             disabled={isDisplayWarning && !checked}
-            loading={false}
+            loading={isLoading}
             block
           >
             Swap
