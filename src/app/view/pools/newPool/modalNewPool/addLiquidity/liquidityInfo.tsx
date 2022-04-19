@@ -1,89 +1,68 @@
-import React, { Dispatch, useCallback, useEffect, useState } from 'react'
-import { BN, web3 } from '@project-serum/anchor'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useMint } from '@senhub/providers'
-import { utils } from '@senswap/sen-js'
 
 import { Button, Col, Row, Typography } from 'antd'
 import { MintSymbol } from 'shared/antd/mint'
 
 import { notifyError, notifySuccess } from 'app/helper'
 import { fetchCGK, numeric } from 'shared/util'
-import { TokenInfo } from '../../index'
 import { PoolCreatingStep } from 'app/constant'
-
-type TokenPrice = {
-  price: number
-  valuation: number
-}
+import { useSelector } from 'react-redux'
+import { AppState } from 'app/model'
+import { useOracles } from 'app/hooks/useOracles'
 
 const LiquidityInfo = ({
-  disableBtnSupply,
-  tokenList,
-  depositedAmounts,
   poolAddress,
   setCurrentStep,
-  restoredDepositedAmounts,
+  amounts,
 }: {
-  disableBtnSupply: boolean
-  tokenList: TokenInfo[]
-  depositedAmounts: string[]
   poolAddress: string
-  setCurrentStep: Dispatch<React.SetStateAction<number>>
-  restoredDepositedAmounts: string[]
+  setCurrentStep: (step: PoolCreatingStep) => void
+  amounts: string[]
 }) => {
-  const [tokenPrice, setTokenPrice] = useState<TokenPrice[]>([])
+  const {
+    pools: { [poolAddress]: poolData },
+  } = useSelector((state: AppState) => state)
+  const [tokenPrice, setTokenPrice] = useState<(CgkData | null)[]>([])
   const [loadingAdd, setLoadingAdd] = useState(false)
   const [loadingClose, setLoadingClose] = useState(false)
-  const { tokenProvider, getDecimals } = useMint()
+  const { tokenProvider } = useMint()
+  const { decimalizeMintAmount } = useOracles()
 
-  const getTokensPrice = useCallback(async () => {
+  const fetchMarketData = useCallback(async () => {
     const tokensPrice = await Promise.all(
-      tokenList.map(async ({ addressToken }, idx) => {
-        const token = await tokenProvider.findByAddress(addressToken)
+      poolData.mints.map(async (mint) => {
+        const token = await tokenProvider.findByAddress(mint.toBase58())
         const ticket = token?.extensions?.coingeckoId
-
-        if (!ticket) return { price: 0, valuation: 0 }
-
-        const CGKTokenInfo = await fetchCGK(ticket)
-
-        return {
-          price: CGKTokenInfo?.price,
-          valuation:
-            Number(CGKTokenInfo?.price * Number(depositedAmounts[idx])) || 0,
-        }
+        if (!ticket) return null
+        const cgkData = await fetchCGK(ticket)
+        return cgkData
       }),
     )
     setTokenPrice(tokensPrice)
-  }, [depositedAmounts, tokenList, tokenProvider])
+  }, [poolData.mints, tokenProvider])
 
   useEffect(() => {
-    getTokensPrice()
-  }, [getTokensPrice, tokenList])
+    fetchMarketData()
+  }, [fetchMarketData])
 
   const onAddLiquidity = async () => {
     try {
       setLoadingAdd(true)
       let lastTxID = ''
-      for (let i = 0; i < tokenList.length; i++) {
-        if (
-          isNaN(Number(restoredDepositedAmounts[i])) !== true &&
-          Number(restoredDepositedAmounts[i]) !== 0
-        )
-          continue
-
-        let decimals = await getDecimals(tokenList[i].addressToken)
-        let mintAmount = utils.decimalize(depositedAmounts[i], decimals)
-
+      for (const idx in poolData.mints) {
+        const mintAddress = poolData.mints[idx]
+        if (poolData.reserves[idx]) continue
+        const amount = await decimalizeMintAmount(amounts[idx], mintAddress)
         const { txId } = await window.balansol.initializeJoin(
           poolAddress,
-          new web3.PublicKey(tokenList[i].addressToken),
-          new BN(String(mintAmount)),
+          mintAddress,
+          amount,
         )
         lastTxID = txId
       }
-
-      setCurrentStep(PoolCreatingStep.confirmCreatePool)
       notifySuccess('Fund pool', lastTxID)
+      setCurrentStep(PoolCreatingStep.confirmCreatePool)
     } catch (error) {
       notifyError(error)
     } finally {
@@ -103,26 +82,39 @@ const LiquidityInfo = ({
     }
   }
 
+  const totalValue = useMemo(() => {
+    let total = 0
+    amounts.forEach((amount, idx) => {
+      if (poolData.reserves[idx]) return
+      total += Number(amount) * (tokenPrice[idx]?.price || 0)
+    })
+    return total
+  }, [amounts, poolData.reserves, tokenPrice])
+
   return (
     <Row gutter={[16, 16]}>
       <Col span={24}>
-        {tokenList.map((value, idx) => (
-          <Row key={idx}>
-            <Col flex={1}>
-              <Typography.Text type="secondary">
-                <MintSymbol mintAddress={value.addressToken} />
-              </Typography.Text>
-              <Typography.Text>
-                ({numeric(tokenPrice[idx]?.price).format('0,0.[0000]')})
-              </Typography.Text>
-            </Col>
-            <Col>
-              <Typography.Text>
-                ${numeric(tokenPrice[idx]?.valuation).format('0,0.[0000]')}
-              </Typography.Text>
-            </Col>
-          </Row>
-        ))}
+        {poolData.mints.map((mint, idx) => {
+          if (poolData.reserves[idx]) return null
+          const mintValue = Number(amounts[idx]) * (tokenPrice[idx]?.price || 0)
+          return (
+            <Row key={idx}>
+              <Col flex={1}>
+                <Typography.Text type="secondary">
+                  <MintSymbol mintAddress={mint.toBase58()} />
+                </Typography.Text>
+                <Typography.Text>
+                  ({numeric(tokenPrice[idx]?.price).format('0,0.[0000]')})
+                </Typography.Text>
+              </Col>
+              <Col>
+                <Typography.Text>
+                  ${numeric(mintValue).format('0,0.[0000]')}
+                </Typography.Text>
+              </Col>
+            </Row>
+          )
+        })}
       </Col>
       <Col span={24}>
         <Row align="middle">
@@ -131,10 +123,7 @@ const LiquidityInfo = ({
           </Col>
           <Col>
             <Typography.Title level={3}>
-              $
-              {numeric(tokenPrice.reduce((a, b) => a + b?.valuation, 0)).format(
-                '0,0.[0000]',
-              )}
+              ${numeric(totalValue).format('0,0.[0000]')}
             </Typography.Title>
           </Col>
         </Row>
@@ -154,7 +143,7 @@ const LiquidityInfo = ({
         <Button
           type="primary"
           onClick={onAddLiquidity}
-          disabled={disableBtnSupply || loadingClose}
+          disabled={loadingClose}
           loading={loadingAdd}
           block
         >

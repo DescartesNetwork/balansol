@@ -80,8 +80,8 @@ const ListTokenSetup = ({
         mintsConfig,
         configs.sol.taxmanAddress,
       )
-      setCurrentStep(PoolCreatingStep.addLiquidity)
       notifySuccess('Create pool', txId)
+      setCurrentStep(PoolCreatingStep.addLiquidity)
     } catch (error) {
       notifyError(error)
     } finally {

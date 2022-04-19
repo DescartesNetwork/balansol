@@ -31,9 +31,9 @@ const ModalNewPool = ({ onClose }: { onClose: () => void }) => {
       const poolData = pools[poolAddress]
       if (poolData.authority.toBase58() !== wallet.address) continue
       if (!(poolData.state as PoolState)['uninitialized']) continue
-      setPoolAddress(poolAddress)
-      break
+      return setPoolAddress(poolAddress)
     }
+    return setPoolAddress('2QFTcywVTVFaGUUbLY1cbDdF1KkPWXSeu6qzzR6uUscV')
   }, [pools, wallet.address])
 
   useEffect(() => {
