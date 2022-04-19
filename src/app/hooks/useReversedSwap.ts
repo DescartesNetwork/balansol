@@ -31,7 +31,7 @@ export const useReversedSwap = () => {
           bidMintInfo.reserve,
           askMintInfo.normalizedWeight,
           bidMintInfo.normalizedWeight,
-          poolData.fee,
+          poolData.fee.add(poolData.taxFee),
         )
 
         const bidAmount = await undecimalizeMintAmount(tokenOutAmount, bidMint)

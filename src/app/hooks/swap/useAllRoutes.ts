@@ -50,7 +50,7 @@ export const useAllRoutes = (metaRoutes: MetaRoute[]): Route[] => {
           bidMintInfo.reserve,
           askMintInfo.normalizedWeight,
           bidMintInfo.normalizedWeight,
-          poolData.fee,
+          poolData.fee.add(poolData.taxFee),
         )
 
         const dataForSlippage = {
@@ -60,7 +60,7 @@ export const useAllRoutes = (metaRoutes: MetaRoute[]): Route[] => {
           weightOut: askMintInfo.normalizedWeight,
           decimalIn: decimalIn,
           decimalOut: decimalOut,
-          swapFee: poolData.fee,
+          swapFee: poolData.fee.add(poolData.taxFee),
         }
 
         let priceImpact = calcPriceImpactSwap(
