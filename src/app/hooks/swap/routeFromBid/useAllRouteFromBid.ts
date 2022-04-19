@@ -1,30 +1,20 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { BN } from '@project-serum/anchor'
 
+import { useMint } from '@senhub/providers'
 import {
   calcOutGivenInSwap,
   calcPriceImpactSwap,
   getMintInfo,
 } from 'app/helper/oracles'
 import { AppState } from 'app/model'
-import { useOracles } from '../useOracles'
-import { MetaRoute } from './useMetaRoutes'
-import { useMint } from '@senhub/providers'
+import { useOracles } from '../../useOracles'
+import { MetaRoute } from '../useMetaRoutes'
+import { Route, RouteInfo } from '../useRouteSwap'
 
-export type RouteInfo = {
-  pool: string
-  bidMint: string
-  bidAmount: BN
-  askMint: string
-  askAmount: BN
-  priceImpact: number
-}
-export type Route = RouteInfo[]
-
-export const useAllRoutes = (metaRoutes: MetaRoute[]): Route[] => {
+export const useAllRouteFromBid = (metaRoutes: MetaRoute[]): Route[] => {
   const {
-    swap: { bidAmount, bidMint },
+    swap: { bidAmount, isReverse },
     pools,
   } = useSelector((state: AppState) => state)
   const { decimalizeMintAmount } = useOracles()
@@ -33,7 +23,9 @@ export const useAllRoutes = (metaRoutes: MetaRoute[]): Route[] => {
 
   const computeRouteInfos = useCallback(async () => {
     const routes = []
+    if (isReverse) return setRoutes([])
     for (const metaRoute of metaRoutes) {
+      const bidMint = metaRoute[0].bidMint
       const route = []
       let bidAmountBN = await decimalizeMintAmount(bidAmount, bidMint)
       for (const market of metaRoute) {
@@ -84,7 +76,14 @@ export const useAllRoutes = (metaRoutes: MetaRoute[]): Route[] => {
       routes.push(route)
     }
     return setRoutes(routes)
-  }, [bidAmount, bidMint, decimalizeMintAmount, getDecimals, metaRoutes, pools])
+  }, [
+    bidAmount,
+    decimalizeMintAmount,
+    getDecimals,
+    isReverse,
+    metaRoutes,
+    pools,
+  ])
 
   useEffect(() => {
     computeRouteInfos()

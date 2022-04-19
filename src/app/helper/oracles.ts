@@ -10,7 +10,7 @@ import {
   PoolPairLpData,
 } from 'app/constant'
 import { PRECISION } from 'app/constant/index'
-import { RouteInfo } from 'app/hooks/swap/useAllRoutes'
+import { RouteInfo } from 'app/hooks/swap/useRouteSwap'
 
 export type routeFullInfo = RouteInfo & { poolData: PoolData }
 

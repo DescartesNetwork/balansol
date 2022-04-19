@@ -22,7 +22,7 @@ export const useMetaRoutes = () => {
     const pools = route.map((e) => e.pool)
     for (const idx in pools) {
       // Check duplicate pool address
-      if (pools.indexOf(pools[idx]) !== Number(idx)) return false
+      if (pools[idx] === pools[Number(idx) + 1]) return false
     }
     for (const marketBid of route) {
       for (const marketAsk of route) {

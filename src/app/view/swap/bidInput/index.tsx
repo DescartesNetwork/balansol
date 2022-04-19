@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import MintInput from 'app/components/mintInput'
 
-import { AppState } from 'app/model'
+import { AppDispatch, AppState } from 'app/model'
 import { setSwapState } from 'app/model/swap.controller'
 import { useMintsCanSwap } from 'app/hooks/swap/useMintsCanSwap'
 
@@ -11,15 +11,15 @@ export default function BidInput() {
   const {
     swap: { bidAmount, bidMint, askMint },
   } = useSelector((state: AppState) => state)
-  const dispatch = useDispatch()
+  const dispatch = useDispatch<AppDispatch>()
   const mintsSwap = useMintsCanSwap()
 
   useEffect(() => {
-    dispatch(setSwapState({ bidMint: mintsSwap[0] }))
+    dispatch(setSwapState({ bidMint: mintsSwap?.[0] || '' })).unwrap()
   }, [dispatch, mintsSwap])
 
   const onChange = (val: string) => {
-    dispatch(setSwapState({ bidAmount: val }))
+    dispatch(setSwapState({ bidAmount: val, isReverse: false })).unwrap()
   }
   // Ignore askMint in mints
   const filteredMints = useMemo(
