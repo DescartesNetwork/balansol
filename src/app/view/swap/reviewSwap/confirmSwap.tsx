@@ -60,11 +60,11 @@ const ConfirmSwap = ({
       const { txId } = await window.balansol.route(bidAmountBN, route, limitBN)
 
       onCancel()
-      setIsLoading(false)
       notifySuccess('Swap', txId)
     } catch (error) {
-      setIsLoading(false)
       notifyError(error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
