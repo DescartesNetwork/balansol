@@ -21,7 +21,7 @@ export type MintSetup = {
 
 const ModalNewPool = ({ onClose }: { onClose: () => void }) => {
   const { pools } = useSelector((state: AppState) => state)
-  const [currentStep, setCurrentStep] = useState(PoolCreatingStep.setGradient)
+  const [currentStep, setCurrentStep] = useState(PoolCreatingStep.setupToken)
   const [poolAddress, setPoolAddress] = useState('')
 
   const { wallet } = useWallet()
@@ -33,7 +33,7 @@ const ModalNewPool = ({ onClose }: { onClose: () => void }) => {
       if (!(poolData.state as PoolState)['uninitialized']) continue
       return setPoolAddress(poolAddress)
     }
-    return setPoolAddress('2QFTcywVTVFaGUUbLY1cbDdF1KkPWXSeu6qzzR6uUscV')
+    return setPoolAddress('')
   }, [pools, wallet.address])
 
   useEffect(() => {
@@ -42,9 +42,10 @@ const ModalNewPool = ({ onClose }: { onClose: () => void }) => {
 
   const creatingPoolProcess = useMemo(() => {
     switch (currentStep) {
-      case PoolCreatingStep.setGradient:
+      case PoolCreatingStep.setupToken:
         return <ListTokenSetup setCurrentStep={setCurrentStep} />
       case PoolCreatingStep.addLiquidity:
+        if (!pools[poolAddress]) return null
         return (
           <AddLiquidity
             setCurrentStep={setCurrentStep}
@@ -52,9 +53,10 @@ const ModalNewPool = ({ onClose }: { onClose: () => void }) => {
           />
         )
       case PoolCreatingStep.confirmCreatePool:
-        return <ConfirmPoolInfo onReset={onClose} poolAddress={poolAddress} />
+        if (!pools[poolAddress]) return null
+        return <ConfirmPoolInfo onConfirm={onClose} poolAddress={poolAddress} />
     }
-  }, [currentStep, onClose, poolAddress])
+  }, [currentStep, onClose, poolAddress, pools])
 
   return (
     <Row gutter={[24, 24]}>

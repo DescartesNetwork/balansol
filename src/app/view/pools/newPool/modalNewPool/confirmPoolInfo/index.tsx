@@ -1,17 +1,15 @@
-import React, { Fragment, useCallback, useEffect, useState } from 'react'
-import { useMint } from '@senhub/providers'
+import { Fragment, useCallback, useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 
 import { Button, Card, Col, Row, Table, Typography } from 'antd'
-
-import { fetchCGK, numeric } from 'shared/util'
 import { MintSetup } from '../index'
-import { WORMHOLE_COLUMNS } from './column'
-import { AppState } from 'app/model'
-import { useSelector } from 'react-redux'
-import { useOracles } from 'app/hooks/useOracles'
-import { GENERAL_DECIMALS } from 'app/constant'
-import util from '@senswap/sen-js/dist/utils'
+import { COLUMNS_CONFIG } from './columns'
 
+import { useMint } from '@senhub/providers'
+import { fetchCGK, numeric } from 'shared/util'
+import { AppState } from 'app/model'
+import { useOracles } from 'app/hooks/useOracles'
+import { getMintInfo } from 'app/helper/oracles'
 import './index.less'
 
 type PoolInfo = {
@@ -21,65 +19,53 @@ type PoolInfo = {
 }
 
 const ConfirmPoolInfo = ({
-  onReset,
+  onConfirm,
   poolAddress,
 }: {
-  onReset: () => void
+  onConfirm: () => void
   poolAddress: string
 }) => {
-  const { pools } = useSelector((state: AppState) => state)
   const [poolInfo, setPoolInfo] = useState<PoolInfo[]>([])
   const [poolTotalValue, setPoolTotalValue] = useState(0)
+
+  const {
+    pools: { [poolAddress]: poolData },
+  } = useSelector((state: AppState) => state)
   const { tokenProvider } = useMint()
   const { undecimalizeMintAmount } = useOracles()
 
   const getPoolInfo = useCallback(async () => {
-    const { mints, reserves, weights } = pools[poolAddress]
-    const poolElements: PoolInfo[] = await Promise.all(
-      mints.map(async (value, idx) => {
-        const tokenInfo = await tokenProvider.findByAddress(value.toBase58())
-        const ticket = tokenInfo?.extensions?.coingeckoId
-        let balance = await undecimalizeMintAmount(
-          reserves[idx],
-          value.toBase58(),
-        )
-        const normalizedWeight = util.undecimalize(
-          BigInt(weights[idx].toString()),
-          GENERAL_DECIMALS,
-        )
-        if (!ticket)
-          return {
-            token: {
-              addressToken: value.toBase58(),
-              weight: String(normalizedWeight),
-              isLocked: true,
-            },
-            amount: Number(balance),
-            value: 0,
-          }
+    const { mints, reserves } = poolData
+    let totalValue = 0
+    const poolInfo: PoolInfo[] = await Promise.all(
+      mints.map(async (mint, idx) => {
+        const mintAddress = mint.toBase58()
+        const mintInfo = getMintInfo(poolData, mint)
 
-        const CGKTokenInfo = await fetchCGK(ticket)
+        const tokenInfo = await tokenProvider.findByAddress(mintAddress)
+        const ticket = tokenInfo?.extensions?.coingeckoId
+        const cgkData = await fetchCGK(ticket)
+
+        let mintAmount = await undecimalizeMintAmount(
+          reserves[idx],
+          mintAddress,
+        )
+        let mintTotalValue = Number(mintAmount) * (cgkData?.price || 0)
+        totalValue += mintTotalValue
         return {
           token: {
-            addressToken: value.toBase58(),
-            weight: String(normalizedWeight),
+            addressToken: mintAddress,
+            weight: String(mintInfo.normalizedWeight),
             isLocked: true,
           },
-          amount: Number(balance),
-          value: Number(
-            numeric(CGKTokenInfo?.price * Number(balance)).format('0,0.[00]'),
-          ),
+          amount: Number(mintAmount),
+          value: mintTotalValue,
         }
       }),
     )
-    const totalValue = poolElements.reduce(
-      (previousSum, currentValue) => previousSum + currentValue.value,
-      0,
-    )
-
     setPoolTotalValue(totalValue)
-    setPoolInfo(poolElements)
-  }, [poolAddress, pools, tokenProvider, undecimalizeMintAmount])
+    setPoolInfo(poolInfo)
+  }, [poolData, tokenProvider, undecimalizeMintAmount])
 
   useEffect(() => {
     getPoolInfo()
@@ -89,9 +75,9 @@ const ConfirmPoolInfo = ({
     <Fragment>
       <Col span={24}>
         <Table
-          columns={WORMHOLE_COLUMNS}
+          columns={COLUMNS_CONFIG}
           dataSource={poolInfo}
-          rowClassName={(record, index) => (index % 2 ? 'odd-row' : 'even-row')}
+          rowClassName={(_, index) => (index % 2 ? 'odd-row' : 'even-row')}
           pagination={false}
           rowKey={(record) => record.token.addressToken}
         />
@@ -111,7 +97,9 @@ const ConfirmPoolInfo = ({
               <Typography.Text type="secondary">Total value</Typography.Text>
             </Col>
             <Col>
-              <Typography.Title level={3}>${poolTotalValue}</Typography.Title>
+              <Typography.Title level={3}>
+                ${numeric(poolTotalValue).format('0,0.[00]')}
+              </Typography.Title>
             </Col>
           </Row>
         </Card>
@@ -119,7 +107,7 @@ const ConfirmPoolInfo = ({
       <Col span={24}>
         <Button
           type="primary"
-          onClick={onReset}
+          onClick={onConfirm}
           style={{ borderRadius: 40 }}
           block
         >

@@ -14,7 +14,7 @@ const PROPORTIONS = [50, 100]
 
 export default function MintInput({
   amount,
-  onChangeAmount = () => {},
+  onChangeAmount,
   selectedMint,
   mints = [],
   onSelect = () => {},
@@ -38,6 +38,7 @@ export default function MintInput({
   const { balance } = useAccountBalanceByMintAddress(selectedMint)
 
   const onInput = (value: string) => {
+    if (!onChangeAmount) return
     const invalidValue = Number(value) > balance && !!onChangeAmount
     return onChangeAmount(value, invalidValue)
   }
@@ -118,9 +119,11 @@ export default function MintInput({
                       <Radio.Button
                         className="proportion-btn"
                         disabled={!onChangeAmount}
-                        onClick={() => {
-                          onChangeAmount(String(minValue))
-                        }}
+                        onClick={
+                          onChangeAmount
+                            ? () => onChangeAmount(String(minValue))
+                            : undefined
+                        }
                         style={{
                           background: isActive ? '#63e0b3' : undefined,
                         }}

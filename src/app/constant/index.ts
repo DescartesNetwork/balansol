@@ -26,9 +26,9 @@ export enum PoolStatus {
 }
 
 export enum PoolCreatingStep {
-  setGradient = 0,
-  addLiquidity = 1,
-  confirmCreatePool = 2,
+  setupToken,
+  addLiquidity,
+  confirmCreatePool,
 }
 
 export const GENERAL_NORMALIZED_NUMBER = 10 ** 9
