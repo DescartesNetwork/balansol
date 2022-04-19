@@ -10,11 +10,6 @@ import {
 import { CanvasRenderer } from 'echarts/renderers'
 
 import { Row, Space } from 'antd'
-import { useSelector } from 'react-redux'
-import { AppState } from 'app/model'
-import util from '@senswap/sen-js/dist/utils'
-import { GENERAL_DECIMALS } from 'app/constant'
-import { useMint } from '@senhub/providers'
 
 echarts.use([
   TitleComponent,
@@ -24,9 +19,9 @@ echarts.use([
   LegendComponent,
 ])
 
-type DoughnutData = { symbol: string; weight: string; logo: string }
+export type PoolBalanceData = { symbol: string; weight: string; logo: string }
 
-const buildOptions = (data: DoughnutData[]) => {
+const buildOptions = (data: PoolBalanceData[]) => {
   return {
     legend: {
       bottom: 0,
@@ -84,35 +79,7 @@ const buildOptions = (data: DoughnutData[]) => {
   }
 }
 
-const DoughnutChart = ({ poolAddress }: { poolAddress: string }) => {
-  const {
-    pools: { [poolAddress]: poolData },
-  } = useSelector((state: AppState) => state)
-  const { tokenProvider } = useMint()
-  const [data, setData] = useState<DoughnutData[]>([])
-
-  const doughnutChartData = useCallback(async () => {
-    const { mints, weights } = poolData
-    const newData = await Promise.all(
-      mints.map(async (value, idx) => {
-        const tokenInfo = await tokenProvider.findByAddress(value.toBase58())
-        const weight = util.undecimalize(
-          BigInt(weights[idx].toString()),
-          GENERAL_DECIMALS,
-        )
-        if (!tokenInfo) return { symbol: 'TOKN', weight, logo: '' }
-        if (!tokenInfo.logoURI)
-          return { symbol: tokenInfo.symbol, weight, logo: '' }
-        return { symbol: tokenInfo.symbol, weight, logo: tokenInfo.logoURI }
-      }),
-    )
-    setData(newData)
-  }, [poolData, tokenProvider])
-
-  useEffect(() => {
-    doughnutChartData()
-  }, [doughnutChartData])
-
+const DoughnutChart = ({ data }: { data: PoolBalanceData[] }) => {
   return (
     <Row justify="center">
       <Space className="doughnut-container">

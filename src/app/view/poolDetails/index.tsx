@@ -7,10 +7,10 @@ import Deposit from './deposit'
 import Withdraw from './withdraw'
 import { PoolAvatar } from 'app/components/pools/poolAvatar'
 import CardPoolDetail from './cardPoolDetail'
-import DoughnutChart from './charts/doughnutChart'
-import BarChart from './charts/barChart'
 import IonIcon from 'shared/antd/ionicon'
 import PoolManagement from './management'
+import PoolBalance from './poolBalance'
+import Volume24h from './volume24h'
 
 import { useAppRouter } from 'app/hooks/useAppRouter'
 import { AppState } from 'app/model'
@@ -146,7 +146,7 @@ const PoolDetails = () => {
                       </Row>
                     </Col>
                     <Col span={24} flex="auto">
-                      <BarChart />
+                      <Volume24h poolAddress={poolAddress} />
                     </Col>
                   </Row>
                 </Card>
@@ -169,7 +169,7 @@ const PoolDetails = () => {
                       </Row>
                     </Col>
                     <Col span={24}>
-                      <DoughnutChart poolAddress={poolAddress} />
+                      <PoolBalance poolAddress={poolAddress} />
                     </Col>
                   </Row>
                 </Card>
