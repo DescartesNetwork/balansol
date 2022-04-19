@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import BarChart from './charts/barChart'
 import { DataLoader } from 'shared/dataloader'
-import { Col, Row, Typography } from 'antd'
+import { Col, Row, Spin, Typography } from 'antd'
 import { numeric } from 'shared/util'
 
 export type VolumeData = { data: number; label: string }
@@ -12,9 +12,11 @@ const TTL_5_MIN = 300000
 
 const Volume24h = ({ poolAddress }: { poolAddress: string }) => {
   const [chartData, setChartData] = useState<VolumeData[]>([])
+  const [isLoading, setIsLoading] = useState(false)
 
   const fetchVolume = useCallback(async () => {
     if (!poolAddress) return setChartData([])
+    setIsLoading(true)
 
     const poolStatService = new PoolService(poolAddress)
     const dailyInfo = await DataLoader.load(
@@ -23,12 +25,15 @@ const Volume24h = ({ poolAddress }: { poolAddress: string }) => {
       { cache: { ttl: TTL_5_MIN } },
     )
     console.log('dailyInfo', dailyInfo)
-    const chartData = Object.keys(dailyInfo).map((time) => {
-      return {
-        data: dailyInfo[time].volume,
-        label: moment(time, 'YYYYMMDD').format('MM/DD'),
-      }
-    })
+    const chartData = Object.keys(dailyInfo)
+      .slice(-8)
+      .map((time) => {
+        return {
+          data: dailyInfo[time].volume,
+          label: moment(time, 'YYYYMMDD').format('MM/DD'),
+        }
+      })
+    setIsLoading(false)
     return setChartData(chartData)
   }, [poolAddress])
   useEffect(() => {
@@ -57,7 +62,9 @@ const Volume24h = ({ poolAddress }: { poolAddress: string }) => {
         </Row>
       </Col>
       <Col span={24} flex="auto">
-        <BarChart data={chartData} />
+        <Spin tip="Loading..." spinning={isLoading}>
+          <BarChart data={chartData} />
+        </Spin>
       </Col>
     </Row>
   )

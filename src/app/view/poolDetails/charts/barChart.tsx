@@ -12,6 +12,7 @@ import { CanvasRenderer } from 'echarts/renderers'
 
 import { Row } from 'antd'
 import { VolumeData } from '../volume24h'
+import { numeric } from 'shared/util'
 
 echarts.use([
   TitleComponent,
@@ -38,6 +39,12 @@ const buildOptions = (data: VolumeData[]) => ({
     splitLine: {
       show: false,
     },
+    axisLabel: {
+      formatter: (value: number) => {
+        return numeric(value).format('0,0.[00]a')
+      },
+    },
+    // data.map((value) => numeric(value).format('0,0.[00]a')),
   },
   series: [
     {
