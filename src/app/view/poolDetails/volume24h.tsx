@@ -17,22 +17,20 @@ const Volume24h = ({ poolAddress }: { poolAddress: string }) => {
   const fetchVolume = useCallback(async () => {
     if (!poolAddress) return setChartData([])
     setIsLoading(true)
-
     const poolStatService = new PoolService(poolAddress)
     const dailyInfo = await DataLoader.load(
       'getDailyInfo' + poolAddress,
       () => poolStatService.getDailyInfo(),
       { cache: { ttl: TTL_5_MIN } },
     )
-    console.log('dailyInfo', dailyInfo)
-    const chartData = Object.keys(dailyInfo)
-      .slice(-8)
-      .map((time) => {
-        return {
-          data: dailyInfo[time].volume,
-          label: moment(time, 'YYYYMMDD').format('MM/DD'),
-        }
-      })
+
+    const chartData = Object.keys(dailyInfo).map((time) => {
+      return {
+        data: dailyInfo[time].volume,
+        label: moment(time, 'YYYYMMDD').format('MM/DD'),
+      }
+    })
+
     setIsLoading(false)
     return setChartData(chartData)
   }, [poolAddress])

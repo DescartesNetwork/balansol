@@ -1,5 +1,3 @@
-import { Fragment } from 'react'
-
 import { TokenInfo } from 'app/view/pools/newPool'
 import { MintAvatar } from 'shared/antd/mint'
 import { randomColor } from 'shared/util'
@@ -15,30 +13,28 @@ export default function Proportion({ tokenList }: { tokenList: TokenInfo[] }) {
   return (
     <div style={{ display: 'flex', marginTop: 8 }}>
       {tokenList.map((value, index) => {
-        if (Number(value.weight) !== 0) {
-          return (
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-                width:
-                  index !== 1
-                    ? `calc(${value.weight}% + 8px)`
-                    : `${value.weight}%`,
-                background: `${randomColor(value.addressToken, 1)}`,
-                height: '8px',
-                borderRadius: '20px',
-                zIndex: `${index}`,
-                marginRight: '-8px',
-                alignItems: 'center',
-              }}
-              key={`${value.addressToken}${index}`}
-            >
-              <MintAvatar mintAddress={value.addressToken} />
-            </div>
-          )
-        }
-        return <Fragment />
+        if (Number(value.weight) === 0) return null
+        return (
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              width:
+                index !== 1
+                  ? `calc(${value.weight}% + 8px)`
+                  : `${value.weight}%`,
+              background: `${randomColor(value.addressToken, 1)}`,
+              height: '8px',
+              borderRadius: '20px',
+              zIndex: `${index}`,
+              marginRight: '-8px',
+              alignItems: 'center',
+            }}
+            key={`${value.addressToken}${index}`}
+          >
+            <MintAvatar mintAddress={value.addressToken} />
+          </div>
+        )
       })}
       <div
         style={{

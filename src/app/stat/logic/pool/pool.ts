@@ -13,7 +13,7 @@ import { utilsBN } from 'app/helper/utilsBN'
 import PoolTransLogService, { SwapActionType } from './poolTranslog'
 import DailyReportService from '../daily-report'
 
-const DATE_RANGE = 11
+const DATE_RANGE = 8
 
 export default class PoolService {
   poolAddress: string
