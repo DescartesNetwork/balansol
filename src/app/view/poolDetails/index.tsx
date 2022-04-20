@@ -98,7 +98,7 @@ const PoolDetails = () => {
                   title="APY"
                   content={
                     <Typography.Title level={3}>
-                      {numeric(apy).format('0,0.[00]%')}
+                      {numeric(apy).format('0,0.[00]a%')}
                     </Typography.Title>
                   }
                   styles={{

@@ -35,6 +35,10 @@ const ConfirmPoolInfo = ({
   const { undecimalizeMintAmount } = useOracles()
 
   const getPoolInfo = useCallback(async () => {
+    if (!poolData) {
+      setPoolInfo([])
+      return setPoolTotalValue(0)
+    }
     const { mints, reserves } = poolData
     let totalValue = 0
     const poolInfo: PoolInfo[] = await Promise.all(

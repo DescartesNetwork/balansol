@@ -52,7 +52,7 @@ const LiquidityInfo = ({
       let lastTxID = ''
       for (const idx in poolData.mints) {
         const mintAddress = poolData.mints[idx]
-        if (poolData.reserves[idx]) continue
+        if (!poolData.reserves[idx].isZero()) continue
         const amount = await decimalizeMintAmount(amounts[idx], mintAddress)
         const { txId } = await window.balansol.initializeJoin(
           poolAddress,
@@ -85,7 +85,7 @@ const LiquidityInfo = ({
   const totalValue = useMemo(() => {
     let total = 0
     amounts.forEach((amount, idx) => {
-      if (poolData.reserves[idx]) return
+      if (!poolData.reserves[idx].isZero()) return
       total += Number(amount) * (tokenPrice[idx]?.price || 0)
     })
     return total
