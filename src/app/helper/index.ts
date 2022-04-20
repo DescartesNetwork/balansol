@@ -26,7 +26,7 @@ export const undecimalizeWrapper = (value: BN, decimals: number) => {
 }
 
 export const priceImpactColor = (priceImpact: number) => {
-  if (priceImpact < PriceImpact.goodSwap) return '#14E041'
+  if (!priceImpact || priceImpact < PriceImpact.goodSwap) return '#14E041'
   if (priceImpact > PriceImpact.acceptableSwap) return '#D72311'
   return '#FA8C16'
 }

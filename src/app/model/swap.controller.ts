@@ -8,6 +8,8 @@ export type SwapState = {
   bidMint: string
   bidAmount: string
   askMint: string
+  askAmount: string
+  isReverse: boolean
   slippageTolerance: number
 }
 
@@ -20,7 +22,9 @@ const initialState: SwapState = {
   bidMint: '',
   bidAmount: '',
   askMint: '',
-  slippageTolerance: 100,
+  askAmount: '',
+  isReverse: false,
+  slippageTolerance: 0.5,
 }
 
 /**

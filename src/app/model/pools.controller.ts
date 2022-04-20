@@ -23,7 +23,7 @@ export const getPools = createAsyncThunk(`${NAME}/getPools`, async () => {
   const pools = await window.balansol.getAllPoolData()
   let bulk: PoolsState = {}
   for (const pool of pools) {
-    bulk[pool.publicKey.toBase58()] = pool.account
+    bulk[pool.publicKey.toBase58()] = pool.account as PoolData
   }
   return bulk
 })

@@ -1,13 +1,25 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
+import { useSelector } from 'react-redux'
+import { useWallet } from '@senhub/providers'
+import { PoolState } from '@senswap/balancer'
 
 import { Space, Tooltip, Typography } from 'antd'
 import IconButton from 'os/view/actionCenter/applications/walletIntro/iconButton'
 import CopyToClipboard from 'react-copy-to-clipboard'
 
 import { explorer, shortenAddress } from 'shared/util'
+import IonIcon from 'shared/antd/ionicon'
+import { AppState } from 'app/model'
 
 const WalletAddress = ({ poolAddress }: { poolAddress: string }) => {
   const [copied, setCopied] = useState(false)
+  const {
+    pools: { [poolAddress]: poolData },
+  } = useSelector((state: AppState) => state)
+  const {
+    wallet: { address: walletAddress },
+  } = useWallet()
+  const state = poolData.state as PoolState
 
   const onCopy = async () => {
     setCopied(true)
@@ -17,6 +29,16 @@ const WalletAddress = ({ poolAddress }: { poolAddress: string }) => {
   }
   return (
     <Space size={10}>
+      {state['frozen'] && (
+        <Tooltip title="Frozen Pool">
+          <IonIcon name="snow-outline" />
+        </Tooltip>
+      )}
+      {poolData.authority.toBase58() === walletAddress && (
+        <Tooltip title="Your pool!">
+          <IonIcon name="person-outline" />
+        </Tooltip>
+      )}
       <Typography.Text
         type="secondary"
         style={{ cursor: 'pointer' }}

@@ -1,30 +1,29 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import { Col, Row } from 'antd'
 import WeightControl from './weightControl'
 import Selection from 'app/components/selection'
 
-import { TokenInfo } from '../index'
 import { useAccount, useMint } from '@senhub/providers'
 import { AppState } from 'app/model'
+import { MintSetup } from '../index'
 
 const TokenSetup = ({
   tokenList,
-  tokenInfo,
+  mintSetup,
   onChangeTokenInfo,
   onRemoveToken,
-  index,
+  id,
 }: {
-  tokenList: TokenInfo[]
-  tokenInfo: TokenInfo
-  onChangeTokenInfo: (value: TokenInfo, index: number) => void
+  tokenList: MintSetup[]
+  mintSetup: MintSetup
+  onChangeTokenInfo: (value: MintSetup, index: number) => void
   onRemoveToken: (index: number) => void
-  index: number
+  id: number
 }) => {
   const { pools } = useSelector((state: AppState) => state)
   const [sourceMint, setSourceMint] = useState<string[]>([])
-  const { addressToken, weight, isLocked } = tokenInfo
   const { accounts } = useAccount()
   const { tokenProvider } = useMint()
 
@@ -47,55 +46,52 @@ const TokenSetup = ({
     })()
   }, [accounts, pools, tokenList, tokenProvider])
 
-  const onChangeToken = (value: string) => {
+  const onChangeToken = (addressToken: string) => {
     onChangeTokenInfo(
       {
-        addressToken: value,
-        weight,
-        isLocked,
+        ...mintSetup,
+        addressToken,
       },
-      index,
+      id,
     )
   }
 
-  const onChangeWeight = (value: string) => {
+  const onChangeWeight = (weight: string) => {
     onChangeTokenInfo(
       {
-        addressToken,
-        weight: value,
-        isLocked,
+        ...mintSetup,
+        weight,
       },
-      index,
+      id,
     )
   }
 
-  const onChangeLock = (value: boolean) => {
+  const onChangeLock = (isLocked: boolean) => {
     onChangeTokenInfo(
       {
-        addressToken,
-        weight,
-        isLocked: value,
+        ...mintSetup,
+        isLocked,
       },
-      index,
+      id,
     )
   }
 
   const onRemove = () => {
-    onRemoveToken(index)
+    onRemoveToken(id)
   }
 
   return (
     <Row>
       <Col flex="auto">
         <Selection
-          selectedMint={addressToken}
+          selectedMint={mintSetup.addressToken}
           onChange={onChangeToken}
           mints={sourceMint}
         />
       </Col>
       <Col>
         <WeightControl
-          tokenInfo={tokenInfo}
+          tokenInfo={mintSetup}
           onChangeWeight={onChangeWeight}
           onChangeLock={onChangeLock}
           onRemoveToken={onRemove}

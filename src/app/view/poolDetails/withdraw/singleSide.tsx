@@ -19,10 +19,12 @@ const WithdrawSingleSide = ({
   poolAddress,
   lptAmount,
   mintAddress,
+  onSuccess = () => {},
 }: {
   lptAmount: string
   poolAddress: string
   mintAddress: string
+  onSuccess?: () => void
 }) => {
   const [amountReserve, setAmountReserve] = useState<BN>(new BN(0))
   const [impactPrice, setImpactPrice] = useState(0)
@@ -58,6 +60,7 @@ const WithdrawSingleSide = ({
         lptAmountBN,
       )
       notifySuccess('Withdraw', txId)
+      onSuccess()
     } catch (error) {
       notifyError(error)
     }
@@ -100,7 +103,7 @@ const WithdrawSingleSide = ({
       poolData.weights,
       supply,
       decimals,
-      poolData.fee,
+      poolData.fee.add(poolData.taxFee),
     )
     if (!!tokenAmountOut) setAmountReserve(tokenAmountOut)
     setImpactPrice(impactPrice)
