@@ -4,7 +4,7 @@ import { Button, Col, Row } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
 import NumericInput from 'shared/antd/numericInput'
 
-import { TokenInfo } from '../index'
+import { MintSetup } from '../index'
 
 export default function WeightControl({
   tokenInfo,
@@ -12,7 +12,7 @@ export default function WeightControl({
   onChangeLock,
   onRemoveToken,
 }: {
-  tokenInfo: TokenInfo
+  tokenInfo: MintSetup
   onChangeWeight: (value: string) => void
   onChangeLock: (value: boolean) => void
   onRemoveToken: () => void
@@ -28,9 +28,8 @@ export default function WeightControl({
           bordered={false}
           onValue={onChangeWeight}
           suffix={'%'}
-          disabled={isLocked}
           maxLength={5}
-          className="input-weight"
+          style={{ textAlign: 'right' }}
           placeholder="0"
         />
       </Col>

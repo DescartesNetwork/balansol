@@ -1,9 +1,10 @@
 import { useState } from 'react'
+import { useSelector } from 'react-redux'
 
 import { Button, Space, Typography } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
 import { MintSymbol } from 'shared/antd/mint'
-import { useSelector } from 'react-redux'
+
 import { AppState } from 'app/model'
 import { useRouteSwap } from 'app/hooks/swap/useRouteSwap'
 import { numeric } from 'shared/util'

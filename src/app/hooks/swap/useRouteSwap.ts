@@ -1,55 +1,51 @@
-import { useCallback, useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
 import { BN } from '@project-serum/anchor'
+import { AppDispatch, AppState } from 'app/model'
+import { setSwapState } from 'app/model/swap.controller'
+import { useCallback, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useBestRouteFromAsk } from './routeFromAsk/useBestRouteFromAsk'
+import { useBestRouteFromBid } from './routeFromBid/useBestRouteFromBid'
 
-import { AppState } from 'app/model'
-import { useMetaRoutes } from './useMetaRoutes'
-import { Route, useAllRoutes } from './useAllRoutes'
-import { useOracles } from '../useOracles'
-
-type RouteSwapInfo = {
+export type RouteSwapInfo = {
   route: Route
   bidAmount: number
   askAmount: number
   priceImpact: number
 }
 
+export type RouteInfo = {
+  pool: string
+  bidMint: string
+  bidAmount: BN
+  askMint: string
+  askAmount: BN
+  priceImpact: number
+}
+export type Route = RouteInfo[]
+
 export const useRouteSwap = (): RouteSwapInfo => {
   const {
-    swap: { bidAmount, askMint },
+    swap: { isReverse, bidMint, askMint, bidAmount, askAmount },
   } = useSelector((state: AppState) => state)
-  const { undecimalizeMintAmount } = useOracles()
-  const metaRoutes = useMetaRoutes()
-  const routes = useAllRoutes(metaRoutes)
-  const [routeSwapInfo, setRouteSwapInfo] = useState<RouteSwapInfo>({
-    route: [],
-    bidAmount: 0,
-    askAmount: 0,
-    priceImpact: 0,
-  })
+  const dispatch = useDispatch<AppDispatch>()
 
-  const getBestRoute = useCallback(async () => {
-    let sortedRoute = routes.sort((routeA, routeB) => {
-      let askAmountA = routeA[routeA.length - 1].askAmount
-      let askAmountB: BN = routeB[routeB.length - 1].askAmount
-      return askAmountB.gt(askAmountA) ? 1 : -1
-    })
-    const bestRoute = sortedRoute[0] || []
-    const askAmount = await undecimalizeMintAmount(
-      bestRoute[bestRoute.length - 1]?.askAmount,
-      askMint,
-    )
-    return setRouteSwapInfo({
-      route: bestRoute,
-      bidAmount: Number(bidAmount),
-      askAmount: Number(askAmount),
-      priceImpact: 0,
-    })
-  }, [askMint, bidAmount, routes, undecimalizeMintAmount])
+  const routesFromBid = useBestRouteFromBid()
+  const routesFromAsk = useBestRouteFromAsk()
+  const route = isReverse ? routesFromAsk : routesFromBid
 
-  useEffect(() => {
-    getBestRoute()
-  }, [getBestRoute])
+  const updateRouteFromBid = useCallback(() => {
+    if (isReverse) return
+    dispatch(setSwapState({ askAmount: route.askAmount.toString() })).unwrap()
+  }, [dispatch, isReverse, route.askAmount])
+  useEffect(() => updateRouteFromBid(), [updateRouteFromBid])
 
-  return routeSwapInfo
+  const updateRouteFromAsk = useCallback(() => {
+    if (!isReverse) return
+    dispatch(setSwapState({ bidAmount: route.bidAmount.toString() })).unwrap()
+  }, [dispatch, isReverse, route.bidAmount])
+  useEffect(() => updateRouteFromAsk(), [updateRouteFromAsk])
+
+  if (!bidMint || !askMint || !(Number(bidAmount) && Number(askAmount)))
+    return { route: [], bidAmount: 0, askAmount: 0, priceImpact: 0 }
+  return route
 }

@@ -26,9 +26,9 @@ export enum PoolStatus {
 }
 
 export enum PoolCreatingStep {
-  setGradient = 0,
-  addLiquidity = 1,
-  confirmCreatePool = 2,
+  setupToken,
+  addLiquidity,
+  confirmCreatePool,
 }
 
 export const GENERAL_NORMALIZED_NUMBER = 10 ** 9
@@ -43,7 +43,7 @@ export enum PriceImpact {
 
 // Deposit types
 
-export type PoolPairData = {
+export type PoolPairLpData = {
   balanceIn: BN
   balanceOut: BN
   weightIn: number
@@ -51,8 +51,24 @@ export type PoolPairData = {
   swapFee: BN
 }
 
+export type PoolPairData = {
+  balanceIn: BN
+  balanceOut: BN
+  weightIn: number
+  weightOut: number
+  decimalIn: number
+  decimalOut: number
+  swapFee: BN
+}
+
 export type MintDataFromPool = {
   reserve: BN
   normalizedWeight: number
   treasury: web3.PublicKey
+}
+
+export enum FilterPools {
+  AllPools = 'all-pools',
+  DepositedPools = 'deposited-pools',
+  YourPools = 'your-pools',
 }

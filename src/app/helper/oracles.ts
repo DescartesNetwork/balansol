@@ -7,8 +7,12 @@ import {
   GENERAL_NORMALIZED_NUMBER,
   LPTDECIMALS,
   PoolPairData,
+  PoolPairLpData,
 } from 'app/constant'
 import { PRECISION } from 'app/constant/index'
+import { RouteInfo } from 'app/hooks/swap/useRouteSwap'
+
+export type routeFullInfo = RouteInfo & { poolData: PoolData }
 
 export const findMintIndex = (poolData: PoolData, mint: Address): number => {
   return poolData.mints
@@ -90,15 +94,14 @@ export const calcInGivenOutSwap = (
 ): BN => {
   const numBalanceOut = balanceOut.toNumber()
   const numBalanceIn = balanceIn.toNumber()
-  const numAmountOut = amountOut.toNumber()
   const numSwapFee = swapFee.toNumber() / GENERAL_NORMALIZED_NUMBER
+  const numAmountOut = amountOut.toNumber() / (1 - numSwapFee)
   const ratioBeforeAfterBalance = numBalanceOut / (numBalanceOut - numAmountOut)
 
   const ratioInOutWeight = weightOut / weightIn
+
   return new BN(
-    numBalanceIn *
-      (ratioBeforeAfterBalance ** ratioInOutWeight - 1) *
-      (1 - numSwapFee),
+    numBalanceIn * (ratioBeforeAfterBalance ** ratioInOutWeight - 1),
   )
 }
 
@@ -119,19 +122,25 @@ export const calcNormalizedWeight = (
 export const calcSpotPrice = (
   balanceIn: BN,
   weightIn: number,
+  decimalIn: number,
   balanceOut: BN,
   weightOut: number,
+  decimalOut: number,
 ): number => {
-  const numBalanceIn = balanceIn.toNumber()
+  const numBalanceIn = Number(
+    util.undecimalize(BigInt(balanceIn.toString()), decimalIn),
+  )
 
-  const numBalanceOut = balanceOut.toNumber()
+  const numBalanceOut = Number(
+    util.undecimalize(BigInt(balanceOut.toString()), decimalOut),
+  )
 
   return numBalanceIn / weightIn / (numBalanceOut / weightOut)
 }
 
 export const spotPriceAfterSwapTokenInForExactBPTOut = (
   amount: BN,
-  poolPairData: PoolPairData,
+  poolPairData: PoolPairLpData,
 ) => {
   const Bo = Number(
     util.undecimalize(BigInt(poolPairData.balanceOut.toString()), LPTDECIMALS),
@@ -157,7 +166,52 @@ export const spotPriceAfterSwapTokenInForExactBPTOut = (
   )
 }
 
-export const caclLpForTokensZeroPriceImpact = (
+function calcSpotPriceAfterSwap(amount: BN, poolPairData: PoolPairData) {
+  const {
+    balanceIn,
+    decimalIn,
+    balanceOut,
+    decimalOut,
+    weightIn,
+    weightOut,
+    swapFee,
+  } = poolPairData
+  const Bi = Number(util.undecimalize(BigInt(balanceIn.toString()), decimalIn))
+  const Bo = Number(
+    util.undecimalize(BigInt(balanceOut.toString()), decimalOut),
+  )
+  const wi = weightIn
+  const wo = weightOut
+  const Ai = Number(util.undecimalize(BigInt(amount.toString()), decimalIn))
+  const f = Number(
+    util.undecimalize(BigInt(swapFee.toString()), GENERAL_DECIMALS),
+  )
+  return (
+    (Bi * wo) /
+    (Bo * (-1 + f) * (Bi / (Ai + Bi - Ai * f)) ** ((wi + wo) / wo) * wi)
+  )
+}
+
+export const calcPriceImpactSwap = (
+  bidAmount: BN,
+  askAmount: BN,
+  poolPairData: PoolPairData,
+) => {
+  const { decimalIn, decimalOut } = poolPairData
+  const numBidAmount = Number(
+    util.undecimalize(BigInt(bidAmount.toString()), decimalIn),
+  )
+  const numAskAmount = Number(
+    util.undecimalize(BigInt(askAmount.toString()), decimalOut),
+  )
+  const spotPriceAfterSwap = calcSpotPriceAfterSwap(bidAmount, poolPairData)
+  let impactPrice = numBidAmount / numAskAmount / -spotPriceAfterSwap - 1
+  if (impactPrice < 0) return 0
+
+  return impactPrice
+}
+
+export const calcLpForTokensZeroPriceImpact = (
   tokenAmountIns: BN[],
   balanceIns: BN[],
   weightIns: BN[],
@@ -171,7 +225,7 @@ export const caclLpForTokensZeroPriceImpact = (
   const amountLpOut = numTokenAmountIns.reduce((totalBptOut, amountIn, i) => {
     // Calculate amount of BPT gained per token in
     const nomalizedWeight = calcNormalizedWeight(weightIns, weightIns[i])
-    const poolPairData: PoolPairData = {
+    const poolPairData: PoolPairLpData = {
       balanceIn: balanceIns[i],
       balanceOut: totalSupply,
       weightIn: nomalizedWeight,
@@ -304,7 +358,7 @@ export const calcDepositPriceImpact = (
   )
 
   const lpOutZeroPriceImpact = Number(
-    caclLpForTokensZeroPriceImpact(
+    calcLpForTokensZeroPriceImpact(
       amountIns,
       balanceIns,
       weightIns,
@@ -315,7 +369,7 @@ export const calcDepositPriceImpact = (
 
   const impactPrice = (1 - lpOut / lpOutZeroPriceImpact) * 100
 
-  return { lpOut, impactPrice }
+  return { lpOut, impactPrice: impactPrice || 0 }
 }
 
 const calcTokenOutGivenExactLpIn = (
@@ -391,7 +445,7 @@ export const calcWithdrawPriceImpact = (
   })
 
   const lpOutZeroPriceImpact = Number(
-    caclLpForTokensZeroPriceImpact(
+    calcLpForTokensZeroPriceImpact(
       tokenAmounts,
       balanceOuts,
       weightOuts,
@@ -408,4 +462,13 @@ export const calcWithdrawPriceImpact = (
   const impactPrice = (numLpAmount / lpOutZeroPriceImpact - 1) * 100
 
   return { tokenAmountOut, impactPrice }
+}
+
+export const calcPriceImpact = (route: routeFullInfo[]) => {
+  let p = 1
+  route.forEach((elmInfo) => {
+    const s = elmInfo.priceImpact
+    p = p * (1 - s)
+  })
+  return 1 - p
 }

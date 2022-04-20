@@ -2,7 +2,7 @@ import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { BN } from '@project-serum/anchor'
 
-import { Button, Col, Modal, Row, Typography } from 'antd'
+import { Button, Checkbox, Col, Modal, Row, Typography } from 'antd'
 import MintInput from 'app/components/mintInput'
 import IonIcon from 'shared/antd/ionicon'
 import { MintSymbol } from 'shared/antd/mint'
@@ -17,6 +17,7 @@ import { useOracles } from 'app/hooks/useOracles'
 import { useMint } from '@senhub/providers'
 import { numeric } from 'shared/util'
 import { useLptSupply } from 'app/hooks/useLptSupply'
+import { useMintBalance } from 'app/hooks/useMintBalance'
 
 const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   const {
@@ -31,11 +32,15 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   const [impactPrice, setImpactPrice] = useState(0)
   const [lpOutTotal, setLpOutTotal] = useState(0)
   const [loading, setLoading] = useState(false)
+  const [disable, setDisable] = useState(true)
+  const [isAcceptHighPrice, setIsAcceptHighPrice] = useState(false)
+  const [baseTokenIndex, setBaseTokenIndex] = useState(0)
   const { getDecimals } = useMint()
-  const { decimalizeMintAmount } = useOracles()
+  const { decimalizeMintAmount, undecimalizeMintAmount } = useOracles()
+  const { getMintBalance } = useMintBalance()
 
   const estimateImpactPriceAndLP = useCallback(async () => {
-    const { reserves, weights, fee, mints } = poolData
+    const { reserves, weights, fee, taxFee, mints } = poolData
     setImpactPrice(0)
 
     let amountIns: BN[] = []
@@ -54,7 +59,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
       weights,
       supply,
       decimalIns,
-      fee,
+      fee.add(taxFee),
     )
 
     setLpOutTotal(lpOut)
@@ -69,6 +74,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
     let newAmounts = [...amounts]
     newAmounts[idx] = value
     setAmounts(newAmounts)
+    setBaseTokenIndex(idx)
   }
 
   const onSubmit = async () => {
@@ -84,6 +90,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
         amountsIn,
       )
       notifySuccess('Deposit', txId)
+      setVisible(false)
     } catch (error) {
       notifyError(error)
     } finally {
@@ -97,6 +104,51 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
 
     return clonedLp
   }, [lpOutTotal])
+
+  const onApplySuggestion = async (index: number) => {
+    const { reserves, mints } = poolData
+    const baseBalance = await undecimalizeMintAmount(
+      reserves[baseTokenIndex],
+      mints[baseTokenIndex],
+    )
+    const currentBalance = await undecimalizeMintAmount(
+      reserves[index],
+      mints[index],
+    )
+    const balanceRatio =
+      (Number(baseBalance) + Number(amounts[baseTokenIndex])) /
+      Number(baseBalance)
+    const suggestedAmount = Number(currentBalance) * (balanceRatio - 1)
+    let newAmounts = [...amounts]
+    newAmounts[index] = String(suggestedAmount)
+    setAmounts(newAmounts)
+  }
+
+  const checkAmountIns = useCallback(async () => {
+    const { mints } = poolData
+    for (let i in amounts) {
+      const { balance } = await getMintBalance(mints[i].toBase58())
+      if (Number(amounts[i]) > balance) return setDisable(true)
+    }
+    if (
+      (impactPrice !== 0 && isAcceptHighPrice) ||
+      (impactPrice === 0 && !!lpOutTotal)
+    )
+      return setDisable(false)
+
+    setDisable(true)
+  }, [
+    amounts,
+    getMintBalance,
+    impactPrice,
+    isAcceptHighPrice,
+    lpOutTotal,
+    poolData,
+  ])
+
+  useEffect(() => {
+    checkAmountIns()
+  }, [checkAmountIns])
 
   return (
     <Fragment>
@@ -114,7 +166,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
         centered={true}
         closeIcon={<IonIcon name="close-outline" />}
       >
-        <Row gutter={[0, 16]}>
+        <Row gutter={[0, 24]}>
           <Col span={24}>
             <Row gutter={[24, 8]}>
               {poolData.mints.map((mint, index) => {
@@ -138,6 +190,17 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
                             {normalizedWeight * 100} %
                           </Typography.Text>
                         </Fragment>
+                      }
+                      ratioButton={
+                        baseTokenIndex !== index && (
+                          <Button
+                            type="text"
+                            style={{ color: '#63e0b3' }}
+                            onClick={() => onApplySuggestion(index)}
+                          >
+                            Apply suggestion
+                          </Button>
+                        )
                       }
                     />
                   </Col>
@@ -177,6 +240,16 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
               </Col>
             </Row>
           </Col>
+          {!!impactPrice && (
+            <Col span={24}>
+              <Checkbox
+                onChange={(e) => setIsAcceptHighPrice(e.target.checked)}
+                checked={isAcceptHighPrice}
+              >
+                I agree to execute this trade with the high price impact.
+              </Checkbox>
+            </Col>
+          )}
           <Col span={24}>
             <Button
               className="balansol-btn"
@@ -184,7 +257,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
               block
               onClick={onSubmit}
               loading={loading}
-              disabled={!lpOutTotal}
+              disabled={disable}
             >
               Deposit
             </Button>

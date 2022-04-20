@@ -10,7 +10,6 @@ import SwapInfo from 'app/components/swapInfo'
 
 import { setSwapState } from 'app/model/swap.controller'
 import { AppState } from 'app/model'
-import { useRouteSwap } from 'app/hooks/swap/useRouteSwap'
 
 import './index.less'
 
@@ -18,17 +17,16 @@ export default function Swap() {
   const dispatch = useDispatch()
 
   const {
-    swap: { askMint, bidMint },
+    swap: { askMint, bidMint, askAmount, bidAmount },
   } = useSelector((state: AppState) => state)
-
-  const { askAmount } = useRouteSwap()
 
   const onSwitch = () => {
     dispatch(
       setSwapState({
         askMint: bidMint,
         bidMint: askMint,
-        bidAmount: askAmount.toString(),
+        bidAmount: askAmount,
+        askAmount: bidAmount,
       }),
     )
   }
