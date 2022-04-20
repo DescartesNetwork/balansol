@@ -44,7 +44,6 @@ const buildOptions = (data: VolumeData[]) => ({
         return numeric(value).format('0,0.[00]a')
       },
     },
-    // data.map((value) => numeric(value).format('0,0.[00]a')),
   },
   series: [
     {
