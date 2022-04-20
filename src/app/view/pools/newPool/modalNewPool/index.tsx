@@ -27,14 +27,16 @@ const ModalNewPool = ({ onClose }: { onClose: () => void }) => {
   const { wallet } = useWallet()
 
   const recoverCreatePoolProcess = useCallback(async () => {
+    if (poolAddress) return
     for (const poolAddress in pools) {
       const poolData = pools[poolAddress]
       if (poolData.authority.toBase58() !== wallet.address) continue
       if (!(poolData.state as PoolState)['uninitialized']) continue
+      setCurrentStep(PoolCreatingStep.addLiquidity)
       return setPoolAddress(poolAddress)
     }
     return setPoolAddress('')
-  }, [pools, wallet.address])
+  }, [poolAddress, pools, wallet.address])
 
   useEffect(() => {
     recoverCreatePoolProcess()

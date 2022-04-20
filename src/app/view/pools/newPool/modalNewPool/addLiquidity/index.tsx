@@ -23,14 +23,15 @@ const AddLiquidity = ({
   const { undecimalizeMintAmount } = useOracles()
 
   const initInputAmountFromPoolData = useCallback(async () => {
-    if (!poolData) return []
+    if (!poolData || inputAmounts.length !== 0) return
     const initInputAmounts = await Promise.all(
-      poolData.mints.map((mint, idx) =>
-        undecimalizeMintAmount(poolData.reserves[idx], mint),
-      ),
+      poolData.mints.map((mint, idx) => {
+        if (Number(inputAmounts[idx])) return inputAmounts[idx]
+        return undecimalizeMintAmount(poolData.reserves[idx], mint)
+      }),
     )
     setInputAmounts(initInputAmounts)
-  }, [poolData, undecimalizeMintAmount])
+  }, [inputAmounts, poolData, undecimalizeMintAmount])
 
   useEffect(() => {
     initInputAmountFromPoolData()
