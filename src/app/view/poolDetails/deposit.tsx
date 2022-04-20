@@ -40,7 +40,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   const { getMintBalance } = useMintBalance()
 
   const estimateImpactPriceAndLP = useCallback(async () => {
-    const { reserves, weights, fee, mints } = poolData
+    const { reserves, weights, fee, taxFee, mints } = poolData
     setImpactPrice(0)
 
     let amountIns: BN[] = []
@@ -59,7 +59,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
       weights,
       supply,
       decimalIns,
-      fee,
+      fee.add(taxFee),
     )
 
     setLpOutTotal(lpOut)
