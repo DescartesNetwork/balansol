@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react'
+import { Fragment } from 'react'
 import { useSelector } from 'react-redux'
 import { useWallet } from '@senhub/providers'
 

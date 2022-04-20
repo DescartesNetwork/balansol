@@ -97,12 +97,17 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
             />
           </Col>
           {isSelectedAll ? (
-            <WithdrawFullSide poolAddress={poolAddress} lptAmount={lptAmount} />
+            <WithdrawFullSide
+              poolAddress={poolAddress}
+              lptAmount={lptAmount}
+              onSuccess={() => setVisible(false)}
+            />
           ) : (
             <WithdrawSingleSide
               poolAddress={poolAddress}
               mintAddress={selectedMints[0]}
               lptAmount={lptAmount}
+              onSuccess={() => setVisible(false)}
             />
           )}
         </Row>

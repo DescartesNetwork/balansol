@@ -15,9 +15,11 @@ import { useOracles } from 'app/hooks/useOracles'
 const WithdrawFullSide = ({
   poolAddress,
   lptAmount,
+  onSuccess = () => {},
 }: {
   lptAmount: string
   poolAddress: string
+  onSuccess?: () => void
 }) => {
   const {
     pools: { [poolAddress]: poolData },
@@ -40,6 +42,7 @@ const WithdrawFullSide = ({
         amount,
       )
       notifySuccess('Withdraw', txId)
+      onSuccess()
     } catch (error) {
       notifyError(error)
     }

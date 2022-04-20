@@ -90,6 +90,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
         amountsIn,
       )
       notifySuccess('Deposit', txId)
+      setVisible(false)
     } catch (error) {
       notifyError(error)
     } finally {
