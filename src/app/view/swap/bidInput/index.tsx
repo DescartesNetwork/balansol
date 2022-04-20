@@ -15,11 +15,12 @@ export default function BidInput() {
   const mintsSwap = useMintsCanSwap()
 
   useEffect(() => {
-    dispatch(setSwapState({ bidMint: mintsSwap?.[0] || '' })).unwrap()
-  }, [dispatch, mintsSwap])
+    if (bidMint) return
+    dispatch(setSwapState({ bidMint: mintsSwap?.[0] || '' }))
+  }, [bidMint, dispatch, mintsSwap])
 
   const onChange = (val: string) => {
-    dispatch(setSwapState({ bidAmount: val, isReverse: false })).unwrap()
+    dispatch(setSwapState({ bidAmount: val, isReverse: false }))
   }
   // Ignore askMint in mints
   const filteredMints = useMemo(

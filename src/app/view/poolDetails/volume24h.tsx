@@ -1,39 +1,28 @@
-import PoolService from 'app/stat/logic/pool/pool'
-import moment from 'moment'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import moment from 'moment'
 
 import BarChart from './charts/barChart'
-import { DataLoader } from 'shared/dataloader'
 import { Col, Row, Spin, Typography } from 'antd'
+
 import { numeric } from 'shared/util'
+import { useStat } from 'app/hooks/useStat'
 
 export type VolumeData = { data: number; label: string }
-const TTL_5_MIN = 300000
 
 const Volume24h = ({ poolAddress }: { poolAddress: string }) => {
   const [chartData, setChartData] = useState<VolumeData[]>([])
-  const [isLoading, setIsLoading] = useState(false)
+  const { dailyInfo, loading } = useStat(poolAddress)
 
   const fetchVolume = useCallback(async () => {
     if (!poolAddress) return setChartData([])
-    setIsLoading(true)
-    const poolStatService = new PoolService(poolAddress)
-    const dailyInfo = await DataLoader.load(
-      'getDailyInfo' + poolAddress,
-      () => poolStatService.getDailyInfo(),
-      { cache: { ttl: TTL_5_MIN } },
-    )
-
     const chartData = Object.keys(dailyInfo).map((time) => {
       return {
         data: dailyInfo[time].volume,
         label: moment(time, 'YYYYMMDD').format('MM/DD'),
       }
     })
-
-    setIsLoading(false)
     return setChartData(chartData)
-  }, [poolAddress])
+  }, [dailyInfo, poolAddress])
   useEffect(() => {
     fetchVolume()
   }, [fetchVolume])
@@ -60,7 +49,7 @@ const Volume24h = ({ poolAddress }: { poolAddress: string }) => {
         </Row>
       </Col>
       <Col span={24} flex="auto">
-        <Spin tip="Loading..." spinning={isLoading}>
+        <Spin tip="Loading..." spinning={loading}>
           <BarChart data={chartData} />
         </Spin>
       </Col>

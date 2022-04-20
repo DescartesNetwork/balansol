@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import { Fragment, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useWallet } from '@senhub/providers'
 
@@ -21,6 +21,7 @@ import { numeric } from 'shared/util'
 import tvlBg from 'app/static/images/tvl.svg'
 import apyBg from 'app/static/images/apy.svg'
 import myContributeBg from 'app/static/images/my-contribution.svg'
+import { useStat } from 'app/hooks/useStat'
 
 const PoolDetails = () => {
   const { getQuery, pushHistory } = useAppRouter()
@@ -31,6 +32,7 @@ const PoolDetails = () => {
   const {
     wallet: { address: walletAddress },
   } = useWallet()
+  const { apy } = useStat(poolAddress)
 
   const TVL = useTVL(poolAddress)
   const { balance } = useAccountBalanceByMintAddress(
@@ -94,7 +96,11 @@ const PoolDetails = () => {
               <Col lg={8} md={8} xs={24}>
                 <CardPoolDetail
                   title="APY"
-                  content={<Typography.Title level={3}>9%</Typography.Title>}
+                  content={
+                    <Typography.Title level={3}>
+                      {numeric(apy).format('0,0.[00]%')}
+                    </Typography.Title>
+                  }
                   styles={{
                     background: `url(${apyBg})`,
                     backgroundPosition: 'center',
