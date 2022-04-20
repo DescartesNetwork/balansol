@@ -10,7 +10,7 @@ import {
   PoolPairLpData,
 } from 'app/constant'
 import { PRECISION } from 'app/constant/index'
-import { RouteInfo } from 'app/hooks/swap/useAllRoutes'
+import { RouteInfo } from 'app/hooks/swap/useRouteSwap'
 
 export type routeFullInfo = RouteInfo & { poolData: PoolData }
 
@@ -94,15 +94,14 @@ export const calcInGivenOutSwap = (
 ): BN => {
   const numBalanceOut = balanceOut.toNumber()
   const numBalanceIn = balanceIn.toNumber()
-  const numAmountOut = amountOut.toNumber()
   const numSwapFee = swapFee.toNumber() / GENERAL_NORMALIZED_NUMBER
+  const numAmountOut = amountOut.toNumber() / (1 - numSwapFee)
   const ratioBeforeAfterBalance = numBalanceOut / (numBalanceOut - numAmountOut)
 
   const ratioInOutWeight = weightOut / weightIn
+
   return new BN(
-    numBalanceIn *
-      (ratioBeforeAfterBalance ** ratioInOutWeight - 1) *
-      (1 - numSwapFee),
+    numBalanceIn * (ratioBeforeAfterBalance ** ratioInOutWeight - 1),
   )
 }
 

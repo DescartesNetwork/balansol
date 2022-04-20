@@ -4,36 +4,30 @@ import { useEffect } from 'react'
 import { Card } from 'antd'
 import MintInput from 'app/components/mintInput'
 
-import { AppState } from 'app/model'
+import { AppDispatch, AppState } from 'app/model'
 import { setSwapState } from 'app/model/swap.controller'
-import { useRouteSwap } from 'app/hooks/swap/useRouteSwap'
 import { useMintsCanSwap } from 'app/hooks/swap/useMintsCanSwap'
-import { useReversedSwap } from 'app/hooks/useReversedSwap'
 
 export default function AskInput() {
   const {
-    swap: { askMint, bidMint },
+    swap: { askMint, bidMint, askAmount },
   } = useSelector((state: AppState) => state)
-  const dispatch = useDispatch()
-  const { askAmount } = useRouteSwap()
-
-  const { estimateTokenOut } = useReversedSwap()
+  const dispatch = useDispatch<AppDispatch>()
   const mintsSwap = useMintsCanSwap()
 
   useEffect(() => {
+    if (askMint && askMint !== bidMint) return
     const newMintSwap = mintsSwap.filter((value) => value !== bidMint)
-    dispatch(setSwapState({ askMint: newMintSwap[0] }))
-  }, [bidMint, dispatch, mintsSwap])
+    dispatch(setSwapState({ askMint: newMintSwap?.[0] || '' })).unwrap()
+  }, [askMint, bidMint, dispatch, mintsSwap])
 
-  const onChange = async (val: string) => {
-    // Temp to fix later. Currently, estimateTokenOut don't go right
-    const newBidAmount = await estimateTokenOut(val)
-
+  const onChange = async (askAmount: string) => {
     dispatch(
       setSwapState({
-        bidAmount: newBidAmount,
+        askAmount,
+        isReverse: true,
       }),
-    )
+    ).unwrap()
   }
 
   return (
@@ -41,7 +35,7 @@ export default function AskInput() {
       <MintInput
         amount={askAmount}
         selectedMint={askMint}
-        onSelect={(mint) => dispatch(setSwapState({ askMint: mint }))}
+        onSelect={(mint) => dispatch(setSwapState({ askMint: mint })).unwrap()}
         onChangeAmount={onChange}
         mints={mintsSwap.filter((value) => value !== bidMint)}
         ratioButton={null}
