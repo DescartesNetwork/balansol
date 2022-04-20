@@ -4,6 +4,7 @@ import Balancer, { getAnchorProvider } from '@senswap/balancer'
 
 import configs from 'app/configs'
 import PoolWatcher from './pool.watcher'
+import { Space, Spin } from 'antd'
 
 export const AppWatcher: FunctionComponent = (props) => {
   const [loading, setLoading] = useState(true)
@@ -25,6 +26,17 @@ export const AppWatcher: FunctionComponent = (props) => {
     watchWallet()
   }, [watchWallet])
 
-  if (loading) return null
+  if (loading)
+    return (
+      <Space
+        style={{
+          width: '100vw',
+          height: `calc(100vh - 64px)`,
+          justifyContent: 'center',
+        }}
+      >
+        <Spin tip="Loading..." spinning={loading} />
+      </Space>
+    )
   return <PoolWatcher>{props.children}</PoolWatcher>
 }
