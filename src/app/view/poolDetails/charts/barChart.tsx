@@ -49,6 +49,7 @@ const buildOptions = (data: VolumeData[]) => ({
     {
       data: data.map((value) => value.data),
       type: 'bar',
+      itemStyle: { color: '#87E0C0' },
     },
   ],
   grid: {
@@ -59,12 +60,7 @@ const buildOptions = (data: VolumeData[]) => ({
 const BarChart = ({ data }: { data: VolumeData[] }) => {
   return (
     <Row justify="center" className="barchart-container">
-      <ReactEChartsCore
-        echarts={echarts}
-        option={buildOptions(data)}
-        notMerge={true}
-        lazyUpdate={true}
-      />
+      <ReactEChartsCore echarts={echarts} option={buildOptions(data)} />
     </Row>
   )
 }
