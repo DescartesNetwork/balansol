@@ -52,6 +52,7 @@ const ModalNewPool = ({ onClose }: { onClose: () => void }) => {
           <AddLiquidity
             setCurrentStep={setCurrentStep}
             poolAddress={poolAddress}
+            onClose={onClose}
           />
         )
       case PoolCreatingStep.confirmCreatePool:

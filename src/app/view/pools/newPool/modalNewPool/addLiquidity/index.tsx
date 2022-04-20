@@ -12,8 +12,10 @@ import { useOracles } from 'app/hooks/useOracles'
 const AddLiquidity = ({
   setCurrentStep,
   poolAddress,
+  onClose = () => {},
 }: {
   setCurrentStep: (step: PoolCreatingStep) => void
+  onClose?: () => void
   poolAddress: string
 }) => {
   const [inputAmounts, setInputAmounts] = useState<string[]>([])
@@ -67,6 +69,7 @@ const AddLiquidity = ({
       </Col>
       <Col span={24}>
         <LiquidityInfo
+          onClose={onClose}
           amounts={inputAmounts}
           poolAddress={poolAddress}
           setCurrentStep={setCurrentStep}
