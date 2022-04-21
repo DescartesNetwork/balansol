@@ -1,8 +1,8 @@
 import { Fragment } from 'react'
 import { useSelector } from 'react-redux'
-import { useWallet } from '@senhub/providers'
+import { useUI, useWallet } from '@senhub/providers'
 
-import { Button, Card, Col, Row, Space, Typography } from 'antd'
+import { Button, Col, Row, Space, Typography } from 'antd'
 import Deposit from './deposit'
 import Withdraw from './withdraw'
 import { PoolAvatar } from 'app/components/pools/poolAvatar'
@@ -32,7 +32,11 @@ const PoolDetails = () => {
   const {
     wallet: { address: walletAddress },
   } = useWallet()
+  const {
+    ui: { width },
+  } = useUI()
   const { apy } = useStat(poolAddress)
+  const isMobile = width < 768
 
   const TVL = useTVL(poolAddress)
   const { balance } = useAccountBalanceByMintAddress(
@@ -57,22 +61,18 @@ const PoolDetails = () => {
             </Button>
           </Col>
           <Col span={24}>
-            <Row gutter={[24, 24]} justify="center">
-              <Col lg={18} md={18} xs={24}>
-                <Space align="start">
+            <Row gutter={[24, 24]} justify="space-between">
+              <Col md={18} xs={24}>
+                <Space>
                   <PoolAvatar poolAddress={poolAddress} size={32} />
                   <Typography.Title level={4}>Balansol LP</Typography.Title>
                 </Space>
               </Col>
-              <Col lg={6} md={6} xs={24}>
-                <Row gutter={[12, 12]} justify="end">
-                  <Col span={12}>
-                    <Withdraw poolAddress={poolAddress} />
-                  </Col>
-                  <Col span={12}>
-                    <Deposit poolAddress={poolAddress} />
-                  </Col>
-                </Row>
+              <Col span={isMobile ? 24 : undefined}>
+                <Space style={{ width: '100%' }}>
+                  <Withdraw poolAddress={poolAddress} />
+                  <Deposit poolAddress={poolAddress} />
+                </Space>
               </Col>
             </Row>
           </Col>
@@ -133,32 +133,10 @@ const PoolDetails = () => {
             <Row gutter={[24, 24]} style={{ display: 'flex' }}>
               <Col lg={12} md={12} xs={24}>
                 {/* Bar Chart */}
-                <Card className="chart-card">
-                  <Volume24h poolAddress={poolAddress} />
-                </Card>
+                <Volume24h poolAddress={poolAddress} />
               </Col>
               <Col lg={12} md={12} xs={24}>
-                {/* Doughnut Chart */}
-                <Card className="chart-card">
-                  <Row gutter={[0, 0]}>
-                    <Col span={24}>
-                      <Row
-                        justify="center"
-                        align="middle"
-                        className="chart-title"
-                      >
-                        <Col flex={'auto'}>
-                          <Typography.Title level={4}>
-                            Pool balance
-                          </Typography.Title>
-                        </Col>
-                      </Row>
-                    </Col>
-                    <Col span={24}>
-                      <PoolBalance poolAddress={poolAddress} />
-                    </Col>
-                  </Row>
-                </Card>
+                <PoolBalance poolAddress={poolAddress} />
               </Col>
               {isOwner && (
                 <Col lg={12} md={12} xs={24}>

@@ -76,10 +76,6 @@ const TokenSetup = ({
     )
   }
 
-  const onRemove = () => {
-    onRemoveToken(id)
-  }
-
   return (
     <Row>
       <Col flex="auto">
@@ -94,7 +90,7 @@ const TokenSetup = ({
           tokenInfo={mintSetup}
           onChangeWeight={onChangeWeight}
           onChangeLock={onChangeLock}
-          onRemoveToken={onRemove}
+          onRemoveToken={() => onRemoveToken(id)}
         />
       </Col>
     </Row>

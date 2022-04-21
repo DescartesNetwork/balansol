@@ -8,8 +8,6 @@ import {
 } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
 
-import { Row, Space } from 'antd'
-
 echarts.use([
   TitleComponent,
   GridComponent,
@@ -80,16 +78,12 @@ const buildOptions = (data: PoolBalanceData[]) => {
 
 const DoughnutChart = ({ data }: { data: PoolBalanceData[] }) => {
   return (
-    <Row justify="center">
-      <Space className="doughnut-container">
-        <ReactEChartsCore
-          echarts={echarts}
-          option={buildOptions(data)}
-          notMerge={true}
-          lazyUpdate={true}
-        />
-      </Space>
-    </Row>
+    <ReactEChartsCore
+      echarts={echarts}
+      option={buildOptions(data)}
+      notMerge={true}
+      lazyUpdate={true}
+    />
   )
 }
 

@@ -1,11 +1,13 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-
-import DoughnutChart, { PoolBalanceData } from './charts/doughnutChart'
-import { GENERAL_DECIMALS } from 'app/constant'
 import { useMint } from '@senhub/providers'
+import { utils } from '@senswap/sen-js'
+
+import { Card, Col, Row, Typography } from 'antd'
+import DoughnutChart, { PoolBalanceData } from './charts/doughnutChart'
+
+import { GENERAL_DECIMALS } from 'app/constant'
 import { AppState } from 'app/model'
-import util from '@senswap/sen-js/dist/utils'
 
 const PoolBalance = ({ poolAddress }: { poolAddress: string }) => {
   const {
@@ -19,7 +21,7 @@ const PoolBalance = ({ poolAddress }: { poolAddress: string }) => {
     const newData = await Promise.all(
       mints.map(async (value, idx) => {
         const tokenInfo = await tokenProvider.findByAddress(value.toBase58())
-        const weight = util.undecimalize(
+        const weight = utils.undecimalize(
           BigInt(weights[idx].toString()),
           GENERAL_DECIMALS,
         )
@@ -36,7 +38,18 @@ const PoolBalance = ({ poolAddress }: { poolAddress: string }) => {
     doughnutChartData()
   }, [doughnutChartData])
 
-  return <DoughnutChart data={poolBalances} />
+  return (
+    <Card className="chart-card">
+      <Row gutter={[24, 24]}>
+        <Col span={24}>
+          <Typography.Title level={4}>Pool balance</Typography.Title>
+        </Col>
+        <Col span={24}>
+          <DoughnutChart data={poolBalances} />
+        </Col>
+      </Row>
+    </Card>
+  )
 }
 
 export default PoolBalance
