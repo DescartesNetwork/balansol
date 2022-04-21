@@ -15,10 +15,12 @@ const LiquidityInfo = ({
   poolAddress,
   setCurrentStep,
   amounts,
+  onClose = () => {},
 }: {
   poolAddress: string
   setCurrentStep: (step: PoolCreatingStep) => void
   amounts: string[]
+  onClose?: () => void
 }) => {
   const {
     pools: { [poolAddress]: poolData },
@@ -75,6 +77,7 @@ const LiquidityInfo = ({
       setLoadingClose(true)
       const { txId } = await window.balansol.closePool(poolAddress)
       notifySuccess('Close pool', txId)
+      onClose()
     } catch (error) {
       notifyError(error)
     } finally {

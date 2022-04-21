@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { PoolData } from '@senswap/balancer'
+import { PoolData, PoolState } from '@senswap/balancer'
 import { account } from '@senswap/sen-js'
 
 /**
@@ -23,7 +23,10 @@ export const getPools = createAsyncThunk(`${NAME}/getPools`, async () => {
   const pools = await window.balansol.getAllPoolData()
   let bulk: PoolsState = {}
   for (const pool of pools) {
-    bulk[pool.publicKey.toBase58()] = pool.account as PoolData
+    const poolData = pool.account as PoolData
+    const poolState = poolData.state as PoolState
+    if (poolState['deleted']) continue
+    bulk[pool.publicKey.toBase58()] = poolData
   }
   return bulk
 })
