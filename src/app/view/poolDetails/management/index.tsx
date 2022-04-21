@@ -7,13 +7,13 @@ const PoolManagement = ({ poolAddress }: { poolAddress: string }) => {
   return (
     <Card>
       <Tabs>
-        <Tabs.TabPane key="weight" tab="Weight">
+        <Tabs.TabPane key="weights" tab="Weights">
           <Weight poolAddress={poolAddress} />
         </Tabs.TabPane>
         <Tabs.TabPane key="freeze-thaw" tab="Freeze/Thaw">
           <FreezeAndThaw poolAddress={poolAddress} />
         </Tabs.TabPane>
-        <Tabs.TabPane key="transfer-owner" tab="Transfer Owner">
+        <Tabs.TabPane key="transfer-ownership" tab="Transfer Ownership">
           <TransferOwner poolAddress={poolAddress} />
         </Tabs.TabPane>
       </Tabs>

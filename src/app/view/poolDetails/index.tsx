@@ -60,7 +60,7 @@ const PoolDetails = () => {
             <Row gutter={[24, 24]} justify="center">
               <Col lg={18} md={18} xs={24}>
                 <Space align="start">
-                  <PoolAvatar poolAddress={poolAddress} />
+                  <PoolAvatar poolAddress={poolAddress} size={32} />
                   <Typography.Title level={4}>Balansol LP</Typography.Title>
                 </Space>
               </Col>

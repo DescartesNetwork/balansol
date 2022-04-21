@@ -65,7 +65,7 @@ const ModalNewPool = ({ onClose }: { onClose: () => void }) => {
       <Col span={24}>
         <Steps size="small" current={currentStep}>
           <Step title="Select tokens & weights" />
-          <Step title="Set liquidity" />
+          <Step title="Add liquidity" />
           <Step title="Confirm" />
         </Steps>
       </Col>

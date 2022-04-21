@@ -50,12 +50,16 @@ const Search = () => {
                   width: 'auto',
                   height: 'auto',
                   background: 'transparent',
+                  marginLeft: -7,
                 }}
                 onClick={() => onSearch('')}
                 icon={<IonIcon name="close-outline" />}
               />
             ) : (
-              <IonIcon style={{ fontSize: '24px' }} name="search-outline" />
+              <IonIcon
+                style={{ fontSize: '24px', marginLeft: -5 }}
+                name="search-outline"
+              />
             )
           }
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {

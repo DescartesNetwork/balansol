@@ -195,7 +195,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
                         baseTokenIndex !== index && (
                           <Button
                             type="text"
-                            style={{ color: '#63e0b3' }}
+                            style={{ color: '#63e0b3', padding: 0 }}
                             onClick={() => onApplySuggestion(index)}
                           >
                             Apply suggestion
