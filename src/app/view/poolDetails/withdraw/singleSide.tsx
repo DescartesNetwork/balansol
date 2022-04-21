@@ -136,7 +136,12 @@ const WithdrawSingleSide = ({
               You will receive
             </Typography.Text>
           </Col>
-          <TokenWillReceive mintAddress={mintAddress} amount={amountReserve} />
+          <Col span={24}>
+            <TokenWillReceive
+              mintAddress={mintAddress}
+              amount={amountReserve}
+            />
+          </Col>
         </Row>
       </Col>
       <Col span={24}>

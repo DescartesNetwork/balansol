@@ -11,7 +11,7 @@ import {
 import { CanvasRenderer } from 'echarts/renderers'
 
 import { Row } from 'antd'
-import { VolumeData } from '../volume24h'
+import { VolumeData } from '.'
 import { numeric } from 'shared/util'
 
 echarts.use([

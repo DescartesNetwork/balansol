@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import moment from 'moment'
 
-import BarChart from './charts/barChart'
+import BarChart from './barChart'
 import { Card, Col, Row, Spin, Typography } from 'antd'
 
 import { numeric } from 'shared/util'
