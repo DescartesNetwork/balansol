@@ -11,23 +11,21 @@ const TokenWillReceive = ({
   amount: BN
 }) => {
   return (
-    <Col span={24}>
-      <Row>
-        <Col flex="auto">
-          <Space>
-            <MintAvatar mintAddress={mintAddress} />
-            <Typography.Text type="secondary">
-              <MintSymbol mintAddress={mintAddress} />
-            </Typography.Text>
-          </Space>
-        </Col>
-        <Col>
-          <Typography.Text>
-            <MintAmount mintAddress={mintAddress} amount={amount} />
+    <Row>
+      <Col flex="auto">
+        <Space>
+          <MintAvatar mintAddress={mintAddress} />
+          <Typography.Text type="secondary">
+            <MintSymbol mintAddress={mintAddress} />
           </Typography.Text>
-        </Col>
-      </Row>
-    </Col>
+        </Space>
+      </Col>
+      <Col>
+        <Typography.Text>
+          <MintAmount mintAddress={mintAddress} amount={amount} />
+        </Typography.Text>
+      </Col>
+    </Row>
   )
 }
 

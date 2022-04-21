@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { useMint } from '@senhub/providers'
 import { TokenInfo } from '@solana/spl-token-registry'
 
-import { Row, Typography } from 'antd'
+import { Space, Typography } from 'antd'
 import { AppState } from 'app/model'
 import { calcNormalizedWeight } from 'app/helper/oracles'
 import { numeric } from 'shared/util'
@@ -36,19 +36,14 @@ const PercentGroupMints = ({ poolAddress }: { poolAddress: string }) => {
   }, [poolData.mints, poolData.weights, tokenProvider])
 
   return (
-    <Row wrap={false}>
+    <Space size={4} align="baseline">
       <Typography.Text style={{ whiteSpace: 'nowrap' }}>
         Balansol LP
       </Typography.Text>
-
-      <Typography.Paragraph
-        type="secondary"
-        ellipsis={{ rows: 1 }}
-        style={{ width: '100%' }}
-      >
-        &nbsp;{`( ${poolSymbol.join(' - ')} )`}
-      </Typography.Paragraph>
-    </Row>
+      <Typography.Text type="secondary" className="ellipsis-text">
+        {`( ${poolSymbol.join(' - ')} )`}
+      </Typography.Text>
+    </Space>
   )
 }
 

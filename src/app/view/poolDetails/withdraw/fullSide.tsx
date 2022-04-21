@@ -90,11 +90,13 @@ const WithdrawFullSide = ({
             </Typography.Text>
           </Col>
           {poolData.mints.map((mint, index) => (
-            <TokenWillReceive
-              key={index}
-              mintAddress={mint.toBase58()}
-              amount={amounts[index]}
-            />
+            <Col span={24}>
+              <TokenWillReceive
+                key={index}
+                mintAddress={mint.toBase58()}
+                amount={amounts[index]}
+              />
+            </Col>
           ))}
         </Row>
       </Col>

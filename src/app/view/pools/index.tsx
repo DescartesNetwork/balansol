@@ -1,3 +1,4 @@
+import { useUI } from '@senhub/providers'
 import { Col, Row } from 'antd'
 
 import ListPools from './listPools'
@@ -5,28 +6,21 @@ import New from './newPool'
 import Search from './search'
 
 const Pools = () => {
+  const {
+    ui: { width },
+  } = useUI()
+
+  const isMobile = width < 768
+
   return (
     <Row gutter={[24, 24]} justify="center" align="middle">
       <Col xs={24} md={20} lg={16}>
-        <Row gutter={12}>
-          <Col span={24}>
-            <Row
-              gutter={[24, 24]}
-              align={'middle'}
-              justify="end"
-              className="chart-title"
-            >
-              <Col xs={24} md={12}>
-                <Search />
-              </Col>
-              <Col xs={24} md={12}>
-                <Row justify={'end'}>
-                  <Col xs={24} md={8}>
-                    <New />
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
+        <Row gutter={[24, 24]} justify="space-between">
+          <Col xs={24} md={12}>
+            <Search />
+          </Col>
+          <Col span={isMobile ? 24 : undefined}>
+            <New />
           </Col>
         </Row>
       </Col>

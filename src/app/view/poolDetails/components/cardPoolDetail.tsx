@@ -5,14 +5,14 @@ import { Card, Row, Col, Typography, Space } from 'antd'
 const CardPoolDetail = ({
   title,
   content,
-  styles,
+  bg,
 }: {
   title: string
   content?: ReactNode
-  styles?: React.CSSProperties
+  bg: string
 }) => {
   return (
-    <Card style={{ boxShadow: 'unset', ...styles }}>
+    <Card className="card-detail-header" style={{ background: `url(${bg})` }}>
       <Row gutter={[0, 8]}>
         <Col span={24}>
           <Typography.Text type="secondary">{title}</Typography.Text>
