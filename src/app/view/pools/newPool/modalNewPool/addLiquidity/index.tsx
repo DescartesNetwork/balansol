@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 
-import { Col, Row } from 'antd'
+import { Button, Col, Row } from 'antd'
 import LiquidityInfo from './liquidityInfo'
 import MintInput from 'app/components/mintInput'
 
@@ -19,6 +19,7 @@ const AddLiquidity = ({
   poolAddress: string
 }) => {
   const [inputAmounts, setInputAmounts] = useState<string[]>([])
+  const [baseTokenIndex, setBaseTokenIndex] = useState(0)
   const {
     pools: { [poolAddress]: poolData },
   } = useSelector((state: AppState) => state)
@@ -38,6 +39,25 @@ const AddLiquidity = ({
   useEffect(() => {
     initInputAmountFromPoolData()
   }, [initInputAmountFromPoolData])
+
+  const onApplySuggestion = async (index: number) => {
+    const { reserves, mints } = poolData
+    const baseBalance = await undecimalizeMintAmount(
+      reserves[baseTokenIndex],
+      mints[baseTokenIndex],
+    )
+    const currentBalance = await undecimalizeMintAmount(
+      reserves[index],
+      mints[index],
+    )
+    const balanceRatio =
+      (Number(baseBalance) + Number(inputAmounts[baseTokenIndex])) /
+      Number(baseBalance)
+    const suggestedAmount = Number(currentBalance) * (balanceRatio - 1)
+    let newAmounts = [...inputAmounts]
+    newAmounts[index] = String(suggestedAmount)
+    setInputAmounts(newAmounts)
+  }
 
   const onUpdateAmount = async (value: string, idx: number) => {
     const newAmounts = [...inputAmounts]
@@ -61,6 +81,17 @@ const AddLiquidity = ({
                       : undefined
                   }
                   force
+                  ratioButton={
+                    baseTokenIndex !== idx && (
+                      <Button
+                        type="text"
+                        style={{ color: '#63e0b3', padding: 0 }}
+                        onClick={() => onApplySuggestion(idx)}
+                      >
+                        Apply suggestion
+                      </Button>
+                    )
+                  }
                 />
               </Col>
             )
