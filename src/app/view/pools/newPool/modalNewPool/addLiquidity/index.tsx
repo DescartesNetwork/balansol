@@ -8,6 +8,9 @@ import MintInput from 'app/components/mintInput'
 import { PoolCreatingStep } from 'app/constant'
 import { AppState } from 'app/model'
 import { useOracles } from 'app/hooks/useOracles'
+import { useMint } from '@senhub/providers'
+import { fetchCGK } from 'shared/util'
+import { calcNormalizedWeight } from 'app/helper/oracles'
 
 const AddLiquidity = ({
   setCurrentStep,
@@ -24,6 +27,7 @@ const AddLiquidity = ({
     pools: { [poolAddress]: poolData },
   } = useSelector((state: AppState) => state)
   const { undecimalizeMintAmount } = useOracles()
+  const { tokenProvider } = useMint()
 
   const initInputAmountFromPoolData = useCallback(async () => {
     if (!poolData || inputAmounts.length !== 0) return
@@ -41,27 +45,88 @@ const AddLiquidity = ({
   }, [initInputAmountFromPoolData])
 
   const onApplySuggestion = async (index: number) => {
-    const { reserves, mints } = poolData
-    const baseBalance = await undecimalizeMintAmount(
-      reserves[baseTokenIndex],
-      mints[baseTokenIndex],
+    const { reserves, mints, weights } = poolData
+    const baseToken = await tokenProvider.findByAddress(
+      mints[baseTokenIndex].toBase58(),
     )
-    const currentBalance = await undecimalizeMintAmount(
-      reserves[index],
-      mints[index],
+    const appliedToken = await tokenProvider.findByAddress(
+      mints[index].toBase58(),
     )
-    const balanceRatio =
-      (Number(baseBalance) + Number(inputAmounts[baseTokenIndex])) /
-      Number(baseBalance)
-    const suggestedAmount = Number(currentBalance) * (balanceRatio - 1)
+
+    const baseTicket = baseToken?.extensions?.coingeckoId
+    const appliedTicket = appliedToken?.extensions?.coingeckoId
+
+    if (!baseTicket && !appliedTicket) {
+      return null
+    }
+    const cGKBaseTokenInfo = await fetchCGK(baseTicket)
+    const cGKAppliedTokenInfo = await fetchCGK(appliedTicket)
+
     let newAmounts = [...inputAmounts]
+    const baseNormalizedWeight = calcNormalizedWeight(
+      weights,
+      weights[baseTokenIndex],
+    )
+    console.log(cGKBaseTokenInfo?.price, cGKAppliedTokenInfo?.price)
+    const appliedNormalizedWeight = calcNormalizedWeight(
+      weights,
+      weights[index],
+    )
+    const suggestedAmount = (
+      (cGKBaseTokenInfo?.price *
+        Number(newAmounts[baseTokenIndex]) *
+        baseNormalizedWeight) /
+      (cGKAppliedTokenInfo?.price * appliedNormalizedWeight)
+    ).toFixed(9)
     newAmounts[index] = String(suggestedAmount)
+
     setInputAmounts(newAmounts)
   }
+
+  // const onSwitchOptimize = async (checked: boolean) => {
+  //   setIsOptimizeLiquidity(checked)
+
+  //   if (!checked) return
+
+  //   const newState = [...depositedAmounts]
+  //   const token = await tokenProvider.findByAddress(
+  //     tokenList[baseTokenIndex].addressToken,
+  //   )
+  //   const ticket = token?.extensions?.coingeckoId
+
+  //   if (!ticket) {
+  //     const state = new Array<string>(newState.length)
+  //     state[baseTokenIndex] = newState[baseTokenIndex]
+  //     return setDepositedAmounts(state)
+  //   }
+
+  //   const CGKEnteredTokenInfo = await fetchCGK(ticket)
+
+  //   const autoDepositedAmount = await Promise.all(
+  //     tokenList.map(async ({ addressToken, weight }, calcedIdx) => {
+  //       const token = await tokenProvider.findByAddress(addressToken)
+  //       const ticket = token?.extensions?.coingeckoId
+  //       if (!ticket) return '0'
+  //       const CGKTokenInfo = await fetchCGK(ticket)
+  //       if (calcedIdx === baseTokenIndex) return newState[baseTokenIndex]
+  //       return String(
+  //         (CGKEnteredTokenInfo?.price *
+  //           Number(newState[baseTokenIndex]) *
+  //           Number(weight)) /
+  //           (CGKTokenInfo?.price * Number(tokenList[calcedIdx].weight)),
+  //       )
+  //     }),
+  //   )
+  // const checkAmountIns = await checkExceedBalance(autoDepositedAmount)
+  // setDisable(checkAmountIns)
+
+  //   return setDepositedAmounts(autoDepositedAmount)
+  // }
 
   const onUpdateAmount = async (value: string, idx: number) => {
     const newAmounts = [...inputAmounts]
     newAmounts[idx] = value
+    setBaseTokenIndex(idx)
     return setInputAmounts(newAmounts)
   }
 
