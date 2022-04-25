@@ -45,7 +45,9 @@ const ListTokenSetup = ({
     // Unlocked mint
     const unlockedMintsAmount = listMintSetting.length - lockedMintsAmount
     let averageWeight = totalWeight / unlockedMintsAmount
-    const newListMintSetting = JSON.parse(JSON.stringify(listMintSetting) as MintSetup[]
+    const newListMintSetting = JSON.parse(
+      JSON.stringify(listMintSetting),
+    ) as MintSetup[]
     newListMintSetting.forEach((mintSetting, idx) => {
       const locked = mintSetting.isLocked || idx === indexJustUpdated
       if (locked) return
