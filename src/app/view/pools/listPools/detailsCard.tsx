@@ -3,7 +3,7 @@ import { useWallet } from '@senhub/providers'
 
 import { Button, Card, Col, Row, Space, Typography } from 'antd'
 import PercentGroupMints from './percentGroupMints'
-import WalletAddress from './walletAddress'
+import PoolAddressActions from './poolAddressActions'
 import { PoolAvatar } from 'app/components/pools/poolAvatar'
 
 import { useAppRouter } from 'app/hooks/useAppRouter'
@@ -40,7 +40,7 @@ const DetailsCard = ({ poolAddress }: { poolAddress: string }) => {
           <PoolAvatar size={32} poolAddress={poolAddress} />
         </Col>
         <Col>
-          <WalletAddress poolAddress={poolAddress} />
+          <PoolAddressActions poolAddress={poolAddress} />
         </Col>
       </Row>
       <Row gutter={[0, 10]}>
