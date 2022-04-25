@@ -33,7 +33,7 @@ export default function Swap() {
 
   return (
     <Row justify="center">
-      <Col lg={8}>
+      <Col xs={24} md={14} lg={12} xl={8}>
         <Card style={{ boxShadow: 'unset' }}>
           <Row gutter={[0, 16]} justify="end">
             <Col>

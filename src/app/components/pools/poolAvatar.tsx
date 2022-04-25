@@ -22,14 +22,15 @@ export const PoolAvatar = ({
 
   return (
     <Avatar.Group style={{ display: 'block', whiteSpace: 'nowrap' }}>
-      {poolData.mints.map((mint) => (
-        <MintAvatar
-          mintAddress={mint.toBase58()}
-          size={size}
-          icon={icon}
-          key={mint.toBase58()}
-        />
-      ))}
+      {poolData &&
+        poolData.mints.map((mint) => (
+          <MintAvatar
+            mintAddress={mint.toBase58()}
+            size={size}
+            icon={icon}
+            key={mint.toBase58()}
+          />
+        ))}
     </Avatar.Group>
   )
 }

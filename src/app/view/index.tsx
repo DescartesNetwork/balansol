@@ -1,18 +1,19 @@
 import { Fragment, useCallback, useEffect } from 'react'
 import { Route, Switch } from 'react-router-dom'
+import { useUI } from '@senhub/providers'
 
 import { Row, Col, Radio, Tabs } from 'antd'
 import PoolDetails from './poolDetails'
 import Pools from './pools'
 import Swap from './swap'
-import './index.less'
 
 import { AppWatcher } from 'app/components/watcher'
 import { QueryParams, HOMEPAGE_TABS } from 'app/constant'
 import { useAppRouter } from 'app/hooks/useAppRouter'
-import { useUI } from '@senhub/providers'
 
 import BG from 'app/static/images/balansol-background.png'
+
+import './index.less'
 
 const SwapAndPools = () => {
   const { getQuery, pushHistory } = useAppRouter()
@@ -29,6 +30,7 @@ const SwapAndPools = () => {
   }, [onChange, selectedTab])
 
   if (!selectedTab) return null
+
   return (
     <Fragment>
       <Row gutter={[24, 24]} justify="center" style={{ paddingBottom: 12 }}>

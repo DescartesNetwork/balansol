@@ -12,6 +12,7 @@ import Header from './header'
 
 import { useAppRouter } from 'app/hooks/useAppRouter'
 import { AppState } from 'app/model'
+import { useEffect } from 'react'
 
 const PoolDetails = () => {
   const { getQuery, pushHistory } = useAppRouter()
@@ -22,6 +23,10 @@ const PoolDetails = () => {
   const {
     wallet: { address: walletAddress },
   } = useWallet()
+
+  useEffect(() => {
+    if (!poolData) pushHistory(`/?tab=pools`)
+  })
 
   const isOwner = walletAddress === poolData?.authority.toBase58()
   if (!poolAddress) return null
