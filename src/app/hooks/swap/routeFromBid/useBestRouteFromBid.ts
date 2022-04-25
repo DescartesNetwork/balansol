@@ -49,6 +49,7 @@ export const useBestRouteFromBid = (): RouteSwapInfo => {
       return { ...bestRoute[idx], poolData }
     })
     const newPriceImpact = calcPriceImpact(bestRouteFullInfo)
+    console.log(newPriceImpact, 'newPriceImpactnewPriceImpact')
 
     return setRouteSwapInfo({
       route: bestRoute,

@@ -186,7 +186,7 @@ function calcSpotPriceAfterSwap(amount: BN, poolPairData: PoolPairData) {
   const f = Number(
     util.undecimalize(BigInt(swapFee.toString()), GENERAL_DECIMALS),
   )
-  return (
+  return -(
     (Bi * wo) /
     (Bo * (-1 + f) * (Bi / (Ai + Bi - Ai * f)) ** ((wi + wo) / wo) * wi)
   )
@@ -205,7 +205,13 @@ export const calcPriceImpactSwap = (
     util.undecimalize(BigInt(askAmount.toString()), decimalOut),
   )
   const spotPriceAfterSwap = calcSpotPriceAfterSwap(bidAmount, poolPairData)
-  let impactPrice = numBidAmount / numAskAmount / -spotPriceAfterSwap - 1
+  console.log(
+    spotPriceAfterSwap,
+    numBidAmount,
+    numAskAmount,
+    'price impact cos the bang ooo ',
+  )
+  let impactPrice = numBidAmount / numAskAmount / spotPriceAfterSwap - 1
   if (impactPrice < 0) return 0
 
   return impactPrice
@@ -468,6 +474,7 @@ export const calcPriceImpact = (route: routeFullInfo[]) => {
   let p = 1
   route.forEach((elmInfo) => {
     const s = elmInfo.priceImpact
+    console.log(s, 'price impact')
     p = p * (1 - s)
   })
   return 1 - p
