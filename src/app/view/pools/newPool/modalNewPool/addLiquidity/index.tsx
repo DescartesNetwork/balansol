@@ -45,7 +45,7 @@ const AddLiquidity = ({
   }, [initInputAmountFromPoolData])
 
   const onApplySuggestion = async (index: number) => {
-    const { reserves, mints, weights } = poolData
+    const { mints, weights } = poolData
     const baseToken = await tokenProvider.findByAddress(
       mints[baseTokenIndex].toBase58(),
     )
@@ -67,7 +67,6 @@ const AddLiquidity = ({
       weights,
       weights[baseTokenIndex],
     )
-    console.log(cGKBaseTokenInfo?.price, cGKAppliedTokenInfo?.price)
     const appliedNormalizedWeight = calcNormalizedWeight(
       weights,
       weights[index],
@@ -82,46 +81,6 @@ const AddLiquidity = ({
 
     setInputAmounts(newAmounts)
   }
-
-  // const onSwitchOptimize = async (checked: boolean) => {
-  //   setIsOptimizeLiquidity(checked)
-
-  //   if (!checked) return
-
-  //   const newState = [...depositedAmounts]
-  //   const token = await tokenProvider.findByAddress(
-  //     tokenList[baseTokenIndex].addressToken,
-  //   )
-  //   const ticket = token?.extensions?.coingeckoId
-
-  //   if (!ticket) {
-  //     const state = new Array<string>(newState.length)
-  //     state[baseTokenIndex] = newState[baseTokenIndex]
-  //     return setDepositedAmounts(state)
-  //   }
-
-  //   const CGKEnteredTokenInfo = await fetchCGK(ticket)
-
-  //   const autoDepositedAmount = await Promise.all(
-  //     tokenList.map(async ({ addressToken, weight }, calcedIdx) => {
-  //       const token = await tokenProvider.findByAddress(addressToken)
-  //       const ticket = token?.extensions?.coingeckoId
-  //       if (!ticket) return '0'
-  //       const CGKTokenInfo = await fetchCGK(ticket)
-  //       if (calcedIdx === baseTokenIndex) return newState[baseTokenIndex]
-  //       return String(
-  //         (CGKEnteredTokenInfo?.price *
-  //           Number(newState[baseTokenIndex]) *
-  //           Number(weight)) /
-  //           (CGKTokenInfo?.price * Number(tokenList[calcedIdx].weight)),
-  //       )
-  //     }),
-  //   )
-  // const checkAmountIns = await checkExceedBalance(autoDepositedAmount)
-  // setDisable(checkAmountIns)
-
-  //   return setDepositedAmounts(autoDepositedAmount)
-  // }
 
   const onUpdateAmount = async (value: string, idx: number) => {
     const newAmounts = [...inputAmounts]
