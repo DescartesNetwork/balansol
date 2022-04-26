@@ -1,13 +1,16 @@
 import { Fragment, useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 
-import { Col, Row } from 'antd'
+import { Button, Col, Row } from 'antd'
 import LiquidityInfo from './liquidityInfo'
 import MintInput from 'app/components/mintInput'
 
 import { PoolCreatingStep } from 'app/constant'
 import { AppState } from 'app/model'
 import { useOracles } from 'app/hooks/useOracles'
+import { useMint } from '@senhub/providers'
+import { fetchCGK } from 'shared/util'
+import { calcNormalizedWeight } from 'app/helper/oracles'
 
 const AddLiquidity = ({
   setCurrentStep,
@@ -19,10 +22,12 @@ const AddLiquidity = ({
   poolAddress: string
 }) => {
   const [inputAmounts, setInputAmounts] = useState<string[]>([])
+  const [baseTokenIndex, setBaseTokenIndex] = useState(0)
   const {
     pools: { [poolAddress]: poolData },
   } = useSelector((state: AppState) => state)
   const { undecimalizeMintAmount } = useOracles()
+  const { tokenProvider } = useMint()
 
   const initInputAmountFromPoolData = useCallback(async () => {
     if (!poolData || inputAmounts.length !== 0) return
@@ -39,9 +44,48 @@ const AddLiquidity = ({
     initInputAmountFromPoolData()
   }, [initInputAmountFromPoolData])
 
+  const onApplySuggestion = async (index: number) => {
+    const { mints, weights } = poolData
+    const baseToken = await tokenProvider.findByAddress(
+      mints[baseTokenIndex].toBase58(),
+    )
+    const appliedToken = await tokenProvider.findByAddress(
+      mints[index].toBase58(),
+    )
+    const baseTicket = baseToken?.extensions?.coingeckoId
+    const appliedTicket = appliedToken?.extensions?.coingeckoId
+
+    if (!baseTicket && !appliedTicket) return null
+
+    const baseTokenCGKData = await fetchCGK(baseTicket)
+    const appliedTokenCGKData = await fetchCGK(appliedTicket)
+
+    let newAmounts = [...inputAmounts]
+    const baseNormalizedWeight = calcNormalizedWeight(
+      weights,
+      weights[baseTokenIndex],
+    )
+    const appliedNormalizedWeight = calcNormalizedWeight(
+      weights,
+      weights[index],
+    )
+    if (!baseTokenCGKData?.price || !appliedTokenCGKData?.price) return null
+
+    const suggestedAmount = (
+      (baseTokenCGKData.price *
+        Number(newAmounts[baseTokenIndex]) *
+        baseNormalizedWeight) /
+      (appliedTokenCGKData.price * appliedNormalizedWeight)
+    ).toFixed(9)
+    newAmounts[index] = String(suggestedAmount)
+
+    setInputAmounts(newAmounts)
+  }
+
   const onUpdateAmount = async (value: string, idx: number) => {
     const newAmounts = [...inputAmounts]
     newAmounts[idx] = value
+    setBaseTokenIndex(idx)
     return setInputAmounts(newAmounts)
   }
 
@@ -61,6 +105,17 @@ const AddLiquidity = ({
                       : undefined
                   }
                   force
+                  ratioButton={
+                    baseTokenIndex !== idx && (
+                      <Button
+                        type="text"
+                        style={{ color: '#63e0b3' }}
+                        onClick={() => onApplySuggestion(idx)}
+                      >
+                        Apply suggestion
+                      </Button>
+                    )
+                  }
                 />
               </Col>
             )

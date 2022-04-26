@@ -10,6 +10,7 @@ import { PoolCreatingStep } from 'app/constant'
 import { useSelector } from 'react-redux'
 import { AppState } from 'app/model'
 import { useOracles } from 'app/hooks/useOracles'
+import { useMintBalance } from 'app/hooks/useMintBalance'
 
 const LiquidityInfo = ({
   poolAddress,
@@ -28,8 +29,10 @@ const LiquidityInfo = ({
   const [tokenPrice, setTokenPrice] = useState<(CgkData | null)[]>([])
   const [loadingAdd, setLoadingAdd] = useState(false)
   const [loadingClose, setLoadingClose] = useState(false)
+  const [disabledSupply, setDisabledSupply] = useState(true)
   const { tokenProvider } = useMint()
   const { decimalizeMintAmount } = useOracles()
+  const { getMintBalance } = useMintBalance()
 
   const fetchMarketData = useCallback(async () => {
     const tokensPrice = await Promise.all(
@@ -94,6 +97,21 @@ const LiquidityInfo = ({
     return total
   }, [amounts, poolData.reserves, tokenPrice])
 
+  const checkAmountIns = useCallback(async () => {
+    const { mints } = poolData
+    for (let i in amounts) {
+      const { balance } = await getMintBalance(mints[i].toBase58())
+      if (Number(amounts[i]) > balance || Number(amounts[i]) <= 0)
+        return setDisabledSupply(true)
+
+      return setDisabledSupply(false)
+    }
+  }, [amounts, getMintBalance, poolData])
+
+  useEffect(() => {
+    checkAmountIns()
+  }, [checkAmountIns])
+
   return (
     <Row gutter={[16, 16]}>
       <Col span={24}>
@@ -146,7 +164,7 @@ const LiquidityInfo = ({
         <Button
           type="primary"
           onClick={onAddLiquidity}
-          disabled={loadingClose}
+          disabled={disabledSupply || loadingClose}
           loading={loadingAdd}
           block
         >
