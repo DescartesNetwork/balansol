@@ -78,7 +78,6 @@ const LiquidityInfo = ({
   const onClosePool = async () => {
     try {
       setLoadingClose(true)
-      setDisableSupply(true)
       const { txId } = await window.balansol.closePool(poolAddress)
       notifySuccess('Close pool', txId)
       onClose()
@@ -165,7 +164,7 @@ const LiquidityInfo = ({
         <Button
           type="primary"
           onClick={onAddLiquidity}
-          disabled={disableSupply}
+          disabled={disableSupply || loadingClose}
           loading={loadingAdd}
           block
         >

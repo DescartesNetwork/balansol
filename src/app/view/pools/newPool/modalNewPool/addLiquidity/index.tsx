@@ -57,8 +57,8 @@ const AddLiquidity = ({
 
     if (!baseTicket && !appliedTicket) return null
 
-    const cGKBaseTokenInfo = await fetchCGK(baseTicket)
-    const cGKAppliedTokenInfo = await fetchCGK(appliedTicket)
+    const baseTokenCGKData = await fetchCGK(baseTicket)
+    const appliedTokenCGKData = await fetchCGK(appliedTicket)
 
     let newAmounts = [...inputAmounts]
     const baseNormalizedWeight = calcNormalizedWeight(
@@ -69,11 +69,13 @@ const AddLiquidity = ({
       weights,
       weights[index],
     )
+    if (!baseTokenCGKData?.price || appliedTokenCGKData?.price) return null
+
     const suggestedAmount = (
-      (cGKBaseTokenInfo?.price *
+      (baseTokenCGKData.price *
         Number(newAmounts[baseTokenIndex]) *
         baseNormalizedWeight) /
-      (cGKAppliedTokenInfo?.price * appliedNormalizedWeight)
+      (appliedTokenCGKData.price * appliedNormalizedWeight)
     ).toFixed(9)
     newAmounts[index] = String(suggestedAmount)
 
@@ -107,7 +109,7 @@ const AddLiquidity = ({
                     baseTokenIndex !== idx && (
                       <Button
                         type="text"
-                        style={{ color: '#63e0b3', padding: 0 }}
+                        style={{ color: '#63e0b3' }}
                         onClick={() => onApplySuggestion(idx)}
                       >
                         Apply suggestion
