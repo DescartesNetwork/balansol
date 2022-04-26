@@ -52,13 +52,11 @@ const AddLiquidity = ({
     const appliedToken = await tokenProvider.findByAddress(
       mints[index].toBase58(),
     )
-
     const baseTicket = baseToken?.extensions?.coingeckoId
     const appliedTicket = appliedToken?.extensions?.coingeckoId
 
-    if (!baseTicket && !appliedTicket) {
-      return null
-    }
+    if (!baseTicket && !appliedTicket) return null
+
     const cGKBaseTokenInfo = await fetchCGK(baseTicket)
     const cGKAppliedTokenInfo = await fetchCGK(appliedTicket)
 

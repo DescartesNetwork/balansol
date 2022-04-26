@@ -102,9 +102,9 @@ const LiquidityInfo = ({
     const { mints } = poolData
     for (let i in amounts) {
       const { balance } = await getMintBalance(mints[i].toBase58())
-      if (Number(amounts[i]) > balance || Number(amounts[i]) <= 0) {
+      if (Number(amounts[i]) > balance || Number(amounts[i]) <= 0)
         return setDisableSupply(true)
-      }
+
       return setDisableSupply(false)
     }
   }, [amounts, getMintBalance, poolData])
