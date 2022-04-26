@@ -186,6 +186,7 @@ function calcSpotPriceAfterSwap(amount: BN, poolPairData: PoolPairData) {
   const f = Number(
     util.undecimalize(BigInt(swapFee.toString()), GENERAL_DECIMALS),
   )
+  console.log(Bi, Bo, wi, wo, Ai, f, 'ccccccccccc')
   return -(
     (Bi * wo) /
     (Bo * (-1 + f) * (Bi / (Ai + Bi - Ai * f)) ** ((wi + wo) / wo) * wi)
@@ -204,7 +205,7 @@ export const calcPriceImpactSwap = (
   const numAskAmount = Number(
     util.undecimalize(BigInt(askAmount.toString()), decimalOut),
   )
-  const spotPriceAfterSwap = calcSpotPriceAfterSwap(bidAmount, poolPairData)
+  const spotPriceAfterSwap = calcSpotPriceAfterSwap(new BN(0), poolPairData)
   console.log(
     spotPriceAfterSwap,
     numBidAmount,
