@@ -69,7 +69,7 @@ const AddLiquidity = ({
       weights,
       weights[index],
     )
-    if (!baseTokenCGKData?.price || appliedTokenCGKData?.price) return null
+    if (!baseTokenCGKData?.price || !appliedTokenCGKData?.price) return null
 
     const suggestedAmount = (
       (baseTokenCGKData.price *
