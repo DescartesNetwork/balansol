@@ -29,7 +29,7 @@ const LiquidityInfo = ({
   const [tokenPrice, setTokenPrice] = useState<(CgkData | null)[]>([])
   const [loadingAdd, setLoadingAdd] = useState(false)
   const [loadingClose, setLoadingClose] = useState(false)
-  const [disableSupply, setDisableSupply] = useState(true)
+  const [disabledSupply, setDisabledSupply] = useState(true)
   const { tokenProvider } = useMint()
   const { decimalizeMintAmount } = useOracles()
   const { getMintBalance } = useMintBalance()
@@ -102,9 +102,9 @@ const LiquidityInfo = ({
     for (let i in amounts) {
       const { balance } = await getMintBalance(mints[i].toBase58())
       if (Number(amounts[i]) > balance || Number(amounts[i]) <= 0)
-        return setDisableSupply(true)
+        return setDisabledSupply(true)
 
-      return setDisableSupply(false)
+      return setDisabledSupply(false)
     }
   }, [amounts, getMintBalance, poolData])
 
@@ -164,7 +164,7 @@ const LiquidityInfo = ({
         <Button
           type="primary"
           onClick={onAddLiquidity}
-          disabled={disableSupply || loadingClose}
+          disabled={disabledSupply || loadingClose}
           loading={loadingAdd}
           block
         >
