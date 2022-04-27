@@ -73,7 +73,6 @@ export const useAllRouteFromBid = (metaRoutes: MetaRoute[]): Route[] => {
       }
       routes.push(route)
     }
-    console.log(routes, 'toutess')
     return setRoutes(routes)
   }, [
     bidAmount,
