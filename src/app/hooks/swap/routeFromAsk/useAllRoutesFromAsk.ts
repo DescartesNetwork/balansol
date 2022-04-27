@@ -1,11 +1,16 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 
-import { calcInGivenOutSwap, getMintInfo } from 'app/helper/oracles'
+import {
+  calcInGivenOutSwap,
+  calcPriceImpactSwap,
+  getMintInfo,
+} from 'app/helper/oracles'
 import { AppState } from 'app/model'
 import { useOracles } from '../../useOracles'
 import { MetaRoute } from '../useMetaRoutes'
 import { Route, RouteInfo } from '../useRouteSwap'
+import { useMint } from '@senhub/providers'
 
 export const useAllRoutesFromAsk = (metaRoutes: MetaRoute[]) => {
   const {
@@ -14,6 +19,7 @@ export const useAllRoutesFromAsk = (metaRoutes: MetaRoute[]) => {
   } = useSelector((state: AppState) => state)
   const { decimalizeMintAmount } = useOracles()
   const [routes, setRoutes] = useState<Route[]>([])
+  const { getDecimals } = useMint()
 
   const computeRouteInfos = useCallback(async () => {
     const routes = []
@@ -28,6 +34,8 @@ export const useAllRoutesFromAsk = (metaRoutes: MetaRoute[]) => {
         const poolData = pools[pool]
         const bidMintInfo = getMintInfo(poolData, bidMint)
         const askMintInfo = getMintInfo(poolData, askMint)
+        const decimalIn = await getDecimals(bidMint)
+        const decimalOut = await getDecimals(askMint)
 
         if (currentAskAmount.gt(askMintInfo.reserve)) {
           isValidRoute = false
@@ -45,6 +53,23 @@ export const useAllRoutesFromAsk = (metaRoutes: MetaRoute[]) => {
           isValidRoute = false
           break
         }
+
+        const dataForSlippage = {
+          balanceIn: bidMintInfo.reserve,
+          balanceOut: askMintInfo.reserve,
+          weightIn: bidMintInfo.normalizedWeight,
+          weightOut: askMintInfo.normalizedWeight,
+          decimalIn: decimalIn,
+          decimalOut: decimalOut,
+          swapFee: poolData.fee.add(poolData.taxFee),
+        }
+
+        const newPriceImpact = calcPriceImpactSwap(
+          tokenInAmount,
+          currentAskAmount,
+          dataForSlippage,
+          true,
+        )
         route = [
           {
             pool: market.pool,
@@ -52,7 +77,7 @@ export const useAllRoutesFromAsk = (metaRoutes: MetaRoute[]) => {
             askMint,
             bidAmount: tokenInAmount,
             askAmount: currentAskAmount,
-            priceImpact: 0,
+            priceImpact: newPriceImpact,
           },
         ].concat(route)
         currentAskAmount = tokenInAmount
@@ -60,7 +85,14 @@ export const useAllRoutesFromAsk = (metaRoutes: MetaRoute[]) => {
       if (isValidRoute) routes.push(route)
     }
     return setRoutes(routes)
-  }, [askAmount, decimalizeMintAmount, isReverse, metaRoutes, pools])
+  }, [
+    askAmount,
+    decimalizeMintAmount,
+    getDecimals,
+    isReverse,
+    metaRoutes,
+    pools,
+  ])
 
   useEffect(() => {
     computeRouteInfos()
