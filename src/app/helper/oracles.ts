@@ -192,32 +192,6 @@ function calcSpotPriceExactInSwap(amount: BN, poolPairData: PoolPairData) {
   )
 }
 
-const calcSpotPriceExactOutSwap = (amount: BN, poolPairData: PoolPairData) => {
-  const {
-    balanceIn,
-    decimalIn,
-    balanceOut,
-    decimalOut,
-    weightIn,
-    weightOut,
-    swapFee,
-  } = poolPairData
-  const Bi = Number(util.undecimalize(BigInt(balanceIn.toString()), decimalIn))
-  const Bo = Number(
-    util.undecimalize(BigInt(balanceOut.toString()), decimalOut),
-  )
-  const wi = weightIn
-  const wo = weightOut
-  const Ao = Number(util.undecimalize(BigInt(amount.toString()), decimalIn))
-  const f = Number(
-    util.undecimalize(BigInt(swapFee.toString()), GENERAL_DECIMALS),
-  )
-  return -(
-    (Bi * (Bo / (-Ao + Bo)) ** ((wi + wo) / wi) * wo) /
-    (Bo * (-1 + f) * wi)
-  )
-}
-
 export const calcPriceImpactSwap = (
   bidAmount: BN,
   poolPairData: PoolPairData,
@@ -225,7 +199,7 @@ export const calcPriceImpactSwap = (
   const currentSpotPrice = calcSpotPriceExactInSwap(new BN(0), poolPairData)
   const spotPriceAfterSwap = calcSpotPriceExactInSwap(bidAmount, poolPairData)
   if (spotPriceAfterSwap < currentSpotPrice) return 0
-  let impactPrice = 1 - currentSpotPrice / spotPriceAfterSwap
+  let impactPrice = (1 - currentSpotPrice / spotPriceAfterSwap) * 100
   return impactPrice
 }
 
