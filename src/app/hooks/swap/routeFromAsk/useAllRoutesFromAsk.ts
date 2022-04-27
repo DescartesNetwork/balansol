@@ -66,9 +66,7 @@ export const useAllRoutesFromAsk = (metaRoutes: MetaRoute[]) => {
 
         const newPriceImpact = calcPriceImpactSwap(
           tokenInAmount,
-          currentAskAmount,
           dataForSlippage,
-          true,
         )
         route = [
           {
