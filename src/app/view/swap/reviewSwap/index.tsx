@@ -17,7 +17,7 @@ const ReviewSwap = () => {
   const [disable, setDisable] = useState(false)
 
   useEffect(() => {
-    if (!!bidAmount) return setDisable(false)
+    if (!!Number(bidAmount)) return setDisable(false)
     setDisable(true)
   }, [bidAmount])
 
