@@ -27,6 +27,7 @@ export default function Swap() {
         bidMint: askMint,
         bidAmount: askAmount,
         askAmount: bidAmount,
+        isReverse: false,
       }),
     )
   }

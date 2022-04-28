@@ -11,7 +11,7 @@ import { explorer, shortenAddress } from 'shared/util'
 import IonIcon from 'shared/antd/ionicon'
 import { AppState } from 'app/model'
 
-const WalletAddress = ({ poolAddress }: { poolAddress: string }) => {
+const PoolAddressActions = ({ poolAddress }: { poolAddress: string }) => {
   const [copied, setCopied] = useState(false)
   const {
     pools: { [poolAddress]: poolData },
@@ -39,13 +39,15 @@ const WalletAddress = ({ poolAddress }: { poolAddress: string }) => {
           <IonIcon name="person-outline" />
         </Tooltip>
       )}
-      <Typography.Text
-        type="secondary"
-        style={{ cursor: 'pointer' }}
-        onClick={() => window.open(explorer(poolAddress), '_blank')}
-      >
-        {shortenAddress(poolAddress, 3, '...')}
-      </Typography.Text>
+      <Tooltip title={poolAddress}>
+        <Typography.Text
+          type="secondary"
+          style={{ cursor: 'pointer' }}
+          onClick={() => window.open(explorer(poolAddress), '_blank')}
+        >
+          {shortenAddress(poolAddress, 3, '...')}
+        </Typography.Text>
+      </Tooltip>
       <Tooltip title="Copied" visible={copied}>
         <CopyToClipboard text={poolAddress} onCopy={onCopy}>
           <IconButton name="copy-outline" onClick={onCopy} />
@@ -54,4 +56,4 @@ const WalletAddress = ({ poolAddress }: { poolAddress: string }) => {
     </Space>
   )
 }
-export default WalletAddress
+export default PoolAddressActions
