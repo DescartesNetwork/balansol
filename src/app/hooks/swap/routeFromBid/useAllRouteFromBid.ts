@@ -55,11 +55,7 @@ export const useAllRouteFromBid = (metaRoutes: MetaRoute[]): Route[] => {
           swapFee: poolData.fee.add(poolData.taxFee),
         }
 
-        let priceImpact = calcPriceImpactSwap(
-          bidAmountBN,
-          tokenOutAmount,
-          dataForSlippage,
-        )
+        let priceImpact = calcPriceImpactSwap(bidAmountBN, dataForSlippage)
         if (priceImpact < 0) priceImpact = 0
         route.push({
           pool: market.pool,
