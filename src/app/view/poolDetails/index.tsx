@@ -9,10 +9,10 @@ import PoolBalance from './poolBalance'
 import Volume24h from './volume24h'
 import Hero from './hero'
 import Header from './header'
+import PoolNotFound from './poolNotFound'
 
 import { useAppRouter } from 'app/hooks/useAppRouter'
 import { AppState } from 'app/model'
-import { useEffect } from 'react'
 
 const PoolDetails = () => {
   const { getQuery, pushHistory } = useAppRouter()
@@ -24,9 +24,7 @@ const PoolDetails = () => {
     wallet: { address: walletAddress },
   } = useWallet()
 
-  useEffect(() => {
-    if (!poolData) pushHistory(`/?tab=pools`)
-  })
+  if (!poolData) return <PoolNotFound />
 
   const isOwner = walletAddress === poolData?.authority.toBase58()
   if (!poolAddress) return null

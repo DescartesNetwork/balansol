@@ -23,10 +23,10 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   const {
     pools: { [poolAddress]: poolData },
   } = useSelector((state: AppState) => state)
-  const { supply } = useLptSupply(poolData?.mintLpt)
+  const { supply } = useLptSupply(poolData.mintLpt)
 
   const [amounts, setAmounts] = useState<string[]>(
-    new Array(poolData?.mints.length).fill('0'),
+    new Array(poolData.mints.length).fill('0'),
   )
   const [visible, setVisible] = useState(false)
   const [impactPrice, setImpactPrice] = useState(0)
@@ -40,7 +40,6 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   const { getMintBalance } = useMintBalance()
 
   const estimateImpactPriceAndLP = useCallback(async () => {
-    if (!poolData) return
     const { reserves, weights, fee, taxFee, mints } = poolData
     setImpactPrice(0)
 
@@ -126,7 +125,6 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   }
 
   const checkAmountIns = useCallback(async () => {
-    if (!poolData) return
     const { mints } = poolData
     for (let i in amounts) {
       const { balance } = await getMintBalance(mints[i].toBase58())
@@ -171,7 +169,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
         <Row gutter={[0, 24]}>
           <Col span={24}>
             <Row gutter={[24, 8]}>
-              {poolData?.mints.map((mint, index) => {
+              {poolData.mints.map((mint, index) => {
                 let mintAddress: string = mint.toBase58()
                 const normalizedWeight = calcNormalizedWeight(
                   poolData.weights,
