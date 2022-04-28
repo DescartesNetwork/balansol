@@ -35,7 +35,7 @@ const PoolAddressActions = ({ poolAddress }: { poolAddress: string }) => {
         </Tooltip>
       )}
       {poolData.authority.toBase58() === walletAddress && (
-        <Tooltip title="Your pool!">
+        <Tooltip title="Your pool">
           <IonIcon name="person-outline" />
         </Tooltip>
       )}
