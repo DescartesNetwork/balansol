@@ -199,7 +199,7 @@ export const calcPriceImpactSwap = (
   const currentSpotPrice = calcSpotPriceExactInSwap(new BN(0), poolPairData)
   const spotPriceAfterSwap = calcSpotPriceExactInSwap(bidAmount, poolPairData)
   if (spotPriceAfterSwap < currentSpotPrice) return 0
-  let impactPrice = (1 - currentSpotPrice / spotPriceAfterSwap) * 100
+  const impactPrice = (1 - currentSpotPrice / spotPriceAfterSwap) * 100
   return impactPrice
 }
 
