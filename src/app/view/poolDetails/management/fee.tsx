@@ -3,10 +3,11 @@ import { useSelector } from 'react-redux'
 import { BN } from '@project-serum/anchor'
 
 import { Col, Row, Typography, Button } from 'antd'
+import NumericInput from 'shared/antd/numericInput'
+
 import { PRECISION } from 'app/constant'
 import { notifyError, notifySuccess } from 'app/helper'
 import { AppState } from 'app/model'
-import NumericInput from 'shared/antd/numericInput'
 
 const Content = ({
   title,
@@ -38,7 +39,7 @@ const Content = ({
         className="fee-input"
         placeholder="0"
         value={percent}
-        onValue={(value) => onChangeValue(value)}
+        onValue={onChangeValue}
       />
     </Col>
   </Row>
@@ -48,10 +49,11 @@ const Fee = ({ poolAddress }: { poolAddress: string }) => {
   const { pools } = useSelector((state: AppState) => state)
   const poolData = pools[poolAddress]
 
-  const currentFee = Number(poolData.fee) / PRECISION
-  const currentTaxFee = Number(poolData.taxFee) / PRECISION
-  const [fee, setFee] = useState(currentFee || '')
-  const [taxFee, setTaxFee] = useState(currentTaxFee || '')
+  const currentFee = (poolData.fee.toNumber() * 100) / PRECISION
+  const currentTaxFee = (poolData.taxFee.toNumber() * 100) / PRECISION
+
+  const [fee, setFee] = useState<string>(currentFee.toString())
+  const [taxFee, setTaxFee] = useState<string>(currentTaxFee.toString())
 
   const [loading, setLoading] = useState(false)
 
@@ -61,8 +63,8 @@ const Fee = ({ poolAddress }: { poolAddress: string }) => {
       const { updateFee } = window.balansol
       const { txId } = await updateFee(
         poolAddress,
-        new BN(Number(fee) * PRECISION),
-        new BN(Number(taxFee) * PRECISION),
+        new BN((Number(fee) * PRECISION) / 100),
+        new BN((Number(taxFee) * PRECISION) / 100),
       )
       return notifySuccess('Fee', txId)
     } catch (err) {
@@ -79,7 +81,7 @@ const Fee = ({ poolAddress }: { poolAddress: string }) => {
           title="fee"
           percent={fee}
           currentPercent={currentFee}
-          onChangeValue={(value) => setFee(value)}
+          onChangeValue={setFee}
         />
       </Col>
       <Col span={24}>
@@ -87,7 +89,7 @@ const Fee = ({ poolAddress }: { poolAddress: string }) => {
           title="tax"
           percent={taxFee}
           currentPercent={currentTaxFee}
-          onChangeValue={(value) => setTaxFee(value)}
+          onChangeValue={setTaxFee}
         />
       </Col>
       <Col span={24}>
