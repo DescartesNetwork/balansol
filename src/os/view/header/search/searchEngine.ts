@@ -14,8 +14,12 @@ class SearchEngine {
       this.field('name')
       this.field('description')
       this.field('tags')
-      this.field('author:name')
-      this.field('author:email')
+      this.field('author:name', {
+        extractor: (doc: any) => doc?.author?.name || '',
+      })
+      this.field('author:email', {
+        extractor: (doc: any) => doc?.author?.email || '',
+      })
       // Data
       Object.keys(register).forEach((appId: string) => {
         const appManifest = register[appId]
@@ -27,7 +31,9 @@ class SearchEngine {
   search = (keyword: string, limit = 10) => {
     let appIds: string[] = []
     if (!keyword) return []
-    this.index.search(keyword).forEach(({ ref }) => {
+    const fuzzy = keyword + '~1'
+    console.log(fuzzy)
+    this.index.search(fuzzy).forEach(({ ref }) => {
       if (!appIds.includes(ref)) return appIds.push(ref)
     })
     return appIds

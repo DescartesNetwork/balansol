@@ -11,7 +11,7 @@ type SentreNotification = {
 interface Window {
   // Sentre
   sentre: {
-    wallet?: import('@senswap/sen-js').WalletInterface
+    wallet: import('@senswap/sen-js').WalletInterface
     lamports: import('@senswap/sen-js').Lamports
     splt: import('@senswap/sen-js').SPLT
     swap: import('@senswap/sen-js').Swap
@@ -21,7 +21,6 @@ interface Window {
   ipfs?: ReturnType<import('ipfs-core').create>
   // Utility
   notify: ({ type, description, onClick }: SentreNotification) => void
-  goto: (url: string) => void
   // Partner wallets
   coin98: any
   solana: any
