@@ -37,7 +37,7 @@ export default function BidInput() {
       mints={filteredMints}
       mintSelection={
         <MintSelection
-          value={askMint}
+          value={bidMint}
           onChange={(mint) => dispatch(setSwapState({ bidMint: mint }))}
           style={{ background: '#394360' }}
         />
