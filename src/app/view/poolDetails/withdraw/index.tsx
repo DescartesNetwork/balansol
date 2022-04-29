@@ -12,18 +12,17 @@ import WithdrawSingleSide from './singleSide'
 import { AppState } from 'app/model'
 
 const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
-  const {
-    pools: { [poolAddress]: poolData },
-  } = useSelector((state: AppState) => state)
-  const mints = useMemo(
-    () => poolData.mints.map((e) => e.toBase58()),
-    [poolData.mints],
-  )
   const [visible, setVisible] = useState(false)
   const [lptAmount, setLptAmount] = useState('')
+  const { pools } = useSelector((state: AppState) => state)
+  const poolData = pools?.[poolAddress]
+  const mints = useMemo(() => {
+    if (!poolData) return []
+    return poolData.mints.map((e) => e.toBase58())
+  }, [poolData])
   const [selectedMints, setSelectedMints] = useState<string[]>(mints)
 
-  const isSelectedAll = selectedMints.length === poolData.mints.length
+  const isSelectedAll = selectedMints.length === poolData?.mints.length
 
   return (
     <Fragment>
@@ -86,7 +85,7 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
           </Col>
           <Col span={24}>
             <MintInput
-              selectedMint={poolData.mintLpt.toBase58()}
+              selectedMint={poolData?.mintLpt.toBase58()}
               amount={lptAmount}
               onChangeAmount={(amount) => setLptAmount(amount)}
               mintLabel={

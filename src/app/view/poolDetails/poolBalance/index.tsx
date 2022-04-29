@@ -17,6 +17,7 @@ const PoolBalance = ({ poolAddress }: { poolAddress: string }) => {
   const [poolBalances, setPoolBalances] = useState<PoolBalanceData[]>([])
 
   const doughnutChartData = useCallback(async () => {
+    if (!poolData) return
     const { mints, weights } = poolData
     const newData = await Promise.all(
       mints.map(async (value, idx) => {
