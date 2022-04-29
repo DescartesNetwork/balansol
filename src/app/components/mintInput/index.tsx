@@ -22,18 +22,20 @@ export default function MintInput({
   mintAvatar,
   ratioButton,
   unit,
-  force, // validate input with max = balance
+  force, // Validate input with max = balance
+  mintSelection,
 }: {
   amount: string | number
   onChangeAmount?: (val: string, invalid?: boolean) => void
   selectedMint: string
   onSelect?: (mint: string) => void
   mints?: string[]
+  unit?: string
+  force?: boolean
   mintLabel?: ReactNode
   mintAvatar?: ReactNode
   ratioButton?: ReactNode
-  unit?: string
-  force?: boolean
+  mintSelection?: ReactNode
 }) {
   const { balance } = useAccountBalanceByMintAddress(selectedMint)
 
@@ -57,13 +59,17 @@ export default function MintInput({
         <Row justify="space-between">
           {/* Mint select */}
           <Col flex="auto">
-            <Selection
-              selectedMint={selectedMint}
-              onChange={onSelect}
-              mints={mints}
-              mintLabel={mintLabel}
-              mintAvatar={mintAvatar}
-            />
+            {!mintSelection ? (
+              <Selection
+                selectedMint={selectedMint}
+                onChange={onSelect}
+                mints={mints}
+                mintLabel={mintLabel}
+                mintAvatar={mintAvatar}
+              />
+            ) : (
+              mintSelection
+            )}
           </Col>
           {/* Amount input */}
           <Col>

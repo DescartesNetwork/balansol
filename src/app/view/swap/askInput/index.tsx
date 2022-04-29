@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 
 import { Card } from 'antd'
 import MintInput from 'app/components/mintInput'
+import { MintSelection } from 'shared/antd/mint'
 
 import { AppDispatch, AppState } from 'app/model'
 import { setSwapState } from 'app/model/swap.controller'
@@ -35,10 +36,17 @@ export default function AskInput() {
       <MintInput
         amount={askAmount}
         selectedMint={askMint}
-        onSelect={(mint) => dispatch(setSwapState({ askMint: mint })).unwrap()}
         onChangeAmount={onChange}
-        mints={mintsSwap.filter((value) => value !== bidMint)}
         ratioButton={null}
+        mintSelection={
+          <MintSelection
+            value={askMint}
+            onChange={(mint) =>
+              dispatch(setSwapState({ askMint: mint })).unwrap()
+            }
+            style={{ background: '#394360' }}
+          />
+        }
       />
     </Card>
   )
