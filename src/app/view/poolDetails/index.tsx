@@ -24,11 +24,9 @@ const PoolDetails = () => {
     wallet: { address: walletAddress },
   } = useWallet()
 
-  if (!poolData) return <PoolNotFound />
+  if (!poolData || !poolAddress) return <PoolNotFound />
 
-  const isOwner = walletAddress === poolData?.authority.toBase58()
-  if (!poolAddress) return null
-
+  const isOwner = walletAddress === poolData.authority.toBase58()
   return (
     <Row justify="center">
       <Col lg={20} md={24} style={{ maxWidth: 930 }}>
