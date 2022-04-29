@@ -66,7 +66,7 @@ const Fee = ({ poolAddress }: { poolAddress: string }) => {
         new BN((Number(fee) * PRECISION) / 100),
         new BN((Number(taxFee) * PRECISION) / 100),
       )
-      return notifySuccess('Fee', txId)
+      return notifySuccess('Update Fee', txId)
     } catch (err) {
       notifyError(err)
     } finally {
