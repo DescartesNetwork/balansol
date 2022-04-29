@@ -2,8 +2,6 @@ import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import { useWallet } from '@senhub/providers'
 import Balancer, { getAnchorProvider } from '@senswap/balancer'
 
-import { Spin } from 'antd'
-
 import configs from 'app/configs'
 import PoolWatcher from './pool.watcher'
 
@@ -19,9 +17,7 @@ export const AppWatcher: FunctionComponent = (props) => {
     if (!wallet) throw new Error('Login fist')
     // init window balancer
     const anchorProvider = getAnchorProvider(splt.nodeUrl, address, wallet)
-    window.app = {
-      balancer: new Balancer(anchorProvider, configs.sol.balancerAddress),
-    }
+    window.balansol = new Balancer(anchorProvider, configs.sol.balancerAddress)
     setLoading(false)
   }, [address])
 
@@ -30,10 +26,5 @@ export const AppWatcher: FunctionComponent = (props) => {
   }, [watchWallet])
 
   if (loading) return null
-  return (
-    <Spin tip="Loading..." spinning={loading}>
-      {props.children}
-      <PoolWatcher />
-    </Spin>
-  )
+  return <PoolWatcher>{props.children}</PoolWatcher>
 }

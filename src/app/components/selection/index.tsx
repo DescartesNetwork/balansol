@@ -1,65 +1,65 @@
-import { useState, Fragment, useEffect } from 'react'
-import { useHistory, useLocation } from 'react-router-dom'
-import { forceCheck } from '@senswap/react-lazyload'
+import { useState, Fragment, ReactNode } from 'react'
 
-import { Row, Col, Typography, Modal, Space } from 'antd'
+import { Typography, Space } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
 import { MintAvatar, MintSymbol } from 'shared/antd/mint'
-import MintSelection, { SelectionInfo } from './mintSelection'
+import MintSelection from './mintSelection'
 
 import './index.less'
 
 const Selection = ({
-  value,
-  onChange,
+  selectedMint,
+  mints = [],
+  onChange = () => {},
+  mintLabel,
+  mintAvatar,
 }: {
-  value: SelectionInfo
-  onChange: (value: SelectionInfo) => void
+  selectedMint: string
+  mints?: string[]
+  onChange?: (mint: string) => void
+  mintLabel?: ReactNode
+  mintAvatar?: ReactNode
 }) => {
   const [visible, setVisible] = useState(false)
-  const history = useHistory()
-  // const { state } = useLocation<SenLpState>()
-  useEffect(() => {
-    if (visible) setTimeout(forceCheck, 500)
-  }, [visible])
 
-  const onSelection = (selectionInfo: SelectionInfo) => {
-    setVisible(false)
-
-    // Clear state of senlp come to
-    // if (state) history.replace({ ...history.location, state: {} })
-
-    return onChange(selectionInfo)
+  const onSelection = (selectedMint: string) => {
+    if (onChange) onChange(selectedMint)
+    return setVisible(false)
   }
-
-  const mintAddress = value?.mintInfo?.address || ''
 
   return (
     <Fragment>
-      <Space className="mint-select" onClick={() => setVisible(true)}>
-        <MintAvatar mintAddress={mintAddress} />
-        <Typography.Text type="secondary">
-          <MintSymbol mintAddress={mintAddress} />
-        </Typography.Text>
-        <Typography.Text type="secondary">
-          <IonIcon name="chevron-down-outline" />
-        </Typography.Text>
-      </Space>
-      <Modal
-        visible={visible}
-        onCancel={() => setVisible(false)}
-        closeIcon={<IonIcon name="close" />}
-        footer={null}
-        destroyOnClose={true}
-        centered={true}
+      {/* Mint selected */}
+
+      <Space
+        className="mint-select"
+        onClick={() => setVisible(mints.length > 0)}
       >
-        <Row gutter={[16, 16]}>
-          <Col span={24} />
-          <Col span={24}>
-            <MintSelection value={value} onChange={onSelection} />
-          </Col>
-        </Row>
-      </Modal>
+        {mintAvatar || <MintAvatar mintAddress={selectedMint} />}
+        {mintLabel || (
+          <Fragment>
+            <Typography.Text type="secondary">
+              <MintSymbol mintAddress={selectedMint} />
+            </Typography.Text>
+            {mints.length ? (
+              <Typography.Text type="secondary">
+                <IonIcon name="chevron-down-outline" />
+              </Typography.Text>
+            ) : null}
+          </Fragment>
+        )}
+      </Space>
+
+      {/* Modal select tokens */}
+      {visible && (
+        <MintSelection
+          selectedMint={selectedMint}
+          visible={visible}
+          onChange={onSelection}
+          mints={mints}
+          onClose={() => setVisible(false)}
+        />
+      )}
     </Fragment>
   )
 }

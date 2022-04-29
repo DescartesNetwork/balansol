@@ -13,7 +13,7 @@ import {
 } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
 
-import SuccessImg from 'os/static/images/success.png'
+import SuccessImg from 'os/static/images/backup/success.png'
 
 const BackupSuccess = ({
   link,
@@ -82,7 +82,7 @@ const BackupSuccess = ({
         <Col span={24}>
           <CopyToClipboard text={link} onCopy={onCopy}>
             <Button type="primary" onClick={onClose}>
-              Copy and Close
+              {'Copy & Close'}
             </Button>
           </CopyToClipboard>
         </Col>

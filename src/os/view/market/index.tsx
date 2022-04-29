@@ -4,18 +4,17 @@ import { useLocation } from 'react-router-dom'
 import { Row, Col } from 'antd'
 import BannerTop from './bannerTop'
 import BannerBottom from './bannerBottom'
-import SearchResult from './searchResults'
 import AppCategorySeeAll from './appCategory/seeAll'
 import AppCategorySlice from './appCategory/slice'
 
 import { useRootSelector, RootState } from 'os/store'
+import AllApps from './allApps'
 
-const CATEGORIES = ['dapps', 'solana']
+const CATEGORIES = ['utility', 'sentre']
 
 const Market = () => {
   const { search } = useLocation()
   const {
-    search: { value },
     page: { register },
   } = useRootSelector((state: RootState) => state)
 
@@ -29,10 +28,7 @@ const Market = () => {
     return CATEGORIES.filter((category) => tags.includes(category))
   }, [register])
 
-  const searchLocation = useMemo(() => new URLSearchParams(search), [search])
-  const category = searchLocation.get('category')
-
-  if (value) return <SearchResult value={value} />
+  const category = new URLSearchParams(search).get('category')
   if (category) return <AppCategorySeeAll category={category} />
   return (
     <Row gutter={[16, 48]} justify="center">
@@ -47,7 +43,7 @@ const Market = () => {
             </Col>
           ))}
           <Col span={24}>
-            <AppCategorySlice category="others" />
+            <AllApps />
           </Col>
           <Col span={24}>
             <BannerBottom />

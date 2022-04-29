@@ -8,6 +8,7 @@ import IonIcon from 'shared/antd/ionicon'
 const DEFAULT_AVATARS: Array<string | undefined> = [undefined]
 
 export type MintAvatarProps = {
+  key?: string
   mintAddress: string
   size?: number
   icon?: ReactNode
@@ -23,6 +24,7 @@ export type MintAvatarProps = {
  * @returns name
  */
 const MintAvatar = ({
+  key,
   mintAddress,
   size = 24,
   icon = <IonIcon name="diamond-outline" />,
@@ -45,7 +47,7 @@ const MintAvatar = ({
   const deriveAvatars = useCallback(async () => {
     if (!account.isAddress(mintAddress)) return setAvatars(DEFAULT_AVATARS)
     // LP mint
-    const poolData = Object.values(pools).find(
+    const poolData = Object.values(pools || {}).find(
       ({ mint_lpt }) => mint_lpt === mintAddress,
     )
     if (poolData) {

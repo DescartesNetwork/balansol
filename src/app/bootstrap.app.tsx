@@ -1,11 +1,20 @@
 import { Provider } from 'react-redux'
-import { WalletProvider, UIProvider } from '@senhub/providers'
+import {
+  WalletProvider,
+  UIProvider,
+  MintProvider,
+  AccountProvider,
+  PoolProvider,
+} from '@senhub/providers'
 
-import PageView from 'app/page'
-import WidgetView from 'app/widget'
+import PageView from 'app/view'
 
 import model from 'app/model'
 import configs from 'app/configs'
+
+import 'app/static/styles/index.less'
+import 'app/static/styles/light.less'
+import 'app/static/styles/dark.less'
 
 const {
   manifest: { appId },
@@ -13,27 +22,18 @@ const {
 
 export const Page = () => {
   return (
-    <UIProvider appId={appId} antd>
+    <UIProvider appId={appId} antd={{ prefixCls: appId }}>
       <WalletProvider>
-        <Provider store={model}>
-          <PageView />
-        </Provider>
+        <AccountProvider>
+          <MintProvider>
+            <PoolProvider>
+              <Provider store={model}>
+                <PageView />
+              </Provider>
+            </PoolProvider>
+          </MintProvider>
+        </AccountProvider>
       </WalletProvider>
-    </UIProvider>
-  )
-}
-
-export const widgetConfig: WidgetConfig = {
-  size: 'small',
-  type: 'solid',
-}
-
-export const Widget = () => {
-  return (
-    <UIProvider appId={appId} antd>
-      <Provider store={model}>
-        <WidgetView />
-      </Provider>
     </UIProvider>
   )
 }

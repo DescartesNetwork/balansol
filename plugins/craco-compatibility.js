@@ -25,20 +25,13 @@ const overrideWebpackConfig = ({ context, webpackConfig, pluginOptions }) => {
     crypto: require.resolve('crypto-browserify'),
     https: require.resolve('https-browserify'),
     path: require.resolve('path-browserify'),
+    url: require.resolve('url/'),
     fs: false,
   }
   // Fix unrecognized change / caching problem
   webpackConfig.cache.buildDependencies.config.push(
     path.join(context.paths.appPath, './craco.config.js'),
   )
-  // Fix "fully specified"
-  // https://github.com/webpack/webpack/issues/11467#issuecomment-808618999/
-  webpackConfig.module.rules.push({
-    test: /\.m?js/,
-    resolve: {
-      fullySpecified: false,
-    },
-  })
   return webpackConfig
 }
 

@@ -1,0 +1,53 @@
+.balansol-table {
+  background-color: transparent !important;
+}
+
+.balansol-table-thead {
+  & > tr > th {
+    background: #263257 !important;
+    border-bottom: none !important;
+    &::before {
+      display: none;
+    }
+  }
+  & > tr:first-child > th:first-child {
+    border-radius: 8px 0 0 8px;
+  }
+  & > tr:last-child > th:last-child {
+    border-radius: 0 8px 8px 0;
+  }
+  th {
+    font-size: 12px;
+    line-height: 20px;
+    font-weight: 400 !important;
+    color: #7a7b85 !important;
+  }
+}
+.balansol-table-tbody {
+  .balansol-table-placeholder {
+    .balansol-table-cell {
+      background: unset !important;
+    }
+  }
+  & > tr > td {
+    border-bottom: none !important;
+    .action-icon {
+      font-size: 24px;
+    }
+  }
+  & > tr.balansol-table-row:hover > td {
+    background-color: unset !important;
+  }
+  .even-row {
+    background-color: transparent !important;
+  }
+  .odd-row {
+    background-color: #263257 !important;
+  }
+  & > tr > td:first-child {
+    border-radius: 8px 0 0 8px;
+  }
+  & > tr > td:last-child {
+    border-radius: 0 8px 8px 0;
+  }
+}

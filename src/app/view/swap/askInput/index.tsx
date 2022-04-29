@@ -1,0 +1,45 @@
+import { useDispatch, useSelector } from 'react-redux'
+import { useEffect } from 'react'
+
+import { Card } from 'antd'
+import MintInput from 'app/components/mintInput'
+
+import { AppDispatch, AppState } from 'app/model'
+import { setSwapState } from 'app/model/swap.controller'
+import { useMintsCanSwap } from 'app/hooks/swap/useMintsCanSwap'
+
+export default function AskInput() {
+  const {
+    swap: { askMint, bidMint, askAmount },
+  } = useSelector((state: AppState) => state)
+  const dispatch = useDispatch<AppDispatch>()
+  const mintsSwap = useMintsCanSwap()
+
+  useEffect(() => {
+    if (askMint && askMint !== bidMint) return
+    const newMintSwap = mintsSwap.filter((value) => value !== bidMint)
+    dispatch(setSwapState({ askMint: newMintSwap?.[0] || '' })).unwrap()
+  }, [askMint, bidMint, dispatch, mintsSwap])
+
+  const onChange = async (askAmount: string) => {
+    dispatch(
+      setSwapState({
+        askAmount,
+        isReverse: true,
+      }),
+    ).unwrap()
+  }
+
+  return (
+    <Card bordered={false} className="card-swap" bodyStyle={{ padding: 0 }}>
+      <MintInput
+        amount={askAmount}
+        selectedMint={askMint}
+        onSelect={(mint) => dispatch(setSwapState({ askMint: mint })).unwrap()}
+        onChangeAmount={onChange}
+        mints={mintsSwap.filter((value) => value !== bidMint)}
+        ratioButton={null}
+      />
+    </Card>
+  )
+}
