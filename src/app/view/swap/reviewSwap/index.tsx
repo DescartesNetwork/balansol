@@ -13,7 +13,7 @@ const ReviewSwap = () => {
     swap: { bidAmount },
   } = useSelector((state: AppState) => state)
 
-  const [visible, setVisivle] = useState(false)
+  const [visible, setVisible] = useState(false)
   const [disable, setDisable] = useState(false)
 
   useEffect(() => {
@@ -26,7 +26,7 @@ const ReviewSwap = () => {
       <Col span={24}>
         <Button
           type="primary"
-          onClick={() => setVisivle(true)}
+          onClick={() => setVisible(true)}
           disabled={disable}
           style={{
             borderRadius: 40,
@@ -37,7 +37,7 @@ const ReviewSwap = () => {
           Review
         </Button>
       </Col>
-      <ConfirmSwap visible={visible} onCancel={() => setVisivle(false)} />
+      <ConfirmSwap visible={visible} onCancel={() => setVisible(false)} />
     </Row>
   )
 }

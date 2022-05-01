@@ -9,6 +9,7 @@ import PoolBalance from './poolBalance'
 import Volume24h from './volume24h'
 import Hero from './hero'
 import Header from './header'
+import PoolNotFound from './poolNotFound'
 
 import { useAppRouter } from 'app/hooks/useAppRouter'
 import { AppState } from 'app/model'
@@ -23,9 +24,9 @@ const PoolDetails = () => {
     wallet: { address: walletAddress },
   } = useWallet()
 
-  const isOwner = walletAddress === poolData?.authority.toBase58()
-  if (!poolAddress) return null
+  if (!poolData || !poolAddress) return <PoolNotFound />
 
+  const isOwner = walletAddress === poolData.authority.toBase58()
   return (
     <Row justify="center">
       <Col lg={20} md={24} style={{ maxWidth: 930 }}>

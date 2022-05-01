@@ -8,6 +8,7 @@ export const useLptSupply = (mintLpt: Address) => {
   const { getMint } = useMint()
 
   const fetchLptSupply = useCallback(async () => {
+    if (!mintLpt) return setSupply(new BN(0))
     let address = new web3.PublicKey(mintLpt).toString()
     try {
       const supply = await getMint({ address }).then((data) =>
