@@ -34,8 +34,9 @@ const buildOptions = (data: PoolBalanceData[]) => {
         avoidLabelOverlap: false,
         top: 0,
         label: {
-          show: false,
-          position: 'center',
+          show: true,
+          position: 'inside',
+          formatter: '{c}%',
         },
         labelLine: {
           show: true,
