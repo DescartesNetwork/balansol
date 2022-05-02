@@ -119,7 +119,11 @@ export default function MintInput({
               <Space>
                 {PROPORTIONS.map((val) => {
                   const minValue = (balance * val) / 100
-                  const isActive = balance && Number(amount) >= minValue
+                  const isActive =
+                    balance &&
+                    Number(amount) >= minValue &&
+                    Number(amount) <= balance
+
                   return (
                     <Space size={4} direction="vertical" key={val}>
                       <Radio.Button
