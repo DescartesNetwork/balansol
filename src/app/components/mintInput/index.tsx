@@ -121,8 +121,8 @@ export default function MintInput({
                   const minValue = (balance * val) / 100
                   const isActive =
                     balance &&
-                    Number(amount) >= minValue &&
-                    Number(amount) <= balance
+                    (Number(amount).toFixed(4) === minValue.toFixed(4) ||
+                      Number(amount).toFixed(4) === balance.toFixed(4))
 
                   return (
                     <Space size={4} direction="vertical" key={val}>
