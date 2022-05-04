@@ -4,7 +4,6 @@ import { useWallet } from '@senhub/providers'
 import { PoolState } from '@senswap/balancer'
 
 import { Space, Tooltip, Typography } from 'antd'
-import IconButton from 'os/view/actionCenter/applications/walletIntro/iconButton'
 import CopyToClipboard from 'react-copy-to-clipboard'
 
 import { explorer, shortenAddress } from 'shared/util'
@@ -50,7 +49,9 @@ const PoolAddressActions = ({ poolAddress }: { poolAddress: string }) => {
       </Tooltip>
       <Tooltip title="Copied" visible={copied}>
         <CopyToClipboard text={poolAddress} onCopy={onCopy}>
-          <IconButton name="copy-outline" onClick={onCopy} />
+          <span onClick={onCopy} style={{ cursor: 'pointer' }}>
+            <IonIcon name="copy-outline" />
+          </span>
         </CopyToClipboard>
       </Tooltip>
     </Space>
