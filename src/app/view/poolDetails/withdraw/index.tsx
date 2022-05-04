@@ -93,6 +93,7 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
               }
               mintAvatar={<PoolAvatar poolAddress={poolAddress} />}
               unit="LP"
+              force
             />
           </Col>
           {isSelectedAll ? (
