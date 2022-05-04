@@ -2,7 +2,7 @@ import { Fragment, useCallback, useEffect } from 'react'
 import { Route, Switch } from 'react-router-dom'
 import { useUI } from '@senhub/providers'
 
-import { Row, Col, Radio, Tabs } from 'antd'
+import { Row, Col, Tabs, Segmented } from 'antd'
 import PoolDetails from './poolDetails'
 import Pools from './pools'
 import Swap from './swap'
@@ -35,21 +35,14 @@ const SwapAndPools = () => {
     <Fragment>
       <Row gutter={[24, 24]} justify="center" style={{ paddingBottom: 12 }}>
         <Col>
-          <Radio.Group
-            onChange={(val) => onChange(val.target.value)}
-            className="pool-option"
+          <Segmented
+            options={Object.keys(HOMEPAGE_TABS).map((key) => {
+              return { label: key, value: HOMEPAGE_TABS[key] }
+            })}
             value={selectedTab}
-          >
-            {Object.keys(HOMEPAGE_TABS).map((key) => (
-              <Radio.Button
-                style={{ minWidth: 90 }}
-                value={HOMEPAGE_TABS[key]}
-                key={key}
-              >
-                {key}
-              </Radio.Button>
-            ))}
-          </Radio.Group>
+            onChange={(val) => onChange(val.toString())}
+            block
+          />
         </Col>
         <Col span={24}>
           <Tabs activeKey={selectedTab} centered className="swap-tab">

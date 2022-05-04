@@ -22,18 +22,20 @@ export default function MintInput({
   mintAvatar,
   ratioButton,
   unit,
-  force, // validate input with max = balance
+  force, // Validate input with max = balance
+  mintSelection,
 }: {
   amount: string | number
   onChangeAmount?: (val: string, invalid?: boolean) => void
   selectedMint: string
   onSelect?: (mint: string) => void
   mints?: string[]
+  unit?: string
+  force?: boolean
   mintLabel?: ReactNode
   mintAvatar?: ReactNode
   ratioButton?: ReactNode
-  unit?: string
-  force?: boolean
+  mintSelection?: ReactNode
 }) {
   const { balance } = useAccountBalanceByMintAddress(selectedMint)
 
@@ -57,13 +59,17 @@ export default function MintInput({
         <Row justify="space-between">
           {/* Mint select */}
           <Col flex="auto">
-            <Selection
-              selectedMint={selectedMint}
-              onChange={onSelect}
-              mints={mints}
-              mintLabel={mintLabel}
-              mintAvatar={mintAvatar}
-            />
+            {!mintSelection ? (
+              <Selection
+                selectedMint={selectedMint}
+                onChange={onSelect}
+                mints={mints}
+                mintLabel={mintLabel}
+                mintAvatar={mintAvatar}
+              />
+            ) : (
+              mintSelection
+            )}
           </Col>
           {/* Amount input */}
           <Col>
@@ -79,7 +85,7 @@ export default function MintInput({
               value={amount}
               max={force ? balance : undefined}
               onValue={onInput}
-              disabled={!onChangeAmount}
+              disabled={!onChangeAmount || (force && !balance)}
             />
           </Col>
         </Row>
@@ -113,7 +119,9 @@ export default function MintInput({
               <Space>
                 {PROPORTIONS.map((val) => {
                   const minValue = (balance * val) / 100
-                  const isActive = balance && Number(amount) >= minValue
+                  const isActive =
+                    balance && Number(amount).toFixed(4) === minValue.toFixed(4)
+
                   return (
                     <Space size={4} direction="vertical" key={val}>
                       <Radio.Button
