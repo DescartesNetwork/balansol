@@ -10,7 +10,9 @@ import { explorer, shortenAddress } from 'shared/util'
 import IonIcon from 'shared/antd/ionicon'
 import { AppState } from 'app/model'
 
-const PoolAddressActions = ({ poolAddress }: { poolAddress: string }) => {
+export type PoolAddressActionsProps = { poolAddress: string }
+
+const PoolAddressActions = ({ poolAddress }: PoolAddressActionsProps) => {
   const [copied, setCopied] = useState(false)
   const {
     pools: { [poolAddress]: poolData },
@@ -22,9 +24,7 @@ const PoolAddressActions = ({ poolAddress }: { poolAddress: string }) => {
 
   const onCopy = async () => {
     setCopied(true)
-    setTimeout(() => {
-      setCopied(false)
-    }, 1500)
+    setTimeout(() => setCopied(false), 1500)
   }
   return (
     <Space size={10}>

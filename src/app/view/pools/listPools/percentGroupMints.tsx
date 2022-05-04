@@ -8,7 +8,9 @@ import { AppState } from 'app/model'
 import { calcNormalizedWeight } from 'app/helper/oracles'
 import { numeric } from 'shared/util'
 
-const PercentGroupMints = ({ poolAddress }: { poolAddress: string }) => {
+export type PercentGroupMintsProps = { poolAddress: string }
+
+const PercentGroupMints = ({ poolAddress }: PercentGroupMintsProps) => {
   const {
     pools: { [poolAddress]: poolData },
   } = useSelector((state: AppState) => state)
@@ -31,7 +33,7 @@ const PercentGroupMints = ({ poolAddress }: { poolAddress: string }) => {
           }`
         }),
       )
-      setPoolSymbol(poolSymbols)
+      return setPoolSymbol(poolSymbols)
     })()
   }, [poolData.mints, poolData.weights, tokenProvider])
 

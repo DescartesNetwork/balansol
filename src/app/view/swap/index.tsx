@@ -13,7 +13,7 @@ import { AppState } from 'app/model'
 
 import './index.less'
 
-export default function Swap() {
+const Swap = () => {
   const dispatch = useDispatch()
 
   const {
@@ -76,3 +76,5 @@ export default function Swap() {
     </Row>
   )
 }
+
+export default Swap

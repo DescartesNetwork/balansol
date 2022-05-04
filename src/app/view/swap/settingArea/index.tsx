@@ -5,7 +5,7 @@ import IonIcon from 'shared/antd/ionicon'
 import PoweredBySentre from './poweredBySentre'
 import Setting from './setting'
 
-export default function SettingArea() {
+const SettingArea = () => {
   return (
     <Space>
       <PoweredBySentre />
@@ -31,3 +31,5 @@ export default function SettingArea() {
     </Space>
   )
 }
+
+export default SettingArea

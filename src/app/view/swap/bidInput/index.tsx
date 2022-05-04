@@ -8,7 +8,7 @@ import { AppDispatch, AppState } from 'app/model'
 import { setSwapState } from 'app/model/swap.controller'
 import { useMintsCanSwap } from 'app/hooks/swap/useMintsCanSwap'
 
-export default function BidInput() {
+const BidInput = () => {
   const {
     swap: { bidAmount, bidMint, askMint },
   } = useSelector((state: AppState) => state)
@@ -45,3 +45,5 @@ export default function BidInput() {
     />
   )
 }
+
+export default BidInput
