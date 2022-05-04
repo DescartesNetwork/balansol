@@ -2,7 +2,8 @@ import { useCallback, useEffect } from 'react'
 import { Route, Switch } from 'react-router-dom'
 import { useUI } from '@senhub/providers'
 
-import { Row, Col, Tabs, Segmented } from 'antd'
+// import { Row, Col, Tabs, Segmented } from 'antd'
+import { Row, Col, Tabs } from 'antd'
 import PoolDetails from './poolDetails'
 import Pools from './pools'
 import Swap from './swap'
@@ -33,7 +34,7 @@ const SwapAndPools = () => {
 
   return (
     <Row gutter={[24, 24]} justify="center" style={{ paddingBottom: 12 }}>
-      <Col>
+      {/* <Col>
         <Segmented
           options={Object.keys(HOMEPAGE_TABS).map((key) => {
             return { label: key, value: HOMEPAGE_TABS[key] }
@@ -42,7 +43,7 @@ const SwapAndPools = () => {
           onChange={(val) => onChange(val.toString())}
           block
         />
-      </Col>
+      </Col> */}
       <Col span={24}>
         <Tabs activeKey={selectedTab} centered className="swap-tab">
           <Tabs.TabPane key={HOMEPAGE_TABS.Swap}>
