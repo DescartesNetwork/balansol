@@ -9,19 +9,21 @@ import { useAccount, useMint } from '@senhub/providers'
 import { AppState } from 'app/model'
 import { MintSetup } from '../index'
 
+export type TokenSetupProps = {
+  tokenList: MintSetup[]
+  mintSetup: MintSetup
+  onChangeTokenInfo: (value: MintSetup, index: number) => void
+  onRemoveToken: (index: number) => void
+  id: number
+}
+
 const TokenSetup = ({
   tokenList,
   mintSetup,
   onChangeTokenInfo,
   onRemoveToken,
   id,
-}: {
-  tokenList: MintSetup[]
-  mintSetup: MintSetup
-  onChangeTokenInfo: (value: MintSetup, index: number) => void
-  onRemoveToken: (index: number) => void
-  id: number
-}) => {
+}: TokenSetupProps) => {
   const { pools } = useSelector((state: AppState) => state)
   const [sourceMint, setSourceMint] = useState<string[]>([])
   const { accounts } = useAccount()

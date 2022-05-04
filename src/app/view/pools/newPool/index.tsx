@@ -21,7 +21,7 @@ const NewPool = () => {
         style={{ borderRadius: 40 }}
         block
       >
-        New pool
+        New Pool
       </Button>
       <Modal
         title={<Typography.Title level={4}>New Pool</Typography.Title>}

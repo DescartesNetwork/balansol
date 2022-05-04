@@ -3,17 +3,19 @@ import IonIcon from 'shared/antd/ionicon'
 import NumericInput from 'shared/antd/numericInput'
 import { MintSetup } from '../index'
 
-export default function WeightControl({
-  tokenInfo,
-  onChangeWeight,
-  onChangeLock,
-  onRemoveToken,
-}: {
+export type WeightControlProps = {
   tokenInfo: MintSetup
   onChangeWeight: (weight: string) => void
   onChangeLock: (isLocked: boolean) => void
   onRemoveToken: () => void
-}) {
+}
+
+const WeightControl = ({
+  tokenInfo,
+  onChangeWeight,
+  onChangeLock,
+  onRemoveToken,
+}: WeightControlProps) => {
   const { weight, isLocked } = tokenInfo
 
   return (
@@ -51,3 +53,5 @@ export default function WeightControl({
     </Space>
   )
 }
+
+export default WeightControl

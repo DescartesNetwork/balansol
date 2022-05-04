@@ -12,19 +12,18 @@ import { useOracles } from 'app/hooks/useOracles'
 import { getMintInfo } from 'app/helper/oracles'
 import './index.less'
 
-type PoolInfo = {
+export type PoolInfo = {
   token: MintSetup
   amount: number
   value: number
 }
 
-const ConfirmPoolInfo = ({
-  onConfirm,
-  poolAddress,
-}: {
+export type ConfirmPoolInfoProps = {
   onConfirm: () => void
   poolAddress: string
-}) => {
+}
+
+const ConfirmPoolInfo = ({ onConfirm, poolAddress }: ConfirmPoolInfoProps) => {
   const [poolInfo, setPoolInfo] = useState<PoolInfo[]>([])
   const [poolTotalValue, setPoolTotalValue] = useState(0)
 

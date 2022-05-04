@@ -20,11 +20,11 @@ const DEFAULT_EMPTY_TOKEN = {
   isLocked: false,
 }
 
-const ListTokenSetup = ({
-  setCurrentStep,
-}: {
+export type ListTokenSetupProps = {
   setCurrentStep: (step: PoolCreatingStep) => void
-}) => {
+}
+
+const ListTokenSetup = ({ setCurrentStep }: ListTokenSetupProps) => {
   const [listMintSetting, setListMintSetting] = useState<MintSetup[]>([])
   const [indexJustUpdated, setIndexJustUpdated] = useState(-1)
   const [loading, setLoading] = useState(false)

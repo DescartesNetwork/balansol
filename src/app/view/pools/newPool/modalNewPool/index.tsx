@@ -19,7 +19,9 @@ export type MintSetup = {
   isLocked: boolean
 }
 
-const ModalNewPool = ({ onClose }: { onClose: () => void }) => {
+export type ModalNewPoolProps = { onClose: () => void }
+
+const ModalNewPool = ({ onClose = () => {} }: ModalNewPoolProps) => {
   const { pools } = useSelector((state: AppState) => state)
   const [currentStep, setCurrentStep] = useState(PoolCreatingStep.setupToken)
   const [poolAddress, setPoolAddress] = useState('')
