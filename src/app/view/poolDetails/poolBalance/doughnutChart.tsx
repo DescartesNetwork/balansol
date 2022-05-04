@@ -33,6 +33,7 @@ const buildOptions = (data: PoolBalanceData[]) => {
         radius: ['40%', '70%'],
         avoidLabelOverlap: false,
         top: 0,
+        bottom: 0,
         label: {
           show: true,
           position: 'inside',
@@ -41,7 +42,6 @@ const buildOptions = (data: PoolBalanceData[]) => {
         labelLine: {
           show: true,
         },
-        bottom: 0,
         data: data.map((value) => {
           return {
             name: value.symbol,

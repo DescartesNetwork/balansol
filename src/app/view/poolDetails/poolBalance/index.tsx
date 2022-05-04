@@ -41,7 +41,7 @@ const PoolBalance = ({ poolAddress }: { poolAddress: string }) => {
 
   return (
     <Card className="chart-card">
-      <Row gutter={[24, 24]}>
+      <Row>
         <Col span={24}>
           <Typography.Title level={4}>Pool balance</Typography.Title>
         </Col>
