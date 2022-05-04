@@ -85,7 +85,7 @@ export default function MintInput({
               value={amount}
               max={force ? balance : undefined}
               onValue={onInput}
-              disabled={!onChangeAmount}
+              disabled={!onChangeAmount || (force && !balance)}
             />
           </Col>
         </Row>
