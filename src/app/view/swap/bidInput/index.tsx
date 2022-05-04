@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import MintInput from 'app/components/mintInput'
+import { MintSelection } from 'shared/antd/mint'
 
 import { AppDispatch, AppState } from 'app/model'
 import { setSwapState } from 'app/model/swap.controller'
@@ -32,9 +33,15 @@ export default function BidInput() {
     <MintInput
       amount={bidAmount}
       selectedMint={bidMint}
-      onSelect={(mint) => dispatch(setSwapState({ bidMint: mint }))}
       onChangeAmount={onChange}
       mints={filteredMints}
+      mintSelection={
+        <MintSelection
+          value={bidMint}
+          onChange={(mint) => dispatch(setSwapState({ bidMint: mint }))}
+          style={{ background: '#394360' }}
+        />
+      }
     />
   )
 }

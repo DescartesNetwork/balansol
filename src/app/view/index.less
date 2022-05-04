@@ -1,39 +1,28 @@
 #balansol {
-  .pool-option {
+  .balansol-segmented {
     display: flex !important;
     justify-content: center !important;
     background: #081438 !important;
-    max-width: fit-content !important;
     padding: 4px !important;
     border-radius: 30px !important;
-    .balansol-radio-button-wrapper {
-      border: none !important;
-      color: #a6a7ad !important;
-      padding: 4px 20px !important;
-      display: flex !important;
-      align-items: center !important;
-      background: transparent !important;
-      justify-content: center;
-      &::before {
-        display: none !important;
-      }
-
-      &.balansol-radio-button-wrapper-checked {
-        background: #fff !important;
-        border-radius: 30px !important;
-        font-weight: 700 !important;
-        color: #e9e9eb !important;
-        box-shadow: unset !important;
-        background: #212c4c !important;
-
-        &.balansol-radio-button-wrapper-disabled {
-          background-color: #212c4c !important;
-        }
-      }
-
-      &.balansol-radio-button-wrapper-disabled {
-        background-color: transparent !important;
-      }
+    box-shadow: none !important;
+    .balansol-segmented-item {
+      border-radius: 30px !important;
+    }
+    .balansol-segmented-item-selected {
+      border-radius: 30px !important;
+      color: #e9e9eb !important;
+      box-shadow: unset !important;
+      background: #212c4c !important;
+      font-weight: 700 !important;
+    }
+    .balansol-segmented-item-label {
+      padding: 2px 11px !important;
+      min-width: 90px;
+    }
+    .balansol-segmented-thumb-motion-appear {
+      border-radius: 30px !important;
+      background: #212c4c !important;
     }
   }
 }
