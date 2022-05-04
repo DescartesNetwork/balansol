@@ -120,9 +120,7 @@ export default function MintInput({
                 {PROPORTIONS.map((val) => {
                   const minValue = (balance * val) / 100
                   const isActive =
-                    balance &&
-                    (Number(amount).toFixed(4) === minValue.toFixed(4) ||
-                      Number(amount).toFixed(4) === balance.toFixed(4))
+                    balance && Number(amount).toFixed(4) === minValue.toFixed(4)
 
                   return (
                     <Space size={4} direction="vertical" key={val}>
