@@ -9,7 +9,7 @@ const {
 const APP_ROUTE = `/app/${appId}`
 
 export const useAppRouter = () => {
-  const { search } = useLocation()
+  const { search, pathname } = useLocation()
   const history = useHistory()
 
   const query = useMemo(() => {
@@ -23,5 +23,5 @@ export const useAppRouter = () => {
     [history],
   )
 
-  return { getQuery, pushHistory, appRoute: APP_ROUTE }
+  return { getQuery, pushHistory, appRoute: APP_ROUTE, pathname }
 }

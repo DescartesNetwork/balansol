@@ -40,7 +40,7 @@ const PoolDetails = () => {
             <Button
               type="text"
               icon={<IonIcon name="arrow-back-outline" />}
-              onClick={() => pushHistory(`/?tab=pools`)}
+              onClick={() => pushHistory(`/pools`)}
               style={{ margin: -12 }}
             >
               Back
