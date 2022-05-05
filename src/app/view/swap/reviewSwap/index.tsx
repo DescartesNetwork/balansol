@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import { Button, Col, Row } from 'antd'
@@ -14,12 +14,6 @@ const ReviewSwap = () => {
   } = useSelector((state: AppState) => state)
 
   const [visible, setVisible] = useState(false)
-  const [disable, setDisable] = useState(true)
-
-  useEffect(() => {
-    if (!!Number(bidAmount)) return setDisable(false)
-    setDisable(true)
-  }, [bidAmount])
 
   return (
     <Row gutter={[24, 24]}>
@@ -27,7 +21,7 @@ const ReviewSwap = () => {
         <Button
           type="primary"
           onClick={() => setVisible(true)}
-          disabled={disable}
+          disabled={!Number(bidAmount)}
           style={{
             borderRadius: 40,
             borderColor: 'transparent',

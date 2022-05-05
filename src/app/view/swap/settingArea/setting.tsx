@@ -42,7 +42,7 @@ const Setting = () => {
                 }}
                 key={value}
               >
-                {value === 100 ? 'Freely' : `${value} %`}
+                {value === 100 ? 'Freely' : `${value}%`}
               </Button>
             )
           })}

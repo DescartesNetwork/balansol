@@ -24,7 +24,7 @@ export const COLUMNS_CONFIG = [
     render: (token: MintSetup) => {
       return (
         <Typography.Text style={{ fontWeight: 700 }}>
-          {Number(token.weight)} %
+          {Number(token.weight)}%
         </Typography.Text>
       )
     },
