@@ -1,4 +1,10 @@
-import { FunctionComponent, useCallback, useEffect, useState } from 'react'
+import {
+  Fragment,
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react'
 import { useWallet } from '@senhub/providers'
 import Balancer, { getAnchorProvider } from '@senswap/balancer'
 
@@ -25,6 +31,6 @@ export const AppWatcher: FunctionComponent = (props) => {
     watchWallet()
   }, [watchWallet])
 
-  if (loading) return null
+  if (loading) return <Fragment />
   return <PoolWatcher>{props.children}</PoolWatcher>
 }

@@ -12,17 +12,19 @@ import { AppState } from 'app/model'
 import { useOracles } from 'app/hooks/useOracles'
 import { useMintBalance } from 'app/hooks/useMintBalance'
 
+export type LiquidityInfoProps = {
+  poolAddress: string
+  setCurrentStep: (step: PoolCreatingStep) => void
+  amounts: string[]
+  onClose?: () => void
+}
+
 const LiquidityInfo = ({
   poolAddress,
   setCurrentStep,
   amounts,
   onClose = () => {},
-}: {
-  poolAddress: string
-  setCurrentStep: (step: PoolCreatingStep) => void
-  amounts: string[]
-  onClose?: () => void
-}) => {
+}: LiquidityInfoProps) => {
   const {
     pools: { [poolAddress]: poolData },
   } = useSelector((state: AppState) => state)

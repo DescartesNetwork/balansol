@@ -9,7 +9,7 @@ import { AppDispatch, AppState } from 'app/model'
 import { setSwapState } from 'app/model/swap.controller'
 import { useMintsCanSwap } from 'app/hooks/swap/useMintsCanSwap'
 
-export default function AskInput() {
+const AskInput = () => {
   const {
     swap: { askMint, bidMint, askAmount },
   } = useSelector((state: AppState) => state)
@@ -51,3 +51,5 @@ export default function AskInput() {
     </Card>
   )
 }
+
+export default AskInput

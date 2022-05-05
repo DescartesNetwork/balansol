@@ -6,23 +6,22 @@ import configs from 'app/configs'
 const {
   manifest: { appId },
 } = configs
+const APP_ROUTE = `/app/${appId}`
 
 export const useAppRouter = () => {
-  const location = useLocation()
+  const { search } = useLocation()
   const history = useHistory()
 
   const query = useMemo(() => {
-    return new URLSearchParams(location.search)
-  }, [location.search])
+    return new URLSearchParams(search)
+  }, [search])
 
   const getQuery = useCallback((queryId: string) => query.get(queryId), [query])
 
-  const appRoute = useMemo(() => `/app/${appId}`, [])
-
   const pushHistory = useCallback(
-    (url: string) => history.push(`${appRoute}${url}`),
-    [appRoute, history],
+    (url: string) => history.push(`${APP_ROUTE}${url}`),
+    [history],
   )
 
-  return { getQuery, pushHistory, appRoute }
+  return { getQuery, pushHistory, appRoute: APP_ROUTE }
 }

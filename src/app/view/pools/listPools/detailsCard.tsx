@@ -12,7 +12,9 @@ import { AppState } from 'app/model'
 import { numeric } from 'shared/util'
 import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
 
-const DetailsCard = ({ poolAddress }: { poolAddress: string }) => {
+export type DetailsCardProps = { poolAddress: string }
+
+const DetailsCard = ({ poolAddress }: DetailsCardProps) => {
   const { pushHistory } = useAppRouter()
   const {
     pools: { [poolAddress]: poolData },

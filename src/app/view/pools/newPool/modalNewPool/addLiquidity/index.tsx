@@ -12,15 +12,17 @@ import { useMint } from '@senhub/providers'
 import { fetchCGK } from 'shared/util'
 import { calcNormalizedWeight } from 'app/helper/oracles'
 
+export type AddLiquidityProps = {
+  setCurrentStep: (step: PoolCreatingStep) => void
+  onClose?: () => void
+  poolAddress: string
+}
+
 const AddLiquidity = ({
   setCurrentStep,
   poolAddress,
   onClose = () => {},
-}: {
-  setCurrentStep: (step: PoolCreatingStep) => void
-  onClose?: () => void
-  poolAddress: string
-}) => {
+}: AddLiquidityProps) => {
   const [inputAmounts, setInputAmounts] = useState<string[]>([])
   const [baseTokenIndex, setBaseTokenIndex] = useState(0)
   const {

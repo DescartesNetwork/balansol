@@ -23,13 +23,15 @@ import { PriceImpact } from 'app/constant'
 
 import './index.less'
 
+export type ConfirmSwapProps = {
+  visible?: boolean
+  onCancel?: () => void
+}
+
 const ConfirmSwap = ({
   visible = false,
   onCancel = () => {},
-}: {
-  visible?: boolean
-  onCancel?: () => void
-}) => {
+}: ConfirmSwapProps) => {
   const {
     swap: { bidAmount, bidMint, askMint, slippageTolerance },
   } = useSelector((state: AppState) => state)

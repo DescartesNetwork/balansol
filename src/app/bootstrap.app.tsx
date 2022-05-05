@@ -7,7 +7,7 @@ import {
   PoolProvider,
 } from '@senhub/providers'
 
-import PageView from 'app/view'
+import View from 'app/view'
 
 import model from 'app/model'
 import configs from 'app/configs'
@@ -27,7 +27,7 @@ export const Page = () => {
           <MintProvider>
             <PoolProvider>
               <Provider store={model}>
-                <PageView />
+                <View />
               </Provider>
             </PoolProvider>
           </MintProvider>
