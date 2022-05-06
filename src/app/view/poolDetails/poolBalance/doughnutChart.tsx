@@ -27,10 +27,14 @@ const buildOptions = (data: PoolBalanceData[]) => {
         color: '#F3F3F5',
       },
     },
+    tooltip: {
+      trigger: 'item',
+      formatter: '{b} <br/> : {c} ({d}%){@e}',
+    },
     series: [
       {
         type: 'pie',
-        radius: ['40%', '70%'],
+        radius: '70%',
         avoidLabelOverlap: false,
         top: 0,
         bottom: 0,
@@ -46,30 +50,7 @@ const buildOptions = (data: PoolBalanceData[]) => {
           return {
             name: value.symbol,
             value: value.weight,
-            tooltip: {
-              show: false,
-              borderWidth: '0',
-            },
-            emphasis: {
-              label: {
-                show: true,
-                formatter: ['{a| }', '{c|{c}%}'].join('\n\n'),
-                rich: {
-                  a: {
-                    backgroundColor: {
-                      image: value.logo,
-                    },
-                    borderRadius: 45,
-                    height: 32,
-                    width: 32,
-                  },
-                  c: {
-                    fontSize: 20,
-                    color: '#F3F3F5',
-                  },
-                },
-              },
-            },
+            e: 'tra',
           }
         }),
       },
