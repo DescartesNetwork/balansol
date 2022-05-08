@@ -32,10 +32,22 @@ const buildOptions = (data: PoolBalanceData[]) => {
         color: '#F3F3F5',
       },
     },
+    tooltip: {
+      trigger: 'item',
+      borderWidth: '2',
+      formatter: function (params: any, ticket: any, callback: () => void) {
+        return `<span style="color: #9CA1AF">${params.data.name}</span><br/><span style="display: flex; flex-wrap: nowrap; justify-content: space-between; align-items: center"><span>Weight</span> <span style="margin-left: 4px">${params.data.value}</span></span> <span style="display: flex; flex-wrap: nowrap; justify-content: space-between"><span>Token amount</span> <span style="margin-left: 4px">${params.data.tokenAmount}</span></span>`
+      },
+      backgroundColor: '#212C4C',
+      extraCssText: 'border-radius: 24px',
+      textStyle: {
+        color: '#F3F3F5',
+      },
+    },
     series: [
       {
         type: 'pie',
-        radius: ['40%', '70%'],
+        radius: '70%',
         avoidLabelOverlap: false,
         top: 0,
         label: {
@@ -52,30 +64,6 @@ const buildOptions = (data: PoolBalanceData[]) => {
             name: value.symbol,
             value: numeric(value.weight).format('0,0.[00]'),
             tokenAmount: value.tokenAmount,
-            tooltip: {
-              show: false,
-              borderWidth: '0',
-            },
-            emphasis: {
-              label: {
-                show: true,
-                formatter: ['{a| }', '{c|{c}%}', '{@tokenAmount}'].join(
-                  '\n\n\n',
-                ),
-                rich: {
-                  a: {
-                    borderRadius: 45,
-                    height: 32,
-                    width: 32,
-                  },
-                  c: {
-                    fontSize: 20,
-                    color: '#F3F3F5',
-                  },
-                },
-                backgroundColor: 'red',
-              },
-            },
           }
         }),
       },
