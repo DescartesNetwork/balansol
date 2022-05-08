@@ -6,7 +6,6 @@ import { utils } from '@senswap/sen-js'
 import { Card, Col, Row, Typography } from 'antd'
 import DoughnutChart, { PoolBalanceData } from './doughnutChart'
 
-import { GENERAL_DECIMALS } from 'app/constant'
 import { AppState } from 'app/model'
 import { getMintInfo } from 'app/helper/oracles'
 
