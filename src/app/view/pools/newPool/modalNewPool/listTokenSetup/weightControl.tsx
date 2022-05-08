@@ -1,4 +1,5 @@
-import { Button, Space } from 'antd'
+import { Button, Row, Space } from 'antd'
+import { Fragment } from 'react'
 import IonIcon from 'shared/antd/ionicon'
 import NumericInput from 'shared/antd/numericInput'
 import { MintSetup } from '../index'
@@ -25,7 +26,7 @@ const WeightControl = ({
         size="large"
         bordered={false}
         onValue={onChangeWeight}
-        suffix={'%'}
+        suffix={<div style={{ marginLeft: -4 }}>%</div>}
         maxLength={5}
         style={{ textAlign: 'right' }}
         placeholder="0"
