@@ -28,13 +28,14 @@ const PoolBalance = ({ poolAddress }: { poolAddress: string }) => {
           value.toBase58(),
         )
 
+        if (!tokenInfo)
+          return { symbol: 'TOKN', weight: normalizedWeight, tokenAmount: '' }
+
         const reserveNumber = utils.undecimalize(
           BigInt(reserve.toString()),
           tokenInfo?.decimals || 0,
         )
 
-        if (!tokenInfo)
-          return { symbol: 'TOKN', weight: normalizedWeight, tokenAmount: '' }
         if (!tokenInfo.logoURI)
           return {
             symbol: tokenInfo.symbol,
