@@ -80,7 +80,7 @@ const DetailsCard = ({ poolAddress }: DetailsCardProps) => {
                 type="primary"
                 onClick={() => pushHistory(`/details?pool=${poolAddress}`)}
               >
-                Overview
+                Details
               </Button>
             </Col>
           </Row>

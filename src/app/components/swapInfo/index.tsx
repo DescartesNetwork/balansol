@@ -77,7 +77,7 @@ const SwapInfo = ({ extraStyle }: { extraStyle?: CSSProperties }) => {
       <Col span={24}>
         <ExtraTypography
           label="Slippage Tolerance"
-          content={`${slippageTolerance} %`}
+          content={`${slippageTolerance}%`}
           loading={false}
         />
       </Col>
