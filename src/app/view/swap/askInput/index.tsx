@@ -1,6 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { useEffect, useMemo } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useEffect } from 'react'
 
 import { Card } from 'antd'
 import MintInput from 'app/components/mintInput'
@@ -17,21 +16,18 @@ const AskInput = () => {
   } = useSelector((state: AppState) => state)
   const dispatch = useDispatch<AppDispatch>()
   const mintsSwap = useMintsCanSwap()
-  const { pushHistory } = useAppRouter()
-  const { search } = useLocation()
-  const query = useMemo(() => new URLSearchParams(search), [search])
-  const tradePair = query.get('pair') || ''
-  const askMintQS = tradePair.split('_')[1]
+  const { pushHistory, getAllQuery } = useAppRouter()
+  const { ask_mint } = getAllQuery<{ ask_mint: string }>()
 
   useEffect(() => {
     if (askMint) return
-    if (!askMintQS) {
+    if (!ask_mint) {
       const newMintSwap = mintsSwap.filter((value) => value !== bidMint)
       dispatch(setSwapState({ askMint: newMintSwap?.[0] || '' })).unwrap()
       return
     }
-    dispatch(setSwapState({ askMint: askMintQS })).unwrap()
-  }, [askMintQS, askMint, bidMint, dispatch, mintsSwap])
+    dispatch(setSwapState({ askMint: ask_mint })).unwrap()
+  }, [ask_mint, askMint, bidMint, dispatch, mintsSwap])
 
   const onChange = async (askAmount: string) => {
     dispatch(
@@ -54,7 +50,7 @@ const AskInput = () => {
             value={askMint}
             onChange={(mint) => {
               dispatch(setSwapState({ askMint: mint })).unwrap()
-              pushHistory(`/swap?pair=${bidMint}_${mint}`)
+              pushHistory(`/swap?bid_mint=${bidMint}&ask_mint=${mint}`)
             }}
             style={{ background: '#394360' }}
           />
