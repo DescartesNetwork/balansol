@@ -1,5 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect, useMemo } from 'react'
+import { useLocation } from 'react-router-dom'
 
 import { Card } from 'antd'
 import MintInput from 'app/components/mintInput'
@@ -9,7 +10,6 @@ import { AppDispatch, AppState } from 'app/model'
 import { setSwapState } from 'app/model/swap.controller'
 import { useMintsCanSwap } from 'app/hooks/swap/useMintsCanSwap'
 import { useAppRouter } from 'app/hooks/useAppRouter'
-import { useLocation } from 'react-router-dom'
 
 const AskInput = () => {
   const {
