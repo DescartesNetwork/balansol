@@ -15,17 +15,18 @@ import BG from 'app/static/images/balansol-background.png'
 import './index.less'
 
 const View = () => {
-  const { tabId = HOMEPAGE_TABS.Swap } = useParams<{ tabId: string }>()
+  const { tabId } = useParams<{ tabId: string }>()
   const { setBackground } = useUI()
-  const { appRoute, pushHistory } = useAppRouter()
+  const { appRoute, pushHistory, getAllQuery } = useAppRouter()
 
   useEffect(() => {
     setBackground({ light: BG, dark: BG })
   }, [setBackground])
 
   useEffect(() => {
-    if (!tabId) pushHistory(`/${HOMEPAGE_TABS.Swap}`)
-  }, [pushHistory, tabId])
+    if (!tabId && Object.keys(getAllQuery()).length === 0)
+      pushHistory(`/${HOMEPAGE_TABS.Swap}`)
+  }, [getAllQuery, pushHistory, tabId])
 
   if (!config.sol.balancerAddress)
     return (
