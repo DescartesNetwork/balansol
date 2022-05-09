@@ -15,7 +15,7 @@ import BG from 'app/static/images/balansol-background.png'
 import './index.less'
 
 const View = () => {
-  const { tabId } = useParams<{ tabId: string }>()
+  const { tabId = HOMEPAGE_TABS.Swap } = useParams<{ tabId: string }>()
   const { setBackground } = useUI()
   const { appRoute, pushHistory } = useAppRouter()
 

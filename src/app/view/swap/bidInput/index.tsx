@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useLocation } from 'react-router-dom'
 
 import MintInput from 'app/components/mintInput'
 import { MintSelection } from 'shared/antd/mint'
@@ -7,6 +8,7 @@ import { MintSelection } from 'shared/antd/mint'
 import { AppDispatch, AppState } from 'app/model'
 import { setSwapState } from 'app/model/swap.controller'
 import { useMintsCanSwap } from 'app/hooks/swap/useMintsCanSwap'
+import { useAppRouter } from 'app/hooks/useAppRouter'
 
 const BidInput = () => {
   const {
@@ -14,11 +16,20 @@ const BidInput = () => {
   } = useSelector((state: AppState) => state)
   const dispatch = useDispatch<AppDispatch>()
   const mintsSwap = useMintsCanSwap()
+  const { pushHistory } = useAppRouter()
+  const { search } = useLocation()
+  const query = useMemo(() => new URLSearchParams(search), [search])
+  const tradePair = query.get('pair') || ''
+  const bidMintQS = tradePair.split('_')[0]
 
   useEffect(() => {
     if (bidMint) return
-    dispatch(setSwapState({ bidMint: mintsSwap?.[0] || '' }))
-  }, [bidMint, dispatch, mintsSwap])
+    if (!bidMintQS) {
+      dispatch(setSwapState({ bidMint: mintsSwap?.[0] || '' }))
+      return
+    }
+    dispatch(setSwapState({ bidMint: bidMintQS }))
+  }, [bidMintQS, bidMint, dispatch, mintsSwap])
 
   const onChange = (val: string) => {
     dispatch(setSwapState({ bidAmount: val, isReverse: false }))
@@ -38,7 +49,10 @@ const BidInput = () => {
       mintSelection={
         <MintSelection
           value={bidMint}
-          onChange={(mint) => dispatch(setSwapState({ bidMint: mint }))}
+          onChange={(mint) => {
+            dispatch(setSwapState({ bidMint: mint }))
+            pushHistory(`/swap?pair=${mint}_${askMint}`)
+          }}
           style={{ background: '#394360' }}
         />
       }

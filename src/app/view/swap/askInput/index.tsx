@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 
 import { Card } from 'antd'
 import MintInput from 'app/components/mintInput'
@@ -8,6 +8,8 @@ import { MintSelection } from 'shared/antd/mint'
 import { AppDispatch, AppState } from 'app/model'
 import { setSwapState } from 'app/model/swap.controller'
 import { useMintsCanSwap } from 'app/hooks/swap/useMintsCanSwap'
+import { useAppRouter } from 'app/hooks/useAppRouter'
+import { useLocation } from 'react-router-dom'
 
 const AskInput = () => {
   const {
@@ -15,12 +17,21 @@ const AskInput = () => {
   } = useSelector((state: AppState) => state)
   const dispatch = useDispatch<AppDispatch>()
   const mintsSwap = useMintsCanSwap()
+  const { pushHistory } = useAppRouter()
+  const { search } = useLocation()
+  const query = useMemo(() => new URLSearchParams(search), [search])
+  const tradePair = query.get('pair') || ''
+  const askMintQS = tradePair.split('_')[1]
 
   useEffect(() => {
-    if (askMint && askMint !== bidMint) return
-    const newMintSwap = mintsSwap.filter((value) => value !== bidMint)
-    dispatch(setSwapState({ askMint: newMintSwap?.[0] || '' })).unwrap()
-  }, [askMint, bidMint, dispatch, mintsSwap])
+    if (askMint) return
+    if (!askMintQS) {
+      const newMintSwap = mintsSwap.filter((value) => value !== bidMint)
+      dispatch(setSwapState({ askMint: newMintSwap?.[0] || '' })).unwrap()
+      return
+    }
+    dispatch(setSwapState({ askMint: askMintQS })).unwrap()
+  }, [askMintQS, askMint, bidMint, dispatch, mintsSwap])
 
   const onChange = async (askAmount: string) => {
     dispatch(
@@ -41,9 +52,10 @@ const AskInput = () => {
         mintSelection={
           <MintSelection
             value={askMint}
-            onChange={(mint) =>
+            onChange={(mint) => {
               dispatch(setSwapState({ askMint: mint })).unwrap()
-            }
+              pushHistory(`/swap?pair=${bidMint}_${mint}`)
+            }}
             style={{ background: '#394360' }}
           />
         }
