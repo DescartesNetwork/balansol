@@ -18,10 +18,19 @@ export const useAppRouter = () => {
 
   const getQuery = useCallback((queryId: string) => query.get(queryId), [query])
 
+  const getAllQuery = useCallback(<T>() => {
+    const queries: Record<string, string> = {}
+    query.forEach((value, key) => {
+      queries[key] = value
+    })
+    const wrapResult: T = queries as any
+    return wrapResult
+  }, [query])
+
   const pushHistory = useCallback(
     (url: string) => history.push(`${APP_ROUTE}${url}`),
     [history],
   )
 
-  return { getQuery, pushHistory, appRoute: APP_ROUTE, pathname }
+  return { getQuery, getAllQuery, pushHistory, appRoute: APP_ROUTE, pathname }
 }
