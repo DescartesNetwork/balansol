@@ -6,8 +6,8 @@ import { utils } from '@senswap/sen-js'
 import { Card, Col, Row, Typography } from 'antd'
 import DoughnutChart, { PoolBalanceData } from './doughnutChart'
 
-import { GENERAL_DECIMALS } from 'app/constant'
 import { AppState } from 'app/model'
+import { getMintInfo } from 'app/helper/oracles'
 
 const PoolBalance = ({ poolAddress }: { poolAddress: string }) => {
   const {
@@ -18,18 +18,34 @@ const PoolBalance = ({ poolAddress }: { poolAddress: string }) => {
 
   const doughnutChartData = useCallback(async () => {
     if (!poolData) return
-    const { mints, weights } = poolData
     const newData = await Promise.all(
-      mints.map(async (value, idx) => {
+      poolData.mints.map(async (value, idx) => {
         const tokenInfo = await tokenProvider.findByAddress(value.toBase58())
-        const weight = utils.undecimalize(
-          BigInt(weights[idx].toString()),
-          GENERAL_DECIMALS,
+
+        const { normalizedWeight, reserve } = getMintInfo(
+          poolData,
+          value.toBase58(),
         )
-        if (!tokenInfo) return { symbol: 'TOKN', weight, logo: '' }
+
+        if (!tokenInfo)
+          return { symbol: 'TOKN', weight: normalizedWeight, tokenAmount: '' }
+
+        const reserveNumber = utils.undecimalize(
+          BigInt(reserve.toString()),
+          tokenInfo?.decimals || 0,
+        )
+
         if (!tokenInfo.logoURI)
-          return { symbol: tokenInfo.symbol, weight, logo: '' }
-        return { symbol: tokenInfo.symbol, weight, logo: tokenInfo.logoURI }
+          return {
+            symbol: tokenInfo.symbol,
+            weight: normalizedWeight,
+            tokenAmount: '',
+          }
+        return {
+          symbol: tokenInfo.symbol,
+          weight: normalizedWeight,
+          tokenAmount: reserveNumber,
+        }
       }),
     )
     setPoolBalances(newData)
