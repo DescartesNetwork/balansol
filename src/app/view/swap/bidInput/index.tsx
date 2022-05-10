@@ -15,7 +15,7 @@ const BidInput = () => {
   } = useSelector((state: AppState) => state)
   const dispatch = useDispatch<AppDispatch>()
   const mintsSwap = useMintsCanSwap()
-  const { pushHistory, getAllQuery } = useAppRouter()
+  const { getAllQuery } = useAppRouter()
   const { bid_mint } = getAllQuery<{ bid_mint: string }>()
 
   useEffect(() => {
@@ -47,7 +47,6 @@ const BidInput = () => {
           value={bidMint}
           onChange={(mint) => {
             dispatch(setSwapState({ bidMint: mint }))
-            pushHistory(`/swap`, { bid_mint: mint }, false)
           }}
           style={{ background: '#394360' }}
         />

@@ -50,7 +50,6 @@ const AskInput = () => {
             value={askMint}
             onChange={(mint) => {
               dispatch(setSwapState({ askMint: mint })).unwrap()
-              pushHistory(`/swap`,{askMint: mint}, false)
             }}
             style={{ background: '#394360' }}
           />

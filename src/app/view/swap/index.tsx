@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { Button, Card, Col, Row } from 'antd'
@@ -10,6 +11,7 @@ import SwapInfo from 'app/components/swapInfo'
 
 import { setSwapState } from 'app/model/swap.controller'
 import { AppState } from 'app/model'
+import { useAppRouter } from 'app/hooks/useAppRouter'
 
 import './index.less'
 
@@ -19,6 +21,13 @@ const Swap = () => {
   const {
     swap: { askMint, bidMint, askAmount, bidAmount },
   } = useSelector((state: AppState) => state)
+  const { pushHistory } = useAppRouter()
+
+  useEffect(() => {
+    if (!!askMint && !!bidMint) {
+      pushHistory(`/swap`, { bid_mint: bidMint, ask_mint: askMint }, false)
+    }
+  }, [askMint, bidMint, pushHistory])
 
   const onSwitch = () => {
     dispatch(
