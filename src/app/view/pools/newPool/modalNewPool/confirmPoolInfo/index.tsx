@@ -46,19 +46,30 @@ const ConfirmPoolInfo = ({ onConfirm, poolAddress }: ConfirmPoolInfoProps) => {
         const mintInfo = getMintInfo(poolData, mint)
 
         const tokenInfo = await tokenProvider.findByAddress(mintAddress)
-        const ticket = tokenInfo?.extensions?.coingeckoId
-        const cgkData = await fetchCGK(ticket)
-
         let mintAmount = await undecimalizeMintAmount(
           reserves[idx],
           mintAddress,
         )
+        const ticket = tokenInfo?.extensions?.coingeckoId
+        if (!ticket) {
+          return {
+            token: {
+              addressToken: mintAddress,
+              weight: numeric(mintInfo.normalizedWeight).format('0,0.[00]'),
+              isLocked: true,
+            },
+            amount: Number(mintAmount),
+            value: 0,
+          }
+        }
+        const cgkData = await fetchCGK(ticket)
+
         let mintTotalValue = Number(mintAmount) * (cgkData?.price || 0)
         totalValue += mintTotalValue
         return {
           token: {
             addressToken: mintAddress,
-            weight: String(mintInfo.normalizedWeight),
+            weight: numeric(mintInfo.normalizedWeight).format('0,0.[00]'),
             isLocked: true,
           },
           amount: Number(mintAmount),
