@@ -16,7 +16,7 @@ const AskInput = () => {
   } = useSelector((state: AppState) => state)
   const dispatch = useDispatch<AppDispatch>()
   const mintsSwap = useMintsCanSwap()
-  const { pushHistory, getAllQuery } = useAppRouter()
+  const { getAllQuery } = useAppRouter()
   const { ask_mint } = getAllQuery<{ ask_mint: string }>()
 
   useEffect(() => {

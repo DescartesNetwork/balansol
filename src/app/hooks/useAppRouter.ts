@@ -27,9 +27,14 @@ export const useAppRouter = () => {
     return wrapResult
   }, [query])
 
+  /**
+   * @param path is URL parameters
+   * @param newQuery Object all Query
+   * @param force keep prev Query with force=false
+   */
   const pushHistory = useCallback(
     (
-      url: string,
+      path: string,
       newQuery: Record<string, string> = {},
       force: boolean = true,
     ) => {
@@ -37,8 +42,8 @@ export const useAppRouter = () => {
       // Keep current query with 'force' === false
       if (force === false) newQuery = Object.assign(currentQuery, newQuery)
       const newParams = new URLSearchParams(newQuery)
-      if (newParams) url += `?${newParams.toString()}`
-      history.push(`${APP_ROUTE}${url}`)
+      if (newParams) path += `?${newParams.toString()}`
+      history.push(`${APP_ROUTE}${path}`)
     },
     [getAllQuery, history],
   )
