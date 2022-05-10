@@ -7,6 +7,7 @@ import { MintSelection } from 'shared/antd/mint'
 import { AppDispatch, AppState } from 'app/model'
 import { setSwapState } from 'app/model/swap.controller'
 import { useMintsCanSwap } from 'app/hooks/swap/useMintsCanSwap'
+import { useAppRouter } from 'app/hooks/useAppRouter'
 
 const BidInput = () => {
   const {
@@ -14,11 +15,17 @@ const BidInput = () => {
   } = useSelector((state: AppState) => state)
   const dispatch = useDispatch<AppDispatch>()
   const mintsSwap = useMintsCanSwap()
+  const { pushHistory, getAllQuery } = useAppRouter()
+  const { bid_mint } = getAllQuery<{ bid_mint: string }>()
 
   useEffect(() => {
     if (bidMint) return
-    dispatch(setSwapState({ bidMint: mintsSwap?.[0] || '' }))
-  }, [bidMint, dispatch, mintsSwap])
+    if (!bid_mint) {
+      dispatch(setSwapState({ bidMint: mintsSwap?.[0] || '' }))
+      return
+    }
+    dispatch(setSwapState({ bidMint: bid_mint }))
+  }, [bid_mint, bidMint, dispatch, mintsSwap])
 
   const onChange = (val: string) => {
     dispatch(setSwapState({ bidAmount: val, isReverse: false }))
@@ -38,7 +45,10 @@ const BidInput = () => {
       mintSelection={
         <MintSelection
           value={bidMint}
-          onChange={(mint) => dispatch(setSwapState({ bidMint: mint }))}
+          onChange={(mint) => {
+            dispatch(setSwapState({ bidMint: mint }))
+            pushHistory(`/swap?bid_mint=${mint}&ask_mint=${askMint}`)
+          }}
           style={{ background: '#394360' }}
         />
       }

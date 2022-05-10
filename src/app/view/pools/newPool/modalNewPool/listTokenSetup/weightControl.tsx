@@ -1,5 +1,4 @@
-import { Button, Row, Space } from 'antd'
-import { Fragment } from 'react'
+import { Button, Space } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
 import NumericInput from 'shared/antd/numericInput'
 import { MintSetup } from '../index'
