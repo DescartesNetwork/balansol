@@ -6,11 +6,13 @@ import Swap from '../swap'
 
 import { HOMEPAGE_TABS } from 'app/constant'
 import { useAppRouter } from 'app/hooks/useAppRouter'
-import { Route, Switch, useParams } from 'react-router-dom'
 
-const SwapAndPools = () => {
-  const { pushHistory, appRoute } = useAppRouter()
-  const { tabId } = useParams<{ tabId: string }>()
+type SwapAndPoolsProps = {
+  tabId: string
+}
+
+const SwapAndPools = ({ tabId }: SwapAndPoolsProps) => {
+  const { pushHistory } = useAppRouter()
 
   const onChange = useCallback(
     (tabId: string) => pushHistory(`/${tabId}`),
@@ -29,12 +31,7 @@ const SwapAndPools = () => {
           block
         />
       </Col>
-      <Col span={24}>
-        <Switch>
-          <Route path={`${appRoute}/swap`} component={Swap} />
-          <Route path={`${appRoute}/pools`} component={Pools} />
-        </Switch>
-      </Col>
+      <Col span={24}>{tabId === 'pools' ? <Pools /> : <Swap />}</Col>
     </Row>
   )
 }

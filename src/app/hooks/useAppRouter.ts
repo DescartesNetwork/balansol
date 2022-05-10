@@ -28,8 +28,19 @@ export const useAppRouter = () => {
   }, [query])
 
   const pushHistory = useCallback(
-    (url: string) => history.push(`${APP_ROUTE}${url}`),
-    [history],
+    (
+      url: string,
+      newQuery: Record<string, string> = {},
+      force: boolean = true,
+    ) => {
+      const currentQuery = getAllQuery<Record<string, string>>()
+      // Keep current query with 'force' === false
+      if (force === false) newQuery = Object.assign(currentQuery, newQuery)
+      const newParams = new URLSearchParams(newQuery)
+      if (newParams) url += `?${newParams.toString()}`
+      history.push(`${APP_ROUTE}${url}`)
+    },
+    [getAllQuery, history],
   )
 
   return { getQuery, getAllQuery, pushHistory, appRoute: APP_ROUTE, pathname }

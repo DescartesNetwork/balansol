@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Route, Switch, useParams } from 'react-router-dom'
+import { Redirect, Route, Switch } from 'react-router-dom'
 import { useUI } from '@senhub/providers'
 
 import { Empty } from 'antd'
@@ -9,24 +9,17 @@ import SwapAndPools from './swapAndPools'
 import { AppWatcher } from 'app/components/watcher'
 import { useAppRouter } from 'app/hooks/useAppRouter'
 import config from 'app/configs'
-import { HOMEPAGE_TABS } from 'app/constant'
 
 import BG from 'app/static/images/balansol-background.png'
 import './index.less'
 
 const View = () => {
-  const { tabId } = useParams<{ tabId: string }>()
   const { setBackground } = useUI()
-  const { appRoute, pushHistory, getAllQuery } = useAppRouter()
+  const { appRoute } = useAppRouter()
 
   useEffect(() => {
     setBackground({ light: BG, dark: BG })
   }, [setBackground])
-
-  useEffect(() => {
-    if (!tabId && Object.keys(getAllQuery()).length === 0)
-      pushHistory(`/${HOMEPAGE_TABS.Swap}`)
-  }, [getAllQuery, pushHistory, tabId])
 
   if (!config.sol.balancerAddress)
     return (
@@ -39,8 +32,16 @@ const View = () => {
   return (
     <AppWatcher>
       <Switch>
-        <Route exact path={`${appRoute}/details`} component={PoolDetails} />
-        <Route path={`${appRoute}/:tabId`} component={SwapAndPools} />
+        <Route path={`${appRoute}/details`} component={PoolDetails} />
+        <Route path={`${appRoute}/swap`}>
+          <SwapAndPools tabId={'swap'} />
+        </Route>
+        <Route path={`${appRoute}/pools`}>
+          <SwapAndPools tabId={'pools'} />
+        </Route>
+        <Route path="*">
+          <Redirect to={`${appRoute}/swap`} />
+        </Route>
       </Switch>
     </AppWatcher>
   )

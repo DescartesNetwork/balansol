@@ -47,7 +47,7 @@ const BidInput = () => {
           value={bidMint}
           onChange={(mint) => {
             dispatch(setSwapState({ bidMint: mint }))
-            pushHistory(`/swap?bid_mint=${mint}&ask_mint=${askMint}`)
+            pushHistory(`/swap`, { bid_mint: mint }, false)
           }}
           style={{ background: '#394360' }}
         />

@@ -78,7 +78,7 @@ const DetailsCard = ({ poolAddress }: DetailsCardProps) => {
             <Col>
               <Button
                 type="primary"
-                onClick={() => pushHistory(`/details?pool=${poolAddress}`)}
+                onClick={() => pushHistory(`/details`, { pool: poolAddress })}
               >
                 Details
               </Button>
