@@ -24,9 +24,8 @@ const Swap = () => {
   const { pushHistory } = useAppRouter()
 
   useEffect(() => {
-    if (!!askMint && !!bidMint) {
+    if (!!askMint && !!bidMint)
       pushHistory(`/swap`, { bid_mint: bidMint, ask_mint: askMint }, false)
-    }
   }, [askMint, bidMint, pushHistory])
 
   const onSwitch = () => {
