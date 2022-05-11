@@ -9,7 +9,7 @@ import {
 import { AppState } from 'app/model'
 import { useOracles } from '../../useOracles'
 import { MetaRoute } from '../useMetaRoutes'
-import { Route, RouteInfo } from '../useRouteSwap'
+import { Route, RouteInfo } from '../../useSwap'
 import { useMint } from '@senhub/providers'
 
 export const useAllRoutesFromAsk = (metaRoutes: MetaRoute[]) => {

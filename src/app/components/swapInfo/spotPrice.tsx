@@ -6,15 +6,17 @@ import IonIcon from 'shared/antd/ionicon'
 import { MintSymbol } from 'shared/antd/mint'
 
 import { AppState } from 'app/model'
-import { useRouteSwap } from 'app/hooks/swap/useRouteSwap'
 import { numeric } from 'shared/util'
+import { useSwap } from 'app/hooks/useSwap'
 
 const MintRatio = ({ reversed = false }: { reversed?: boolean }) => {
   const {
     swap: { askMint, bidMint },
   } = useSelector((state: AppState) => state)
 
-  const { bidAmount, askAmount } = useRouteSwap()
+  const {
+    swap: { bidAmount, askAmount },
+  } = useSwap()
 
   const spotPrice = askAmount / bidAmount
   const actualBid = reversed ? bidMint : askMint

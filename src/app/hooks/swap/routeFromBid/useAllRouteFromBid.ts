@@ -10,7 +10,7 @@ import {
 import { AppState } from 'app/model'
 import { useOracles } from '../../useOracles'
 import { MetaRoute } from '../useMetaRoutes'
-import { Route } from '../useRouteSwap'
+import { Route } from '../../useSwap'
 
 export const useAllRouteFromBid = (metaRoutes: MetaRoute[]): Route[] => {
   const {

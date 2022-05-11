@@ -6,7 +6,7 @@ import { AppState } from 'app/model'
 import { calcPriceImpact } from 'app/helper/oracles'
 import { useOracles } from '../../useOracles'
 import { useMetaRoutes } from '../useMetaRoutes'
-import { RouteSwapInfo } from '../useRouteSwap'
+import { RouteSwapInfo } from '../../useSwap'
 import { useAllRouteFromBid } from './useAllRouteFromBid'
 
 export const useBestRouteFromBid = (): RouteSwapInfo => {

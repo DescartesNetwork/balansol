@@ -35,6 +35,10 @@ const PoolWatcher = () => {
       })
     }
   }, [dispatch, walletAddress])
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
+
   // Watch account changes
   const watchData = useCallback(async () => {
     if (watchId) return console.warn('Already watched')
@@ -48,7 +52,6 @@ const PoolWatcher = () => {
   }, [dispatch])
 
   useEffect(() => {
-    fetchData()
     watchData()
     // Unwatch (cancel socket)
     return () => {

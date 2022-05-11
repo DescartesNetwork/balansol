@@ -4,10 +4,12 @@ import { Space } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
 
 import { MintAvatar } from 'shared/antd/mint'
-import { useRouteSwap } from 'app/hooks/swap/useRouteSwap'
+import { useSwap } from 'app/hooks/useSwap'
 
 const RouteAvatar = () => {
-  const { route } = useRouteSwap()
+  const {
+    swap: { route },
+  } = useSwap()
 
   const routeMints: string[] = []
   for (const routeElm of route) {

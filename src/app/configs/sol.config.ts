@@ -41,8 +41,8 @@ const conf: Record<Net, Conf> = {
     node: 'http://api.google.mainnet-beta.solana.com/',
     spltAddress: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
     splataAddress: 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL',
-    balancerAddress: '',
-    taxmanAddress: '',
+    balancerAddress: 'SSW7ooZ1EbEognq5GosbygA3uWW1Hq1NsFq6TsftCFV',
+    taxmanAddress: 'GJLqpmDxxrV9xruee2vFvEoTho7VVQHRtuHH8nfoAE54',
   },
 }
 

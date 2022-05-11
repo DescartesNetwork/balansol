@@ -6,7 +6,7 @@ import { BN } from '@project-serum/anchor'
 import { AppState } from 'app/model'
 import { useMetaRoutes } from '../useMetaRoutes'
 import { useOracles } from '../../useOracles'
-import { RouteSwapInfo } from '../useRouteSwap'
+import { RouteSwapInfo } from '../../useSwap'
 import { useAllRoutesFromAsk } from './useAllRoutesFromAsk'
 
 export const useBestRouteFromAsk = () => {

@@ -17,11 +17,11 @@ import PreviewSwap from 'app/components/swapInfo'
 
 import { AppState } from 'app/model'
 import { notifyError, notifySuccess } from 'app/helper'
-import { useRouteSwap } from 'app/hooks/swap/useRouteSwap'
 import { useOracles } from 'app/hooks/useOracles'
 import { PriceImpact } from 'app/constant'
 
 import './index.less'
+import { useSwap } from 'app/hooks/useSwap'
 
 export type ConfirmSwapProps = {
   visible?: boolean
@@ -39,7 +39,9 @@ const ConfirmSwap = ({
   const [checked, setChecked] = useState(false)
   const [isDisplayWarning, setIsDisplayWarning] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const { askAmount, priceImpact, route } = useRouteSwap()
+  const {
+    swap: { askAmount, priceImpact, route },
+  } = useSwap()
   const { decimalizeMintAmount } = useOracles()
 
   useEffect(() => {

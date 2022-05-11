@@ -11,6 +11,8 @@ import View from 'app/view'
 
 import model from 'app/model'
 import configs from 'app/configs'
+import BalansolPoolsProvider from './hooks/useBalansolPools'
+import BalansolProvider from './hooks/useSwap'
 
 import 'app/static/styles/light.less'
 import 'app/static/styles/dark.less'
@@ -27,7 +29,12 @@ export const Page = () => {
           <MintProvider>
             <PoolProvider>
               <Provider store={model}>
-                <View />
+                {/* Balansol provider context */}
+                <BalansolPoolsProvider>
+                  <BalansolProvider>
+                    <View />
+                  </BalansolProvider>
+                </BalansolPoolsProvider>
               </Provider>
             </PoolProvider>
           </MintProvider>
