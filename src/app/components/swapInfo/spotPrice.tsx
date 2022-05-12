@@ -13,10 +13,7 @@ const MintRatio = ({ reversed = false }: { reversed?: boolean }) => {
   const {
     swap: { askMint, bidMint },
   } = useSelector((state: AppState) => state)
-
-  const {
-    swap: { bidAmount, askAmount },
-  } = useSwap()
+  const { bidAmount, askAmount } = useSwap()
 
   const spotPrice = askAmount / bidAmount
   const actualBid = reversed ? bidMint : askMint

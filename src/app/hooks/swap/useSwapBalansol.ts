@@ -2,12 +2,12 @@ import { useCallback, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 
 import { AppState } from 'app/model'
-import { SwapPlatform, SwapPlatformInfo } from '../useSwap'
+import { SwapPlatform, SwapProvider } from '../useSwap'
 import { useOracles } from '../useOracles'
 import { useBestRouteFromAsk } from './routeFromAsk/useBestRouteFromAsk'
 import { useBestRouteFromBid } from './routeFromBid/useBestRouteFromBid'
 
-export const useSwapBalansol = (): SwapPlatformInfo => {
+export const useSwapBalansol = (): SwapProvider => {
   const {
     swap: { bidAmount, bidMint, askMint, slippageTolerance, isReverse },
   } = useSelector((state: AppState) => state)

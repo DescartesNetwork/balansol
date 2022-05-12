@@ -7,9 +7,7 @@ import { MintAvatar } from 'shared/antd/mint'
 import { useSwap } from 'app/hooks/useSwap'
 
 const RouteAvatar = () => {
-  const {
-    swap: { route },
-  } = useSwap()
+  const { route } = useSwap()
 
   const routeMints: string[] = []
   for (const routeElm of route) {

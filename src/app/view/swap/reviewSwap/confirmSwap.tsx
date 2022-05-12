@@ -17,7 +17,6 @@ import PreviewSwap from 'app/components/swapInfo'
 
 import { AppState } from 'app/model'
 import { notifyError, notifySuccess } from 'app/helper'
-import { useOracles } from 'app/hooks/useOracles'
 import { PriceImpact } from 'app/constant'
 
 import './index.less'
@@ -33,16 +32,13 @@ const ConfirmSwap = ({
   onCancel = () => {},
 }: ConfirmSwapProps) => {
   const {
-    swap: { bidAmount, bidMint, askMint, slippageTolerance },
+    swap: { bidAmount, bidMint, askMint },
   } = useSelector((state: AppState) => state)
 
   const [checked, setChecked] = useState(false)
   const [isDisplayWarning, setIsDisplayWarning] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const {
-    swap: { askAmount, priceImpact, route },
-  } = useSwap()
-  const { decimalizeMintAmount } = useOracles()
+  const { askAmount, priceImpact, swap } = useSwap()
 
   useEffect(() => {
     if (priceImpact > PriceImpact.goodSwap) return setIsDisplayWarning(true)
@@ -57,12 +53,7 @@ const ConfirmSwap = ({
   const onSwap = async () => {
     setIsLoading(true)
     try {
-      const bidAmountBN = await decimalizeMintAmount(bidAmount, bidMint)
-      const limit = Number(askAmount) * (1 - slippageTolerance / 100)
-      const limitBN = await decimalizeMintAmount(limit, askMint)
-
-      const { txId } = await window.balansol.route(bidAmountBN, route, limitBN)
-
+      const { txId } = await swap()
       onCancel()
       notifySuccess('Swap', txId)
     } catch (error) {

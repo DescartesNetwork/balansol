@@ -53,9 +53,7 @@ const SwapInfo = ({ extraStyle }: { extraStyle?: CSSProperties }) => {
   const {
     swap: { slippageTolerance },
   } = useSelector((state: AppState) => state)
-  const {
-    swap: { priceImpact },
-  } = useSwap()
+  const { priceImpact } = useSwap()
 
   return (
     <Row gutter={[12, 12]} style={{ ...extraStyle }}>

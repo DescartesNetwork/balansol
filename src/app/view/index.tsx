@@ -11,6 +11,8 @@ import SwapAndPools from './swapAndPools'
 
 import { AppWatcher } from 'app/components/watcher'
 import { useAppRouter } from 'app/hooks/useAppRouter'
+import BalansolPoolsProvider from 'app/hooks/useBalansolPools'
+import BalansolProvider from 'app/hooks/useSwap'
 import configs from 'app/configs'
 
 import BG from 'app/static/images/balansol-background.png'
@@ -39,26 +41,31 @@ const View = () => {
     )
 
   return (
-    <AppWatcher>
-      <JupiterProvider
-        connection={connection}
-        cluster={'mainnet-beta'}
-        userPublicKey={new web3.PublicKey(wallet.address)}
-      >
-        <Switch>
-          <Route path={`${appRoute}/details`} component={PoolDetails} />
-          <Route path={`${appRoute}/swap`}>
-            <SwapAndPools tabId={'swap'} />
-          </Route>
-          <Route path={`${appRoute}/pools`}>
-            <SwapAndPools tabId={'pools'} />
-          </Route>
-          <Route path="*">
-            <Redirect to={`${appRoute}/swap`} />
-          </Route>
-        </Switch>
-      </JupiterProvider>
-    </AppWatcher>
+    <JupiterProvider
+      connection={connection}
+      cluster={'mainnet-beta'}
+      userPublicKey={new web3.PublicKey(wallet.address)}
+    >
+      <AppWatcher>
+        {/* Balansol provider context */}
+        <BalansolPoolsProvider>
+          <BalansolProvider>
+            <Switch>
+              <Route path={`${appRoute}/details`} component={PoolDetails} />
+              <Route path={`${appRoute}/swap`}>
+                <SwapAndPools tabId={'swap'} />
+              </Route>
+              <Route path={`${appRoute}/pools`}>
+                <SwapAndPools tabId={'pools'} />
+              </Route>
+              <Route path="*">
+                <Redirect to={`${appRoute}/swap`} />
+              </Route>
+            </Switch>
+          </BalansolProvider>
+        </BalansolPoolsProvider>
+      </AppWatcher>
+    </JupiterProvider>
   )
 }
 
