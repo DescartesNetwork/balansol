@@ -1,13 +1,14 @@
 import { Fragment } from 'react'
 
-import { Space } from 'antd'
+import { Divider, Space } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
-
 import { MintAvatar } from 'shared/antd/mint'
-import { useSwap } from 'app/hooks/useSwap'
+import PoweredByJupiter from '../poweredByJupiter'
+
+import { SwapPlatform, useSwap } from 'app/hooks/useSwap'
 
 const RouteAvatar = () => {
-  const { route } = useSwap()
+  const { route, platform } = useSwap()
 
   const routeMints: string[] = []
   for (const routeElm of route) {
@@ -25,6 +26,12 @@ const RouteAvatar = () => {
           <MintAvatar mintAddress={mintAddress} />
         </Fragment>
       ))}
+      {platform === SwapPlatform.Jupiter && (
+        <Fragment>
+          <Divider type="vertical" style={{ margin: 0 }} />
+          <PoweredByJupiter />
+        </Fragment>
+      )}
     </Space>
   )
 }
