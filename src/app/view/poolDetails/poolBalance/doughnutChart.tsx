@@ -34,9 +34,9 @@ const buildOptions = (data: PoolBalanceData[]) => {
     },
     tooltip: {
       trigger: 'item',
-      borderWidth: '2',
+      borderWidth: '1',
       formatter: function (params: any, ticket: any, callback: () => void) {
-        return `<span style="color: #9CA1AF">${params.data.name}</span><br/><span style="display: flex; flex-wrap: nowrap; justify-content: space-between; align-items: center"><span>Weight</span> <span style="margin-left: 4px">${params.data.value}</span></span> <span style="display: flex; flex-wrap: nowrap; justify-content: space-between"><span>Token amount</span> <span style="margin-left: 4px">${params.data.tokenAmount}</span></span>`
+        return `<div style="width: 160px; font-weight: 400"><span style="color: #9CA1AF; font-size: 12px">${params.data.name}</span><br/><span style="display: flex; justify-content: space-between; font-size: 14px"><span>Weight</span> <span>${params.data.value}%</span></span> <span style="display: flex; justify-content: space-between; font-size: 14px"><span>Token amount</span> <span>${params.data.tokenAmount}</span></span></div>`
       },
       backgroundColor: '#212C4C',
       extraCssText: 'border-radius: 24px',
