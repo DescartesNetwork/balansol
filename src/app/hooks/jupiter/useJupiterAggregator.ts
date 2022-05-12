@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { web3, BN } from '@project-serum/anchor'
 import { useJupiter } from '@jup-ag/react-hook'
-import { RouteInfo } from '@jup-ag/core'
 import { Connection, PublicKey } from '@solana/web3.js'
 import { useWallet } from '@senhub/providers'
 
@@ -17,6 +16,7 @@ const {
   sol: { node },
 } = configs
 const connection = new Connection(node)
+
 interface UseJupiterProps {
   amount: number
   inputMint: PublicKey | undefined
