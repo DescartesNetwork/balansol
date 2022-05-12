@@ -70,8 +70,6 @@ const Provider = ({ children }: { children: ReactNode }) => {
   // Route Jupiter
   const jupiter = useJupiterAggregator()
 
-  console.log('jupiter', jupiter)
-  console.log('platformSwap', platformSwap)
   const choosePlatform = useCallback(() => {
     if (balansol.route.length) return setPlatformSwap(balansol)
     return setPlatformSwap(jupiter)

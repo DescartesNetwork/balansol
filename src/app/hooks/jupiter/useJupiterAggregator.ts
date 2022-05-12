@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { web3, BN } from '@project-serum/anchor'
 import { useJupiter } from '@jup-ag/react-hook'
+import { RouteInfo } from '@jup-ag/core'
 import { Connection, PublicKey } from '@solana/web3.js'
 import { useWallet } from '@senhub/providers'
 
@@ -23,8 +24,6 @@ interface UseJupiterProps {
   slippage: number
   debounceTime?: number
 }
-
-let timeout: NodeJS.Timeout
 
 const DEFAULT_JUPITER_PROPS = {
   amount: 0,
@@ -54,6 +53,7 @@ export const useJupiterAggregator = (): SwapProvider => {
     wallet: { address: walletAddress },
   } = useWallet()
   const { decimalizeMintAmount, undecimalizeMintAmount } = useOracles()
+  const { exchange, routes, loading } = useJupiter(jupiterProps)
 
   const composeJupiterProps = useCallback(async () => {
     if (!bidMint || !askMint || !Number(bidAmount) || isReverse)
@@ -78,7 +78,41 @@ export const useJupiterAggregator = (): SwapProvider => {
     composeJupiterProps()
   }, [composeJupiterProps])
 
-  const { exchange, routes, loading, refresh } = useJupiter(jupiterProps)
+  const composeBestRoute = useCallback(async () => {
+    if (!bidMint || !askMint || !Number(bidAmount) || isReverse || !routes)
+      return setBestRouteInfo(DEFAULT_EMPTY_ROUTE)
+    const bestJupiterRoute = routes[0]
+
+    const route = bestJupiterRoute.marketInfos.map((market) => {
+      return {
+        bidAmount: new BN(market.inAmount),
+        bidMint: market.inputMint.toBase58(),
+        askAmount: new BN(market.outAmount),
+        askMint: market.outputMint.toBase58(),
+        pool: '',
+        priceImpact: market.priceImpactPct,
+      }
+    })
+
+    const inAmount = await undecimalizeMintAmount(
+      new BN(bestJupiterRoute.inAmount),
+      bidMint,
+    )
+    const outAmount = await undecimalizeMintAmount(
+      new BN(bestJupiterRoute.outAmount),
+      askMint,
+    )
+
+    return setBestRouteInfo({
+      route,
+      bidAmount: Number(inAmount),
+      askAmount: Number(outAmount),
+      priceImpact: bestJupiterRoute.priceImpactPct * 100,
+    })
+  }, [askMint, bidAmount, bidMint, isReverse, routes, undecimalizeMintAmount])
+  useEffect(() => {
+    composeBestRoute()
+  }, [composeBestRoute])
 
   const swap = useCallback(async () => {
     const {
@@ -102,50 +136,6 @@ export const useJupiterAggregator = (): SwapProvider => {
     const { txid, outputAddress } = result
     return { txId: txid, dstAddress: outputAddress }
   }, [exchange, routes, walletAddress])
-
-  const composeBestRoute = useCallback(async () => {
-    if (!routes) return setBestRouteInfo(DEFAULT_EMPTY_ROUTE)
-    const bestJupiterRoute = routes[0]
-
-    const route = bestJupiterRoute.marketInfos.map((market) => {
-      return {
-        bidAmount: new BN(market.inAmount),
-        bidMint: market.inputMint.toBase58(),
-        askAmount: new BN(market.outAmount),
-        askMint: market.outputMint.toBase58(),
-        pool: '',
-        priceImpact: market.priceImpactPct,
-      }
-    })
-
-    const bidAmount = await undecimalizeMintAmount(
-      new BN(bestJupiterRoute.inAmount),
-      bidMint,
-    )
-    const askAmount = await undecimalizeMintAmount(
-      new BN(bestJupiterRoute.outAmount),
-      askMint,
-    )
-    return setBestRouteInfo({
-      route,
-      bidAmount: Number(bidAmount),
-      askAmount: Number(askAmount),
-      priceImpact: bestJupiterRoute.priceImpactPct * 100,
-    })
-  }, [askMint, bidMint, routes, undecimalizeMintAmount])
-  useEffect(() => {
-    composeBestRoute()
-  }, [composeBestRoute])
-
-  useEffect(() => {
-    if (!!bidAmount && Number(bidAmount) > 0 && !loading && !routes?.length) {
-      if (timeout) clearTimeout(timeout)
-      timeout = setTimeout(() => {
-        console.log('refresh ne')
-        refresh()
-      }, 1000)
-    }
-  }, [bidAmount, loading, refresh, routes?.length])
 
   return useMemo(() => {
     return { ...bestRouteInfo, swap, platform: SwapPlatform.Jupiter, loading }
