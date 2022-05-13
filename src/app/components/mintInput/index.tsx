@@ -118,9 +118,15 @@ export default function MintInput({
             ) : (
               <Space>
                 {PROPORTIONS.map((val) => {
-                  const minValue = (balance * val) / 100
-                  const isActive =
-                    balance && Number(amount).toFixed(4) === minValue.toFixed(4)
+                  let proportionActive = 0
+                  for (const idx in PROPORTIONS) {
+                    if (!balance) break
+                    const proportion = PROPORTIONS[idx]
+                    const proportionVal = (balance * proportion) / 100
+                    if (Number(amount).toFixed(4) === proportionVal.toFixed(4))
+                      proportionActive = proportion
+                  }
+                  const isActive = val <= proportionActive
 
                   return (
                     <Space size={4} direction="vertical" key={val}>
@@ -129,7 +135,8 @@ export default function MintInput({
                         disabled={!onChangeAmount}
                         onClick={
                           onChangeAmount
-                            ? () => onChangeAmount(String(minValue))
+                            ? () =>
+                                onChangeAmount(String((balance * val) / 100))
                             : undefined
                         }
                         style={{
