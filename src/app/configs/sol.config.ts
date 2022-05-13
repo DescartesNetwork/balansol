@@ -19,7 +19,7 @@ const conf: Record<Net, Conf> = {
     node: 'https://api.devnet.solana.com',
     spltAddress: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
     splataAddress: 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL',
-    balancerAddress: '33Mw5L5tUT6mWU9iJDp7cvD2z33kH1cpJS9q9TG8PGm4',
+    balancerAddress: 'J9vAQKiJLg1GtGqLVRhLe4aHTdQ9585WwkPQ3qpM2LpK',
     taxmanAddress: 'GJLqpmDxxrV9xruee2vFvEoTho7VVQHRtuHH8nfoAE54',
   },
 
@@ -38,11 +38,11 @@ const conf: Record<Net, Conf> = {
    * Production configurations
    */
   mainnet: {
-    node: 'http://api.google.mainnet-beta.solana.com/',
+    node: 'https://ssc-dao.genesysgo.net/',
     spltAddress: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
     splataAddress: 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL',
-    balancerAddress: '',
-    taxmanAddress: '',
+    balancerAddress: 'SSW7ooZ1EbEognq5GosbygA3uWW1Hq1NsFq6TsftCFV',
+    taxmanAddress: 'GJLqpmDxxrV9xruee2vFvEoTho7VVQHRtuHH8nfoAE54',
   },
 }
 

@@ -7,9 +7,9 @@ import RouteAvatar from './routeAvatar'
 import SpotPrice from './spotPrice'
 
 import { numeric } from 'shared/util'
-import { useRouteSwap } from 'app/hooks/swap/useRouteSwap'
 import { AppState } from 'app/model'
 import { priceImpactColor } from 'app/helper'
+import { useSwap } from 'app/hooks/useSwap'
 
 export type LiteMintInfo = {
   address: string
@@ -22,15 +22,17 @@ export type HopData = {
   dstMintAddress: string
 }
 
+type ExtraTypographyProps = {
+  label?: string
+  content?: string | ReactNode
+  loading?: boolean
+}
+
 const ExtraTypography = ({
   label = '',
   content = '',
   loading = false,
-}: {
-  label?: string
-  content?: string | ReactNode
-  loading?: boolean
-}) => {
+}: ExtraTypographyProps) => {
   return (
     <Row align="middle" style={{ width: '100%' }}>
       <Col flex="auto" style={{ justifyContent: 'left' }}>
@@ -51,8 +53,7 @@ const SwapInfo = ({ extraStyle }: { extraStyle?: CSSProperties }) => {
   const {
     swap: { slippageTolerance },
   } = useSelector((state: AppState) => state)
-
-  const { priceImpact } = useRouteSwap()
+  const { priceImpact } = useSwap()
 
   return (
     <Row gutter={[12, 12]} style={{ ...extraStyle }}>

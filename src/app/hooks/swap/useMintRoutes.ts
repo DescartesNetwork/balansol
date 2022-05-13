@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
-import { useActivePools } from '../pools/useActivePools'
+
+import { useBalansolPools } from '../useBalansolPools'
 
 type MintAddress = string
 type PoolAddress = string
@@ -7,7 +8,7 @@ export type MintRoutes = Record<MintAddress, Record<MintAddress, PoolAddress[]>>
 
 // Generate MintRoute, includes all pools that can swap bidMint -> askMint
 export const useMintRoutes = (): MintRoutes => {
-  const pools = useActivePools()
+  const { activePools } = useBalansolPools()
 
   const addPoolToRoute = (
     routes: MintRoutes,
@@ -26,8 +27,8 @@ export const useMintRoutes = (): MintRoutes => {
 
   return useMemo(() => {
     let mintRoutes: MintRoutes = {}
-    for (const poolAddress in pools) {
-      const mints = pools[poolAddress].mints.map((e) => e.toBase58())
+    for (const poolAddress in activePools) {
+      const mints = activePools[poolAddress].mints.map((e) => e.toBase58())
       for (const bidMint of mints) {
         for (const askMint of mints) {
           mintRoutes = addPoolToRoute(mintRoutes, bidMint, askMint, poolAddress)
@@ -35,5 +36,5 @@ export const useMintRoutes = (): MintRoutes => {
       }
     }
     return mintRoutes
-  }, [pools])
+  }, [activePools])
 }
