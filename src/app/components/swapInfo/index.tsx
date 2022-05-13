@@ -62,7 +62,7 @@ const SwapInfo = ({ extraStyle }: { extraStyle?: CSSProperties }) => {
           label="Price impact"
           content={
             <Typography.Text style={{ color: priceImpactColor(priceImpact) }}>
-              {numeric(priceImpact / 100).format('0.[0000]%')}
+              {numeric(priceImpact).format('0.[0000]%')}
             </Typography.Text>
           }
           loading={false}

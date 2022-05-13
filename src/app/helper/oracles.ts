@@ -199,7 +199,7 @@ export const calcPriceImpactSwap = (
   const currentSpotPrice = calcSpotPriceExactInSwap(new BN(0), poolPairData)
   const spotPriceAfterSwap = calcSpotPriceExactInSwap(bidAmount, poolPairData)
   if (spotPriceAfterSwap < currentSpotPrice) return 0
-  const impactPrice = (1 - currentSpotPrice / spotPriceAfterSwap) * 100
+  const impactPrice = 1 - currentSpotPrice / spotPriceAfterSwap
   return impactPrice
 }
 
@@ -359,7 +359,7 @@ export const calcDepositPriceImpact = (
     ).toFixed(9),
   )
 
-  const impactPrice = (1 - lpOut / lpOutZeroPriceImpact) * 100
+  const impactPrice = 1 - lpOut / lpOutZeroPriceImpact
 
   return { lpOut, impactPrice: impactPrice || 0 }
 }
@@ -451,7 +451,7 @@ export const calcWithdrawPriceImpact = (
   )
   if (numLpAmount < lpOutZeroPriceImpact)
     return { tokenAmountOut, impactPrice: 0 }
-  const impactPrice = (numLpAmount / lpOutZeroPriceImpact - 1) * 100
+  const impactPrice = numLpAmount / lpOutZeroPriceImpact - 1
 
   return { tokenAmountOut, impactPrice }
 }
