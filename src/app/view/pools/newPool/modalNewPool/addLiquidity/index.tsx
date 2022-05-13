@@ -108,7 +108,8 @@ const AddLiquidity = ({
                   }
                   force
                   ratioButton={
-                    baseTokenIndex !== idx && (
+                    baseTokenIndex !== idx &&
+                    Number(inputAmounts[baseTokenIndex]) !== 0 && (
                       <Button
                         type="text"
                         style={{ color: '#63e0b3' }}
