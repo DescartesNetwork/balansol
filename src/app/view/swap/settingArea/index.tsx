@@ -9,10 +9,7 @@ const SettingArea = () => {
   return (
     <Space>
       <PoweredBySentre />
-      <Divider
-        type="vertical"
-        style={{ border: '1px solid #394360', padding: 0, margin: 0 }}
-      />
+      <Divider type="vertical" />
       <Popover
         placement="bottomRight"
         content={<Setting />}
@@ -24,8 +21,8 @@ const SettingArea = () => {
           type="text"
           shape="circle"
           size="large"
-          icon={<IonIcon name="cog-outline" style={{ color: '#ffffff' }} />}
-          style={{ background: 'transparent', width: 'unset' }}
+          style={{ minWidth: 'unset', width: 'unset' }}
+          icon={<IonIcon name="cog-outline" />}
         />
       </Popover>
     </Space>
