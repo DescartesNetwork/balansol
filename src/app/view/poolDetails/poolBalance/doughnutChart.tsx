@@ -36,7 +36,7 @@ const buildOptions = (data: PoolBalanceData[]) => {
       trigger: 'item',
       borderWidth: '1',
       formatter: function (params: any, ticket: any, callback: () => void) {
-        return `<div style="width: 160px; font-weight: 400"><span style="color: #9CA1AF; font-size: 12px">${params.data.name}</span><br/><span style="display: flex; justify-content: space-between; font-size: 14px"><span>Weight</span> <span>${params.data.value}%</span></span> <span style="display: flex; justify-content: space-between; font-size: 14px"><span>Token amount</span> <span>${params.data.tokenAmount}</span></span></div>`
+        return `<div style="width: 200px; font-weight: 400"><span style="color: #9CA1AF; font-size: 12px">${params.data.name}</span><br/><span style="display: flex; justify-content: space-between; font-size: 14px"><span>Weight</span> <span>${params.data.value}%</span></span> <span style="display: flex; justify-content: space-between; font-size: 14px"><span>Token amount</span> <span>${params.data.tokenAmount}</span></span></div>`
       },
       backgroundColor: '#212C4C',
       extraCssText: 'border-radius: 24px',
