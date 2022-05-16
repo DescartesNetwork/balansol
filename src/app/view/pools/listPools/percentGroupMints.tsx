@@ -38,7 +38,7 @@ const PercentGroupMints = ({ poolAddress }: PercentGroupMintsProps) => {
   }, [poolData.mints, poolData.weights, tokenProvider])
 
   return (
-    <Space size={4} align="baseline">
+    <Space size={2} align="baseline">
       <Typography.Text style={{ whiteSpace: 'nowrap' }}>
         Balansol LP
       </Typography.Text>
