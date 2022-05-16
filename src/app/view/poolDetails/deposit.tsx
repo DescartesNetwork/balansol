@@ -187,12 +187,13 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
                             <MintSymbol mintAddress={mintAddress || ''} />
                           </Typography.Text>
                           <Typography.Text type="secondary">
-                            {normalizedWeight * 100}%
+                            {numeric(normalizedWeight).format('0,0.[0000]%')}
                           </Typography.Text>
                         </Fragment>
                       }
                       ratioButton={
-                        baseTokenIndex !== index && (
+                        baseTokenIndex !== index &&
+                        Number(amounts[baseTokenIndex]) > 0 && (
                           <Button
                             type="text"
                             style={{ color: '#63e0b3', padding: 0 }}
@@ -219,7 +220,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
                   </Col>
                   <Col>
                     <span style={{ color: priceImpactColor(impactPrice) }}>
-                      {numeric(impactPrice).format('0,0.[0000]')}%
+                      {numeric(impactPrice).format('0,0.[0000]%')}
                     </span>
                   </Col>
                 </Row>
