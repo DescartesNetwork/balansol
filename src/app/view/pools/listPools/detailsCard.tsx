@@ -80,7 +80,9 @@ const DetailsCard = ({ poolAddress }: DetailsCardProps) => {
                 type="primary"
                 onClick={() => pushHistory(`/details`, { pool: poolAddress })}
               >
-                Details
+                {poolData.authority.toBase58() === walletAddress
+                  ? 'Manage'
+                  : 'Details'}
               </Button>
             </Col>
           </Row>
