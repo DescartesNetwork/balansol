@@ -187,7 +187,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
                             <MintSymbol mintAddress={mintAddress || ''} />
                           </Typography.Text>
                           <Typography.Text type="secondary">
-                            {normalizedWeight * 100}%
+                            {numeric(normalizedWeight).format('0,0.[0000]%')}
                           </Typography.Text>
                         </Fragment>
                       }
