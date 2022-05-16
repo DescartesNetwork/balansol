@@ -193,7 +193,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
                       }
                       ratioButton={
                         baseTokenIndex !== index &&
-                        Number(amounts[baseTokenIndex]) !== 0 && (
+                        Number(amounts[baseTokenIndex]) > 0 && (
                           <Button
                             type="text"
                             style={{ color: '#63e0b3', padding: 0 }}
