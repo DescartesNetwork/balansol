@@ -25,17 +25,17 @@ const MintSelection = ({
 
   return (
     <Modal
-      title={<Typography.Title level={4}>Select token</Typography.Title>}
       visible={visible}
       closeIcon={<IonIcon name="close" />}
-      className="modal-balansol"
       footer={null}
       destroyOnClose={true}
       centered={true}
-      bodyStyle={{ paddingTop: 0 }}
       onCancel={onClose}
     >
       <Row gutter={[16, 16]}>
+        <Col span={24}>
+          <Typography.Title level={4}>Select token</Typography.Title>
+        </Col>
         <Col span={24}>
           <Search mints={mints} onChange={setMintsSearched} />
         </Col>

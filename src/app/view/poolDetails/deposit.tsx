@@ -157,16 +157,17 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
       </Button>
       {/* Modal deposit */}
       <Modal
-        title={<Typography.Title level={4}>Deposit</Typography.Title>}
         visible={visible}
         onCancel={() => setVisible(false)}
-        className="modal-balansol"
         footer={null}
         destroyOnClose={true}
         centered={true}
         closeIcon={<IonIcon name="close-outline" />}
       >
-        <Row gutter={[0, 24]}>
+        <Row gutter={[24, 24]}>
+          <Col span={24}>
+            <Typography.Title level={4}>Deposit</Typography.Title>
+          </Col>
           <Col span={24}>
             <Row gutter={[24, 8]}>
               {poolData.mints.map((mint, index) => {
@@ -196,7 +197,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
                         Number(amounts[baseTokenIndex]) > 0 && (
                           <Button
                             type="text"
-                            style={{ color: '#63e0b3', padding: 0 }}
+                            style={{ marginRight: -15 }}
                             onClick={() => onApplySuggestion(index)}
                           >
                             Apply suggestion
@@ -253,7 +254,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
           )}
           <Col span={24}>
             <Button
-              className="balansol-btn"
+              size="large"
               type="primary"
               block
               onClick={onSubmit}

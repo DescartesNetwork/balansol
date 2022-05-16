@@ -7,7 +7,7 @@
 @import './index.less';
 
 // Colors
-@primary-color: @PRIMARY;
+@primary-color: @NEUTRAL100;
 @info-color: @INFO;
 @success-color: @SUCCESS;
 @warning-color: @WARNING;
@@ -19,9 +19,9 @@
 
 // Typography
 @font-family: 'Nunito', sans-serif;
-@text-color: @NEUTRAL05;
-@text-color-secondary: @NEUTRAL40;
-@heading-color: @NEUTRAL05;
+@text-color: @NEUTRAL100;
+@text-color-secondary: @NEUTRAL60;
+@heading-color: @NEUTRAL100;
 @disabled-color: @NEUTRAL40;
 @typography-title-margin-top: 0px;
 @typography-title-margin-bottom: 0px;
@@ -35,14 +35,14 @@
 
 // Card
 @card-radius: @border-radius-base * 3;
-@card-actions-background: @NEUTRAL100;
-@card-background: @NEUTRAL90;
-@card-shadow: @DARK_SHADOW2;
+@card-actions-background: @CARD_LIGHT;
+@card-background: @CARD_LIGHT;
+@card-shadow: unset;
 
 // Modal
-@modal-header-bg: @NEUTRAL90;
-@modal-content-bg: @NEUTRAL90;
-@modal-footer-bg: @NEUTRAL90;
+@modal-header-bg: @CARD_LIGHT;
+@modal-content-bg: @CARD_LIGHT;
+@modal-footer-bg: @CARD_LIGHT;
 @modal-footer-padding-horizontal: 24px;
 
 // Drawer
@@ -53,16 +53,16 @@
 @btn-shadow: unset;
 @btn-primary-shadow: unset;
 @btn-text-shadow: unset;
-@btn-default-border: @NEUTRAL80;
-// @btn-default-ghost-color: @NEUTRAL10;
+@btn-default-border: @NEUTRAL100;
+
 @btn-default-ghost-border: @PRIMARY;
-@btn-primary-color: #081438;
+@btn-primary-color: @CARD_LIGHT;
 @btn-disable-color: @NEUTRAL60;
-@btn-disable-bg: @NEUTRAL80;
-@btn-default-ghost-color: @primary-color;
-@btn-default-ghost-border: @primary-color;
+@btn-disable-bg: @DISABLE_BG_BTN;
+@btn-default-ghost-color: @NEUTRAL100;
+@btn-default-ghost-border: @NEUTRAL100;
 @btn-border-radius-base: 24px;
-@btn-disable-border: @BORDER_COLOR_BASE;
+@btn-disable-border: @DISABLE_BORDER_BTN;
 
 // Input
 @input-placeholder-color: @NEUTRAL40;
@@ -89,3 +89,7 @@
 
 //Table
 @table-bg: @TRANSPARENT;
+
+.balansol-card-bordered {
+  border-color: rgba(255, 255, 255, 0.8);
+}

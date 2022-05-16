@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { BN, web3 } from '@project-serum/anchor'
 import { MintActionStates } from '@senswap/balancer'
 
@@ -127,7 +127,7 @@ const ListTokenSetup = ({ setCurrentStep }: ListTokenSetupProps) => {
   }, [listMintSetting])
 
   return (
-    <Fragment>
+    <Row gutter={[24, 24]}>
       <Col span={24}>
         <Row gutter={[0, 12]}>
           <Col flex="auto">Token</Col>
@@ -145,15 +145,9 @@ const ListTokenSetup = ({ setCurrentStep }: ListTokenSetupProps) => {
           ))}
           <Col span={24}>
             <Button
-              type="primary"
               icon={<IonIcon name="add-outline" />}
               onClick={onAddNewToken}
-              style={{
-                borderRadius: 40,
-                background: 'transparent',
-                color: '#63E0B3',
-                borderColor: '#63E0B3',
-              }}
+              ghost
               disabled={loading}
             >
               Add a token
@@ -179,7 +173,7 @@ const ListTokenSetup = ({ setCurrentStep }: ListTokenSetupProps) => {
           </Col>
         </Row>
       </Col>
-    </Fragment>
+    </Row>
   )
 }
 

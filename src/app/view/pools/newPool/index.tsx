@@ -1,6 +1,6 @@
 import { Fragment, useState } from 'react'
 
-import { Button, Modal, Typography } from 'antd'
+import { Button, Modal } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
 import ModalNewPool from './modalNewPool'
 
@@ -15,26 +15,24 @@ const NewPool = () => {
   return (
     <Fragment>
       <Button
-        className="btn-outline"
         icon={<IonIcon name="add-outline" />}
         onClick={() => setVisible(true)}
         style={{ borderRadius: 40 }}
         block
+        ghost
       >
         New Pool
       </Button>
       <Modal
-        title={<Typography.Title level={4}>New Pool</Typography.Title>}
         visible={visible}
         onCancel={() => {
           setVisible(false)
         }}
         closeIcon={<IonIcon name="close" />}
         footer={null}
-        destroyOnClose={true}
-        centered={true}
+        destroyOnClose
+        centered
         width={572}
-        className="modal-balansol"
       >
         <ModalNewPool onClose={() => setVisible(false)} />
       </Modal>

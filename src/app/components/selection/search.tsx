@@ -39,7 +39,7 @@ const Search = ({
 
   return (
     <Card
-      className="card-child-balansol color-95"
+      className="mint-search"
       bodyStyle={{ padding: 0 }}
       style={{ padding: 8 }}
       bordered={false}

@@ -8,6 +8,7 @@ import {
 } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
 import { numeric } from 'shared/util'
+import { useUI } from '@senhub/providers'
 
 echarts.use([
   TitleComponent,
@@ -23,13 +24,13 @@ export type PoolBalanceData = {
   tokenAmount: string
 }
 
-const buildOptions = (data: PoolBalanceData[]) => {
+const buildOptions = (data: PoolBalanceData[], textColor: string) => {
   return {
     legend: {
       bottom: 0,
       icon: 'circle',
       textStyle: {
-        color: '#F3F3F5',
+        color: textColor,
       },
     },
     tooltip: {
@@ -41,7 +42,7 @@ const buildOptions = (data: PoolBalanceData[]) => {
       backgroundColor: '#212C4C',
       extraCssText: 'border-radius: 24px',
       textStyle: {
-        color: '#F3F3F5',
+        color: textColor,
       },
     },
     series: [
@@ -71,11 +72,20 @@ const buildOptions = (data: PoolBalanceData[]) => {
   }
 }
 
+const TEXT_COLOR = {
+  light: '#081438',
+  dark: '#F3F3F5',
+}
+
 const DoughnutChart = ({ data }: { data: PoolBalanceData[] }) => {
+  const {
+    ui: { theme },
+  } = useUI()
+
   return (
     <ReactEChartsCore
       echarts={echarts}
-      option={buildOptions(data)}
+      option={buildOptions(data, TEXT_COLOR[theme])}
       notMerge={true}
       lazyUpdate={true}
     />
