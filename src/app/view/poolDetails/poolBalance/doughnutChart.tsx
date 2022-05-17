@@ -24,25 +24,28 @@ export type PoolBalanceData = {
   tokenAmount: string
 }
 
-const buildOptions = (data: PoolBalanceData[], textColor: string) => {
+const buildOptions = (
+  data: PoolBalanceData[],
+  style: { color: string; backgroundColor: string },
+) => {
   return {
     legend: {
       bottom: 0,
       icon: 'circle',
       textStyle: {
-        color: textColor,
+        color: style.color,
       },
     },
     tooltip: {
       trigger: 'item',
       borderWidth: '1',
       formatter: function (params: any, ticket: any, callback: () => void) {
-        return `<div style="width: 200px; font-weight: 400"><span style="color: #9CA1AF; font-size: 12px">${params.data.name}</span><br/><span style="display: flex; justify-content: space-between; font-size: 14px"><span>Weight</span> <span>${params.data.value}%</span></span> <span style="display: flex; justify-content: space-between; font-size: 14px"><span>Token amount</span> <span>${params.data.tokenAmount}</span></span></div>`
+        return `<div style="width: 200px; font-weight: 400"><span style="color: #9CA1AF; font-size: 12px">${params.data.name}</span><br/><span style="display: flex; justify-content: space-between"><span style="font-size: 14px, font-weight: 400">Weight</span> <span style="font-size: 16px; font-weight: 700">${params.data.value}%</span></span> <span style="display: flex; justify-content: space-between;"><span style="font-size: 14px; font-weight: 400">Token amount</span> <span style="font-size: 16px; font-weight: 700">${params.data.tokenAmount}</span></span></div>`
       },
-      backgroundColor: '#212C4C',
+      backgroundColor: style.backgroundColor,
       extraCssText: 'border-radius: 24px',
       textStyle: {
-        color: textColor,
+        color: style.color,
       },
     },
     series: [
@@ -72,9 +75,15 @@ const buildOptions = (data: PoolBalanceData[], textColor: string) => {
   }
 }
 
-const TEXT_COLOR = {
-  light: '#081438',
-  dark: '#F3F3F5',
+const STYLE = {
+  light: {
+    color: '#081438',
+    backgroundColor: '#F2F4FA',
+  },
+  dark: {
+    color: '#F3F3F5',
+    backgroundColor: '#212C4C',
+  },
 }
 
 const DoughnutChart = ({ data }: { data: PoolBalanceData[] }) => {
@@ -85,7 +94,7 @@ const DoughnutChart = ({ data }: { data: PoolBalanceData[] }) => {
   return (
     <ReactEChartsCore
       echarts={echarts}
-      option={buildOptions(data, TEXT_COLOR[theme])}
+      option={buildOptions(data, STYLE[theme])}
       notMerge={true}
       lazyUpdate={true}
     />
