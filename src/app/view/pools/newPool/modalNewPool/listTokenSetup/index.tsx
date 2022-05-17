@@ -19,6 +19,7 @@ const DEFAULT_EMPTY_TOKEN = {
   weight: '',
   isLocked: false,
 }
+const TOKEN_LIMIT = 8
 
 export type ListTokenSetupProps = {
   setCurrentStep: (step: PoolCreatingStep) => void
@@ -102,7 +103,7 @@ const ListTokenSetup = ({ setCurrentStep }: ListTokenSetupProps) => {
   }
 
   const onAddNewToken = () => {
-    if (loading) return
+    if (loading || listMintSetting.length >= TOKEN_LIMIT) return
     setListMintSetting([...listMintSetting, { ...DEFAULT_EMPTY_TOKEN }])
   }
 
