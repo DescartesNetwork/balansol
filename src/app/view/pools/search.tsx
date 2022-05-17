@@ -28,6 +28,7 @@ const Search = () => {
             dispatch(setFilterPool({ filterPool: value }))
           }}
           style={{ width: '100%', height: '32px' }}
+          className="category"
         >
           <Select.Option value={FilterPools.AllPools}>All pools</Select.Option>
           <Select.Option value={FilterPools.DepositedPools}>

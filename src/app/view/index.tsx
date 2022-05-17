@@ -15,7 +15,9 @@ import BalansolPoolsProvider from 'app/hooks/useBalansolPools'
 import BalansolProvider from 'app/hooks/useSwap'
 import configs from 'app/configs'
 
-import BG from 'app/static/images/balansol-background.png'
+import BG_DARK from 'app/static/images/background-dark.png'
+import BG_LIGHT from 'app/static/images/background-light.png'
+
 import './index.less'
 
 const {
@@ -29,7 +31,7 @@ const View = () => {
   const { wallet } = useWallet()
 
   useEffect(() => {
-    setBackground({ light: BG, dark: BG })
+    setBackground({ light: BG_LIGHT, dark: BG_DARK })
   }, [setBackground])
 
   if (!configs.sol.balancerAddress)

@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import { Button, Card, Col, Row, Table, Typography } from 'antd'
@@ -86,7 +86,7 @@ const ConfirmPoolInfo = ({ onConfirm, poolAddress }: ConfirmPoolInfoProps) => {
   }, [getPoolInfo])
 
   return (
-    <Fragment>
+    <Row gutter={[24, 24]}>
       <Col span={24}>
         <Table
           columns={COLUMNS_CONFIG}
@@ -100,11 +100,10 @@ const ConfirmPoolInfo = ({ onConfirm, poolAddress }: ConfirmPoolInfoProps) => {
         <Card
           style={{
             borderRadius: '8px',
-            backgroundColor: '#142042',
-            boxShadow: 'none',
           }}
           bodyStyle={{ padding: 16 }}
           bordered={false}
+          className="card-total-value"
         >
           <Row align="middle">
             <Col flex={1}>
@@ -124,11 +123,12 @@ const ConfirmPoolInfo = ({ onConfirm, poolAddress }: ConfirmPoolInfoProps) => {
           onClick={onConfirm}
           style={{ borderRadius: 40 }}
           block
+          size="large"
         >
           Confirm
         </Button>
       </Col>
-    </Fragment>
+    </Row>
   )
 }
 

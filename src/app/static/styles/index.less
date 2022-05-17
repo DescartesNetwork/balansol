@@ -1,19 +1,6 @@
 @import './common/card.less';
 @screen-phone: 767px;
 
-.modal-balansol {
-  .balansol-modal-content {
-    background: #212c4c !important;
-    border: 1px solid #4e4f5c !important;
-    border-radius: 24px !important;
-  }
-  .balansol-modal-header {
-    background: #212c4c !important;
-    border-radius: 24px 24px 0 0 !important;
-    border-bottom: none !important;
-  }
-}
-
 .percent-btn {
   border-radius: 8px !important;
   height: 8px !important;
@@ -24,83 +11,8 @@
   font-size: 12px;
 }
 
-.mint-select {
-  background: #394360 !important;
-  border-radius: 16px !important;
-  padding: 4px 8px !important;
-  cursor: pointer;
-}
-
-.withdraw {
-  width: 100%;
-  .btn-toke-name {
-    border-radius: 8px !important;
-    border: unset !important;
-    background: #394360 !important;
-    color: #f3f3f5 !important;
-    .title {
-      font-weight: 400;
-    }
-    &.selected {
-      background: rgba(99, 224, 179, 0.1) !important;
-      color: #63e0b3 !important;
-    }
-  }
-}
-
-.btn-slippage {
-  padding: 5px 16px;
-  border-radius: 8px !important;
-  font-weight: 400;
-  &.selected {
-    background: rgba(99, 224, 179, 0.1) !important;
-    color: #63e0b3 !important;
-  }
-}
-.management-input {
-  border-radius: 24px !important;
-  background: #142042 !important;
-  border: none !important;
-  padding: 9px 16px !important;
-}
-
-.transfer-owner {
-  .balansol-input:focus {
-    box-shadow: none !important;
-  }
-  &-input {
-    .management-input();
-  }
-}
-
-.fee {
-  .balansol-input:focus {
-    box-shadow: none !important;
-  }
-  &-input {
-    .management-input();
-  }
-}
-
-.weight {
-  &-input {
-    .management-input();
-    &-error {
-      .management-input();
-      input {
-        color: red !important;
-      }
-    }
-  }
-
-  .balansol-input-affix-wrapper-focused {
-    box-shadow: none !important;
-  }
-
-  .balansol-input {
-    background: #142042 !important;
-    text-align: right !important;
-  }
+.balansol-input-affix-wrapper-focused {
+  box-shadow: none !important;
 }
 
 .chart-card {
@@ -127,14 +39,6 @@
   }
   @media screen and (max-width: @screen-phone) {
     height: 380px;
-  }
-}
-
-.btn {
-  &-outline {
-    color: #63e0b3 !important;
-    background: inherit !important;
-    border: 1px solid #63e0b3 !important;
   }
 }
 

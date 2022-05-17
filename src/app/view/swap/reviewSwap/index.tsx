@@ -28,11 +28,8 @@ const ReviewSwap = () => {
           onClick={() => setVisible(true)}
           disabled={disabled}
           loading={loading}
-          style={{
-            borderRadius: 40,
-            borderColor: 'transparent',
-          }}
           block
+          size="large"
         >
           Review
         </Button>

@@ -1,44 +1,26 @@
-#balansol {
+.swap-and-pool {
+  padding: 4px !important;
+  border-radius: 30px !important;
+  box-shadow: none !important;
+  background: #e6eaf5 !important;
   .balansol-segmented {
-    display: flex !important;
-    justify-content: center !important;
-    background: #081438 !important;
-    padding: 4px !important;
-    border-radius: 30px !important;
-    box-shadow: none !important;
-    .balansol-segmented-item {
+    &-item {
       border-radius: 30px !important;
-    }
-    .balansol-segmented-item-selected {
-      border-radius: 30px !important;
-      color: #e9e9eb !important;
-      box-shadow: unset !important;
-      background: #212c4c !important;
-      font-weight: 700 !important;
-    }
-    .balansol-segmented-item-label {
-      padding: 2px 11px !important;
-      min-width: 90px;
-    }
-    .balansol-segmented-thumb-motion-appear {
-      border-radius: 30px !important;
-      background: #212c4c !important;
-    }
-  }
-}
-
-.balansol-tabs {
-  &.swap-tab {
-    .balansol-tabs-nav {
-      display: none !important;
-      &::before {
-        display: none !important;
+      &-selected {
+        color: #081438 !important;
+        box-shadow: unset !important;
+        background: #f2f4fa !important;
+        font-weight: 700 !important;
       }
-      .balansol-tabs-nav-wrap {
-        &.balansol-tabs-tab-active {
-          background: #fff !important;
-        }
+      &-label {
+        padding: 2px 11px !important;
+        min-width: 90px;
+        color: #6b7288 !important;
       }
+    }
+    &-thumb-motion-appear {
+      border-radius: 30px !important;
+      background: #f2f4fa !important;
     }
   }
 }
@@ -63,4 +45,33 @@
   box-shadow: unset !important;
   background-position: center !important;
   background-size: cover !important;
+}
+
+#dark {
+  .swap-and-pool {
+    background: #081438 !important;
+    .balansol-segmented {
+      &-item {
+        &-selected {
+          background: #212c4c !important;
+        }
+        &-label {
+          color: #f4f4f5 !important;
+        }
+      }
+
+      &-thumb-motion-appear {
+        background: #212c4c !important;
+      }
+    }
+  }
+}
+
+#light {
+  .balansol-select-dropdown {
+    background-color: #ffffff !important;
+  }
+  .balansol-select-item-option-selected {
+    background: #f2f4fa !important;
+  }
 }

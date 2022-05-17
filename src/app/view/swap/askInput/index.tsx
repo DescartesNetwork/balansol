@@ -1,5 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
+import { useUI } from '@senhub/providers'
 
 import { Card } from 'antd'
 import MintInput from 'app/components/mintInput'
@@ -14,6 +15,9 @@ const AskInput = () => {
   const {
     swap: { askMint, bidMint, askAmount },
   } = useSelector((state: AppState) => state)
+  const {
+    ui: { theme },
+  } = useUI()
   const dispatch = useDispatch<AppDispatch>()
   const mintsSwap = useMintsCanSwap()
   const { getAllQuery } = useAppRouter()
@@ -51,7 +55,7 @@ const AskInput = () => {
             onChange={(mint) => {
               dispatch(setSwapState({ askMint: mint })).unwrap()
             }}
-            style={{ background: '#394360' }}
+            style={{ background: theme === 'dark' ? '#394360' : '#F2F4FA' }}
           />
         }
       />

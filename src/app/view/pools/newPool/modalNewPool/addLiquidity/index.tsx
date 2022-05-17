@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import { Button, Col, Row } from 'antd'
@@ -92,7 +92,7 @@ const AddLiquidity = ({
   }
 
   return (
-    <Fragment>
+    <Row gutter={[24, 24]}>
       <Col span={24}>
         <Row justify="center" gutter={[8, 8]}>
           {poolData.mints.map((mint, idx) => {
@@ -112,8 +112,8 @@ const AddLiquidity = ({
                     Number(inputAmounts[baseTokenIndex]) > 0 && (
                       <Button
                         type="text"
-                        style={{ color: '#63e0b3' }}
                         onClick={() => onApplySuggestion(idx)}
+                        style={{ marginRight: -15 }}
                       >
                         Apply suggestion
                       </Button>
@@ -133,7 +133,7 @@ const AddLiquidity = ({
           setCurrentStep={setCurrentStep}
         />
       </Col>
-    </Fragment>
+    </Row>
   )
 }
 

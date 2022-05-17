@@ -18,9 +18,9 @@ import PreviewSwap from 'app/components/swapInfo'
 import { AppState } from 'app/model'
 import { notifyError, notifySuccess } from 'app/helper'
 import { PriceImpact } from 'app/constant'
+import { useSwap } from 'app/hooks/useSwap'
 
 import './index.less'
-import { useSwap } from 'app/hooks/useSwap'
 
 export type ConfirmSwapProps = {
   visible?: boolean
@@ -127,6 +127,7 @@ const ConfirmSwap = ({
             disabled={isDisplayWarning && !checked}
             loading={isLoading}
             block
+            size="large"
           >
             Swap
           </Button>

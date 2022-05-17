@@ -18,10 +18,8 @@ const SettingArea = () => {
         overlayInnerStyle={{ borderRadius: 24 }}
       >
         <Button
+          style={{ marginRight: -7 }}
           type="text"
-          shape="circle"
-          size="large"
-          style={{ minWidth: 'unset', width: 'unset' }}
           icon={<IonIcon name="cog-outline" />}
         />
       </Popover>
