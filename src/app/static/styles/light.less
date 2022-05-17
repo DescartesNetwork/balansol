@@ -12,9 +12,9 @@
 @success-color: @SUCCESS;
 @warning-color: @WARNING;
 @error-color: @ERROR;
-@popover-background: @NEUTRAL100;
-@body-background: @NEUTRAL100;
-@component-background: @NEUTRAL100;
+@popover-background: @CARD_LIGHT;
+@body-background: @CARD_LIGHT;
+@component-background: @CARD_LIGHT;
 @disabled-bg: @NEUTRAL90;
 
 // Typography
@@ -74,18 +74,6 @@
 
 // Checkbox
 @checkbox-border-radius: @border-radius-base - 4;
-
-// Patch
-.@{ant-prefix}-layout {
-  background: unset;
-}
-.@{ant-prefix}-card {
-  box-shadow: @DARK_SHADOW1;
-  .glass {
-    background-color: color(~`('@{card-background}99') `);
-    backdrop-filter: blur(4px);
-  }
-}
 
 //Table
 @table-bg: @TRANSPARENT;
