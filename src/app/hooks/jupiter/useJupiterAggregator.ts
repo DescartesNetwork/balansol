@@ -79,9 +79,15 @@ export const useJupiterAggregator = (): SwapProvider => {
   }, [composeJupiterProps])
 
   const composeBestRoute = useCallback(async () => {
-    if (!bidMint || !askMint || !Number(bidAmount) || isReverse || !routes)
+    const bestJupiterRoute = routes?.[0]
+    if (
+      !bidMint ||
+      !askMint ||
+      !Number(bidAmount) ||
+      isReverse ||
+      !bestJupiterRoute
+    )
       return setBestRouteInfo(DEFAULT_EMPTY_ROUTE)
-    const bestJupiterRoute = routes[0]
 
     const route = bestJupiterRoute.marketInfos.map((market) => {
       return {
