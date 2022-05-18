@@ -15,6 +15,8 @@ import { useLptSupply } from 'app/hooks/useLptSupply'
 import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
 import { numeric } from 'shared/util'
 
+import './index.less'
+
 const WithdrawSingleSide = ({
   poolAddress,
   lptAmount,
@@ -114,7 +116,7 @@ const WithdrawSingleSide = ({
   }, [estimateImpactPriceAndLP])
 
   return (
-    <Row gutter={[0, 12]} className="withdraw">
+    <Row gutter={[12, 12]} className="withdraw">
       <Col span={24}>
         <Row>
           <Col flex="auto">
@@ -130,7 +132,7 @@ const WithdrawSingleSide = ({
         </Row>
       </Col>
       <Col span={24}>
-        <Row gutter={[0, 14]}>
+        <Row gutter={[14, 14]}>
           <Col span={24}>
             <Typography.Text type="secondary" style={{ fontSize: '14px' }}>
               You will receive
@@ -146,8 +148,8 @@ const WithdrawSingleSide = ({
       </Col>
       <Col span={24}>
         <Button
-          className="balansol-btn"
           type="primary"
+          size="large"
           block
           onClick={onSubmit}
           disabled={amountReserve.isZero() || Number(lptAmount) > balance * 0.3}

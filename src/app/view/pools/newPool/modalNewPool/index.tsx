@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useWallet } from '@senhub/providers'
 
-import { Col, Row, Steps } from 'antd'
+import { Col, Row, Steps, Typography } from 'antd'
 import ListTokenSetup from './listTokenSetup'
 import AddLiquidity from './addLiquidity'
 import ConfirmPoolInfo from './confirmPoolInfo'
@@ -66,13 +66,16 @@ const ModalNewPool = ({ onClose = () => {} }: ModalNewPoolProps) => {
   return (
     <Row gutter={[24, 24]}>
       <Col span={24}>
+        <Typography.Title level={4}>New Pool</Typography.Title>
+      </Col>
+      <Col span={24}>
         <Steps size="small" current={currentStep}>
           <Step title="Select tokens & weights" />
           <Step title="Add liquidity" />
           <Step title="Confirm" />
         </Steps>
       </Col>
-      {creatingPoolProcess}
+      <Col span={24}>{creatingPoolProcess}</Col>
     </Row>
   )
 }

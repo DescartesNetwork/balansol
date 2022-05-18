@@ -31,21 +31,22 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
       </Button>
       {/* Modal withdraw */}
       <Modal
-        title={<Typography.Title level={4}>Withdraw</Typography.Title>}
         visible={visible}
         onCancel={() => setVisible(false)}
-        className="modal-balansol"
         footer={null}
-        destroyOnClose={true}
-        centered={true}
+        destroyOnClose
+        centered
         closeIcon={<IonIcon name="close-outline" />}
       >
-        <Row gutter={[0, 24]} className="withdraw">
+        <Row gutter={[24, 24]} className="withdraw">
           <Col span={24}>
-            <Row gutter={[0, 12]}>
+            <Typography.Title level={4}>Withdraw</Typography.Title>
+          </Col>
+          <Col span={24}>
+            <Row gutter={[12, 12]}>
               <Col span={24}>
                 <Typography.Text type="secondary" style={{ fontSize: '12px' }}>
-                  You want to reveice
+                  You want to receive
                 </Typography.Text>
               </Col>
               <Col span={24}>
@@ -96,20 +97,22 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
               force
             />
           </Col>
-          {isSelectedAll ? (
-            <WithdrawFullSide
-              poolAddress={poolAddress}
-              lptAmount={lptAmount}
-              onSuccess={() => setVisible(false)}
-            />
-          ) : (
-            <WithdrawSingleSide
-              poolAddress={poolAddress}
-              mintAddress={selectedMints[0]}
-              lptAmount={lptAmount}
-              onSuccess={() => setVisible(false)}
-            />
-          )}
+          <Col span={24}>
+            {isSelectedAll ? (
+              <WithdrawFullSide
+                poolAddress={poolAddress}
+                lptAmount={lptAmount}
+                onSuccess={() => setVisible(false)}
+              />
+            ) : (
+              <WithdrawSingleSide
+                poolAddress={poolAddress}
+                mintAddress={selectedMints[0]}
+                lptAmount={lptAmount}
+                onSuccess={() => setVisible(false)}
+              />
+            )}
+          </Col>
         </Row>
       </Modal>
     </Fragment>

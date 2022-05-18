@@ -57,12 +57,7 @@ const Swap = () => {
                   <Button
                     className="btn-switch-type"
                     size="small"
-                    icon={
-                      <IonIcon
-                        name="git-compare-outline"
-                        style={{ color: 'white' }}
-                      />
-                    }
+                    icon={<IonIcon name="git-compare-outline" />}
                     onClick={onSwitch}
                   />
                 </Col>

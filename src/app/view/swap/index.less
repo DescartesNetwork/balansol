@@ -1,18 +1,43 @@
-.balansol-card {
-  &.card-swap {
-    background: transparent !important;
+#balansol {
+  .card-swap {
     border-radius: 20px !important;
     width: 100% !important;
     box-shadow: unset !important;
   }
-
   .btn-switch-type {
     position: absolute !important;
     top: -10px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 1 !important;
-    border-color: #212c4c !important;
+    background: #f2f4fa !important;
+    border: unset !important;
+  }
+}
+
+.btn-slippage {
+  padding: 5px 16px;
+  border-radius: 8px !important;
+  font-weight: 400;
+  border: none !important;
+  background: #e6e8eb !important;
+  color: #6b7288 !important;
+  &.selected {
+    background: rgba(99, 224, 179, 0.1) !important;
+    color: #081438 !important;
+  }
+}
+
+#dark {
+  .btn-switch-type {
     background: #212c4c !important;
+  }
+  .btn-slippage {
+    background: #394360 !important;
+    color: #f3f3f5 !important;
+    &.selected {
+      background: rgba(99, 224, 179, 0.1) !important;
+      color: #63e0b3 !important;
+    }
   }
 }

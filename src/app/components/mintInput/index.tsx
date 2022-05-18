@@ -9,6 +9,7 @@ import { numeric } from 'shared/util'
 import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
 
 import './index.less'
+import { useUI } from '@senhub/providers'
 
 const PROPORTIONS = [50, 100]
 
@@ -37,24 +38,20 @@ export default function MintInput({
   ratioButton?: ReactNode
   mintSelection?: ReactNode
 }) {
+  const {
+    ui: { theme },
+  } = useUI()
   const { balance } = useAccountBalanceByMintAddress(selectedMint)
-
   const onInput = (value: string) => {
     if (!onChangeAmount) return
     const invalidValue = Number(value) > balance && !!onChangeAmount
     return onChangeAmount(value, invalidValue)
   }
 
+  const bg_default = theme === 'dark' ? '#394360' : '#ced0d7'
+
   return (
-    <Row
-      gutter={[0, 10]}
-      align="middle"
-      style={{
-        background: '#142042',
-        borderRadius: 20,
-        padding: 16,
-      }}
-    >
+    <Row gutter={[0, 10]} align="middle" className="card-swap-item">
       <Col span={24}>
         <Row justify="space-between">
           {/* Mint select */}
@@ -140,7 +137,7 @@ export default function MintInput({
                             : undefined
                         }
                         style={{
-                          background: isActive ? '#63e0b3' : undefined,
+                          background: isActive ? '#63e0b3' : bg_default,
                         }}
                       />
                       <Typography.Text type="secondary" className="caption">

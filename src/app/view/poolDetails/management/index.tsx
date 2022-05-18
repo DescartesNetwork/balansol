@@ -4,6 +4,8 @@ import FreezeAndThaw from './freezeAndThaw'
 import TransferOwner from './transferOwner'
 import Weight from './weight'
 
+import './index.less'
+
 const PoolManagement = ({ poolAddress }: { poolAddress: string }) => {
   return (
     <Card>

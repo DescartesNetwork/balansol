@@ -23,6 +23,7 @@ const SwapAndPools = ({ tabId }: SwapAndPoolsProps) => {
     <Row gutter={[24, 24]} justify="center" style={{ paddingBottom: 12 }}>
       <Col>
         <Segmented
+          className="swap-and-pool"
           options={Object.keys(HOMEPAGE_TABS).map((key) => {
             return { label: key, value: HOMEPAGE_TABS[key] }
           })}

@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { PoolState } from '@senswap/balancer'
 import { useWallet } from '@senhub/providers'
 
-import { Button, Modal, Typography } from 'antd'
+import { Button, Modal } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
 import ModalNewPool from './modalNewPool'
 import { AppState } from 'app/model'
@@ -37,26 +37,24 @@ const NewPool = () => {
   return (
     <Fragment>
       <Button
-        className="btn-outline"
         icon={<IonIcon name={!isInProcess ? 'add-outline' : 'sync-outline'} />}
         onClick={() => setVisible(true)}
         style={{ borderRadius: 40 }}
         block
+        ghost
       >
         {!isInProcess ? 'New Pool' : 'Resume'}
       </Button>
       <Modal
-        title={<Typography.Title level={4}>New Pool</Typography.Title>}
         visible={visible}
         onCancel={() => {
           setVisible(false)
         }}
         closeIcon={<IonIcon name="close" />}
         footer={null}
-        destroyOnClose={true}
-        centered={true}
+        destroyOnClose
+        centered
         width={572}
-        className="modal-balansol"
       >
         <ModalNewPool onClose={() => setVisible(false)} />
       </Modal>

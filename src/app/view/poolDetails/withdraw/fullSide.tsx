@@ -101,12 +101,7 @@ const WithdrawFullSide = ({
         </Row>
       </Col>
       <Col span={24}>
-        <Button
-          className="balansol-btn"
-          type="primary"
-          block
-          onClick={onSubmit}
-        >
+        <Button type="primary" block onClick={onSubmit} size="large">
           Withdraw
         </Button>
       </Col>
