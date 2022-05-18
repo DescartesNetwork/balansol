@@ -144,6 +144,11 @@ export const useJupiterAggregator = (): SwapProvider => {
   }, [exchange, routes, walletAddress])
 
   return useMemo(() => {
-    return { ...bestRouteInfo, swap, platform: SwapPlatform.Jupiter, loading }
-  }, [bestRouteInfo, loading, swap])
+    return {
+      ...bestRouteInfo,
+      swap,
+      platform: SwapPlatform.Jupiter,
+      loading: !Number(bidAmount) ? false : loading,
+    }
+  }, [bestRouteInfo, bidAmount, loading, swap])
 }
