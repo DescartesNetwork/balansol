@@ -1,13 +1,9 @@
-import { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
-
 import { Col, Row } from 'antd'
 import WeightControl from './weightControl'
-import Selection from 'app/components/selection'
 
-import { useAccount, useMint } from '@senhub/providers'
-import { AppState } from 'app/model'
+import { useUI } from '@senhub/providers'
 import { MintSetup } from '../index'
+import { MintSelection } from 'shared/antd/mint'
 
 export type TokenSetupProps = {
   tokenList: MintSetup[]
@@ -24,29 +20,9 @@ const TokenSetup = ({
   onRemoveToken,
   id,
 }: TokenSetupProps) => {
-  const { pools } = useSelector((state: AppState) => state)
-  const [sourceMint, setSourceMint] = useState<string[]>([])
-  const { accounts } = useAccount()
-  const { tokenProvider } = useMint()
-
-  useEffect(() => {
-    ;(async () => {
-      const selectedMints = tokenList.map((token) => token.addressToken)
-      const selectedIgnoreMints = Object.values(accounts)
-        .map(({ mint }) => mint)
-        .filter((value) => !selectedMints.includes(value))
-      const mintInfos = await Promise.all(
-        selectedIgnoreMints.map(
-          async (value) => await tokenProvider.findByAddress(value),
-        ),
-      )
-      const filteredSourceMints = selectedIgnoreMints.filter(
-        (_, idx) => mintInfos[idx],
-      )
-
-      setSourceMint(filteredSourceMints)
-    })()
-  }, [accounts, pools, tokenList, tokenProvider])
+  const {
+    ui: { theme },
+  } = useUI()
 
   const onChangeToken = (addressToken: string) => {
     onChangeTokenInfo(
@@ -81,10 +57,10 @@ const TokenSetup = ({
   return (
     <Row>
       <Col flex="auto">
-        <Selection
-          selectedMint={mintSetup.addressToken}
+        <MintSelection
+          value={mintSetup.addressToken}
           onChange={onChangeToken}
-          mints={sourceMint}
+          style={{ background: theme === 'dark' ? '#394360' : '#F2F4FA' }}
         />
       </Col>
       <Col>
