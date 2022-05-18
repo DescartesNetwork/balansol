@@ -35,10 +35,8 @@ const ModalNewPool = ({ onClose = () => {} }: ModalNewPoolProps) => {
       if (poolData.authority.toBase58() !== wallet.address) continue
       if (!(poolData.state as PoolState)['uninitialized']) continue
       setCurrentStep(PoolCreatingStep.addLiquidity)
-
       return setPoolAddress(poolAddress)
     }
-
     return setPoolAddress('')
   }, [poolAddress, pools, wallet.address])
 
