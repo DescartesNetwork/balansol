@@ -1,12 +1,12 @@
 import { Fragment, useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { PoolState } from '@senswap/balancer'
+import { useWallet } from '@senhub/providers'
 
 import { Button, Modal, Typography } from 'antd'
 import IonIcon from 'shared/antd/ionicon'
 import ModalNewPool from './modalNewPool'
 import { AppState } from 'app/model'
-import { PoolState } from '@senswap/balancer'
-import { useWallet } from '@senhub/providers'
 
 export type TokenInfo = {
   addressToken: string
