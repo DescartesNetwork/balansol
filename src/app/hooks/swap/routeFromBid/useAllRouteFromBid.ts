@@ -23,7 +23,7 @@ export const useAllRouteFromBid = (metaRoutes: MetaRoute[]): Route[] => {
 
   const computeRouteInfos = useCallback(async () => {
     const routes = []
-    if (isReverse) return setRoutes([])
+    if (isReverse || !Number(bidAmount)) return setRoutes([])
     for (const metaRoute of metaRoutes) {
       const bidMint = metaRoute[0].bidMint
       const route = []

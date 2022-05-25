@@ -71,9 +71,9 @@ const Provider = ({ children }: { children: ReactNode }) => {
   const jupiter = useJupiterAggregator()
 
   const choosePlatform = useCallback(() => {
-    if (balansol.route.length) return setPlatformSwap(balansol)
+    if (balansol.route.length || isReverse) return setPlatformSwap(balansol)
     return setPlatformSwap(jupiter)
-  }, [balansol, jupiter])
+  }, [balansol, isReverse, jupiter])
   useEffect(() => {
     choosePlatform()
   }, [choosePlatform])
