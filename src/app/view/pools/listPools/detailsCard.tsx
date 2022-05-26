@@ -46,7 +46,7 @@ const DetailsCard = ({ poolAddress }: DetailsCardProps) => {
           <PoolAddressActions poolAddress={poolAddress} />
         </Col>
       </Row>
-      <Row gutter={[0, 26]}>
+      <Row gutter={[0, 24]}>
         <Col span={24}>
           <PercentGroupMints poolAddress={poolAddress} />
         </Col>
