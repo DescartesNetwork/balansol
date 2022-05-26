@@ -32,7 +32,7 @@ const AddLiquidity = ({
   const { undecimalizeMintAmount } = useOracles()
   const { tokenProvider } = useMint()
 
-  const isDisplaySuggestButton = (idx: number) =>
+  const isVisibleSuggestion = (idx: number) =>
     baseTokenIndex !== idx &&
     Number(inputAmounts[baseTokenIndex]) > 0 &&
     Number(suggestedAmounts[idx]) > 0 &&
@@ -55,7 +55,6 @@ const AddLiquidity = ({
 
   const onApplySuggestion = async (index: number) => {
     const newAmounts = [...inputAmounts]
-
     newAmounts[index] = suggestedAmounts[index]
     setInputAmounts(newAmounts)
   }
@@ -86,11 +85,11 @@ const AddLiquidity = ({
         const appliedTicket = appliedToken?.extensions?.coingeckoId
         if (!appliedTicket) return ''
         const appliedTokenCGKData = await fetchCGK(appliedTicket)
+        if (!appliedTokenCGKData.price) return ''
         const appliedNormalizedWeight = calcNormalizedWeight(
           weights,
           weights[index],
         )
-        if (!appliedTokenCGKData.price) return ''
         const suggestedAmount = (
           (baseTokenCGKData.price * Number(amount) * baseNormalizedWeight) /
           (appliedTokenCGKData.price * appliedNormalizedWeight)
@@ -119,7 +118,7 @@ const AddLiquidity = ({
                   }
                   force
                   ratioButton={
-                    isDisplaySuggestButton(idx) && (
+                    isVisibleSuggestion(idx) && (
                       <Button
                         type="text"
                         onClick={() => onApplySuggestion(idx)}

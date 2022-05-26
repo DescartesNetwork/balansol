@@ -121,7 +121,8 @@ export default function MintInput({
                     const proportion = PROPORTIONS[idx]
                     const proportionVal = (balance * proportion) / 100
 
-                    if (amount >= proportionVal) proportionActive = proportion
+                    if (Number(amount).toFixed(4) === proportionVal.toFixed(4))
+                      proportionActive = proportion
                   }
                   const isActive = val <= proportionActive
 
