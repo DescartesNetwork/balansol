@@ -34,7 +34,7 @@ const DetailsCard = ({ poolAddress }: DetailsCardProps) => {
 
   return (
     <Card
-      className={`${validPool ? '' : 'disabled-pool'}`}
+      className={`${validPool ? 'pool-card-detail' : 'disabled-pool'}`}
       style={{ boxShadow: 'unset' }}
       onClick={() => pushHistory(`/details`, { pool: poolAddress })}
     >
