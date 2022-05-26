@@ -24,12 +24,19 @@ const AddLiquidity = ({
   onClose = () => {},
 }: AddLiquidityProps) => {
   const [inputAmounts, setInputAmounts] = useState<string[]>([])
+  const [suggestedAmounts, setSuggestAmounts] = useState<string[]>([])
   const [baseTokenIndex, setBaseTokenIndex] = useState(0)
   const {
     pools: { [poolAddress]: poolData },
   } = useSelector((state: AppState) => state)
   const { undecimalizeMintAmount } = useOracles()
   const { tokenProvider } = useMint()
+
+  const isVisibleSuggestion = (idx: number) =>
+    baseTokenIndex !== idx &&
+    Number(inputAmounts[baseTokenIndex]) > 0 &&
+    Number(suggestedAmounts[idx]) > 0 &&
+    Number(suggestedAmounts[idx]) !== Number(inputAmounts[idx])
 
   const initInputAmountFromPoolData = useCallback(async () => {
     if (!poolData || inputAmounts.length !== 0) return
@@ -47,48 +54,51 @@ const AddLiquidity = ({
   }, [initInputAmountFromPoolData])
 
   const onApplySuggestion = async (index: number) => {
+    const newAmounts = [...inputAmounts]
+    newAmounts[index] = suggestedAmounts[index]
+    setInputAmounts(newAmounts)
+  }
+
+  const onUpdateAmount = async (amount: string, baseIdx: number) => {
+    const newAmounts = [...inputAmounts]
+    newAmounts[baseIdx] = amount
+    setBaseTokenIndex(baseIdx)
+    setInputAmounts(newAmounts)
+    // handle suggestion for other tokens
     const { mints, weights } = poolData
     const baseToken = await tokenProvider.findByAddress(
-      mints[baseTokenIndex].toBase58(),
-    )
-    const appliedToken = await tokenProvider.findByAddress(
-      mints[index].toBase58(),
+      mints[baseIdx].toBase58(),
     )
     const baseTicket = baseToken?.extensions?.coingeckoId
-    const appliedTicket = appliedToken?.extensions?.coingeckoId
-
-    if (!baseTicket && !appliedTicket) return null
-
+    if (!baseTicket) return null
     const baseTokenCGKData = await fetchCGK(baseTicket)
-    const appliedTokenCGKData = await fetchCGK(appliedTicket)
-
-    let newAmounts = [...inputAmounts]
+    if (!baseTokenCGKData.price) return null
     const baseNormalizedWeight = calcNormalizedWeight(
       weights,
       weights[baseTokenIndex],
     )
-    const appliedNormalizedWeight = calcNormalizedWeight(
-      weights,
-      weights[index],
+
+    const newSuggestAmounts = await Promise.all(
+      mints.map(async (mint, index) => {
+        if (baseIdx === index) return ''
+        const appliedToken = await tokenProvider.findByAddress(mint.toBase58())
+        const appliedTicket = appliedToken?.extensions?.coingeckoId
+        if (!appliedTicket) return ''
+        const appliedTokenCGKData = await fetchCGK(appliedTicket)
+        if (!appliedTokenCGKData.price) return ''
+        const appliedNormalizedWeight = calcNormalizedWeight(
+          weights,
+          weights[index],
+        )
+        const suggestedAmount = (
+          (baseTokenCGKData.price * Number(amount) * baseNormalizedWeight) /
+          (appliedTokenCGKData.price * appliedNormalizedWeight)
+        ).toFixed(9)
+
+        return suggestedAmount
+      }),
     )
-    if (!baseTokenCGKData?.price || !appliedTokenCGKData?.price) return null
-
-    const suggestedAmount = (
-      (baseTokenCGKData.price *
-        Number(newAmounts[baseTokenIndex]) *
-        baseNormalizedWeight) /
-      (appliedTokenCGKData.price * appliedNormalizedWeight)
-    ).toFixed(9)
-    newAmounts[index] = String(suggestedAmount)
-
-    setInputAmounts(newAmounts)
-  }
-
-  const onUpdateAmount = async (value: string, idx: number) => {
-    const newAmounts = [...inputAmounts]
-    newAmounts[idx] = value
-    setBaseTokenIndex(idx)
-    return setInputAmounts(newAmounts)
+    setSuggestAmounts(newSuggestAmounts)
   }
 
   return (
@@ -108,8 +118,7 @@ const AddLiquidity = ({
                   }
                   force
                   ratioButton={
-                    baseTokenIndex !== idx &&
-                    Number(inputAmounts[baseTokenIndex]) > 0 && (
+                    isVisibleSuggestion(idx) && (
                       <Button
                         type="text"
                         onClick={() => onApplySuggestion(idx)}

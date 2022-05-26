@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 import { BN, utils, web3 } from '@project-serum/anchor'
 
 import { Button, Col, Row, Typography } from 'antd'
+import IonIcon from 'shared/antd/ionicon'
 import TokenWillReceive from '../tokenWillReceive'
 
 import { useAccount, useMint, useWallet } from '@senhub/providers'
@@ -16,6 +17,8 @@ import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
 import { numeric } from 'shared/util'
 
 import './index.less'
+
+const WITHDRAW_LIMIT = 0.3
 
 const WithdrawSingleSide = ({
   poolAddress,
@@ -46,8 +49,11 @@ const WithdrawSingleSide = ({
     poolData.mintLpt.toBase58(),
   )
 
+  const isExceedWithdrawLimitation =
+    Number(lptAmount) > balance * WITHDRAW_LIMIT
+
   const onSubmit = async () => {
-    if (Number(lptAmount) > balance * 0.3) {
+    if (Number(lptAmount) > balance * WITHDRAW_LIMIT) {
       return notifyError({
         message: 'Please input amount less than 30% available supply!',
       })
@@ -147,15 +153,31 @@ const WithdrawSingleSide = ({
         </Row>
       </Col>
       <Col span={24}>
-        <Button
-          type="primary"
-          size="large"
-          block
-          onClick={onSubmit}
-          disabled={amountReserve.isZero() || Number(lptAmount) > balance * 0.3}
-        >
-          Withdraw
-        </Button>
+        <Row gutter={[0, 8]}>
+          {isExceedWithdrawLimitation && (
+            <Col span={24}>
+              <Typography.Text
+                type="danger"
+                style={{ display: 'flex', alignItems: 'center' }}
+              >
+                <IonIcon name="warning-outline" style={{ fontSize: '16px' }} />
+                {'  '}
+                You cannot withdraw because the price impact is greater than 30%
+              </Typography.Text>
+            </Col>
+          )}
+          <Col span={24}>
+            <Button
+              type="primary"
+              size="large"
+              block
+              onClick={onSubmit}
+              disabled={amountReserve.isZero() || isExceedWithdrawLimitation}
+            >
+              Withdraw
+            </Button>
+          </Col>
+        </Row>
       </Col>
     </Row>
   )

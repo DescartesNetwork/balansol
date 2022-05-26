@@ -6,7 +6,7 @@ import Mint from './mint'
 import IonIcon from 'shared/antd/ionicon'
 import { useState } from 'react'
 
-const LIMITATION = 100
+const LIMIT = 100
 
 const MintSelection = ({
   selectedMint,
@@ -43,7 +43,7 @@ const MintSelection = ({
           <Row gutter={[16, 16]} style={{ height: 300 }} className="scrollbar">
             <Col span={24}>
               <Row gutter={[16, 16]}>
-                {mintsSearched.slice(0, LIMITATION).map((mintAddress, i) => (
+                {mintsSearched.slice(0, LIMIT).map((mintAddress, i) => (
                   <Col span={24} key={i}>
                     <LazyLoad height={48} overflow>
                       <Mint
