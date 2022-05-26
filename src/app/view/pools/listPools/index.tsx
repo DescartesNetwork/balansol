@@ -13,7 +13,7 @@ const ListPools = () => {
         let poolState: any = listPools[poolAddress].state
         if (poolState['uninitialized'] || poolState['deleted']) return null
         return (
-          <Col xs={24} md={12} key={poolAddress}>
+          <Col xs={24} md={24} key={poolAddress}>
             <DetailsCard poolAddress={poolAddress} />
           </Col>
         )

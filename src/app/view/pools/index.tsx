@@ -13,10 +13,10 @@ const Pools = () => {
   const isMobile = width < 768
 
   return (
-    <Row gutter={[24, 24]} justify="center" align="middle">
-      <Col xs={24} md={20} lg={16}>
+    <Row gutter={[12, 12]} justify="center" align="middle">
+      <Col xs={24} md={20} lg={16} xl={12} xxl={8}>
         <Row gutter={[24, 24]} justify="space-between">
-          <Col xs={24} md={12}>
+          <Col flex={1}>
             <Search />
           </Col>
           <Col span={isMobile ? 24 : undefined}>
@@ -24,7 +24,8 @@ const Pools = () => {
           </Col>
         </Row>
       </Col>
-      <Col xs={24} md={20} lg={16}>
+      <Col span={24} />
+      <Col xs={24} md={20} lg={16} xl={12} xxl={8}>
         <ListPools />
       </Col>
     </Row>

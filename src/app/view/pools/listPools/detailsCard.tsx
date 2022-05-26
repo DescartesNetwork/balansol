@@ -36,6 +36,7 @@ const DetailsCard = ({ poolAddress }: DetailsCardProps) => {
     <Card
       className={`${validPool ? '' : 'disabled-pool'}`}
       style={{ boxShadow: 'unset' }}
+      onClick={() => pushHistory(`/details`, { pool: poolAddress })}
     >
       <Row style={{ marginBottom: '16px' }}>
         <Col flex="auto">
@@ -45,16 +46,16 @@ const DetailsCard = ({ poolAddress }: DetailsCardProps) => {
           <PoolAddressActions poolAddress={poolAddress} />
         </Col>
       </Row>
-      <Row gutter={[0, 10]}>
+      <Row gutter={[0, 26]}>
         <Col span={24}>
           <PercentGroupMints poolAddress={poolAddress} />
         </Col>
         <Col span={24}>
           <Row align="bottom" wrap={false}>
             <Col flex="auto">
-              <Row>
-                <Col span={24}>
-                  <Space>
+              <Row gutter={[32, 0]}>
+                <Col>
+                  <Space size={4} direction="vertical">
                     <Typography.Text type="secondary">TVL:</Typography.Text>
                     <Typography.Title level={5}>
                       {' '}
@@ -62,8 +63,8 @@ const DetailsCard = ({ poolAddress }: DetailsCardProps) => {
                     </Typography.Title>
                   </Space>
                 </Col>
-                <Col span={24}>
-                  <Space>
+                <Col flex={1}>
+                  <Space size={4} direction="vertical">
                     <Typography.Text type="secondary">
                       My Contribution:
                     </Typography.Text>
@@ -74,16 +75,6 @@ const DetailsCard = ({ poolAddress }: DetailsCardProps) => {
                   </Space>
                 </Col>
               </Row>
-            </Col>
-            <Col>
-              <Button
-                type="primary"
-                onClick={() => pushHistory(`/details`, { pool: poolAddress })}
-              >
-                {poolData.authority.toBase58() === walletAddress
-                  ? 'Manage'
-                  : 'Details'}
-              </Button>
             </Col>
           </Row>
         </Col>
