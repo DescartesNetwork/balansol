@@ -18,7 +18,7 @@ import { numeric } from 'shared/util'
 
 import './index.less'
 
-const WITHDRAW_LIMITATION = 0.3
+const WITHDRAW_LIMIT = 0.3
 
 const WithdrawSingleSide = ({
   poolAddress,
@@ -50,10 +50,10 @@ const WithdrawSingleSide = ({
   )
 
   const isExceedWithdrawLimitation =
-    Number(lptAmount) > balance * WITHDRAW_LIMITATION
+    Number(lptAmount) > balance * WITHDRAW_LIMIT
 
   const onSubmit = async () => {
-    if (Number(lptAmount) > balance * WITHDRAW_LIMITATION) {
+    if (Number(lptAmount) > balance * WITHDRAW_LIMIT) {
       return notifyError({
         message: 'Please input amount less than 30% available supply!',
       })
@@ -162,7 +162,7 @@ const WithdrawSingleSide = ({
               >
                 <IonIcon name="warning-outline" style={{ fontSize: '16px' }} />
                 {'  '}
-                You cannot withdraw because the price impact is greater than 3%
+                You cannot withdraw because the price impact is greater than 30%
               </Typography.Text>
             </Col>
           )}

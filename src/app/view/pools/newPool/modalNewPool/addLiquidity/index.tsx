@@ -32,6 +32,12 @@ const AddLiquidity = ({
   const { undecimalizeMintAmount } = useOracles()
   const { tokenProvider } = useMint()
 
+  const isDisplaySuggestButton = (idx: number) =>
+    baseTokenIndex !== idx &&
+    Number(inputAmounts[baseTokenIndex]) > 0 &&
+    Number(suggestedAmounts[idx]) > 0 &&
+    Number(suggestedAmounts[idx]) !== Number(inputAmounts[idx])
+
   const initInputAmountFromPoolData = useCallback(async () => {
     if (!poolData || inputAmounts.length !== 0) return
     const initInputAmounts = await Promise.all(
@@ -49,12 +55,9 @@ const AddLiquidity = ({
 
   const onApplySuggestion = async (index: number) => {
     const newAmounts = [...inputAmounts]
-    const newSuggestAmount = [...suggestedAmounts]
 
     newAmounts[index] = suggestedAmounts[index]
-    newSuggestAmount[index] = ''
     setInputAmounts(newAmounts)
-    setSuggestAmounts(newSuggestAmount)
   }
 
   const onUpdateAmount = async (amount: string, baseIdx: number) => {
@@ -116,9 +119,7 @@ const AddLiquidity = ({
                   }
                   force
                   ratioButton={
-                    baseTokenIndex !== idx &&
-                    Number(inputAmounts[baseTokenIndex]) > 0 &&
-                    Number(suggestedAmounts[idx]) > 0 && (
+                    isDisplaySuggestButton(idx) && (
                       <Button
                         type="text"
                         onClick={() => onApplySuggestion(idx)}
