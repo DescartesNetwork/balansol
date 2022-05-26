@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux'
 import { useWallet } from '@senhub/providers'
 
-import { Button, Card, Col, Row, Space, Typography } from 'antd'
+import { Card, Col, Row, Space, Typography } from 'antd'
 import PercentGroupMints from './percentGroupMints'
 import PoolAddressActions from './poolAddressActions'
 import { PoolAvatar } from 'app/components/pools/poolAvatar'
