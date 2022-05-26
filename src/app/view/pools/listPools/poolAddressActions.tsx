@@ -22,9 +22,10 @@ const PoolAddressActions = ({ poolAddress }: PoolAddressActionsProps) => {
   } = useWallet()
   const state = poolData.state as PoolState
 
-  const onCopy = async () => {
+  const onCopy = async (e: any) => {
     setCopied(true)
     setTimeout(() => setCopied(false), 1500)
+    e.stopPropagation()
   }
   return (
     <Space size={10}>
@@ -42,7 +43,10 @@ const PoolAddressActions = ({ poolAddress }: PoolAddressActionsProps) => {
         <Typography.Text
           type="secondary"
           style={{ cursor: 'pointer' }}
-          onClick={() => window.open(explorer(poolAddress), '_blank')}
+          onClick={(e) => {
+            window.open(explorer(poolAddress), '_blank')
+            e?.stopPropagation()
+          }}
         >
           {shortenAddress(poolAddress, 3, '...')}
         </Typography.Text>
