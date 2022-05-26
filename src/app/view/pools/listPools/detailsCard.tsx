@@ -63,7 +63,7 @@ const DetailsCard = ({ poolAddress }: DetailsCardProps) => {
                     </Typography.Title>
                   </Space>
                 </Col>
-                <Col flex={1}>
+                <Col flex="auto">
                   <Space size={4} direction="vertical">
                     <Typography.Text type="secondary">
                       My Contribution:
