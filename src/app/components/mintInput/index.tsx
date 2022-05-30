@@ -12,6 +12,19 @@ import './index.less'
 import { useUI } from '@senhub/providers'
 
 const PROPORTIONS = [50, 100]
+type MintInputProps = {
+  amount: string | number
+  onChangeAmount?: (val: string, invalid?: boolean) => void
+  selectedMint: string
+  onSelect?: (mint: string) => void
+  mints?: string[]
+  unit?: string
+  force?: boolean
+  mintLabel?: ReactNode
+  mintAvatar?: ReactNode
+  ratioButton?: ReactNode
+  mintSelection?: ReactNode
+}
 
 export default function MintInput({
   amount,
@@ -25,19 +38,7 @@ export default function MintInput({
   unit,
   force, // Validate input with max = balance
   mintSelection,
-}: {
-  amount: string | number
-  onChangeAmount?: (val: string, invalid?: boolean) => void
-  selectedMint: string
-  onSelect?: (mint: string) => void
-  mints?: string[]
-  unit?: string
-  force?: boolean
-  mintLabel?: ReactNode
-  mintAvatar?: ReactNode
-  ratioButton?: ReactNode
-  mintSelection?: ReactNode
-}) {
+}: MintInputProps) {
   const {
     ui: { theme },
   } = useUI()
@@ -75,7 +76,6 @@ export default function MintInput({
               style={{
                 textAlign: 'right',
                 fontSize: 24,
-                // maxWidth: 150,
                 padding: 0,
               }}
               placeholder="0"
