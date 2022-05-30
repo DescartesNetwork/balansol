@@ -2,7 +2,7 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { Button, Col, Input, Row, Select } from 'antd'
-import IonIcon from 'shared/antd/ionicon'
+import IonIcon from '@sentre/antd-ionicon'
 
 import { FilterPools } from 'app/constant'
 import { AppDispatch, AppState } from 'app/model'

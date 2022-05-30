@@ -4,7 +4,7 @@ import { MintActionStates } from '@senswap/balancer'
 
 import { Button, Col, Row } from 'antd'
 import Proportion from 'app/components/proportion'
-import IonIcon from 'shared/antd/ionicon'
+import IonIcon from '@sentre/antd-ionicon'
 import TokenSetup from './tokenSetup'
 
 import { GENERAL_NORMALIZED_NUMBER, PoolCreatingStep } from 'app/constant'

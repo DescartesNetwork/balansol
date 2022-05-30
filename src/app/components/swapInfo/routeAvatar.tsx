@@ -1,7 +1,7 @@
 import { Fragment } from 'react'
 
 import { Divider, Space } from 'antd'
-import IonIcon from 'shared/antd/ionicon'
+import IonIcon from '@sentre/antd-ionicon'
 import { MintAvatar } from 'shared/antd/mint'
 import PoweredByJupiter from '../poweredByJupiter'
 
@@ -26,12 +26,13 @@ const RouteAvatar = () => {
           <MintAvatar mintAddress={mintAddress} />
         </Fragment>
       ))}
-      {platform === SwapPlatform.Jupiter && (
+      {!!route.length && platform === SwapPlatform.Jupiter && (
         <Fragment>
           <Divider type="vertical" style={{ margin: 0 }} />
           <PoweredByJupiter />
         </Fragment>
       )}
+      {!route.length && <Fragment>--</Fragment>}
     </Space>
   )
 }

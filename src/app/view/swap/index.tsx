@@ -6,7 +6,7 @@ import AskInput from './askInput'
 import BidInput from './bidInput'
 import ActionReview from './reviewSwap'
 import SettingArea from './settingArea'
-import IonIcon from 'shared/antd/ionicon'
+import IonIcon from '@sentre/antd-ionicon'
 import SwapInfo from 'app/components/swapInfo'
 
 import { setSwapState } from 'app/model/swap.controller'

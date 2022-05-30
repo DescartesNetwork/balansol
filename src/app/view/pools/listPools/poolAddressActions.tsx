@@ -7,7 +7,7 @@ import { Space, Tooltip, Typography } from 'antd'
 import CopyToClipboard from 'react-copy-to-clipboard'
 
 import { explorer, shortenAddress } from 'shared/util'
-import IonIcon from 'shared/antd/ionicon'
+import IonIcon from '@sentre/antd-ionicon'
 import { AppState } from 'app/model'
 
 export type PoolAddressActionsProps = { poolAddress: string }

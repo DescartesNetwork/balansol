@@ -4,7 +4,7 @@ import { PoolState } from '@senswap/balancer'
 import { useWallet } from '@senhub/providers'
 
 import { Button, Modal } from 'antd'
-import IonIcon from 'shared/antd/ionicon'
+import IonIcon from '@sentre/antd-ionicon'
 import ModalNewPool from './modalNewPool'
 import { AppState } from 'app/model'
 

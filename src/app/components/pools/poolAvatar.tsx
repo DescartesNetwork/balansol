@@ -2,7 +2,7 @@ import { ReactNode } from 'react'
 import { useSelector } from 'react-redux'
 
 import { Avatar } from 'antd'
-import IonIcon from 'shared/antd/ionicon'
+import IonIcon from '@sentre/antd-ionicon'
 import { MintAvatar } from 'shared/antd/mint'
 
 import { AppState } from 'app/model'

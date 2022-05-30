@@ -2,7 +2,7 @@ import { account } from '@senswap/sen-js'
 import { ChangeEvent, useState } from 'react'
 
 import { Button, Col, Input, Row, Space, Typography } from 'antd'
-import IonIcon from 'shared/antd/ionicon'
+import IonIcon from '@sentre/antd-ionicon'
 
 import { notifyError, notifySuccess } from 'app/helper'
 

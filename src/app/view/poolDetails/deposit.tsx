@@ -4,7 +4,7 @@ import { BN } from '@project-serum/anchor'
 
 import { Button, Checkbox, Col, Modal, Row, Typography } from 'antd'
 import MintInput from 'app/components/mintInput'
-import IonIcon from 'shared/antd/ionicon'
+import IonIcon from '@sentre/antd-ionicon'
 import { MintSymbol } from 'shared/antd/mint'
 
 import { notifyError, notifySuccess, priceImpactColor } from 'app/helper'

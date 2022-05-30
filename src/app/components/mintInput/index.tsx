@@ -53,9 +53,9 @@ export default function MintInput({
   return (
     <Row gutter={[0, 10]} align="middle" className="card-swap-item">
       <Col span={24}>
-        <Row justify="space-between">
+        <Row gutter={[10, 0]} wrap={false}>
           {/* Mint select */}
-          <Col flex="auto">
+          <Col>
             {!mintSelection ? (
               <Selection
                 selectedMint={selectedMint}
@@ -69,13 +69,13 @@ export default function MintInput({
             )}
           </Col>
           {/* Amount input */}
-          <Col>
+          <Col flex="auto">
             <NumericInput
               bordered={false}
               style={{
                 textAlign: 'right',
                 fontSize: 24,
-                maxWidth: 150,
+                // maxWidth: 150,
                 padding: 0,
               }}
               placeholder="0"

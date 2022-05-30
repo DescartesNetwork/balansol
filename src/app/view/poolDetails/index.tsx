@@ -3,7 +3,7 @@ import { useUI, useWallet } from '@senhub/providers'
 
 import { Button, Col, Row } from 'antd'
 
-import IonIcon from 'shared/antd/ionicon'
+import IonIcon from '@sentre/antd-ionicon'
 import PoolManagement from './management'
 import PoolBalance from './poolBalance'
 import Volume24h from './volume24h'

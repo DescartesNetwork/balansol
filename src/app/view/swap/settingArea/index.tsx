@@ -1,7 +1,5 @@
-import React from 'react'
-
 import { Button, Divider, Popover, Space } from 'antd'
-import IonIcon from 'shared/antd/ionicon'
+import IonIcon from '@sentre/antd-ionicon'
 import PoweredBySentre from './poweredBySentre'
 import Setting from './setting'
 
