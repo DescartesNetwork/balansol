@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import { ReactNode, useCallback } from 'react'
 
 import { Col, Radio, Row, Space, Typography } from 'antd'
 import NumericInput from 'shared/antd/numericInput'
@@ -43,11 +43,15 @@ export default function MintInput({
     ui: { theme },
   } = useUI()
   const { balance } = useAccountBalanceByMintAddress(selectedMint)
-  const onInput = (value: string) => {
-    if (!onChangeAmount) return
-    const invalidValue = Number(value) > balance && !!onChangeAmount
-    return onChangeAmount(value, invalidValue)
-  }
+
+  const onInput = useCallback(
+    (value: string) => {
+      if (!onChangeAmount) return
+      const invalidValue = Number(value) > balance && !!onChangeAmount
+      return onChangeAmount(value, invalidValue)
+    },
+    [balance, onChangeAmount],
+  )
 
   const bg_default = theme === 'dark' ? '#394360' : '#ced0d7'
 
