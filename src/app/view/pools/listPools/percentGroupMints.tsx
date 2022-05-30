@@ -3,7 +3,8 @@ import { useSelector } from 'react-redux'
 import { useMint } from '@senhub/providers'
 import { TokenInfo } from '@solana/spl-token-registry'
 
-import { Space, Tooltip, Typography } from 'antd'
+import { Card, Space, Typography } from 'antd'
+
 import { AppState } from 'app/model'
 import { calcNormalizedWeight } from 'app/helper/oracles'
 import { numeric } from 'shared/util'
@@ -38,21 +39,23 @@ const PercentGroupMints = ({ poolAddress }: PercentGroupMintsProps) => {
   }, [poolData.mints, poolData.weights, tokenProvider])
 
   return (
-    <Space size={2} align="baseline">
+    <Space size={[16, 8]} align="center" wrap={true}>
       <Typography.Text style={{ whiteSpace: 'nowrap' }}>
         Balansol LP
       </Typography.Text>
 
-      <Typography.Text
-        type="secondary"
-        className="ellipsis-text"
-        style={{ cursor: 'pointer' }}
-      >
-        <Tooltip title={poolSymbol.join(' - ')}>
-          {`( ${poolSymbol.join(' - ')}`}
-        </Tooltip>
-      </Typography.Text>
-      <Typography.Text type="secondary">)</Typography.Text>
+      {poolSymbol.map((value) => (
+        <Card
+          bodyStyle={{ padding: '2px 8px' }}
+          style={{
+            background: '#394360',
+            marginRight: '-8px',
+            boxShadow: 'none',
+          }}
+        >
+          <Typography.Text>{value}</Typography.Text>
+        </Card>
+      ))}
     </Space>
   )
 }
