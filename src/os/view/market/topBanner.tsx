@@ -10,15 +10,14 @@ import storePanel2 from 'os/static/images/market/store-panel2.png'
 import storePanel3 from 'os/static/images/market/store-panel3.png'
 import storePanel4 from 'os/static/images/market/store-panel4.png'
 
-import './index.less'
+import './index.os.less'
 
 const PAGE_PADDING = 20
 const PANELS = [storePanel1, storePanel2, storePanel3, storePanel4]
 
 const TopBanner = () => {
-  const {
-    ui: { width, infix },
-  } = useRootSelector((state: RootState) => state)
+  const width = useRootSelector((state: RootState) => state.ui.width)
+  const infix = useRootSelector((state: RootState) => state.ui.infix)
 
   const isMobile = infix === 'xs'
 

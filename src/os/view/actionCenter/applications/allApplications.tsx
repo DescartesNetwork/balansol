@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 
 import { Button, Col, Modal, Row, Space, Typography, Switch } from 'antd'
-import IonIcon from 'shared/antd/ionicon'
+import IonIcon from '@sentre/antd-ionicon'
 import WidgetLayout from './widgetLayout'
 
 import {
@@ -21,7 +21,8 @@ const AllApplications = () => {
   const [disabled, setDisabled] = useState(true)
   const [appId, setAppId] = useState('')
   const [visible, setVisible] = useState(false)
-  const { appIds, register } = useRootSelector((state: RootState) => state.page)
+  const appIds = useRootSelector((state: RootState) => state.page.appIds)
+  const register = useRootSelector((state: RootState) => state.page.register)
 
   const onChange = useCallback(
     (appIds: AppIds) => dispatch(updatePage(appIds)),
