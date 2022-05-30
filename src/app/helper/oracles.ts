@@ -11,6 +11,7 @@ import {
 } from 'app/constant'
 import { PRECISION } from 'app/constant/index'
 import { RouteInfo } from 'app/hooks/useSwap'
+import { utilsBN } from './utilsBN'
 
 export type routeFullInfo = RouteInfo & { poolData: PoolData }
 
@@ -70,10 +71,10 @@ export const calcOutGivenInSwap = (
   weightIn: number,
   swapFee: BN,
 ): BN => {
-  const numBalanceOut = balanceOut.toNumber()
-  const numBalanceIn = balanceIn.toNumber()
-  const numAmountIn = amountIn.toNumber()
-  const numSwapFee = swapFee.toNumber() / GENERAL_NORMALIZED_NUMBER
+  const numBalanceOut = utilsBN.toNumber(balanceOut)
+  const numBalanceIn = utilsBN.toNumber(balanceIn)
+  const numAmountIn = utilsBN.toNumber(amountIn)
+  const numSwapFee = utilsBN.toNumber(swapFee) / GENERAL_NORMALIZED_NUMBER
   const ratioBeforeAfterBalance = numBalanceIn / (numBalanceIn + numAmountIn)
 
   const ratioInOutWeight = weightIn / weightOut
@@ -92,10 +93,10 @@ export const calcInGivenOutSwap = (
   weightIn: number,
   swapFee: BN,
 ): BN => {
-  const numBalanceOut = balanceOut.toNumber()
-  const numBalanceIn = balanceIn.toNumber()
-  const numSwapFee = swapFee.toNumber() / GENERAL_NORMALIZED_NUMBER
-  const numAmountOut = amountOut.toNumber() / (1 - numSwapFee)
+  const numBalanceOut = utilsBN.toNumber(balanceOut)
+  const numBalanceIn = utilsBN.toNumber(balanceIn)
+  const numSwapFee = utilsBN.toNumber(swapFee) / GENERAL_NORMALIZED_NUMBER
+  const numAmountOut = utilsBN.toNumber(amountOut) / (1 - numSwapFee)
   const ratioBeforeAfterBalance = numBalanceOut / (numBalanceOut - numAmountOut)
 
   const ratioInOutWeight = weightOut / weightIn

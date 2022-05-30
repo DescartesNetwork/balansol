@@ -11,6 +11,7 @@ import { AppState } from 'app/model'
 import JupiterWalletWrapper from 'app/hooks/jupiter/jupiterWalletWrapper'
 import { SwapPlatform, RouteSwapInfo, SwapProvider } from 'app/hooks/useSwap'
 import { useOracles } from '../useOracles'
+import { utilsBN } from 'app/helper/utilsBN'
 
 const {
   sol: { node },
@@ -60,7 +61,7 @@ export const useJupiterAggregator = (): SwapProvider => {
       return setJupiterProps({ ...DEFAULT_JUPITER_PROPS })
     const bidAmountBN = await decimalizeMintAmount(bidAmount, bidMint)
     setJupiterProps({
-      amount: bidAmountBN.toNumber(),
+      amount: utilsBN.toNumber(bidAmountBN),
       inputMint: new web3.PublicKey(bidMint),
       outputMint: new web3.PublicKey(askMint),
       slippage: slippageTolerance,
@@ -91,9 +92,9 @@ export const useJupiterAggregator = (): SwapProvider => {
 
     const route = bestJupiterRoute.marketInfos.map((market) => {
       return {
-        bidAmount: new BN(market.inAmount),
+        bidAmount: new BN(market.inAmount.toString()),
         bidMint: market.inputMint.toBase58(),
-        askAmount: new BN(market.outAmount),
+        askAmount: new BN(market.outAmount.toString()),
         askMint: market.outputMint.toBase58(),
         pool: '',
         priceImpact: market.priceImpactPct,
@@ -101,11 +102,11 @@ export const useJupiterAggregator = (): SwapProvider => {
     })
 
     const inAmount = await undecimalizeMintAmount(
-      new BN(bestJupiterRoute.inAmount),
+      new BN(bestJupiterRoute.inAmount.toString()),
       bidMint,
     )
     const outAmount = await undecimalizeMintAmount(
-      new BN(bestJupiterRoute.outAmount),
+      new BN(bestJupiterRoute.outAmount.toString()),
       askMint,
     )
 

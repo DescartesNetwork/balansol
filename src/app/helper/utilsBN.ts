@@ -48,4 +48,8 @@ export const utilsBN = {
     if (!fraction) return integer
     return integer + '.' + fraction
   },
+
+  toNumber: (numBN: BN): number => {
+    return Number(utilsBN.undecimalize(numBN, 0))
+  },
 }
