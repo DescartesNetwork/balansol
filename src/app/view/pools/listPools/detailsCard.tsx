@@ -8,6 +8,7 @@ import { PoolAvatar } from 'app/components/pools/poolAvatar'
 
 import { useAppRouter } from 'app/hooks/useAppRouter'
 import { useTVL } from 'app/hooks/useTVL'
+import { useVolume24h } from 'app/hooks/useVolume24h'
 import { AppState } from 'app/model'
 import { numeric } from 'shared/util'
 import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
@@ -22,6 +23,7 @@ const DetailsCard = ({ poolAddress }: DetailsCardProps) => {
   const {
     wallet: { address: walletAddress },
   } = useWallet()
+  const { vol24h } = useVolume24h(poolAddress)
 
   const poolState: any = poolData.state
   const TVL = useTVL(poolAddress)
@@ -60,6 +62,15 @@ const DetailsCard = ({ poolAddress }: DetailsCardProps) => {
                     <Typography.Title level={5}>
                       {' '}
                       {numeric(TVL).formatCurrency('($0.00a)')}
+                    </Typography.Title>
+                  </Space>
+                </Col>
+                <Col>
+                  <Space size={4} direction="vertical">
+                    <Typography.Text type="secondary">Vol 24h:</Typography.Text>
+                    <Typography.Title level={5}>
+                      {' '}
+                      {numeric(vol24h).formatCurrency('($0.00a)')}
                     </Typography.Title>
                   </Space>
                 </Col>
