@@ -52,8 +52,8 @@ const NumericInput = forwardRef(
 
     // Handle cursor jumping
     // To prevent autofocus on mobile, we must strictly check cursor different from null
-    if (cursor !== null) innerRef?.current?.setSelectionRange(cursor, cursor)
-
+    if (cursor !== null)
+      setTimeout(() => innerRef?.current?.setSelectionRange(cursor, cursor), 50)
     return (
       <Tooltip
         title={
