@@ -15,8 +15,8 @@ const PercentGroupMints = ({ poolAddress }: PercentGroupMintsProps) => {
   const {
     pools: { [poolAddress]: poolData },
   } = useSelector((state: AppState) => state)
-  const { tokenProvider } = useMint()
   const [poolSymbol, setPoolSymbol] = useState<string[]>([])
+  const { tokenProvider } = useMint()
   const {
     ui: { theme },
   } = useUI()
