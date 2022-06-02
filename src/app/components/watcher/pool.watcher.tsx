@@ -6,6 +6,9 @@ import {
   useState,
 } from 'react'
 import { useDispatch } from 'react-redux'
+import { useMint } from '@senhub/providers'
+
+import Loading from '../loading'
 
 import { getPools, upsetPool } from 'app/model/pools.controller'
 import { AppDispatch } from 'app/model'
@@ -16,10 +19,12 @@ let watchId = 0
 const PoolWatcher: FunctionComponent = (props) => {
   const dispatch = useDispatch<AppDispatch>()
   const [loading, setLoading] = useState(true)
+  const { tokenProvider } = useMint()
 
   // First-time fetching
   const fetchData = useCallback(async () => {
     try {
+      await tokenProvider.all()
       await dispatch(getPools()).unwrap()
       setLoading(false)
     } catch (er) {
@@ -28,7 +33,7 @@ const PoolWatcher: FunctionComponent = (props) => {
         description: 'Cannot fetch data of pools',
       })
     }
-  }, [dispatch])
+  }, [dispatch, tokenProvider])
 
   // Watch account changes
   const watchData = useCallback(async () => {
@@ -53,7 +58,7 @@ const PoolWatcher: FunctionComponent = (props) => {
     }
   }, [fetchData, watchData])
 
-  if (loading) return null
+  if (loading) return <Loading />
   return <Fragment>{props.children}</Fragment>
 }
 
