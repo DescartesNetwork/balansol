@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { useMint } from '@senhub/providers'
 
 import { Button, Col, Row, Typography } from 'antd'
@@ -7,10 +8,10 @@ import { MintSymbol } from 'shared/antd/mint'
 import { notifyError, notifySuccess } from 'app/helper'
 import { fetchCGK, numeric } from 'shared/util'
 import { PoolCreatingStep } from 'app/constant'
-import { useSelector } from 'react-redux'
-import { AppState } from 'app/model'
+import { AppDispatch, AppState } from 'app/model'
 import { useOracles } from 'app/hooks/useOracles'
 import { useMintBalance } from 'app/hooks/useMintBalance'
+import { removePool } from 'app/model/pools.controller'
 
 export type LiquidityInfoProps = {
   poolAddress: string
@@ -28,6 +29,7 @@ const LiquidityInfo = ({
   const {
     pools: { [poolAddress]: poolData },
   } = useSelector((state: AppState) => state)
+  const dispatch = useDispatch<AppDispatch>()
   const [tokenPrice, setTokenPrice] = useState<(CgkData | null)[]>([])
   const [loadingAdd, setLoadingAdd] = useState(false)
   const [loadingClose, setLoadingClose] = useState(false)
@@ -83,6 +85,7 @@ const LiquidityInfo = ({
       const { txId } = await window.balansol.closePool(poolAddress)
       notifySuccess('Close pool', txId)
       onClose()
+      dispatch(removePool({ address: poolAddress }))
     } catch (error) {
       notifyError(error)
     } finally {

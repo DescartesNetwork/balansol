@@ -56,6 +56,19 @@ export const upsetPool = createAsyncThunk<
   return { [address]: data }
 })
 
+export const removePool = createAsyncThunk<
+  PoolsState,
+  { address: string },
+  { state: any }
+>(`${NAME}/removePool`, async ({ address }, { getState }) => {
+  const { pools } = getState()
+  if (!account.isAddress(address)) throw new Error('Invalid pool address')
+  if (!pools[address]) throw new Error('Pool address does not exist!')
+  const newPools = { ...pools }
+  delete newPools[address]
+  return newPools
+})
+
 /**
  * Usual procedure
  */
@@ -74,7 +87,8 @@ const slice = createSlice({
       .addCase(
         upsetPool.fulfilled,
         (state, { payload }) => void Object.assign(state, payload),
-      ),
+      )
+      .addCase(removePool.fulfilled, (state, { payload }) => payload),
 })
 
 export default slice.reducer
