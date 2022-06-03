@@ -47,7 +47,7 @@ const PercentGroupMints = ({ poolAddress }: PercentGroupMintsProps) => {
         Balansol LP
       </Typography.Text>
 
-      {poolSymbol.map((value) => (
+      {poolSymbol.map((value, idx) => (
         <Card
           bodyStyle={{ padding: '2px 8px' }}
           style={{
@@ -55,6 +55,7 @@ const PercentGroupMints = ({ poolAddress }: PercentGroupMintsProps) => {
             marginRight: '-8px',
             boxShadow: 'none',
           }}
+          key={value + idx}
         >
           <Typography.Text>{value}</Typography.Text>
         </Card>

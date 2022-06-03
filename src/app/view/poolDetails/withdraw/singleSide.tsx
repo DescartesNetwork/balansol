@@ -162,7 +162,7 @@ const WithdrawSingleSide = ({
               >
                 <IonIcon name="warning-outline" style={{ fontSize: '16px' }} />
                 {'  '}
-                You cannot withdraw because the price impact is greater than 30%
+                You cannot withdraw more than 30% of the available LP
               </Typography.Text>
             </Col>
           )}
