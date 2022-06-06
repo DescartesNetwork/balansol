@@ -19,7 +19,7 @@ const model = configureStore({
     main,
     pools,
     swap,
-    searchPools
+    searchPools,
   },
 })
 
