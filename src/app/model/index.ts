@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
-import { devTools } from 'shared/devTools'
+import { devTools } from 'app/model/devTools'
 
 import main from 'app/model/main.controller'
 import pools from 'app/model/pools.controller'
@@ -19,7 +19,7 @@ const model = configureStore({
     main,
     pools,
     swap,
-    searchPools
+    searchPools,
   },
 })
 

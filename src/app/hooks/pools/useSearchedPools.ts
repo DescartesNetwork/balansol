@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { forceCheck } from '@senswap/react-lazyload'
+import { forceCheck } from '@sentre/react-lazyload'
 import { useMint } from '@senhub/providers'
 
 import { AppState } from 'app/model'
