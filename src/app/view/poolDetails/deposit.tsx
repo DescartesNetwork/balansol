@@ -18,6 +18,7 @@ import { useMint } from '@senhub/providers'
 import { numeric } from 'shared/util'
 import { useLptSupply } from 'app/hooks/useLptSupply'
 import { useMintBalance } from 'app/hooks/useMintBalance'
+import { PriceImpact } from 'app/constant'
 
 const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   const {
@@ -242,7 +243,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
               </Col>
             </Row>
           </Col>
-          {!!impactPrice && (
+          {impactPrice > PriceImpact.acceptableSwap && (
             <Col span={24}>
               <Checkbox
                 onChange={(e) => setIsAcceptHighPrice(e.target.checked)}

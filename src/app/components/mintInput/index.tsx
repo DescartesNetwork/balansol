@@ -83,7 +83,7 @@ export default function MintInput({
                 padding: 0,
               }}
               placeholder="0"
-              value={amount}
+              value={numeric(amount).format('0,0.[0000]')}
               max={force ? balance : undefined}
               onValue={onInput}
               disabled={!onChangeAmount || (force && !balance)}

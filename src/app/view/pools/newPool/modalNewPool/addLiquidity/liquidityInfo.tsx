@@ -121,7 +121,6 @@ const LiquidityInfo = ({
     <Row gutter={[16, 16]}>
       <Col span={24}>
         {poolData.mints.map((mint, idx) => {
-          if (poolData.reserves[idx]) return null
           const mintValue = Number(amounts[idx]) * (tokenPrice[idx]?.price || 0)
           return (
             <Row key={idx}>
@@ -129,8 +128,12 @@ const LiquidityInfo = ({
                 <Typography.Text type="secondary">
                   <MintSymbol mintAddress={mint.toBase58()} />
                 </Typography.Text>
-                <Typography.Text>
-                  ({numeric(tokenPrice[idx]?.price).format('0,0.[0000]')})
+                <Typography.Text type="secondary">
+                  (
+                  {tokenPrice[idx]?.price
+                    ? numeric(tokenPrice[idx]?.price).format('0,0.[0000]')
+                    : '--'}
+                  )
                 </Typography.Text>
               </Col>
               <Col>
