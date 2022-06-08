@@ -22,6 +22,7 @@ export const AppWatcher: FunctionComponent = (props) => {
     const { splt, wallet } = window.sentre
     if (!wallet) throw new Error('Login fist')
     // init window balancer
+    // @ts-ignore
     const anchorProvider = getAnchorProvider(splt.nodeUrl, address, wallet)
     window.balansol = new Balancer(anchorProvider, configs.sol.balancerAddress)
     setLoading(false)
