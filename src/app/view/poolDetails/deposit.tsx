@@ -38,19 +38,16 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   const { getMintBalance } = useMintBalance()
 
   const estimateImpactPriceAndLP = useCallback(async () => {
-    const { reserves, weights, fee, taxFee, mints } = poolData
     setImpactPrice(0)
-
+    const { reserves, weights, fee, taxFee, mints } = poolData
     let amountIns: BN[] = []
     let decimalIns: number[] = []
-
     for (let i in amounts) {
       const decimalIn = await getDecimals(mints[i].toBase58())
       const amountBn = await decimalizeMintAmount(amounts[i], mints[i])
       amountIns.push(amountBn)
       decimalIns.push(decimalIn)
     }
-
     const { lpOut, impactPrice } = calcDepositPriceImpact(
       amountIns,
       reserves,
@@ -59,7 +56,6 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
       decimalIns,
       fee.add(taxFee),
     )
-
     setLpOutTotal(lpOut)
     setImpactPrice(impactPrice)
   }, [amounts, decimalizeMintAmount, getDecimals, poolData, supply])
@@ -128,13 +124,11 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
       const { balance } = await getMintBalance(mints[i].toBase58())
       if (Number(amounts[i]) > balance) return setDisable(true)
     }
-    if (
-      (impactPrice !== 0 && isAcceptHighPrice) ||
-      (impactPrice === 0 && !!lpOutTotal)
-    )
-      return setDisable(false)
+    if (!lpOutTotal) return setDisable(true)
+    if (impactPrice > PriceImpact.acceptableSwap && !isAcceptHighPrice)
+      return setDisable(true)
 
-    setDisable(true)
+    return setDisable(false)
   }, [
     amounts,
     getMintBalance,
