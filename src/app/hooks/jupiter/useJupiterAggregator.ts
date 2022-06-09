@@ -47,9 +47,8 @@ export const useJupiterAggregator = (): SwapProvider => {
   const [jupiterProps, setJupiterProps] = useState<UseJupiterProps>({
     ...DEFAULT_JUPITER_PROPS,
   })
-  const {
-    swap: { bidMint, askMint, bidAmount, slippageTolerance, isReverse },
-  } = useSelector((state: AppState) => state)
+  const { bidMint, askMint, bidAmount, slippageTolerance, isReverse } =
+    useSelector((state: AppState) => state.swap)
   const {
     wallet: { address: walletAddress },
   } = useWallet()

@@ -10,9 +10,8 @@ import { useSwap } from 'app/hooks/useSwap'
 import './index.less'
 
 const ReviewSwap = () => {
-  const {
-    swap: { bidAmount, askAmount },
-  } = useSelector((state: AppState) => state)
+  const bidAmount = useSelector((state: AppState) => state.swap.bidAmount)
+  const askAmount = useSelector((state: AppState) => state.swap.askAmount)
 
   const [visible, setVisible] = useState(false)
   const { loading, route } = useSwap()

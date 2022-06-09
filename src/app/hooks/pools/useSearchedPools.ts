@@ -9,13 +9,11 @@ import { PoolsState } from 'app/model/pools.controller'
 const KEY_SIZE = 3
 
 export const useSearchedPools = (pools: PoolsState) => {
-  const { tokenProvider } = useMint()
-
-  const {
-    searchPools: { searchInput },
-  } = useSelector((state: AppState) => state)
-
   const [poolsSearched, setPoolsSearched] = useState<PoolsState>({})
+  const searchInput = useSelector(
+    (state: AppState) => state.searchPools.searchInput,
+  )
+  const { tokenProvider } = useMint()
 
   const search = useCallback(async () => {
     const newPoolsSearch: PoolsState = {}

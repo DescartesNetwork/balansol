@@ -8,6 +8,7 @@ import { useOracles } from '../../useOracles'
 import { useMetaRoutes } from '../useMetaRoutes'
 import { RouteSwapInfo } from '../../useSwap'
 import { useAllRouteFromBid } from './useAllRouteFromBid'
+import { useBalansolPools } from 'app/hooks/useBalansolPools'
 
 export const useBestRouteFromBid = (): RouteSwapInfo => {
   const [routeSwapInfo, setRouteSwapInfo] = useState<RouteSwapInfo>({
@@ -16,11 +17,10 @@ export const useBestRouteFromBid = (): RouteSwapInfo => {
     askAmount: 0,
     priceImpact: 0,
   })
-  const {
-    swap: { bidAmount, askMint, bidMint },
-    pools,
-  } = useSelector((state: AppState) => state)
-
+  const { bidAmount, askMint, bidMint } = useSelector(
+    (state: AppState) => state.swap,
+  )
+  const { activePools } = useBalansolPools()
   const { undecimalizeMintAmount } = useOracles()
   const metaRoutes = useMetaRoutes()
   const routes = useAllRouteFromBid(metaRoutes)
@@ -45,7 +45,7 @@ export const useBestRouteFromBid = (): RouteSwapInfo => {
       askMint,
     )
     const bestRouteFullInfo = bestRoute.map((value, idx) => {
-      const poolData = pools[value.pool]
+      const poolData = activePools[value.pool]
       return { ...bestRoute[idx], poolData }
     })
     const newPriceImpact = calcPriceImpact(bestRouteFullInfo)
@@ -56,7 +56,7 @@ export const useBestRouteFromBid = (): RouteSwapInfo => {
       askAmount: Number(askAmount),
       priceImpact: newPriceImpact,
     })
-  }, [askMint, bidAmount, bidMint, pools, routes, undecimalizeMintAmount])
+  }, [askMint, bidAmount, bidMint, activePools, routes, undecimalizeMintAmount])
 
   useEffect(() => {
     getBestRoute()

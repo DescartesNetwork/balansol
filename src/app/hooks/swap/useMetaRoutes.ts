@@ -12,10 +12,7 @@ type Market = {
 export type MetaRoute = Market[]
 
 export const useMetaRoutes = () => {
-  const {
-    swap: { askMint, bidMint },
-  } = useSelector((state: AppState) => state)
-
+  const { askMint, bidMint } = useSelector((state: AppState) => state.swap)
   const tokenRoutes = useMintRoutes()
 
   const validRoute = (route: MetaRoute) => {

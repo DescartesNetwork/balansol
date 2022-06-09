@@ -46,8 +46,7 @@ const Content = ({
 )
 
 const Fee = ({ poolAddress }: { poolAddress: string }) => {
-  const { pools } = useSelector((state: AppState) => state)
-  const poolData = pools[poolAddress]
+  const poolData = useSelector((state: AppState) => state.pools[poolAddress])
 
   const currentFee = (poolData.fee.toNumber() * 100) / PRECISION
   const currentTaxFee = (poolData.taxFee.toNumber() * 100) / PRECISION

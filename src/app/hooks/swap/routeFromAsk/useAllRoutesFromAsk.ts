@@ -11,12 +11,11 @@ import { useOracles } from '../../useOracles'
 import { MetaRoute } from '../useMetaRoutes'
 import { Route, RouteInfo } from '../../useSwap'
 import { useMint } from '@senhub/providers'
+import { useBalansolPools } from 'app/hooks/useBalansolPools'
 
 export const useAllRoutesFromAsk = (metaRoutes: MetaRoute[]) => {
-  const {
-    swap: { askAmount, isReverse },
-    pools,
-  } = useSelector((state: AppState) => state)
+  const { askAmount, isReverse } = useSelector((state: AppState) => state.swap)
+  const { activePools } = useBalansolPools()
   const { decimalizeMintAmount } = useOracles()
   const [routes, setRoutes] = useState<Route[]>([])
   const { getDecimals } = useMint()
@@ -31,7 +30,7 @@ export const useAllRoutesFromAsk = (metaRoutes: MetaRoute[]) => {
       let currentAskAmount = await decimalizeMintAmount(askAmount, askMint)
       for (const market of [...metaRoute].reverse()) {
         const { bidMint, askMint, pool } = market
-        const poolData = pools[pool]
+        const poolData = activePools[pool]
         const bidMintInfo = getMintInfo(poolData, bidMint)
         const askMintInfo = getMintInfo(poolData, askMint)
         const decimalIn = await getDecimals(bidMint)
@@ -84,12 +83,12 @@ export const useAllRoutesFromAsk = (metaRoutes: MetaRoute[]) => {
     }
     return setRoutes(routes)
   }, [
+    activePools,
     askAmount,
     decimalizeMintAmount,
     getDecimals,
     isReverse,
     metaRoutes,
-    pools,
   ])
 
   useEffect(() => {

@@ -14,8 +14,7 @@ import { AppState } from 'app/model'
 const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
   const [visible, setVisible] = useState(false)
   const [lptAmount, setLptAmount] = useState('')
-  const { pools } = useSelector((state: AppState) => state)
-  const poolData = pools?.[poolAddress]
+  const poolData = useSelector((state: AppState) => state.pools[poolAddress])
   const mints = useMemo(() => {
     if (!poolData) return []
     return poolData.mints.map((e) => e.toBase58())

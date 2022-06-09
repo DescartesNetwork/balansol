@@ -21,11 +21,8 @@ import { useMintBalance } from 'app/hooks/useMintBalance'
 import { PriceImpact } from 'app/constant'
 
 const Deposit = ({ poolAddress }: { poolAddress: string }) => {
-  const {
-    pools: { [poolAddress]: poolData },
-  } = useSelector((state: AppState) => state)
+  const poolData = useSelector((state: AppState) => state.pools[poolAddress])
   const { supply } = useLptSupply(poolData.mintLpt)
-
   const [amounts, setAmounts] = useState<string[]>(
     new Array(poolData.mints.length).fill('0'),
   )

@@ -17,9 +17,7 @@ import { AppState } from 'app/model'
 const PoolDetails = () => {
   const { getQuery, pushHistory } = useAppRouter()
   const poolAddress = getQuery('pool') || ''
-  const {
-    pools: { [poolAddress]: poolData },
-  } = useSelector((state: AppState) => state)
+  const poolData = useSelector((state: AppState) => state.pools[poolAddress])
   const {
     wallet: { address: walletAddress },
   } = useWallet()
@@ -30,7 +28,6 @@ const PoolDetails = () => {
   if (!poolData || !poolAddress) return <PoolNotFound />
 
   const isOwner = walletAddress === poolData.authority.toBase58()
-
   const isMobile = width < 768
   return (
     <Row justify="center">

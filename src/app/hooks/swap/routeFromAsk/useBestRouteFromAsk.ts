@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux'
 import { BN } from '@project-serum/anchor'
 
 import { AppState } from 'app/model'
+import { useBalansolPools } from 'app/hooks/useBalansolPools'
 import { useMetaRoutes } from '../useMetaRoutes'
 import { useOracles } from '../../useOracles'
 import { RouteSwapInfo } from '../../useSwap'
@@ -16,10 +17,10 @@ export const useBestRouteFromAsk = () => {
     askAmount: 0,
     priceImpact: 0,
   })
-  const {
-    swap: { bidMint, askAmount, askMint },
-    pools,
-  } = useSelector((state: AppState) => state)
+  const { bidMint, askAmount, askMint } = useSelector(
+    (state: AppState) => state.swap,
+  )
+  const { activePools } = useBalansolPools()
 
   const { undecimalizeMintAmount } = useOracles()
   const metaRoutes = useMetaRoutes()
@@ -46,7 +47,7 @@ export const useBestRouteFromAsk = () => {
     )
 
     const bestRouteFullInfo = bestRoute.map((value, idx) => {
-      const poolData = pools[value.pool]
+      const poolData = activePools[value.pool]
       return { ...bestRoute[idx], poolData }
     })
     const newPriceImpact = calcPriceImpact(bestRouteFullInfo)
@@ -57,7 +58,7 @@ export const useBestRouteFromAsk = () => {
       askAmount: Number(askAmount),
       priceImpact: newPriceImpact,
     })
-  }, [askAmount, askMint, bidMint, pools, routes, undecimalizeMintAmount])
+  }, [askAmount, askMint, bidMint, activePools, routes, undecimalizeMintAmount])
 
   useEffect(() => {
     getBestRoute()

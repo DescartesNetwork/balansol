@@ -12,9 +12,7 @@ import { numeric } from 'shared/util'
 export type PercentGroupMintsProps = { poolAddress: string }
 
 const PercentGroupMints = ({ poolAddress }: PercentGroupMintsProps) => {
-  const {
-    pools: { [poolAddress]: poolData },
-  } = useSelector((state: AppState) => state)
+  const poolData = useSelector((state: AppState) => state.pools[poolAddress])
   const [poolSymbol, setPoolSymbol] = useState<string[]>([])
   const { tokenProvider } = useMint()
   const {

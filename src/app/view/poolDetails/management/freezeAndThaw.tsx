@@ -10,9 +10,7 @@ import { notifyError, notifySuccess } from 'app/helper'
 import { PresetStatusColorType } from 'antd/lib/_util/colors'
 
 const FreezeAndThaw = ({ poolAddress }: { poolAddress: string }) => {
-  const { pools } = useSelector((state: AppState) => state)
-
-  const poolData = pools[poolAddress]
+  const poolData = useSelector((state: AppState) => state.pools[poolAddress])
   const state = poolData.state as PoolState
 
   if (state['initialized']) return <FreezePool poolAddress={poolAddress} />

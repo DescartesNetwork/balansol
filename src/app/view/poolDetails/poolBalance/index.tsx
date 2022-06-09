@@ -10,11 +10,9 @@ import { AppState } from 'app/model'
 import { getMintInfo } from 'app/helper/oracles'
 
 const PoolBalance = ({ poolAddress }: { poolAddress: string }) => {
-  const {
-    pools: { [poolAddress]: poolData },
-  } = useSelector((state: AppState) => state)
-  const { tokenProvider } = useMint()
   const [poolBalances, setPoolBalances] = useState<PoolBalanceData[]>([])
+  const poolData = useSelector((state: AppState) => state.pools[poolAddress])
+  const { tokenProvider } = useMint()
 
   const doughnutChartData = useCallback(async () => {
     if (!poolData) return
@@ -59,7 +57,7 @@ const PoolBalance = ({ poolAddress }: { poolAddress: string }) => {
     <Card className="chart-card">
       <Row>
         <Col span={24}>
-          <Typography.Title level={4}>Pool balance</Typography.Title>
+          <Typography.Title level={4}>Pool Weights</Typography.Title>
         </Col>
         <Col span={24}>
           <DoughnutChart data={poolBalances} />

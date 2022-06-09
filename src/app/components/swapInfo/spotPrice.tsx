@@ -10,9 +10,7 @@ import { numeric } from 'shared/util'
 import { useSwap } from 'app/hooks/useSwap'
 
 const MintRatio = ({ reversed = false }: { reversed?: boolean }) => {
-  const {
-    swap: { askMint, bidMint },
-  } = useSelector((state: AppState) => state)
+  const { askMint, bidMint } = useSelector((state: AppState) => state.swap)
   const { bidAmount, askAmount } = useSwap()
 
   const spotPrice = askAmount / bidAmount

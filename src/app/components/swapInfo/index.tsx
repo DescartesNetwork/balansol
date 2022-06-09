@@ -50,9 +50,9 @@ const ExtraTypography = ({
 }
 
 const SwapInfo = ({ extraStyle }: { extraStyle?: CSSProperties }) => {
-  const {
-    swap: { slippageTolerance },
-  } = useSelector((state: AppState) => state)
+  const slippageTolerance = useSelector(
+    (state: AppState) => state.swap.slippageTolerance,
+  )
   const { priceImpact } = useSwap()
 
   return (

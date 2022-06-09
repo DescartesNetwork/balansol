@@ -26,8 +26,9 @@ const Token = ({ mintAddress }: { mintAddress: string }) => (
 const Weight = ({ poolAddress }: { poolAddress: string }) => {
   const [tokensInfo, setTokensInfo] = useState<Record<string, TokenInfo>>()
   const [loading, setLoading] = useState(false)
-  const { pools } = useSelector((state: AppState) => state)
-  const { mints, weights } = pools[poolAddress]
+  const { mints, weights } = useSelector(
+    (state: AppState) => state.pools[poolAddress],
+  )
 
   const fetchWeights = useCallback(() => {
     const nextWeights: Record<string, TokenInfo> = {}

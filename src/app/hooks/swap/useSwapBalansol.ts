@@ -8,9 +8,8 @@ import { useBestRouteFromAsk } from './routeFromAsk/useBestRouteFromAsk'
 import { useBestRouteFromBid } from './routeFromBid/useBestRouteFromBid'
 
 export const useSwapBalansol = (): SwapProvider => {
-  const {
-    swap: { bidAmount, bidMint, askMint, slippageTolerance, isReverse },
-  } = useSelector((state: AppState) => state)
+  const { bidAmount, bidMint, askMint, slippageTolerance, isReverse } =
+    useSelector((state: AppState) => state.swap)
   const { decimalizeMintAmount } = useOracles()
   const routesFromBid = useBestRouteFromBid()
   const routesFromAsk = useBestRouteFromAsk()

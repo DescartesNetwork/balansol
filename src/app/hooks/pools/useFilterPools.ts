@@ -9,10 +9,10 @@ import { FilterPools } from 'app/constant'
 
 export const useFilterPools = () => {
   const [poolsFilter, setPoolsFilter] = useState<PoolsState>({})
-  const {
-    pools,
-    searchPools: { filterPool },
-  } = useSelector((state: AppState) => state)
+  const pools = useSelector((state: AppState) => state.pools)
+  const filterPool = useSelector(
+    (state: AppState) => state.searchPools.filterPool,
+  )
   const {
     wallet: { address: walletAddress },
   } = useWallet()

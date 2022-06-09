@@ -15,12 +15,12 @@ export type TokenInfo = {
 }
 
 const NewPool = () => {
-  const { pools } = useSelector((state: AppState) => state)
+  const pools = useSelector((state: AppState) => state.pools)
   const [visible, setVisible] = useState(false)
   const [isInProcess, setIsInProcess] = useState(false)
   const { wallet } = useWallet()
 
-  const checkUninitializePool = useCallback(async () => {
+  const checkUninitializedPool = useCallback(async () => {
     for (const poolAddress in pools) {
       const poolData = pools[poolAddress]
       if (poolData.authority.toBase58() !== wallet.address) continue
@@ -31,8 +31,8 @@ const NewPool = () => {
   }, [pools, wallet.address])
 
   useEffect(() => {
-    checkUninitializePool()
-  }, [checkUninitializePool])
+    checkUninitializedPool()
+  }, [checkUninitializedPool])
 
   return (
     <Fragment>

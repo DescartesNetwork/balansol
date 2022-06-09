@@ -8,9 +8,9 @@ import { AppState } from 'app/model'
 const slippageOptions = [0.5, 1, 2, 100]
 
 const Setting = () => {
-  const {
-    swap: { slippageTolerance },
-  } = useSelector((state: AppState) => state)
+  const slippageTolerance = useSelector(
+    (state: AppState) => state.swap.slippageTolerance,
+  )
   const dispatch = useDispatch()
 
   const onChange = (value: number) => {

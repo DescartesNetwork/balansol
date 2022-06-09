@@ -1,3 +1,5 @@
+import { PoolState } from '@senswap/balancer'
+
 import { Col, Row } from 'antd'
 import { useFilterPools } from 'app/hooks/pools/useFilterPools'
 import { useSearchedPools } from 'app/hooks/pools/useSearchedPools'
@@ -10,8 +12,12 @@ const ListPools = () => {
   return (
     <Row gutter={[24, 24]}>
       {Object.keys(listPools).map((poolAddress) => {
-        let poolState: any = listPools[poolAddress].state
+        const poolData = listPools[poolAddress]
+        let poolState: PoolState = poolData.state
         if (poolState['uninitialized'] || poolState['deleted']) return null
+        if (poolData.reserves.map((val) => val.toString()).includes('0'))
+          return null
+
         return (
           <Col xs={24} md={24} key={poolAddress}>
             <DetailsCard poolAddress={poolAddress} />

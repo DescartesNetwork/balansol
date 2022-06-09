@@ -21,17 +21,14 @@ const WithdrawFullSide = ({
   poolAddress: string
   onSuccess?: () => void
 }) => {
-  const {
-    pools: { [poolAddress]: poolData },
-  } = useSelector((state: AppState) => state)
+  const [amounts, setAmounts] = useState<BN[]>([])
+  const poolData = useSelector((state: AppState) => state.pools[poolAddress])
   const {
     wallet: { address: walletAddress },
   } = useWallet()
   const { accounts } = useAccount()
   const { getMint } = useMint()
   const { decimalize } = useOracles()
-
-  const [amounts, setAmounts] = useState<BN[]>([])
 
   const onSubmit = async () => {
     try {

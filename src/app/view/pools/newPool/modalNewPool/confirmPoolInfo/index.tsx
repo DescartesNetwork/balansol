@@ -26,10 +26,7 @@ export type ConfirmPoolInfoProps = {
 const ConfirmPoolInfo = ({ onConfirm, poolAddress }: ConfirmPoolInfoProps) => {
   const [poolInfo, setPoolInfo] = useState<PoolInfo[]>([])
   const [poolTotalValue, setPoolTotalValue] = useState(0)
-
-  const {
-    pools: { [poolAddress]: poolData },
-  } = useSelector((state: AppState) => state)
+  const poolData = useSelector((state: AppState) => state.pools[poolAddress])
   const { tokenProvider } = useMint()
   const { undecimalizeMintAmount } = useOracles()
 

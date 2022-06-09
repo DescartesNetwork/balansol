@@ -14,9 +14,7 @@ export type PoolAddressActionsProps = { poolAddress: string }
 
 const PoolAddressActions = ({ poolAddress }: PoolAddressActionsProps) => {
   const [copied, setCopied] = useState(false)
-  const {
-    pools: { [poolAddress]: poolData },
-  } = useSelector((state: AppState) => state)
+  const poolData = useSelector((state: AppState) => state.pools[poolAddress])
   const {
     wallet: { address: walletAddress },
   } = useWallet()

@@ -9,9 +9,9 @@ import { AppDispatch, AppState } from 'app/model'
 import { setSearchInput, setFilterPool } from 'app/model/searchPools.controller'
 
 const Search = () => {
-  const {
-    searchPools: { searchInput, filterPool },
-  } = useSelector((state: AppState) => state)
+  const { searchInput, filterPool } = useSelector(
+    (state: AppState) => state.searchPools,
+  )
 
   const dispatch = useDispatch<AppDispatch>()
 

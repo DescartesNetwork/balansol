@@ -26,9 +26,7 @@ const AddLiquidity = ({
   const [inputAmounts, setInputAmounts] = useState<string[]>([])
   const [suggestedAmounts, setSuggestAmounts] = useState<string[]>([])
   const [baseTokenIndex, setBaseTokenIndex] = useState(0)
-  const {
-    pools: { [poolAddress]: poolData },
-  } = useSelector((state: AppState) => state)
+  const poolData = useSelector((state: AppState) => state.pools[poolAddress])
   const { undecimalizeMintAmount } = useOracles()
   const { tokenProvider } = useMint()
 

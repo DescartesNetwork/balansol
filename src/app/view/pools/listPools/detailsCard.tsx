@@ -16,14 +16,12 @@ import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
 export type DetailsCardProps = { poolAddress: string }
 
 const DetailsCard = ({ poolAddress }: DetailsCardProps) => {
-  const { pushHistory } = useAppRouter()
-  const {
-    pools: { [poolAddress]: poolData },
-  } = useSelector((state: AppState) => state)
+  const poolData = useSelector((state: AppState) => state.pools[poolAddress])
   const {
     wallet: { address: walletAddress },
   } = useWallet()
   const { vol24h } = useVolume24h(poolAddress)
+  const { pushHistory } = useAppRouter()
 
   const poolState: any = poolData.state
   const TVL = useTVL(poolAddress)

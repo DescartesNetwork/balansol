@@ -7,9 +7,7 @@ import { useOracles } from './useOracles'
 import { AppState } from 'app/model'
 
 export const useTVL = (poolAddress: string) => {
-  const {
-    pools: { [poolAddress]: poolData },
-  } = useSelector((state: AppState) => state)
+  const poolData = useSelector((state: AppState) => state.pools[poolAddress])
 
   const [TVL, setTVL] = useState(0)
   const { getTokenPrice } = useMintPrice()

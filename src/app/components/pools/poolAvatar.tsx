@@ -7,18 +7,18 @@ import { MintAvatar } from 'shared/antd/mint'
 
 import { AppState } from 'app/model'
 
+type PoolAvatarProps = {
+  poolAddress: string
+  size?: number
+  icon?: ReactNode
+}
+
 export const PoolAvatar = ({
   poolAddress,
   size = 24,
   icon = <IonIcon name="diamond-outline" />,
-}: {
-  poolAddress: string
-  size?: number
-  icon?: ReactNode
-}) => {
-  const {
-    pools: { [poolAddress]: poolData },
-  } = useSelector((state: AppState) => state)
+}: PoolAvatarProps) => {
+  const poolData = useSelector((state: AppState) => state.pools[poolAddress])
 
   return (
     <Avatar.Group style={{ display: 'block', whiteSpace: 'nowrap' }}>

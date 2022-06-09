@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { BN, utils, web3 } from '@project-serum/anchor'
+import { BN } from '@project-serum/anchor'
+import { useMint } from '@senhub/providers'
 
 import { Button, Col, Row, Typography } from 'antd'
 import IonIcon from '@sentre/antd-ionicon'
 import TokenWillReceive from '../tokenWillReceive'
 
-import { useAccount, useMint, useWallet } from '@senhub/providers'
 import { calcWithdrawPriceImpact } from 'app/helper/oracles'
 import { notifyError, notifySuccess, priceImpactColor } from 'app/helper'
 import { AppState } from 'app/model'
@@ -20,30 +20,25 @@ import './index.less'
 
 const WITHDRAW_LIMIT = 0.3
 
+type WithdrawSingleSideProps = {
+  lptAmount: string
+  poolAddress: string
+  mintAddress: string
+  onSuccess?: () => void
+}
+
 const WithdrawSingleSide = ({
   poolAddress,
   lptAmount,
   mintAddress,
   onSuccess = () => {},
-}: {
-  lptAmount: string
-  poolAddress: string
-  mintAddress: string
-  onSuccess?: () => void
-}) => {
+}: WithdrawSingleSideProps) => {
   const [amountReserve, setAmountReserve] = useState<BN>(new BN(0))
   const [impactPrice, setImpactPrice] = useState(0)
+  const [loading, setLoading] = useState(false)
   const { getDecimals } = useMint()
-
-  const {
-    pools: { [poolAddress]: poolData },
-  } = useSelector((state: AppState) => state)
-  const {
-    wallet: { address: walletAddress },
-  } = useWallet()
-  const { accounts } = useAccount()
+  const poolData = useSelector((state: AppState) => state.pools[poolAddress])
   const { decimalize } = useOracles()
-
   const { supply } = useLptSupply(poolData.mintLpt)
   const { balance } = useAccountBalanceByMintAddress(
     poolData.mintLpt.toBase58(),
@@ -53,14 +48,13 @@ const WithdrawSingleSide = ({
     Number(lptAmount) > balance * WITHDRAW_LIMIT
 
   const onSubmit = async () => {
-    if (Number(lptAmount) > balance * WITHDRAW_LIMIT) {
+    if (Number(lptAmount) > balance * WITHDRAW_LIMIT)
       return notifyError({
         message: 'Please input amount less than 30% available supply!',
       })
-    }
 
     try {
-      await initializeAccountIfNeeded()
+      setLoading(true)
       let lptAmountBN = decimalize(lptAmount, LPTDECIMALS)
       const { txId } = await window.balansol.removeSidedLiquidity(
         poolAddress,
@@ -71,22 +65,8 @@ const WithdrawSingleSide = ({
       onSuccess()
     } catch (error) {
       notifyError(error)
-    }
-  }
-
-  const initializeAccountIfNeeded = async () => {
-    const tokenAccount = await utils.token.associatedAddress({
-      owner: new web3.PublicKey(walletAddress),
-      mint: new web3.PublicKey(mintAddress),
-    })
-    if (!accounts[tokenAccount.toBase58()]) {
-      const { wallet, splt } = window.sentre
-      if (!wallet) throw new Error('Login first')
-      await splt.initializeAccount(
-        new web3.PublicKey(mintAddress).toBase58(),
-        walletAddress,
-        wallet,
-      )
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -173,6 +153,7 @@ const WithdrawSingleSide = ({
               block
               onClick={onSubmit}
               disabled={amountReserve.isZero() || isExceedWithdrawLimitation}
+              loading={loading}
             >
               Withdraw
             </Button>

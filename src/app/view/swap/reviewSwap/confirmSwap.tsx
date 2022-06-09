@@ -31,13 +31,12 @@ const ConfirmSwap = ({
   visible = false,
   onCancel = () => {},
 }: ConfirmSwapProps) => {
-  const {
-    swap: { bidAmount, bidMint, askMint },
-  } = useSelector((state: AppState) => state)
-
   const [checked, setChecked] = useState(false)
   const [isDisplayWarning, setIsDisplayWarning] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const { bidAmount, bidMint, askMint } = useSelector(
+    (state: AppState) => state.swap,
+  )
   const { askAmount, priceImpact, swap } = useSwap()
 
   useEffect(() => {

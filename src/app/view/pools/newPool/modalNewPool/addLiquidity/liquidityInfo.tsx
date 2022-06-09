@@ -26,9 +26,7 @@ const LiquidityInfo = ({
   amounts,
   onClose = () => {},
 }: LiquidityInfoProps) => {
-  const {
-    pools: { [poolAddress]: poolData },
-  } = useSelector((state: AppState) => state)
+  const poolData = useSelector((state: AppState) => state.pools[poolAddress])
   const dispatch = useDispatch<AppDispatch>()
   const [tokenPrice, setTokenPrice] = useState<(CgkData | null)[]>([])
   const [loadingAdd, setLoadingAdd] = useState(false)

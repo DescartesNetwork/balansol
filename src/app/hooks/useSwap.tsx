@@ -58,9 +58,7 @@ const Context = createContext<SwapProvider>({ ...DEFAULT_EMPTY_ROUTE })
  * Swap Context Provider
  */
 const Provider = ({ children }: { children: ReactNode }) => {
-  const {
-    swap: { isReverse },
-  } = useSelector((state: AppState) => state)
+  const isReverse = useSelector((state: AppState) => state.swap.isReverse)
   const dispatch = useDispatch<AppDispatch>()
   const [platformSwap, setPlatformSwap] = useState<SwapProvider>({
     ...DEFAULT_EMPTY_ROUTE,

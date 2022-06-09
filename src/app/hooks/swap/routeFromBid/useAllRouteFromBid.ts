@@ -11,12 +11,11 @@ import { AppState } from 'app/model'
 import { useOracles } from '../../useOracles'
 import { MetaRoute } from '../useMetaRoutes'
 import { Route } from '../../useSwap'
+import { useBalansolPools } from 'app/hooks/useBalansolPools'
 
 export const useAllRouteFromBid = (metaRoutes: MetaRoute[]): Route[] => {
-  const {
-    swap: { bidAmount, isReverse },
-    pools,
-  } = useSelector((state: AppState) => state)
+  const { bidAmount, isReverse } = useSelector((state: AppState) => state.swap)
+  const { activePools } = useBalansolPools()
   const { decimalizeMintAmount } = useOracles()
   const [routes, setRoutes] = useState<Route[]>([])
   const { getDecimals } = useMint()
@@ -30,7 +29,7 @@ export const useAllRouteFromBid = (metaRoutes: MetaRoute[]): Route[] => {
       let bidAmountBN = await decimalizeMintAmount(bidAmount, bidMint)
       for (const market of metaRoute) {
         const { bidMint, askMint, pool } = market
-        const poolData = pools[pool]
+        const poolData = activePools[pool]
         const bidMintInfo = getMintInfo(poolData, bidMint)
         const askMintInfo = getMintInfo(poolData, askMint)
         const decimalIn = await getDecimals(bidMint)
@@ -76,7 +75,7 @@ export const useAllRouteFromBid = (metaRoutes: MetaRoute[]): Route[] => {
     getDecimals,
     isReverse,
     metaRoutes,
-    pools,
+    activePools,
   ])
 
   useEffect(() => {

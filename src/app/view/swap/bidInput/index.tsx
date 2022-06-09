@@ -11,9 +11,9 @@ import { useMintsCanSwap } from 'app/hooks/swap/useMintsCanSwap'
 import { useAppRouter } from 'app/hooks/useAppRouter'
 
 const BidInput = () => {
-  const {
-    swap: { bidAmount, bidMint, askMint },
-  } = useSelector((state: AppState) => state)
+  const { bidAmount, bidMint, askMint } = useSelector(
+    (state: AppState) => state.swap,
+  )
   const dispatch = useDispatch<AppDispatch>()
   const {
     ui: { theme },
