@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux'
 import { BN, utils, web3 } from '@project-serum/anchor'
 
 import { Button, Col, Row, Typography } from 'antd'
-import IonIcon from '@sentre/antd-ionicon'
 import TokenWillReceive from '../tokenWillReceive'
 
 import { useAccount, useMint, useWallet } from '@senhub/providers'
@@ -154,18 +153,6 @@ const WithdrawSingleSide = ({
       </Col>
       <Col span={24}>
         <Row gutter={[0, 8]}>
-          {isExceedWithdrawLimitation && (
-            <Col span={24}>
-              <Typography.Text
-                type="danger"
-                style={{ display: 'flex', alignItems: 'center' }}
-              >
-                <IonIcon name="warning-outline" style={{ fontSize: '16px' }} />
-                {'  '}
-                You cannot withdraw more than 30% of the available LP
-              </Typography.Text>
-            </Col>
-          )}
           <Col span={24}>
             <Button
               type="primary"

@@ -82,6 +82,21 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
                   })}
                 </Row>
               </Col>
+              {!isSelectedAll && (
+                <Col span={24}>
+                  <Typography.Text
+                    type="secondary"
+                    style={{ display: 'flex', alignItems: 'center' }}
+                  >
+                    <IonIcon
+                      name="warning-outline"
+                      style={{ fontSize: '16px', marginRight: 8 }}
+                    />
+                    {'  '}
+                    You cannot withdraw more than 30% of the available LP
+                  </Typography.Text>
+                </Col>
+              )}
             </Row>
           </Col>
           <Col span={24}>
@@ -90,11 +105,14 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
               amount={lptAmount}
               onChangeAmount={(amount) => setLptAmount(amount)}
               mintLabel={
-                <Typography.Text type="secondary">Balansol LP</Typography.Text>
+                <Typography.Text type="secondary" style={{ color: '#f3f3f5' }}>
+                  Balansol LP
+                </Typography.Text>
               }
               mintAvatar={<PoolAvatar poolAddress={poolAddress} />}
               unit="LP"
               force
+              ratioButton={!isSelectedAll && null}
             />
           </Col>
           <Col span={24}>
