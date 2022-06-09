@@ -10,7 +10,7 @@ import NumericInput from 'shared/antd/numericInput'
 import { calcNormalizedWeight } from 'app/helper/oracles'
 import { AppState } from 'app/model'
 import { numeric } from 'shared/util'
-import { TokenInfo } from 'app/view/pools/newPool'
+import { TokenInfo } from 'app/view/swapAndPools/pools/newPool'
 import { notifyError, notifySuccess } from 'app/helper'
 import { GENERAL_NORMALIZED_NUMBER } from 'app/constant'
 

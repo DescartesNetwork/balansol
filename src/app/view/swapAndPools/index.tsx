@@ -1,8 +1,8 @@
 import { useCallback } from 'react'
 
 import { Row, Col, Segmented } from 'antd'
-import Pools from '../pools'
-import Swap from '../swap'
+import Pools from './pools'
+import Swap from './swap'
 
 import { HOMEPAGE_TABS } from 'app/constant'
 import { useAppRouter } from 'app/hooks/useAppRouter'

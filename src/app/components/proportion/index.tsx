@@ -1,4 +1,4 @@
-import { TokenInfo } from 'app/view/pools/newPool'
+import { TokenInfo } from 'app/view/swapAndPools/pools/newPool'
 import { MintAvatar } from 'shared/antd/mint'
 import { randomColor } from 'shared/util'
 
