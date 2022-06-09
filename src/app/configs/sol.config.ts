@@ -19,7 +19,7 @@ const conf: Record<Net, Conf> = {
     node: 'https://api.devnet.solana.com',
     spltAddress: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
     splataAddress: 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL',
-    balancerAddress: 'J9vAQKiJLg1GtGqLVRhLe4aHTdQ9585WwkPQ3qpM2LpK',
+    balancerAddress: '35nNfTyYRnysDu2uUujys2Um3Mso1pT9ATLHdAyDBMZS',
     taxmanAddress: 'GJLqpmDxxrV9xruee2vFvEoTho7VVQHRtuHH8nfoAE54',
   },
 
