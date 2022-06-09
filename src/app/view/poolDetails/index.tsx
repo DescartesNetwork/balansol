@@ -5,7 +5,7 @@ import { Button, Col, Row } from 'antd'
 
 import IonIcon from '@sentre/antd-ionicon'
 import PoolManagement from './management'
-import PoolBalance from './poolBalance'
+import PoolWeights from './poolWeights'
 import Volume24h from './volume24h'
 import Hero from './hero'
 import Header from './header'
@@ -56,7 +56,7 @@ const PoolDetails = () => {
                 <Volume24h poolAddress={poolAddress} />
               </Col>
               <Col lg={12} md={12} xs={24}>
-                <PoolBalance poolAddress={poolAddress} />
+                <PoolWeights poolAddress={poolAddress} />
               </Col>
               {isOwner && (
                 <Col lg={12} md={12} xs={24}>

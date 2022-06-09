@@ -18,14 +18,14 @@ echarts.use([
   LegendComponent,
 ])
 
-export type PoolBalanceData = {
+export type PoolWeightData = {
   symbol: string
   weight: number
   tokenAmount: string
 }
 
 const buildOptions = (
-  data: PoolBalanceData[],
+  data: PoolWeightData[],
   style: { color: string; backgroundColor: string },
 ) => {
   return {
@@ -86,7 +86,7 @@ const STYLE = {
   },
 }
 
-const DoughnutChart = ({ data }: { data: PoolBalanceData[] }) => {
+const DoughnutChart = ({ data }: { data: PoolWeightData[] }) => {
   const {
     ui: { theme },
   } = useUI()
