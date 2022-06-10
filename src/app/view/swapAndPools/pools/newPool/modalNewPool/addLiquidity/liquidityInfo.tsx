@@ -118,30 +118,35 @@ const LiquidityInfo = ({
   return (
     <Row gutter={[16, 16]}>
       <Col span={24}>
-        {poolData.mints.map((mint, idx) => {
-          const mintValue = Number(amounts[idx]) * (tokenPrice[idx]?.price || 0)
-          return (
-            <Row key={idx}>
-              <Col flex={1}>
-                <Typography.Text type="secondary">
-                  <MintSymbol mintAddress={mint.toBase58()} />
-                </Typography.Text>
-                <Typography.Text type="secondary">
-                  (
-                  {tokenPrice[idx]?.price
-                    ? numeric(tokenPrice[idx]?.price).format('0,0.[0000]')
-                    : '--'}
-                  )
-                </Typography.Text>
+        <Row gutter={[12, 12]}>
+          {poolData.mints.map((mint, idx) => {
+            const mintValue =
+              Number(amounts[idx]) * (tokenPrice[idx]?.price || 0)
+            return (
+              <Col span={24}>
+                <Row key={idx}>
+                  <Col flex={1}>
+                    <Typography.Text type="secondary">
+                      <MintSymbol mintAddress={mint.toBase58()} />
+                    </Typography.Text>
+                    <Typography.Text type="secondary">
+                      (
+                      {tokenPrice[idx]?.price
+                        ? numeric(tokenPrice[idx]?.price).format('$0,0.[0000]')
+                        : '--'}
+                      )
+                    </Typography.Text>
+                  </Col>
+                  <Col>
+                    <Typography.Text>
+                      {numeric(mintValue).format('$0,0.[0000]')}
+                    </Typography.Text>
+                  </Col>
+                </Row>
               </Col>
-              <Col>
-                <Typography.Text>
-                  ${numeric(mintValue).format('0,0.[0000]')}
-                </Typography.Text>
-              </Col>
-            </Row>
-          )
-        })}
+            )
+          })}
+        </Row>
       </Col>
       <Col span={24}>
         <Row align="middle">

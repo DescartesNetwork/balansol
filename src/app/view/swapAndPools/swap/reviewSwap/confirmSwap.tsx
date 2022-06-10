@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import {
   Row,
@@ -15,7 +15,8 @@ import IonIcon from '@sentre/antd-ionicon'
 import { MintAvatar, MintSymbol } from 'shared/antd/mint'
 import PreviewSwap from 'app/components/swapInfo'
 
-import { AppState } from 'app/model'
+import { AppDispatch, AppState } from 'app/model'
+import { setSwapState } from 'app/model/swap.controller'
 import { notifyError, notifySuccess } from 'app/helper'
 import { PriceImpact } from 'app/constant'
 import { useSwap } from 'app/hooks/useSwap'
@@ -34,6 +35,7 @@ const ConfirmSwap = ({
   const [checked, setChecked] = useState(false)
   const [isDisplayWarning, setIsDisplayWarning] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const dispatch = useDispatch<AppDispatch>()
   const { bidAmount, bidMint, askMint } = useSelector(
     (state: AppState) => state.swap,
   )
@@ -54,6 +56,7 @@ const ConfirmSwap = ({
     try {
       const { txId } = await swap()
       onCancel()
+      dispatch(setSwapState({ bidAmount: '' }))
       notifySuccess('Swap', txId)
     } catch (error) {
       notifyError(error)
