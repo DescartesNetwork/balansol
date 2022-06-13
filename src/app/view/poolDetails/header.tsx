@@ -9,7 +9,7 @@ import { PoolAvatar } from 'app/components/pools/poolAvatar'
 import Deposit from './deposit'
 import Withdraw from './withdraw'
 
-import { asyncWait } from 'shared/util'
+import { asyncWait, explorer } from 'shared/util'
 import { AppState } from 'app/model'
 
 type InfoProps = { title: string; value: string }
@@ -23,22 +23,30 @@ const Info = ({ title, value }: InfoProps) => {
   }
 
   return (
-    <Space align="center">
-      <Tooltip title="Copied" visible={copied} arrowPointAtCenter>
-        <CopyToClipboard text={value}>
-          <Button
-            type="text"
-            size="small"
-            icon={<IonIcon name="copy-outline" />}
-            onClick={onCopy}
-          />
-        </CopyToClipboard>
-      </Tooltip>
-      <Space direction="vertical" size={4}>
+    <Space direction="vertical" size={4}>
+      <Space>
         <Typography.Text type="secondary">{title}</Typography.Text>
+        <Button
+          type="text"
+          size="small"
+          icon={<IonIcon name="open-outline" />}
+          onClick={() => window.open(explorer(value), '_blank')}
+        />
+      </Space>
+      <Space>
         <Typography.Text style={{ wordBreak: 'break-all' }}>
           {value}
         </Typography.Text>
+        <Tooltip title="Copied" visible={copied} arrowPointAtCenter>
+          <CopyToClipboard text={value}>
+            <Button
+              type="text"
+              size="small"
+              icon={<IonIcon name="copy-outline" />}
+              onClick={onCopy}
+            />
+          </CopyToClipboard>
+        </Tooltip>
       </Space>
     </Space>
   )
@@ -70,7 +78,7 @@ const Header = ({ poolAddress }: { poolAddress: string }) => {
             <Button
               type="text"
               style={{ marginLeft: -4 }}
-              icon={<IonIcon name="alert-circle-outline" />}
+              icon={<IonIcon name="information-circle-outline" />}
             />
           </Popover>
         </Space>

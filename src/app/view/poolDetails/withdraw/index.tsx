@@ -101,11 +101,7 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
               selectedMint={poolData?.mintLpt.toBase58()}
               amount={lptAmount}
               onChangeAmount={(amount) => setLptAmount(amount)}
-              mintLabel={
-                <Typography.Text type="secondary" style={{ color: '#f3f3f5' }}>
-                  Balansol LP
-                </Typography.Text>
-              }
+              mintLabel={<Typography.Text>Balansol LP</Typography.Text>}
               mintAvatar={<PoolAvatar poolAddress={poolAddress} />}
               unit="LP"
               force
