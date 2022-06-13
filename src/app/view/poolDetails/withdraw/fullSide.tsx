@@ -1,7 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { BN, utils, web3 } from '@project-serum/anchor'
-import { useAccount, useMint, useWallet } from '@senhub/providers'
+import { BN } from '@project-serum/anchor'
+import {
+  createMultiTokenAccountIfNeededTransactions,
+  getAnchorProvider,
+} from 'sentre-web3'
+import { useMint } from '@senhub/providers'
 
 import { Button, Col, Row, Typography } from 'antd'
 import TokenWillReceive from '../tokenWillReceive'
@@ -11,6 +15,7 @@ import { calcMintReceivesRemoveFullSide } from 'app/helper/oracles'
 import { AppState } from 'app/model'
 import { LPTDECIMALS } from 'app/constant/index'
 import { useOracles } from 'app/hooks/useOracles'
+import { rpc } from 'shared/runtime'
 
 const WithdrawFullSide = ({
   poolAddress,
@@ -22,41 +27,51 @@ const WithdrawFullSide = ({
   onSuccess?: () => void
 }) => {
   const [amounts, setAmounts] = useState<BN[]>([])
+  const [loading, setLoading] = useState(false)
   const poolData = useSelector((state: AppState) => state.pools[poolAddress])
-  const {
-    wallet: { address: walletAddress },
-  } = useWallet()
-  const { accounts } = useAccount()
   const { getMint } = useMint()
   const { decimalize } = useOracles()
 
   const onSubmit = async () => {
     try {
-      await initializeAccountIfNeeded()
+      setLoading(true)
       let amount = decimalize(lptAmount, LPTDECIMALS)
-      const { txId } = await window.balansol.removeLiquidity(
-        poolAddress,
-        amount,
+      const { wallet } = window.sentre
+      const walletAddress = await wallet.getAddress()
+      const provider = getAnchorProvider(rpc, walletAddress, wallet)
+
+      const transactions = await initTokenAccountTxs()
+      const { transaction } =
+        await window.balansol.createRemoveLiquidityTransaction(
+          poolAddress,
+          amount,
+        )
+      transactions.push(transaction)
+      const txIds = await provider.sendAll(
+        transactions.map((tx) => {
+          return { tx, signers: [] }
+        }),
       )
-      notifySuccess('Withdraw', txId)
+      notifySuccess('Withdraw', txIds[txIds.length - 1])
       onSuccess()
     } catch (error) {
       notifyError(error)
+    } finally {
+      setLoading(false)
     }
   }
 
-  const initializeAccountIfNeeded = async () => {
-    for (const mint of poolData.mints) {
-      const tokenAccount = await utils.token.associatedAddress({
-        owner: new web3.PublicKey(walletAddress),
-        mint,
-      })
-      if (!accounts[tokenAccount.toBase58()]) {
-        const { wallet, splt } = window.sentre
-        if (!wallet) throw new Error('Login first')
-        await splt.initializeAccount(mint.toBase58(), walletAddress, wallet)
-      }
-    }
+  async function initTokenAccountTxs() {
+    const { wallet } = window.sentre
+    const walletAddress = await wallet.getAddress()
+    const provider = getAnchorProvider(rpc, walletAddress, wallet)
+    const transactions = await createMultiTokenAccountIfNeededTransactions(
+      provider,
+      {
+        mints: poolData.mints,
+      },
+    )
+    return transactions
   }
 
   const calcMintReceiveFullSide = useCallback(async () => {
@@ -98,7 +113,13 @@ const WithdrawFullSide = ({
         </Row>
       </Col>
       <Col span={24}>
-        <Button type="primary" block onClick={onSubmit} size="large">
+        <Button
+          type="primary"
+          block
+          onClick={onSubmit}
+          size="large"
+          loading={loading}
+        >
           Withdraw
         </Button>
       </Col>
