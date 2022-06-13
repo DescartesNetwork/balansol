@@ -1,7 +1,7 @@
 import { Fragment, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 
-import { Button, Col, Modal, Row, Typography } from 'antd'
+import { Button, Col, Modal, Row, Space, Typography } from 'antd'
 import MintInput from 'app/components/mintInput'
 import { PoolAvatar } from 'app/components/pools/poolAvatar'
 import IonIcon from '@sentre/antd-ionicon'
@@ -84,17 +84,15 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
               </Col>
               {!isSelectedAll && (
                 <Col span={24}>
-                  <Typography.Text
-                    type="secondary"
-                    style={{ display: 'flex', alignItems: 'center' }}
-                  >
+                  <Space align="center" size={4}>
                     <IonIcon
                       name="warning-outline"
-                      style={{ fontSize: '16px', marginRight: 8 }}
+                      style={{ fontSize: '16px' }}
                     />
-                    {'  '}
-                    You cannot withdraw more than 30% of the available LP
-                  </Typography.Text>
+                    <Typography.Text type="secondary">
+                      You cannot withdraw more than 30% of the available LP
+                    </Typography.Text>
+                  </Space>
                 </Col>
               )}
             </Row>
