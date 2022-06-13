@@ -24,7 +24,7 @@ export const Page = () => {
     <UIProvider
       appId={appId}
       antd={{ prefixCls: appId }}
-      style={{ paddingBottom: 60 }}
+      style={{ paddingBottom: 12 }}
     >
       <WalletProvider>
         <AccountProvider>
