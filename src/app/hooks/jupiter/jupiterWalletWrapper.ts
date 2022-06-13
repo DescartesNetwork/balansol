@@ -33,12 +33,7 @@ class JupiterWalletWrapper {
   }
 
   async signAllTransactions(transactions: Transaction[]) {
-    const signedTransactions = []
-    for (const transaction of transactions) {
-      const signedTransaction = await this.signTransaction(transaction)
-      signedTransactions.push(signedTransaction)
-    }
-    return signedTransactions
+    return await this._wallet.signAllTransactions(transactions)
   }
 }
 
