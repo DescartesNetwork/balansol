@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { BN } from '@project-serum/anchor'
+import { useUI } from '@senhub/providers'
 
 import { Button, Col, Row, Space, Typography } from 'antd'
 import IonIcon from '@sentre/antd-ionicon'
 import { MintAvatar, MintSymbol } from 'shared/antd/mint'
-import NumericInput from 'shared/antd/numericInput'
+import NumericInput from 'app/components/numericInput'
 
 import { calcNormalizedWeight } from 'app/helper/oracles'
 import { AppState } from 'app/model'
@@ -29,6 +30,9 @@ const Weight = ({ poolAddress }: { poolAddress: string }) => {
   const { mints, weights } = useSelector(
     (state: AppState) => state.pools[poolAddress],
   )
+  const {
+    ui: { theme },
+  } = useUI()
 
   const fetchWeights = useCallback(() => {
     const nextWeights: Record<string, TokenInfo> = {}
@@ -156,16 +160,24 @@ const Weight = ({ poolAddress }: { poolAddress: string }) => {
         return (
           <Col span={24} key={addressToken + idx} className="weight">
             <Row gutter={12} align="middle">
-              <Col flex="auto">
+              <Col
+                flex="auto"
+                className={
+                  validateWeight(addressToken)
+                    ? 'weight-input'
+                    : 'weight-input-error'
+                }
+              >
                 <NumericInput
                   prefix={<Token mintAddress={addressToken} />}
-                  className={
-                    validateWeight(addressToken)
-                      ? 'weight-input'
-                      : 'weight-input-error'
-                  }
                   disabled={isLocked}
-                  suffix={<Typography.Text>%</Typography.Text>}
+                  bordered={false}
+                  controls={false}
+                  styles={{
+                    borderRadius: 40,
+                    background: theme === 'light' ? '#e6eaf5' : '#142042',
+                  }}
+                  addonAfter={<Typography.Text>%</Typography.Text>}
                   value={weight}
                   name={addressToken}
                   onValue={(val: string) => onWeightChange(val, addressToken)}

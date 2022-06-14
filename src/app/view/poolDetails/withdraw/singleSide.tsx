@@ -92,7 +92,7 @@ const WithdrawSingleSide = ({
       decimals,
       poolData.fee.add(poolData.taxFee),
     )
-    if (!!tokenAmountOut) setAmountReserve(tokenAmountOut)
+    setAmountReserve(tokenAmountOut || new BN(0))
     setImpactPrice(impactPrice)
   }, [decimalize, getDecimals, lptAmount, mintAddress, poolData, supply])
 
