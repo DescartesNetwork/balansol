@@ -27,7 +27,7 @@ export const useSwapBalansol = (): SwapProvider => {
     const transactions = await createMultiTokenAccountIfNeededTransactions(
       provider,
       {
-        mints: routeInfo.route.map((r) => r.askMint),
+        mints: routeInfo.route.map((route) => route.askMint),
       },
     )
     return transactions

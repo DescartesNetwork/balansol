@@ -1,12 +1,6 @@
 import { Row, Col, Spin, Typography, Space } from 'antd'
 
-import configs from 'app/configs'
-
 import './index.less'
-
-const {
-  manifest: { appId },
-} = configs
 
 const Loading = () => {
   return (
@@ -19,7 +13,7 @@ const Loading = () => {
               <Space direction="vertical" align="center" size={32}>
                 <Spin size="large" />
                 <Typography.Title level={5}>
-                  Welcome to {appId}. The application is loading...
+                  Welcome to Balansol. The application is loading...
                 </Typography.Title>
               </Space>
             </Col>

@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { useDebounce } from 'react-use'
 
 import {
   calcInGivenOutSwap,
@@ -91,9 +92,7 @@ export const useAllRoutesFromAsk = (metaRoutes: MetaRoute[]) => {
     metaRoutes,
   ])
 
-  useEffect(() => {
-    computeRouteInfos()
-  }, [computeRouteInfos])
+  useDebounce(async () => computeRouteInfos(), 300, [computeRouteInfos])
 
   return routes
 }

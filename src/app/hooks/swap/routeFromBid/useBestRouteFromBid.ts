@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { BN } from '@project-serum/anchor'
 
@@ -9,6 +9,7 @@ import { useMetaRoutes } from '../useMetaRoutes'
 import { RouteSwapInfo } from '../../useSwap'
 import { useAllRouteFromBid } from './useAllRouteFromBid'
 import { useBalansolPools } from 'app/hooks/useBalansolPools'
+import { useDebounce } from 'react-use'
 
 export const useBestRouteFromBid = (): RouteSwapInfo => {
   const [routeSwapInfo, setRouteSwapInfo] = useState<RouteSwapInfo>({
@@ -58,9 +59,7 @@ export const useBestRouteFromBid = (): RouteSwapInfo => {
     })
   }, [askMint, bidAmount, bidMint, activePools, routes, undecimalizeMintAmount])
 
-  useEffect(() => {
-    getBestRoute()
-  }, [getBestRoute])
+  useDebounce(async () => getBestRoute(), 300, [getBestRoute])
 
   return routeSwapInfo
 }

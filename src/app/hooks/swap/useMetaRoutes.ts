@@ -1,5 +1,6 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { useDebounce } from 'react-use'
 
 import { AppState } from 'app/model'
 import { useMintRoutes } from './useMintRoutes'
@@ -14,6 +15,7 @@ export type MetaRoute = Market[]
 export const useMetaRoutes = () => {
   const { askMint, bidMint } = useSelector((state: AppState) => state.swap)
   const tokenRoutes = useMintRoutes()
+  const [metaRoutes, setMetaRoutes] = useState<MetaRoute[]>([])
 
   const validRoute = (route: MetaRoute) => {
     const pools = route.map((e) => e.pool)
@@ -66,10 +68,12 @@ export const useMetaRoutes = () => {
     [tokenRoutes],
   )
 
-  const metaRoutes = useMemo(() => {
-    const metaRoute = computeMetaRoutes(bidMint, askMint)
-    return metaRoute
+  const compareMetaRoutes = useCallback(() => {
+    const metaRoutes = computeMetaRoutes(bidMint, askMint)
+    setMetaRoutes(metaRoutes)
   }, [askMint, bidMint, computeMetaRoutes])
+
+  useDebounce(async () => compareMetaRoutes(), 300, [compareMetaRoutes])
 
   return metaRoutes
 }

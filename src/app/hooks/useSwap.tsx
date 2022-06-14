@@ -14,6 +14,7 @@ import { AppDispatch, AppState } from 'app/model'
 import { setSwapState } from 'app/model/swap.controller'
 import { useSwapBalansol } from './swap/useSwapBalansol'
 import { useJupiterAggregator } from './jupiter/useJupiterAggregator'
+import { net } from 'shared/runtime'
 
 export type RouteSwapInfo = {
   route: Route
@@ -69,7 +70,8 @@ const Provider = ({ children }: { children: ReactNode }) => {
   const jupiter = useJupiterAggregator()
 
   const choosePlatform = useCallback(() => {
-    if (balansol.route.length || isReverse) return setPlatformSwap(balansol)
+    if (balansol.route.length || isReverse || net !== 'mainnet')
+      return setPlatformSwap(balansol)
     return setPlatformSwap(jupiter)
   }, [balansol, isReverse, jupiter])
   useEffect(() => {
