@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { useDebounce } from 'react-use'
 
 import { useMint } from '@senhub/providers'
 import {
@@ -78,9 +79,7 @@ export const useAllRouteFromBid = (metaRoutes: MetaRoute[]): Route[] => {
     activePools,
   ])
 
-  useEffect(() => {
-    computeRouteInfos()
-  }, [computeRouteInfos])
+  useDebounce(async () => computeRouteInfos(), 300, [computeRouteInfos])
 
   return routes
 }

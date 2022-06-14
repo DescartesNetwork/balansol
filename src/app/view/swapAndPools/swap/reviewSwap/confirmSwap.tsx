@@ -13,7 +13,7 @@ import {
 } from 'antd'
 import IonIcon from '@sentre/antd-ionicon'
 import { MintAvatar, MintSymbol } from 'shared/antd/mint'
-import PreviewSwap from 'app/components/swapInfo'
+import PreviewSwap from 'app/view/swapAndPools/swap/swapInfo'
 
 import { AppDispatch, AppState } from 'app/model'
 import { setSwapState } from 'app/model/swap.controller'
