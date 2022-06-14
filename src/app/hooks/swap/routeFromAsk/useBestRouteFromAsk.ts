@@ -1,7 +1,8 @@
 import { calcPriceImpact } from 'app/helper/oracles'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { BN } from '@project-serum/anchor'
+import { useDebounce } from 'react-use'
 
 import { AppState } from 'app/model'
 import { useBalansolPools } from 'app/hooks/useBalansolPools'
@@ -60,9 +61,7 @@ export const useBestRouteFromAsk = () => {
     })
   }, [askAmount, askMint, bidMint, activePools, routes, undecimalizeMintAmount])
 
-  useEffect(() => {
-    getBestRoute()
-  }, [getBestRoute])
+  useDebounce(async () => getBestRoute(), 300, [getBestRoute])
 
   return routeSwapInfo
 }

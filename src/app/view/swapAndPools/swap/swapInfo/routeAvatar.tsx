@@ -3,7 +3,7 @@ import { Fragment } from 'react'
 import { Divider, Space } from 'antd'
 import IonIcon from '@sentre/antd-ionicon'
 import { MintAvatar } from 'shared/antd/mint'
-import PoweredByJupiter from '../poweredByJupiter'
+import PoweredByJupiter from '../../../../components/poweredByJupiter'
 
 import { SwapPlatform, useSwap } from 'app/hooks/useSwap'
 
@@ -11,12 +11,10 @@ const RouteAvatar = () => {
   const { route, platform } = useSwap()
 
   const routeMints: string[] = []
-  for (const routeElm of route) {
-    if (!routeMints.includes(routeElm.bidMint))
-      routeMints.push(routeElm.bidMint)
-    if (!routeMints.includes(routeElm.askMint))
-      routeMints.push(routeElm.askMint)
-  }
+  route.forEach((routeElm, idx) => {
+    if (idx === 0) routeMints.push(routeElm.bidMint)
+    routeMints.push(routeElm.askMint)
+  })
 
   return (
     <Space>

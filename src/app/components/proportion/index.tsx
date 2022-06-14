@@ -23,7 +23,7 @@ export default function Proportion({ tokenList }: { tokenList: TokenInfo[] }) {
                 index !== 1
                   ? `calc(${value.weight}% + 8px)`
                   : `${value.weight}%`,
-              background: `${randomColor(value.addressToken, 1)}`,
+              background: `${randomColor(value.addressToken || '_', 1)}`,
               height: '8px',
               borderRadius: '20px',
               zIndex: `${index}`,
