@@ -10,6 +10,7 @@ import { AppDispatch, AppState } from 'app/model'
 import { setSwapState } from 'app/model/swap.controller'
 import { useMintsCanSwap } from 'app/hooks/swap/useMintsCanSwap'
 import { useAppRouter } from 'app/hooks/useAppRouter'
+import configs from 'app/configs'
 
 const AskInput = () => {
   const { askMint, bidMint, askAmount } = useSelector(
@@ -24,13 +25,8 @@ const AskInput = () => {
   const { ask_mint } = getAllQuery<{ ask_mint: string }>()
 
   useEffect(() => {
-    if (askMint) return
-    if (!ask_mint) {
-      const newMintSwap = mintsSwap.filter((value) => value !== bidMint)
-      dispatch(setSwapState({ askMint: newMintSwap?.[0] || '' })).unwrap()
-      return
-    }
-    dispatch(setSwapState({ askMint: ask_mint })).unwrap()
+    if (!askMint)
+      dispatch(setSwapState({ askMint: configs.sol.askMintDefault }))
   }, [ask_mint, askMint, bidMint, dispatch, mintsSwap])
 
   const onChange = async (askAmount: string) => {
