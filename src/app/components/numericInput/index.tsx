@@ -40,7 +40,6 @@ const NumericInput = ({
     <InputNumber
       {...props}
       stringMode
-      type="number"
       onChange={onAmount}
       className={`${inputStyle}`}
       style={{ width: '100%', fontSize: 24, ...styles }}
@@ -49,6 +48,7 @@ const NumericInput = ({
           onAmount('0')
         }
       }}
+      decimalSeparator="."
     />
   )
 }
