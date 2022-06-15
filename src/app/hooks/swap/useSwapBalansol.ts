@@ -18,7 +18,7 @@ export const useSwapBalansol = (): SwapProvider => {
   const { decimalizeMintAmount } = useOracles()
   const routesFromBid = useBestRouteFromBid()
   const routesFromAsk = useBestRouteFromAsk()
-  const routeInfo = isReverse ? routesFromAsk : routesFromBid
+  const { loading, bestRoute } = isReverse ? routesFromAsk : routesFromBid
 
   const initTokenAccountTxs = useCallback(async () => {
     const { wallet } = window.sentre
@@ -27,11 +27,11 @@ export const useSwapBalansol = (): SwapProvider => {
     const transactions = await createMultiTokenAccountIfNeededTransactions(
       provider,
       {
-        mints: routeInfo.route.map((route) => route.askMint),
+        mints: bestRoute.route.map((route) => route.askMint),
       },
     )
     return transactions
-  }, [routeInfo.route])
+  }, [bestRoute.route])
 
   const swap = useCallback(async () => {
     const { wallet } = window.sentre
@@ -39,12 +39,12 @@ export const useSwapBalansol = (): SwapProvider => {
     const provider = getAnchorProvider(rpc, walletAddress, wallet)
 
     const bidAmountBN = await decimalizeMintAmount(bidAmount, bidMint)
-    const limit = Number(routeInfo.askAmount) * (1 - slippageTolerance / 100)
+    const limit = Number(bestRoute.askAmount) * (1 - slippageTolerance / 100)
     const limitBN = await decimalizeMintAmount(limit, askMint)
     const transactions = await initTokenAccountTxs()
     const { transaction } = await window.balansol.createRouteTransaction(
       bidAmountBN,
-      routeInfo.route,
+      bestRoute.route,
       limitBN,
     )
     transactions.push(transaction)
@@ -60,17 +60,17 @@ export const useSwapBalansol = (): SwapProvider => {
     bidMint,
     decimalizeMintAmount,
     initTokenAccountTxs,
-    routeInfo.askAmount,
-    routeInfo.route,
+    bestRoute.askAmount,
+    bestRoute.route,
     slippageTolerance,
   ])
 
   return useMemo(() => {
     return {
-      ...routeInfo,
+      ...bestRoute,
       swap,
-      loading: false,
+      loading: loading,
       platform: SwapPlatform.Balansol,
     }
-  }, [routeInfo, swap])
+  }, [bestRoute, swap, loading])
 }
