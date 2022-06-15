@@ -29,7 +29,14 @@ const BidInput = () => {
   }, [bid_mint, bidMint, dispatch, mintsSwap])
 
   const onChange = (val: string) => {
-    dispatch(setSwapState({ bidAmount: val, isReverse: false }))
+    dispatch(
+      setSwapState({
+        bidAmount: val,
+        isReverse: false,
+        askAmount: '',
+        loading: true,
+      }),
+    )
   }
   // Ignore askMint in mints
   const filteredMints = useMemo(

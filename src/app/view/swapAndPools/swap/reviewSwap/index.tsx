@@ -12,9 +12,10 @@ import './index.less'
 const ReviewSwap = () => {
   const bidAmount = useSelector((state: AppState) => state.swap.bidAmount)
   const askAmount = useSelector((state: AppState) => state.swap.askAmount)
+  const loading = useSelector((state: AppState) => state.swap.loading)
 
   const [visible, setVisible] = useState(false)
-  const { loading, route } = useSwap()
+  const { route } = useSwap()
 
   const disabled =
     !Number(bidAmount) || !Number(askAmount) || !route.length || loading
