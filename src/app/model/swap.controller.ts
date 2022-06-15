@@ -11,6 +11,7 @@ export type SwapState = {
   askAmount: string
   isReverse: boolean
   slippageTolerance: number
+  loading: boolean
 }
 
 /**
@@ -25,6 +26,7 @@ const initialState: SwapState = {
   askAmount: '',
   isReverse: false,
   slippageTolerance: 0.5,
+  loading: false,
 }
 
 /**

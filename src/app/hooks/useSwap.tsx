@@ -4,10 +4,10 @@ import {
   ReactNode,
   useMemo,
   useCallback,
-  useEffect,
   useState,
 } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useDebounce } from 'react-use'
 import { BN } from '@project-serum/anchor'
 
 import { AppDispatch, AppState } from 'app/model'
@@ -70,25 +70,34 @@ const Provider = ({ children }: { children: ReactNode }) => {
   const jupiter = useJupiterAggregator()
 
   const choosePlatform = useCallback(() => {
-    if (balansol.route.length || isReverse || net !== 'mainnet')
+    if (
+      balansol.route.length ||
+      isReverse ||
+      net !== 'mainnet' ||
+      balansol.loading
+    )
       return setPlatformSwap(balansol)
     return setPlatformSwap(jupiter)
   }, [balansol, isReverse, jupiter])
-  useEffect(() => {
-    choosePlatform()
-  }, [choosePlatform])
+  useDebounce(() => choosePlatform(), 300, [choosePlatform])
 
   const updateRouteFromBid = useCallback(() => {
     if (isReverse) return
-    dispatch(setSwapState({ askAmount: platformSwap.askAmount.toString() }))
-  }, [dispatch, isReverse, platformSwap.askAmount])
-  useEffect(() => updateRouteFromBid(), [updateRouteFromBid])
+    let askAmount = platformSwap.askAmount.toString()
+    const loading = platformSwap.loading
+    if (loading) askAmount = ''
+    dispatch(setSwapState({ askAmount, loading }))
+  }, [platformSwap, isReverse, dispatch])
+  useDebounce(() => updateRouteFromBid(), 300, [updateRouteFromBid])
 
   const updateRouteFromAsk = useCallback(() => {
     if (!isReverse) return
-    dispatch(setSwapState({ bidAmount: platformSwap.bidAmount.toString() }))
-  }, [dispatch, isReverse, platformSwap.bidAmount])
-  useEffect(() => updateRouteFromAsk(), [updateRouteFromAsk])
+    let bidAmount = platformSwap.bidAmount.toString()
+    const loading = platformSwap.loading
+    if (loading) bidAmount = ''
+    dispatch(setSwapState({ bidAmount, loading }))
+  }, [dispatch, isReverse, platformSwap.bidAmount, platformSwap.loading])
+  useDebounce(() => updateRouteFromAsk(), 300, [updateRouteFromAsk])
 
   const provider = useMemo((): SwapProvider => {
     return platformSwap

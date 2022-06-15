@@ -1,24 +1,28 @@
-import { calcPriceImpact } from 'app/helper/oracles'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { BN } from '@project-serum/anchor'
 import { useDebounce } from 'react-use'
 
 import { AppState } from 'app/model'
+import { calcPriceImpact } from 'app/helper/oracles'
 import { useBalansolPools } from 'app/hooks/useBalansolPools'
-import { useMetaRoutes } from '../useMetaRoutes'
 import { useOracles } from '../../useOracles'
 import { RouteSwapInfo } from '../../useSwap'
+import { useMetaRoutes } from '../useMetaRoutes'
 import { useAllRoutesFromAsk } from './useAllRoutesFromAsk'
 
-export const useBestRouteFromAsk = () => {
+export const useBestRouteFromAsk = (): {
+  loading: boolean
+  bestRoute: RouteSwapInfo
+} => {
   const [routeSwapInfo, setRouteSwapInfo] = useState<RouteSwapInfo>({
     route: [],
     bidAmount: 0,
     askAmount: 0,
     priceImpact: 0,
   })
-  const { bidMint, askAmount, askMint } = useSelector(
+  const [loading, setLoading] = useState(false)
+  const { bidMint, askAmount, askMint, isReverse } = useSelector(
     (state: AppState) => state.swap,
   )
   const { activePools } = useBalansolPools()
@@ -61,7 +65,23 @@ export const useBestRouteFromAsk = () => {
     })
   }, [askAmount, askMint, bidMint, activePools, routes, undecimalizeMintAmount])
 
-  useDebounce(async () => getBestRoute(), 300, [getBestRoute])
+  useDebounce(
+    () => {
+      try {
+        if (!isReverse) return
+        getBestRoute()
+      } catch (error) {
+        console.log('route error:', error)
+      } finally {
+        setLoading(false)
+      }
+    },
+    500,
+    [getBestRoute],
+  )
+  useEffect(() => {
+    setLoading(true)
+  }, [getBestRoute])
 
-  return routeSwapInfo
+  return { loading, bestRoute: routeSwapInfo }
 }

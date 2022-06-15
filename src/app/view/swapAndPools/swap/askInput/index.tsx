@@ -8,7 +8,6 @@ import { MintSelection } from 'shared/antd/mint'
 
 import { AppDispatch, AppState } from 'app/model'
 import { setSwapState } from 'app/model/swap.controller'
-import { useMintsCanSwap } from 'app/hooks/swap/useMintsCanSwap'
 import { useAppRouter } from 'app/hooks/useAppRouter'
 import configs from 'app/configs'
 
@@ -20,20 +19,21 @@ const AskInput = () => {
     ui: { theme },
   } = useUI()
   const dispatch = useDispatch<AppDispatch>()
-  const mintsSwap = useMintsCanSwap()
   const { getAllQuery } = useAppRouter()
   const { ask_mint } = getAllQuery<{ ask_mint: string }>()
 
   useEffect(() => {
     if (!askMint)
       dispatch(setSwapState({ askMint: configs.sol.askMintDefault }))
-  }, [ask_mint, askMint, bidMint, dispatch, mintsSwap])
+  }, [ask_mint, askMint, bidMint, dispatch])
 
   const onChange = async (askAmount: string) => {
     dispatch(
       setSwapState({
         askAmount,
         isReverse: true,
+        bidAmount: '',
+        loading: true,
       }),
     ).unwrap()
   }
