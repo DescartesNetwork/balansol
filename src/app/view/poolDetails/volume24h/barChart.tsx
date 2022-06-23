@@ -54,6 +54,10 @@ const buildOptions = (data: VolumeData[]) => ({
   ],
   grid: {
     show: false,
+    top: 10,
+    left: 40,
+    right: 10,
+    bottom: 50,
   },
 })
 
