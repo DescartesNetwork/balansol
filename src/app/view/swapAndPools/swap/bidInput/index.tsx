@@ -24,9 +24,11 @@ const BidInput = () => {
   const { bid_mint } = getAllQuery<{ bid_mint: string }>()
 
   useEffect(() => {
-    if (!bidMint)
-      dispatch(setSwapState({ bidMint: configs.sol.bidMintDefault }))
-  }, [bid_mint, bidMint, dispatch, mintsSwap])
+    if (!bidMint) {
+      const defaultBidMint = bid_mint || configs.sol.bidMintDefault
+      dispatch(setSwapState({ bidMint: defaultBidMint }))
+    }
+  }, [bidMint, bid_mint, dispatch])
 
   const onChange = (val: string) => {
     dispatch(

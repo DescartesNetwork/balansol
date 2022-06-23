@@ -55,6 +55,8 @@ const SwapInfo = ({ extraStyle }: { extraStyle?: CSSProperties }) => {
   )
   const { priceImpact } = useSwap()
 
+  const priceImpactDisplay = numeric(priceImpact).format('0.[0000]')
+
   return (
     <Row gutter={[12, 12]} style={{ ...extraStyle }}>
       <Col span={24}>
@@ -62,7 +64,9 @@ const SwapInfo = ({ extraStyle }: { extraStyle?: CSSProperties }) => {
           label="Price impact"
           content={
             <Typography.Text style={{ color: priceImpactColor(priceImpact) }}>
-              {numeric(priceImpact).format('0.[0000]%')}
+              {Number(priceImpactDisplay) > 0
+                ? numeric(priceImpactDisplay).format('0.[0000]%')
+                : '~ 0%'}
             </Typography.Text>
           }
           loading={false}

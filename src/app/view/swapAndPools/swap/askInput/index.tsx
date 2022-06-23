@@ -12,9 +12,7 @@ import { useAppRouter } from 'app/hooks/useAppRouter'
 import configs from 'app/configs'
 
 const AskInput = () => {
-  const { askMint, bidMint, askAmount } = useSelector(
-    (state: AppState) => state.swap,
-  )
+  const { askMint, askAmount } = useSelector((state: AppState) => state.swap)
   const {
     ui: { theme },
   } = useUI()
@@ -23,9 +21,11 @@ const AskInput = () => {
   const { ask_mint } = getAllQuery<{ ask_mint: string }>()
 
   useEffect(() => {
-    if (!askMint)
-      dispatch(setSwapState({ askMint: configs.sol.askMintDefault }))
-  }, [ask_mint, askMint, bidMint, dispatch])
+    if (!askMint) {
+      const defaultAskMint = ask_mint || configs.sol.askMintDefault
+      dispatch(setSwapState({ askMint: defaultAskMint }))
+    }
+  }, [askMint, ask_mint, dispatch])
 
   const onChange = async (askAmount: string) => {
     dispatch(

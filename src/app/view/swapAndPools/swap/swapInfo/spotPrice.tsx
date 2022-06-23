@@ -13,7 +13,8 @@ const MintRatio = ({ reversed = false }: { reversed?: boolean }) => {
   const { askMint, bidMint } = useSelector((state: AppState) => state.swap)
   const { bidAmount, askAmount } = useSwap()
 
-  const spotPrice = askAmount / bidAmount
+  let spotPrice = reversed ? askAmount / bidAmount : bidAmount / askAmount
+  if (!bidAmount || !askAmount) spotPrice = 0
   const actualBid = reversed ? bidMint : askMint
   const actualAsk = reversed ? askMint : bidMint
 
@@ -21,9 +22,7 @@ const MintRatio = ({ reversed = false }: { reversed?: boolean }) => {
     <Space>
       <MintSymbol mintAddress={actualBid} />
       <Typography.Text>=</Typography.Text>
-      <Typography.Text>
-        {numeric(!reversed ? spotPrice : 1 / spotPrice).format('0.[0000]')}
-      </Typography.Text>
+      <Typography.Text>{numeric(spotPrice).format('0.[0000]')}</Typography.Text>
       <MintSymbol mintAddress={actualAsk} />
     </Space>
   )
