@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import LazyLoad from '@sentre/react-lazyload'
 
-import { Button, Empty, Col, Input, Row } from 'antd'
+import { Button, Empty, Col, Input, Row, Spin } from 'antd'
 import IonIcon from '@sentre/antd-ionicon'
 import MintTag from './mintTag'
 import MintCard from './mintCard'
@@ -9,11 +9,10 @@ import LoadMore from './loadMore'
 
 import { useRecommendedMints } from './hooks/useRecommendedMints'
 import { useSearchedMints } from './hooks/useSearchedMints'
-import { useSortMints } from 'shared/hooks/useSortMints'
 
 const LIMIT = 30
 const AMOUNT_BEFORE_LOAD_MORE = 5
-let timeOut: NodeJS.Timeout
+let timeOutLoadMore: NodeJS.Timeout
 
 export type SearchMintsProps = {
   value?: string
@@ -30,8 +29,7 @@ const SearchMints = ({
   const [keyword, setKeyword] = useState('')
   const [offset, setOffset] = useState(LIMIT)
   const { recommendedMints, addRecommendMint } = useRecommendedMints()
-  const { searchedMints, loading } = useSearchedMints(keyword, 0)
-  const { sortedMints } = useSortMints(searchedMints)
+  const { searchedMints, loading } = useSearchedMints(keyword)
 
   const onSelect = useCallback(
     (mintAddress: string) => {
@@ -46,10 +44,6 @@ const SearchMints = ({
     const list = document.getElementById('sentre-token-selection-list')
     if (list) list.scrollTop = 0
   }, [keyword, visible])
-
-  useEffect(() => {
-    if (!visible) setKeyword('')
-  }, [visible])
 
   return (
     <Row gutter={[32, 32]}>
@@ -87,35 +81,43 @@ const SearchMints = ({
         </Col>
       )}
       <Col span={24}>
-        <Row
-          gutter={[8, 8]}
-          style={{ maxHeight: 360 }}
-          className="scrollbar"
-          id="sentre-token-selection-list"
-          justify="center"
+        <Spin
+          spinning={loading}
+          tip={!keyword.length ? 'Loading...' : 'Searching...'}
         >
-          {sortedMints.length ? (
-            sortedMints.slice(0, offset).map((mintAddress, index) => (
-              <Col span={24} key={mintAddress}>
-                <LazyLoad height={60} overflow throttle={300}>
-                  <MintCard mintAddress={mintAddress} onClick={onSelect} />
-                </LazyLoad>
-                {index === offset - AMOUNT_BEFORE_LOAD_MORE && (
-                  <LoadMore
-                    callback={() => {
-                      if (timeOut) clearTimeout(timeOut)
-                      timeOut = setTimeout(() => setOffset(offset + LIMIT), 300)
-                    }}
-                  />
-                )}
+          <Row
+            gutter={[8, 8]}
+            style={{ maxHeight: 360, paddingRight: 4, minHeight: 50 }}
+            className="scrollbar"
+            id="sentre-token-selection-list"
+            justify="center"
+          >
+            {searchedMints.length || loading ? (
+              searchedMints.slice(0, offset).map((mintAddress, index) => (
+                <Col span={24} key={mintAddress + index}>
+                  <LazyLoad height={60} overflow throttle={300}>
+                    <MintCard mintAddress={mintAddress} onClick={onSelect} />
+                  </LazyLoad>
+                  {index === offset - AMOUNT_BEFORE_LOAD_MORE && (
+                    <LoadMore
+                      callback={() => {
+                        if (timeOutLoadMore) clearTimeout(timeOutLoadMore)
+                        timeOutLoadMore = setTimeout(
+                          () => setOffset(offset + LIMIT),
+                          250,
+                        )
+                      }}
+                    />
+                  )}
+                </Col>
+              ))
+            ) : (
+              <Col>
+                <Empty style={{ padding: 40 }} />
               </Col>
-            ))
-          ) : (
-            <Col>
-              <Empty style={{ padding: 40 }} />
-            </Col>
-          )}
-        </Row>
+            )}
+          </Row>
+        </Spin>
       </Col>
     </Row>
   )
