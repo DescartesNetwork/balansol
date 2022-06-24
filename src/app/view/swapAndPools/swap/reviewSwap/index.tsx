@@ -27,7 +27,7 @@ const ReviewSwap = () => {
           type="primary"
           onClick={() => setVisible(true)}
           disabled={disabled}
-          loading={loading}
+          loading={loading && Number(bidAmount) + Number(askAmount) !== 0}
           block
           size="large"
         >
