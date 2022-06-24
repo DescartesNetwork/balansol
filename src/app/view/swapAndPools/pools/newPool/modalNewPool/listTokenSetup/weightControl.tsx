@@ -1,7 +1,8 @@
 import { Button, Space } from 'antd'
 import IonIcon from '@sentre/antd-ionicon'
-import NumericInput from 'shared/antd/numericInput'
+
 import { MintSetup } from '../index'
+import NumericInput from 'app/components/numericInput'
 
 export type WeightControlProps = {
   tokenInfo: MintSetup
@@ -22,14 +23,13 @@ const WeightControl = ({
     <Space size={4}>
       <NumericInput
         value={weight}
+        controls={false}
         size="large"
         bordered={false}
         onValue={onChangeWeight}
-        suffix={<div style={{ marginLeft: -4 }}>%</div>}
+        addonAfter={<div style={{ marginLeft: -4 }}>%</div>}
         maxLength={5}
-        style={{ textAlign: 'right' }}
         placeholder="0"
-        className="input-weight"
       />
       <Button
         onClick={() => {

@@ -1,7 +1,8 @@
 import { ReactNode, useCallback } from 'react'
+import { useUI } from '@senhub/providers'
 
 import { Col, Radio, Row, Space, Typography } from 'antd'
-import NumericInput from 'shared/antd/numericInput'
+import NumericInput from '../numericInput'
 import { MintSymbol } from 'shared/antd/mint'
 import Selection from '../selection'
 
@@ -9,7 +10,6 @@ import { numeric } from 'shared/util'
 import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
 
 import './index.less'
-import { useUI } from '@senhub/providers'
 
 const PROPORTIONS = [50, 100]
 type MintInputProps = {
@@ -77,11 +77,7 @@ export default function MintInput({
           <Col flex="auto">
             <NumericInput
               bordered={false}
-              style={{
-                textAlign: 'right',
-                fontSize: 24,
-                padding: 0,
-              }}
+              controls={false}
               placeholder="0"
               value={amount}
               max={force ? balance : undefined}

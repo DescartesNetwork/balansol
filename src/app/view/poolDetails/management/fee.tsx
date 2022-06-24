@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { BN } from '@project-serum/anchor'
 
 import { Col, Row, Typography, Button } from 'antd'
-import NumericInput from 'shared/antd/numericInput'
+import NumericInput, { InputStyle } from 'app/components/numericInput'
 
 import { PRECISION } from 'app/constant'
 import { notifyError, notifySuccess } from 'app/helper'
@@ -36,9 +36,12 @@ const Content = ({
     </Col>
     <Col span={24} className="fee">
       <NumericInput
-        className="fee-input"
+        bordered={false}
+        inputStyle={InputStyle.InputLeft}
         placeholder="0"
+        controls={false}
         value={percent}
+        styles={{ fontSize: 14 }}
         onValue={onChangeValue}
       />
     </Col>

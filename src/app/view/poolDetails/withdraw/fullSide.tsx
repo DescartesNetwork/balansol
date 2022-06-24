@@ -119,6 +119,7 @@ const WithdrawFullSide = ({
           onClick={onSubmit}
           size="large"
           loading={loading}
+          disabled={!Number(lptAmount)}
         >
           Withdraw
         </Button>
