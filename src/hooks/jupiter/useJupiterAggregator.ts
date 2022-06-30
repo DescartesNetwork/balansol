@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { web3, BN } from '@project-serum/anchor'
 import { useJupiter } from '@jup-ag/react-hook'
-import { Connection, PublicKey } from '@solana/web3.js'
 import { useWallet, rpc } from '@sentre/senhub'
 
 import { AppState } from 'model'
@@ -12,12 +11,12 @@ import { SwapPlatform, RouteSwapInfo, SwapProvider } from 'hooks/useSwap'
 import { useOracles } from '../useOracles'
 import { utilsBN } from 'helper/utilsBN'
 
-const connection = new Connection(rpc)
+const connection = new web3.Connection(rpc)
 
 interface UseJupiterProps {
   amount: number
-  inputMint: PublicKey | undefined
-  outputMint: PublicKey | undefined
+  inputMint: web3.PublicKey | undefined
+  outputMint: web3.PublicKey | undefined
   slippage: number
   debounceTime?: number
 }
