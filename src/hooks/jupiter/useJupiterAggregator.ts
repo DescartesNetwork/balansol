@@ -3,9 +3,8 @@ import { useSelector } from 'react-redux'
 import { web3, BN } from '@project-serum/anchor'
 import { useJupiter } from '@jup-ag/react-hook'
 import { Connection, PublicKey } from '@solana/web3.js'
-import { useWallet } from '@sentre/senhub'
+import { useWallet, rpc } from '@sentre/senhub'
 
-import configs from 'configs'
 import { AppState } from 'model'
 
 import JupiterWalletWrapper from 'hooks/jupiter/jupiterWalletWrapper'
@@ -13,10 +12,7 @@ import { SwapPlatform, RouteSwapInfo, SwapProvider } from 'hooks/useSwap'
 import { useOracles } from '../useOracles'
 import { utilsBN } from 'helper/utilsBN'
 
-const {
-  sol: { node },
-} = configs
-const connection = new Connection(node)
+const connection = new Connection(rpc)
 
 interface UseJupiterProps {
   amount: number

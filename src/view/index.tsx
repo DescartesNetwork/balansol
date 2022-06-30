@@ -3,7 +3,7 @@ import { Redirect, Route, Switch } from 'react-router-dom'
 import { web3 } from '@project-serum/anchor'
 import { Connection } from '@solana/web3.js'
 import { JupiterProvider } from '@jup-ag/react-hook'
-import { useUI, useWallet } from '@sentre/senhub'
+import { useUI, useWallet, rpc } from '@sentre/senhub'
 
 import { Empty } from 'antd'
 import PoolDetails from './poolDetails'
@@ -20,10 +20,7 @@ import BG_LIGHT from 'static/images/background-light.png'
 
 import './index.less'
 
-const {
-  sol: { node },
-} = configs
-const connection = new Connection(node)
+const connection = new Connection(rpc)
 
 const View = () => {
   const { setBackground } = useUI()
