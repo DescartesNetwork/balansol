@@ -1,6 +1,5 @@
+import { net, Net } from '@sentre/senhub'
 import useSWRImmutable from 'swr/immutable'
-
-import { net, Net } from 'shared/runtime'
 
 export const JUP_TOKEN_LIST_URL: Record<Net, string> = {
   devnet: 'https://api.jup.ag/api/tokens/devnet',
