@@ -8,7 +8,6 @@ import DoughnutChart, { PoolWeightData } from './doughnutChart'
 import { AppState } from 'model'
 import { getMintInfo } from 'helper/oracles'
 import { utilsBN } from 'helper/utilsBN'
-import { min } from 'bn.js'
 
 const PoolWeights = ({ poolAddress }: { poolAddress: string }) => {
   const [poolWeights, setPoolWeights] = useState<PoolWeightData[]>([])
