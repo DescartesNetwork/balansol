@@ -8,11 +8,12 @@ import DoughnutChart, { PoolWeightData } from './doughnutChart'
 import { AppState } from 'model'
 import { getMintInfo } from 'helper/oracles'
 import { utilsBN } from 'helper/utilsBN'
+import { min } from 'bn.js'
 
 const PoolWeights = ({ poolAddress }: { poolAddress: string }) => {
   const [poolWeights, setPoolWeights] = useState<PoolWeightData[]>([])
   const poolData = useSelector((state: AppState) => state.pools[poolAddress])
-  const { tokenProvider } = useMint()
+  const { tokenProvider, getDecimals } = useMint()
 
   const doughnutChartData = useCallback(async () => {
     if (!poolData) return
@@ -22,22 +23,24 @@ const PoolWeights = ({ poolAddress }: { poolAddress: string }) => {
           poolData,
           mint.toBase58(),
         )
-        let symbol = 'TOKEN'
-        let tokenAmount = '-'
         const tokenInfo = await tokenProvider.findByAddress(mint.toBase58())
-        if (tokenInfo) {
-          symbol = tokenInfo.symbol
-          tokenAmount = utilsBN.undecimalize(reserve, tokenInfo.decimals)
-        }
+
+        if (tokenInfo)
+          return {
+            symbol: tokenInfo.symbol,
+            tokenAmount: utilsBN.undecimalize(reserve, tokenInfo.decimals),
+            weight: normalizedWeight * 100,
+          }
+        const decimal = await getDecimals(mint.toBase58())
         return {
-          symbol,
-          tokenAmount,
+          symbol: mint.toBase58().substring(0, 4),
+          tokenAmount: utilsBN.undecimalize(reserve, decimal) || '0',
           weight: normalizedWeight * 100,
         }
       }),
     )
     setPoolWeights(newData)
-  }, [poolData, tokenProvider])
+  }, [getDecimals, poolData, tokenProvider])
 
   useEffect(() => {
     doughnutChartData()

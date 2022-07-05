@@ -30,7 +30,7 @@ const PercentGroupMints = ({ poolAddress }: PercentGroupMintsProps) => {
             await tokenProvider.findByAddress(mint.toBase58())
 
           return `${util.numeric(normalizedWeight).format('0,0.[00]%')} ${
-            tokenInfo?.symbol
+            tokenInfo?.symbol || mint.toBase58().substring(0, 4)
           }`
         }),
       )
