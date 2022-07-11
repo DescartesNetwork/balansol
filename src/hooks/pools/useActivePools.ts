@@ -1,22 +1,35 @@
-import { useMemo } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { PoolState } from '@senswap/balancer'
 
 import { PoolsState } from 'model/pools.controller'
 import { AppState } from 'model'
+import { useTVL } from 'hooks/useTVL'
+
+const MIN_TVL = 1000
 
 export const useActivePools = () => {
   const pools = useSelector((state: AppState) => state.pools)
+  const [activePools, setActivePools] = useState<PoolsState>({})
+  const { getTVL } = useTVL()
 
-  return useMemo(() => {
+  const filterPools = useCallback(async () => {
     const activePools: PoolsState = {}
     for (const addr in pools) {
       const poolData = pools[addr]
       const state = poolData.state as PoolState
       if (!state['initialized']) continue
       if (poolData.reserves.map((val) => val.toString()).includes('0')) continue
+      const tvl = await getTVL(poolData)
+      if (tvl < MIN_TVL) continue
       activePools[addr] = poolData
     }
-    return activePools
-  }, [pools])
+    setActivePools(activePools)
+  }, [getTVL, pools])
+
+  useEffect(() => {
+    filterPools()
+  }, [filterPools])
+
+  return activePools
 }
