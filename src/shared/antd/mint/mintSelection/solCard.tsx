@@ -10,8 +10,8 @@ import { ButtonOpenExplorer, Verification } from './mintCard'
 import { useJupiterTokens } from './hooks/useJupiterTokens'
 import { useMintPrice } from 'hooks/useMintPrice'
 
-const SOL_ADDRESS = '11111111111111111111111111111111'
-const SOL_DECIMALS = 9
+export const SOL_ADDRESS = '11111111111111111111111111111111'
+export const SOL_DECIMALS = 9
 
 export type SolCardProps = {
   onClick?: (mintAddress: string) => void

@@ -6,11 +6,10 @@ import IonIcon from '@sentre/antd-ionicon'
 import MintTag from './mintTag'
 import MintCard from './mintCard'
 import LoadMore from './loadMore'
+import SolCard from './solCard'
 
 import { useRecommendedMints } from './hooks/useRecommendedMints'
 import { useSearchedMints } from './hooks/useSearchedMints'
-import { SOL_ADDRESS } from 'stat/constants/sol'
-import SolCard from './solCard'
 
 const LIMIT = 30
 const AMOUNT_BEFORE_LOAD_MORE = 5
@@ -38,7 +37,7 @@ const SearchMints = ({
   const onSelect = useCallback(
     (mintAddress: string) => {
       onChange(mintAddress)
-      if (SOL_ADDRESS !== mintAddress) addRecommendMint(mintAddress)
+      addRecommendMint(mintAddress)
     },
     [onChange, addRecommendMint],
   )

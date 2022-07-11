@@ -1,6 +1,6 @@
 import { net, Net } from '@sentre/senhub'
-import { SOL_ADDRESS } from 'stat/constants/sol'
 import useSWRImmutable from 'swr/immutable'
+import { SOL_ADDRESS } from '../solCard'
 
 export const JUP_TOKEN_LIST_URL: Record<Net, string> = {
   devnet: 'https://api.jup.ag/api/tokens/devnet',

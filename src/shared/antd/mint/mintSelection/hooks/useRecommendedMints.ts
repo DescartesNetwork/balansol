@@ -3,7 +3,7 @@ import { net, storage } from '@sentre/senhub'
 
 import { useSortMints } from 'shared/hooks/useSortMints'
 import { useMyMints } from './useMyMints'
-import { SOL_ADDRESS } from 'stat/constants/sol'
+import { SOL_ADDRESS } from '../solCard'
 
 const LIMIT_ITEM = 8
 const LOCAL_STORAGE_ID = `${net}:selected_mints`
@@ -24,6 +24,8 @@ export const useRecommendedMints = () => {
   }, [sortedMints])
 
   const addRecommendMint = useCallback(async (mintAddress: string) => {
+    if (mintAddress === SOL_ADDRESS) return
+
     let mints: string[] = storage.get(LOCAL_STORAGE_ID) || []
     mints = mints.filter((mint) => mint !== mintAddress)
     const newMints = [mintAddress, ...mints].slice(0, LIMIT_ITEM)
