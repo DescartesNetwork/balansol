@@ -20,14 +20,14 @@ export type SearchMintsProps = {
   onChange?: (value: string) => void
   visible?: boolean
   onClose?: () => void
-  supportNativeSol?: boolean
+  supportedNativeSol?: boolean
 }
 
 const SearchMints = ({
   value = '',
   onChange = () => {},
   visible,
-  supportNativeSol = false,
+  supportedNativeSol = false,
 }: SearchMintsProps) => {
   const [keyword, setKeyword] = useState('')
   const [offset, setOffset] = useState(LIMIT)
@@ -95,7 +95,7 @@ const SearchMints = ({
             id="sentre-token-selection-list"
             justify="center"
           >
-            {supportNativeSol && (
+            {supportedNativeSol && (
               <Col span={24}>
                 <MintCard mintAddress={SOL_ADDRESS} onClick={onSelect} />
               </Col>
