@@ -10,6 +10,7 @@ import LoadMore from './loadMore'
 import { useRecommendedMints } from './hooks/useRecommendedMints'
 import { useSearchedMints } from './hooks/useSearchedMints'
 import { SOL_ADDRESS } from 'stat/constants/sol'
+import SolCard from './solCard'
 
 const LIMIT = 30
 const AMOUNT_BEFORE_LOAD_MORE = 5
@@ -20,14 +21,14 @@ export type SearchMintsProps = {
   onChange?: (value: string) => void
   visible?: boolean
   onClose?: () => void
-  supportedNativeSol?: boolean
+  nativeSol?: boolean
 }
 
 const SearchMints = ({
   value = '',
   onChange = () => {},
   visible,
-  supportedNativeSol = false,
+  nativeSol = false,
 }: SearchMintsProps) => {
   const [keyword, setKeyword] = useState('')
   const [offset, setOffset] = useState(LIMIT)
@@ -47,6 +48,8 @@ const SearchMints = ({
     const list = document.getElementById('sentre-token-selection-list')
     if (list) list.scrollTop = 0
   }, [keyword, visible])
+
+  const searching = !!keyword.length
 
   return (
     <Row gutter={[32, 32]}>
@@ -68,9 +71,9 @@ const SearchMints = ({
           onChange={(e) => setKeyword(e.target.value || '')}
         />
       </Col>
-      {!keyword.length && (
+      {!searching && (
         <Col span={24}>
-          <Row gutter={[8, 8]}>
+          <Row gutter={[8, 8]} style={{ maxHeight: 96, overflow: 'hidden' }}>
             {recommendedMints.map((mintAddress) => (
               <Col key={mintAddress}>
                 <MintTag
@@ -86,7 +89,7 @@ const SearchMints = ({
       <Col span={24}>
         <Spin
           spinning={loading}
-          tip={!keyword.length ? 'Loading...' : 'Searching...'}
+          tip={!searching ? 'Loading...' : 'Searching...'}
         >
           <Row
             gutter={[8, 8]}
@@ -95,9 +98,9 @@ const SearchMints = ({
             id="sentre-token-selection-list"
             justify="center"
           >
-            {supportedNativeSol && (
+            {nativeSol && !searching && (
               <Col span={24}>
-                <MintCard mintAddress={SOL_ADDRESS} onClick={onSelect} />
+                <SolCard onClick={onSelect} />
               </Col>
             )}
             {searchedMints.length || loading ? (
