@@ -5,12 +5,12 @@ import { Button, Empty, Col, Input, Row, Spin } from 'antd'
 import IonIcon from '@sentre/antd-ionicon'
 import MintTag from './mintTag'
 import MintCard from './mintCard'
+import SolCard from './solCard'
 import LoadMore from './loadMore'
 
 import { useRecommendedMints } from './hooks/useRecommendedMints'
 import { useSearchedMints } from './hooks/useSearchedMints'
 import { SOL_ADDRESS } from 'stat/constants/sol'
-import SolCard from './solCard'
 
 const LIMIT = 30
 const AMOUNT_BEFORE_LOAD_MORE = 5
