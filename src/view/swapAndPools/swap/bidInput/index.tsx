@@ -59,7 +59,6 @@ const BidInput = () => {
             dispatch(setSwapState({ bidMint: mint }))
           }}
           style={{ background: theme === 'dark' ? '#394360' : '#F2F4FA' }}
-          nativeSol
         />
       }
     />
