@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { utils } from '@senswap/sen-js'
-import { useWallet } from '@sentre/senhub'
+import { useWallet, util } from '@sentre/senhub'
 import { numeric } from '@sentre/senhub/dist/shared/util'
 
 import { Card, Col, Row, Space, Typography } from 'antd'
@@ -8,7 +8,6 @@ import { MintAvatar, MintName, MintSymbol } from 'shared/antd/mint'
 import { ButtonOpenExplorer, Verification } from './mintCard'
 
 import { useJupiterTokens } from './hooks/useJupiterTokens'
-import { useMintPrice } from 'hooks/useMintPrice'
 
 export const SOL_ADDRESS = '11111111111111111111111111111111'
 export const SOL_DECIMALS = 9
@@ -22,7 +21,6 @@ const SolCard = ({ onClick = () => {} }: SolCardProps) => {
   const {
     wallet: { lamports },
   } = useWallet()
-  const { getTokenPrice } = useMintPrice()
 
   const solBalance = utils.undecimalize(lamports, SOL_DECIMALS)
 
@@ -31,10 +29,10 @@ const SolCard = ({ onClick = () => {} }: SolCardProps) => {
 
   useEffect(() => {
     ;(async () => {
-      const price = await getTokenPrice(SOL_ADDRESS)
+      const { price } = await util.fetchCGK('solana')
       setPrice(price)
     })()
-  }, [getTokenPrice])
+  }, [])
 
   return (
     <Card
