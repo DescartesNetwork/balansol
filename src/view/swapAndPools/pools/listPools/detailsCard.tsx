@@ -23,7 +23,7 @@ const DetailsCard = ({ poolAddress }: DetailsCardProps) => {
   const { pushHistory } = useAppRouter()
 
   const poolState: any = poolData.state
-  const TVL = useTVL(poolAddress)
+  const { TVL } = useTVL(poolAddress)
   const { balance } = useAccountBalanceByMintAddress(
     poolData.mintLpt.toBase58(),
   )

@@ -18,7 +18,7 @@ const Hero = ({ poolAddress }: { poolAddress: string }) => {
     pools: { [poolAddress]: poolData },
   } = useSelector((state: AppState) => state)
 
-  const TVL = useTVL(poolAddress)
+  const { TVL } = useTVL(poolAddress)
 
   const { balance } = useAccountBalanceByMintAddress(
     poolData.mintLpt.toBase58(),

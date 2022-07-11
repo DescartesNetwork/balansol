@@ -11,12 +11,12 @@ export const useStat = (poolAddress: string) => {
   const [apy, setApy] = useState(0)
   const [dailyInfo, setDailyInfo] = useState<Record<string, TotalSummary>>({})
   const [loading, setLoading] = useState(false)
-  const tvl = useTVL(poolAddress)
+  const { TVL } = useTVL(poolAddress)
 
   const fetchVolume = useCallback(async () => {
     try {
       setLoading(true)
-      if (!poolAddress || !tvl) {
+      if (!poolAddress || !TVL) {
         setLoading(false)
         setApy(0)
         return setDailyInfo({})
@@ -30,7 +30,7 @@ export const useStat = (poolAddress: string) => {
       // Calc Roi -> APY
       let totalVolume = 0
       for (const date in dailyInfo) totalVolume += dailyInfo[date].volume
-      const roi = totalVolume / tvl
+      const roi = totalVolume / TVL
       const apy = Math.pow(1 + roi / 100, 365) - 1
 
       setApy(apy)
@@ -39,7 +39,7 @@ export const useStat = (poolAddress: string) => {
     } finally {
       setLoading(false)
     }
-  }, [poolAddress, tvl])
+  }, [poolAddress, TVL])
 
   useEffect(() => {
     fetchVolume()

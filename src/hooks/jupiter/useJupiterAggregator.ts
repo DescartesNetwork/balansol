@@ -108,7 +108,7 @@ export const useJupiterAggregator = (): SwapProvider => {
       route,
       bidAmount: Number(inAmount),
       askAmount: Number(outAmount),
-      priceImpact: bestJupiterRoute.priceImpactPct * 100,
+      priceImpact: bestJupiterRoute.priceImpactPct,
     })
   }, [askMint, bidAmount, bidMint, isReverse, routes, undecimalizeMintAmount])
   useEffect(() => {
