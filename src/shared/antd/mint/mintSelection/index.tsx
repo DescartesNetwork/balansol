@@ -53,7 +53,7 @@ const MintSelection = ({
         className="mint-select-modal"
         destroyOnClose
       >
-        <SearchMints onChange={onSelect} nativeSol={nativeSol} />
+        <SearchMints onChange={onSelect} nativeSol={nativeSol} value={value} />
       </Modal>
     </Fragment>
   )
