@@ -38,7 +38,7 @@ const SearchMints = ({
   const onSelect = useCallback(
     (mintAddress: string) => {
       onChange(mintAddress)
-      if (![SOL_ADDRESS].includes(mintAddress)) addRecommendMint(mintAddress)
+      if (SOL_ADDRESS !== mintAddress) addRecommendMint(mintAddress)
     },
     [onChange, addRecommendMint],
   )
