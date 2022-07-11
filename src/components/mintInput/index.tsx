@@ -6,9 +6,8 @@ import NumericInput from '../numericInput'
 import { MintSymbol } from 'shared/antd/mint'
 import Selection from '../selection'
 
-import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
-
 import './index.less'
+import { useWrapAccountBalance } from 'hooks/useWrapAccountBalance'
 
 const PROPORTIONS = [50, 100]
 type MintInputProps = {
@@ -41,7 +40,7 @@ export default function MintInput({
   const {
     ui: { theme },
   } = useUI()
-  const { balance } = useAccountBalanceByMintAddress(selectedMint)
+  const balance = useWrapAccountBalance(selectedMint)
 
   const onInput = useCallback(
     (value: string) => {
