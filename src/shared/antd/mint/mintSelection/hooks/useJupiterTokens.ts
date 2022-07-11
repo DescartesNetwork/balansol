@@ -1,4 +1,5 @@
 import { net, Net } from '@sentre/senhub'
+import { SOL_ADDRESS } from 'stat/constants/sol'
 import useSWRImmutable from 'swr/immutable'
 
 export const JUP_TOKEN_LIST_URL: Record<Net, string> = {
@@ -12,6 +13,9 @@ const loadJptTokens = async () => {
     data.json(),
   )
   const tokenMap = new Map<string, boolean>()
+  // set SOL address to verify tokens list
+  tokenMap.set(SOL_ADDRESS, true)
+
   for (const token of tokens) {
     tokenMap.set(token.address, true)
   }

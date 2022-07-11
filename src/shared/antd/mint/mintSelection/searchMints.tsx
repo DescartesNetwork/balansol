@@ -9,6 +9,7 @@ import LoadMore from './loadMore'
 
 import { useRecommendedMints } from './hooks/useRecommendedMints'
 import { useSearchedMints } from './hooks/useSearchedMints'
+import { SOL_ADDRESS } from 'stat/constants/sol'
 
 const LIMIT = 30
 const AMOUNT_BEFORE_LOAD_MORE = 5
@@ -19,12 +20,14 @@ export type SearchMintsProps = {
   onChange?: (value: string) => void
   visible?: boolean
   onClose?: () => void
+  supportNativeSol?: boolean
 }
 
 const SearchMints = ({
   value = '',
   onChange = () => {},
   visible,
+  supportNativeSol = false,
 }: SearchMintsProps) => {
   const [keyword, setKeyword] = useState('')
   const [offset, setOffset] = useState(LIMIT)
@@ -34,7 +37,7 @@ const SearchMints = ({
   const onSelect = useCallback(
     (mintAddress: string) => {
       onChange(mintAddress)
-      addRecommendMint(mintAddress)
+      if (![SOL_ADDRESS].includes(mintAddress)) addRecommendMint(mintAddress)
     },
     [onChange, addRecommendMint],
   )
@@ -69,7 +72,7 @@ const SearchMints = ({
         <Col span={24}>
           <Row gutter={[8, 8]}>
             {recommendedMints.map((mintAddress) => (
-              <Col xs={12} sm={8} md={6} key={mintAddress}>
+              <Col key={mintAddress}>
                 <MintTag
                   mintAddress={mintAddress}
                   onClick={onSelect}
@@ -92,6 +95,11 @@ const SearchMints = ({
             id="sentre-token-selection-list"
             justify="center"
           >
+            {supportNativeSol && (
+              <Col span={24}>
+                <MintCard mintAddress={SOL_ADDRESS} onClick={onSelect} />
+              </Col>
+            )}
             {searchedMints.length || loading ? (
               searchedMints.slice(0, offset).map((mintAddress, index) => (
                 <Col span={24} key={mintAddress + index}>

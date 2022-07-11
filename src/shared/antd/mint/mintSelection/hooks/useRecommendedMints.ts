@@ -3,6 +3,7 @@ import { net, storage } from '@sentre/senhub'
 
 import { useSortMints } from 'shared/hooks/useSortMints'
 import { useMyMints } from './useMyMints'
+import { SOL_ADDRESS } from 'stat/constants/sol'
 
 const LIMIT_ITEM = 8
 const LOCAL_STORAGE_ID = `${net}:selected_mints`
@@ -16,7 +17,7 @@ export const useRecommendedMints = () => {
     let mints: string[] = storage.get(LOCAL_STORAGE_ID) || []
     for (const mint of sortedMints) {
       if (mints.length >= LIMIT_ITEM) break
-      if (mints.includes(mint)) continue
+      if (mints.includes(mint) || [SOL_ADDRESS].includes(mint)) continue
       mints.push(mint)
     }
     return setRecommendedMints(mints.slice(0, LIMIT_ITEM))
