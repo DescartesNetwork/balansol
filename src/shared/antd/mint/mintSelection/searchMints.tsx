@@ -72,9 +72,9 @@ const SearchMints = ({
       </Col>
       {!searching && (
         <Col span={24}>
-          <Row gutter={[8, 8]} style={{ maxHeight: 96, overflow: 'hidden' }}>
+          <Row gutter={[8, 8]}>
             {recommendedMints.map((mintAddress) => (
-              <Col key={mintAddress}>
+              <Col key={mintAddress} flex={1}>
                 <MintTag
                   mintAddress={mintAddress}
                   onClick={onSelect}
