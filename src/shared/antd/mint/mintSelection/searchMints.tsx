@@ -28,6 +28,7 @@ export type SearchMintsProps = {
 const SearchMints = ({
   value = '',
   onChange = () => {},
+  onClose = () => {},
   visible,
   nativeSol = false,
   hoverable = true,
@@ -42,8 +43,9 @@ const SearchMints = ({
     (mintAddress: string) => {
       onChange(mintAddress)
       addRecommendMint(mintAddress)
+      onClose()
     },
-    [onChange, addRecommendMint],
+    [onChange, addRecommendMint, onClose],
   )
 
   useEffect(() => {
