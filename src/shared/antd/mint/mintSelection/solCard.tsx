@@ -3,14 +3,15 @@ import { utils } from '@senswap/sen-js'
 import { useWallet, util } from '@sentre/senhub'
 import { numeric } from '@sentre/senhub/dist/shared/util'
 
-import { Card, Col, Row, Space, Typography } from 'antd'
+import { Card, Col, Row, Space, Tooltip, Typography } from 'antd'
 import { MintAvatar, MintName, MintSymbol } from 'shared/antd/mint'
-import { ButtonOpenExplorer, Verification } from './mintCard'
+import { MintCardActions, Verification } from './mintCard'
 
 import { useJupiterTokens } from './hooks/useJupiterTokens'
 
 export const SOL_ADDRESS = '11111111111111111111111111111111'
 export const SOL_DECIMALS = 9
+export const DEFAULT_FORMAT_NUMRIC = '0,0.[000]'
 
 export type SolCardProps = {
   onClick?: (mintAddress: string) => void
@@ -24,8 +25,8 @@ const SolCard = ({ onClick = () => {} }: SolCardProps) => {
 
   const solBalance = utils.undecimalize(lamports, SOL_DECIMALS)
 
-  const formatNumric = (value: string | number) =>
-    numeric(value).format('0,0.[000]')
+  const formatNumric = (value: string | number, format?: string) =>
+    numeric(value).format(format || DEFAULT_FORMAT_NUMRIC)
 
   useEffect(() => {
     ;(async () => {
@@ -47,7 +48,7 @@ const SolCard = ({ onClick = () => {} }: SolCardProps) => {
       bordered={false}
       onClick={() => onClick(SOL_ADDRESS)}
     >
-      <Row gutter={[16, 16]} align="middle">
+      <Row gutter={[16, 16]}>
         <Col>
           <MintAvatar mintAddress={SOL_ADDRESS} size={36} />
         </Col>
@@ -68,21 +69,21 @@ const SolCard = ({ onClick = () => {} }: SolCardProps) => {
           </Space>
         </Col>
         <Col flex="auto" style={{ textAlign: 'right' }}>
-          <Space>
+          <Space align="start">
             {/* SOL infomation */}
-            <Space direction="vertical">
-              <Space size={4}>
-                <Typography.Text style={{ color: ' #03e1ff' }}>
-                  ◎
+            <Tooltip
+              title={
+                <Typography.Text className="caption" style={{ color: '#fff' }}>
+                  {formatNumric(solBalance, '0,0.[00000]')} SOL ≈{' '}
+                  {formatNumric(price * Number(solBalance), '0,0.[000000]')} $
                 </Typography.Text>
-                <Typography.Text>{formatNumric(solBalance)}</Typography.Text>
-              </Space>
-              <Typography.Text type="secondary" className="caption">
-                {formatNumric(price * Number(solBalance))} $
-              </Typography.Text>
-            </Space>
+              }
+            >
+              <Typography.Text style={{ color: ' #03e1ff' }}>◎</Typography.Text>
+            </Tooltip>
+            <Typography.Text>{formatNumric(solBalance)}</Typography.Text>
             {/*  Button open explorer */}
-            <ButtonOpenExplorer address={SOL_ADDRESS} />
+            <MintCardActions address={SOL_ADDRESS} />
           </Space>
         </Col>
       </Row>
