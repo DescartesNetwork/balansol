@@ -26,14 +26,6 @@ const MintSelection = ({
 }: MintSelectionProps) => {
   const [visible, setVisible] = useState(false)
 
-  const onSelect = useCallback(
-    (mintAddress: string) => {
-      onChange(mintAddress)
-      setVisible(false)
-    },
-    [onChange],
-  )
-
   return (
     <Fragment>
       <Button
@@ -58,7 +50,8 @@ const MintSelection = ({
         destroyOnClose
       >
         <SearchMints
-          onChange={onSelect}
+          onChange={onChange}
+          onClose={() => setVisible(false)}
           nativeSol={nativeSol}
           value={value}
           hoverable={hoverable}
