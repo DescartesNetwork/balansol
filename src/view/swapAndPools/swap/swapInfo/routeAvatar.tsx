@@ -2,7 +2,7 @@ import { Fragment } from 'react'
 
 import { Divider, Space } from 'antd'
 import IonIcon from '@sentre/antd-ionicon'
-import { MintAvatar } from 'shared/antd/mint'
+import { MintAvatar } from '@sen-use/components'
 import PoweredByJupiter from '../../../../components/poweredByJupiter'
 
 import { SwapPlatform, useSwap } from 'hooks/useSwap'

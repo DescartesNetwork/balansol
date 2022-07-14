@@ -1,5 +1,5 @@
+import { MintAvatar, MintSymbol, MintName } from '@sen-use/components'
 import { Space, Typography, Card, Divider } from 'antd'
-import { MintAvatar, MintName, MintSymbol } from 'shared/antd/mint'
 
 const Mint = ({
   mintAddress,

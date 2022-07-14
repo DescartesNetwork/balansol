@@ -1,8 +1,8 @@
 import { useState, Fragment, ReactNode } from 'react'
 
 import { Typography, Space } from 'antd'
+import { MintAvatar, MintSymbol } from '@sen-use/components'
 import IonIcon from '@sentre/antd-ionicon'
-import { MintAvatar, MintSymbol } from 'shared/antd/mint'
 import MintSelection from './mintSelection'
 
 import './index.less'

@@ -5,7 +5,7 @@ import { useUI, util } from '@sentre/senhub'
 
 import { Button, Col, Row, Space, Typography } from 'antd'
 import IonIcon from '@sentre/antd-ionicon'
-import { MintAvatar, MintSymbol } from 'shared/antd/mint'
+import { MintAvatar, MintSymbol } from '@sen-use/components'
 import NumericInput from 'components/numericInput'
 
 import { calcNormalizedWeight } from 'helper/oracles'

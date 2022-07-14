@@ -5,7 +5,7 @@ import { Button, Col, Modal, Row, Space, Typography } from 'antd'
 import MintInput from 'components/mintInput'
 import { PoolAvatar } from 'components/pools/poolAvatar'
 import IonIcon from '@sentre/antd-ionicon'
-import { MintSymbol } from 'shared/antd/mint'
+import { MintSymbol } from '@sen-use/components'
 import WithdrawFullSide from './fullSide'
 import WithdrawSingleSide from './singleSide'
 

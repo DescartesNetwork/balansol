@@ -3,8 +3,8 @@ import { useUI, util } from '@sentre/senhub'
 
 import { Col, Radio, Row, Space, Typography } from 'antd'
 import NumericInput from '../numericInput'
-import { MintSymbol } from 'shared/antd/mint'
 import Selection from '../selection'
+import { MintSymbol } from '@sen-use/components'
 
 import './index.less'
 import { useWrapAccountBalance } from 'hooks/useWrapAccountBalance'
