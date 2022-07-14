@@ -1,7 +1,7 @@
+import { MintAvatar } from '@sen-use/components'
 import { util } from '@sentre/senhub'
 
 import { TokenInfo } from 'view/swapAndPools/pools/newPool'
-import { MintAvatar } from 'shared/antd/mint'
 
 export default function Proportion({ tokenList }: { tokenList: TokenInfo[] }) {
   const weightTotal = tokenList.reduce(

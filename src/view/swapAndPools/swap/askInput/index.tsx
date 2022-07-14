@@ -4,7 +4,7 @@ import { useUI } from '@sentre/senhub'
 
 import { Card } from 'antd'
 import MintInput from 'components/mintInput'
-import { MintSelection } from 'shared/antd/mint'
+import { MintSelection } from '@sen-use/components'
 
 import { AppDispatch, AppState } from 'model'
 import { setSwapState } from 'model/swap.controller'

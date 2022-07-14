@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useUI } from '@sentre/senhub'
 
 import MintInput from 'components/mintInput'
-import { MintSelection } from 'shared/antd/mint'
+import { MintSelection } from '@sen-use/components'
 
 import { AppDispatch, AppState } from 'model'
 import { setSwapState } from 'model/swap.controller'

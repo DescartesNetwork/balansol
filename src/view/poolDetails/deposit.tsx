@@ -5,7 +5,7 @@ import { util } from '@sentre/senhub'
 import { Button, Checkbox, Col, Modal, Row, Typography } from 'antd'
 import MintInput from 'components/mintInput'
 import IonIcon from '@sentre/antd-ionicon'
-import { MintSymbol } from 'shared/antd/mint'
+import { MintSymbol } from '@sen-use/components'
 
 import { notifyError, notifySuccess, priceImpactColor } from 'helper'
 import { AppState } from 'model'

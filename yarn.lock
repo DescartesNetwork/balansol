@@ -2175,6 +2175,11 @@
     tiny-invariant "^1.2.0"
     tslib "^2.4.0"
 
+"@sen-use/components@^1.0.8":
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/@sen-use/components/-/components-1.0.8.tgz#193f8b51ac5bf9f3af120553f65aae2718532f99"
+  integrity sha512-AxlRuV6Rk6xo7QXBtqkpCtkaAU6/hNe8nIbUFsw/Pdpk3aFbY+c6Rc8DrAhbYyDHnb5AFL8QmIcqyt3wN+clmw==
+
 "@senswap/balancer@^0.4.2":
   version "0.4.2"
   resolved "https://registry.yarnpkg.com/@senswap/balancer/-/balancer-0.4.2.tgz#13aa982126ab9518f9b312edea9e7df97d95d31e"
@@ -2259,10 +2264,10 @@
   resolved "https://registry.yarnpkg.com/@sentre/react-lazyload/-/react-lazyload-3.2.2.tgz#f3d921327a2b14b9b3a9e906d01034f11387097a"
   integrity sha512-NKJhz9G8pModoZJaLMziRJtd582pFHbIydNXwRI72ECkjqbc7XIgBX+8kssrUtRxK2rW9VVQnGKDpmyZ8iSIyw==
 
-"@sentre/senhub@^3.0.37":
-  version "3.0.38"
-  resolved "https://registry.yarnpkg.com/@sentre/senhub/-/senhub-3.0.38.tgz#8cedfa7abe323cab207bf0176dd3a818e1b0124f"
-  integrity sha512-e/B1yZDaYsUSrsdgRw4kAH3U0JThZwpmf+ef3xGZf6BB1REZ0isN0CZOFlXa/l03NbBZNXH9Si8CFIabsenP2A==
+"@sentre/senhub@^3.0.44":
+  version "3.0.44"
+  resolved "https://registry.yarnpkg.com/@sentre/senhub/-/senhub-3.0.44.tgz#9ba0ab4c62e8216a720aefcd85e270a31bf3b018"
+  integrity sha512-e7rw/nW+rs4QvGfHYOwJoMYxS48V8N1mWis+279EzUAS5HcJ2UalTwxqgG5+wv3FEydP9GRlJjlWCwZlan4VIA==
   dependencies:
     "@dnd-kit/core" "^4.0.1"
     "@dnd-kit/sortable" "^5.0.0"
@@ -2366,6 +2371,7 @@
     cross-fetch "3.0.6"
 
 "@solana/spl-token-v2@npm:@solana/spl-token@0.2.0", "@solana/spl-token@^0.2.0":
+  name "@solana/spl-token-v2"
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/@solana/spl-token/-/spl-token-0.2.0.tgz#329bb6babb5de0f9c40035ddb1657f01a8347acd"
   integrity sha512-RWcn31OXtdqIxmkzQfB2R+WpsJOVS6rKuvpxJFjvik2LyODd+WN58ZP3Rpjpro03fscGAkzlFuP3r42doRJgyQ==
