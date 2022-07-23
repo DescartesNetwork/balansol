@@ -132,7 +132,9 @@ export default function MintInput({
                         onClick={
                           onChangeAmount
                             ? () =>
-                                onChangeAmount(String((balance * val) / 100))
+                                onChangeAmount(
+                                  ((balance * val) / 100).toFixed(9),
+                                )
                             : undefined
                         }
                         style={{

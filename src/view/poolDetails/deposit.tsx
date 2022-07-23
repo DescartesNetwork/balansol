@@ -108,7 +108,10 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
     const balanceRatio =
       (Number(baseBalance) + Number(amounts[baseTokenIndex])) /
       Number(baseBalance)
-    const suggestedAmount = Number(currentBalance) * (balanceRatio - 1)
+    const suggestedAmount = (
+      Number(currentBalance) *
+      (balanceRatio - 1)
+    ).toFixed(9)
     let newAmounts = [...amounts]
     newAmounts[index] = String(suggestedAmount)
     setAmounts(newAmounts)
