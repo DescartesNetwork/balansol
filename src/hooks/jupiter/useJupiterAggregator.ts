@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 import { web3, BN } from '@project-serum/anchor'
 import { useJupiter } from '@jup-ag/react-hook'
 import { useWallet, rpc } from '@sentre/senhub'
+import JSBI from 'jsbi'
 
 import { AppState } from 'model'
 
@@ -14,7 +15,7 @@ import { utilsBN } from 'helper/utilsBN'
 const connection = new web3.Connection(rpc)
 
 interface UseJupiterProps {
-  amount: number
+  amount: JSBI
   inputMint: web3.PublicKey | undefined
   outputMint: web3.PublicKey | undefined
   slippage: number
@@ -22,7 +23,7 @@ interface UseJupiterProps {
 }
 
 const DEFAULT_JUPITER_PROPS = {
-  amount: 0,
+  amount: JSBI.BigInt(0),
   inputMint: undefined,
   outputMint: undefined,
   slippage: 0,
@@ -55,7 +56,7 @@ export const useJupiterAggregator = (): SwapProvider => {
       return setJupiterProps({ ...DEFAULT_JUPITER_PROPS })
     const bidAmountBN = await decimalizeMintAmount(bidAmount, bidMint)
     setJupiterProps({
-      amount: utilsBN.toNumber(bidAmountBN),
+      amount: JSBI.BigInt(utilsBN.toNumber(bidAmountBN)),
       inputMint: new web3.PublicKey(bidMint),
       outputMint: new web3.PublicKey(askMint),
       slippage: slippageTolerance,

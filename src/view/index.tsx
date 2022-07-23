@@ -19,6 +19,7 @@ import BG_DARK from 'static/images/background-dark.png'
 import BG_LIGHT from 'static/images/background-light.png'
 
 import './index.less'
+import ComputeRoutes from './computeRoutes'
 
 const connection = new Connection(rpc)
 
@@ -51,6 +52,10 @@ const View = () => {
           <BalansolProvider>
             <Switch>
               <Route path={`${appRoute}/details`} component={PoolDetails} />
+              <Route
+                path={`${appRoute}/test-compute`}
+                component={ComputeRoutes}
+              />
               <Route path={`${appRoute}/swap`}>
                 <SwapAndPools tabId={'swap'} />
               </Route>
