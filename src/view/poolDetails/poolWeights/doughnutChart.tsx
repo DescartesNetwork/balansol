@@ -40,7 +40,7 @@ const buildOptions = (
       trigger: 'item',
       borderWidth: '1',
       formatter: function (params: any, ticket: any, callback: () => void) {
-        return `<div style="width: 200px; font-weight: 400"><span style="color: #9CA1AF; font-size: 12px">${params.data.name}</span><br/><span style="display: flex; justify-content: space-between"><span style="font-size: 14px, font-weight: 400">Weight</span> <span style="font-size: 16px; font-weight: 700">${params.data.value}%</span></span> <span style="display: flex; justify-content: space-between;"><span style="font-size: 14px; font-weight: 400">Token amount</span> <span style="font-size: 16px; font-weight: 700">${params.data.tokenAmount}</span></span></div>`
+        return `<div style="min-width: 200px; font-weight: 400"><span style="color: #9CA1AF; font-size: 12px">${params.data.name}</span><br/><span style="display: flex; justify-content: space-between"><span style="font-size: 14px, font-weight: 400">Weight&nbsp;</span> <span style="font-size: 16px; font-weight: 700">${params.data.value}%</span></span> <span style="display: flex; justify-content: space-between;"><span style="font-size: 14px; font-weight: 400">Token amount&nbsp;</span> <span style="font-size: 16px; font-weight: 700">${params.data.tokenAmount}</span></span></div>`
       },
       backgroundColor: style.backgroundColor,
       extraCssText: 'border-radius: 24px',
