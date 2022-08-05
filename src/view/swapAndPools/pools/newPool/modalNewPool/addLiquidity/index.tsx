@@ -90,7 +90,7 @@ const AddLiquidity = ({
         const suggestedAmount = (
           (baseTokenCGKData.price * Number(amount) * baseNormalizedWeight) /
           (appliedTokenCGKData.price * appliedNormalizedWeight)
-        ).toFixed(9)
+        ).toFixed(appliedToken.decimals)
 
         return suggestedAmount
       }),
