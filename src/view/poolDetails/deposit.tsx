@@ -97,6 +97,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
 
   const onApplySuggestion = async (index: number) => {
     const { reserves, mints } = poolData
+    const mintDecimal = await getDecimals(mints[index].toBase58())
     const baseBalance = await undecimalizeMintAmount(
       reserves[baseTokenIndex],
       mints[baseTokenIndex],
@@ -111,7 +112,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
     const suggestedAmount = (
       Number(currentBalance) *
       (balanceRatio - 1)
-    ).toFixed(9)
+    ).toFixed(mintDecimal)
     let newAmounts = [...amounts]
     newAmounts[index] = String(suggestedAmount)
     setAmounts(newAmounts)

@@ -37,11 +37,10 @@ const ConfirmPoolInfo = ({ onConfirm, poolAddress }: ConfirmPoolInfoProps) => {
     }
     const { mints, reserves } = poolData
     let totalValue = 0
-    const poolInfo: PoolInfo[] = await Promise.all(
+    const newPoolInfo: PoolInfo[] = await Promise.all(
       mints.map(async (mint, idx) => {
         const mintAddress = mint.toBase58()
         const mintInfo = getMintInfo(poolData, mint)
-
         const tokenInfo = await tokenProvider.findByAddress(mintAddress)
         let mintAmount = await undecimalizeMintAmount(
           reserves[idx],
@@ -56,6 +55,7 @@ const ConfirmPoolInfo = ({ onConfirm, poolAddress }: ConfirmPoolInfoProps) => {
                 .numeric(mintInfo.normalizedWeight)
                 .format('0,0.[00]'),
               isLocked: true,
+              decimal: tokenInfo?.decimals,
             },
             amount: Number(mintAmount),
             value: 0,
@@ -70,6 +70,7 @@ const ConfirmPoolInfo = ({ onConfirm, poolAddress }: ConfirmPoolInfoProps) => {
             addressToken: mintAddress,
             weight: util.numeric(mintInfo.normalizedWeight).format('0,0.[00]'),
             isLocked: true,
+            decimal: tokenInfo?.decimals,
           },
           amount: Number(mintAmount),
           value: mintTotalValue,
@@ -77,7 +78,7 @@ const ConfirmPoolInfo = ({ onConfirm, poolAddress }: ConfirmPoolInfoProps) => {
       }),
     )
     setPoolTotalValue(totalValue)
-    setPoolInfo(poolInfo)
+    setPoolInfo(newPoolInfo)
   }, [poolData, tokenProvider, undecimalizeMintAmount])
 
   useEffect(() => {

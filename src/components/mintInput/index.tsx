@@ -1,13 +1,15 @@
 import { ReactNode, useCallback } from 'react'
-import { useUI, util } from '@sentre/senhub'
+import { util } from '@sentre/senhub'
 
-import { Col, Radio, Row, Space, Typography } from 'antd'
+import { Col, Row, Space, Typography } from 'antd'
 import NumericInput from '../numericInput'
 import Selection from '../selection'
 import { MintSymbol } from '@sen-use/components'
+import Proportion from './proportion'
+
+import { useWrapAccountBalance } from 'hooks/useWrapAccountBalance'
 
 import './index.less'
-import { useWrapAccountBalance } from 'hooks/useWrapAccountBalance'
 
 const PROPORTIONS = [50, 100]
 type MintInputProps = {
@@ -37,9 +39,6 @@ export default function MintInput({
   force, // Validate input with max = balance
   mintSelection,
 }: MintInputProps) {
-  const {
-    ui: { theme },
-  } = useUI()
   const balance = useWrapAccountBalance(selectedMint)
 
   const onInput = useCallback(
@@ -50,8 +49,6 @@ export default function MintInput({
     },
     [balance, onChangeAmount],
   )
-
-  const bg_default = theme === 'dark' ? '#394360' : '#ced0d7'
 
   return (
     <Row gutter={[0, 10]} align="middle" className="card-swap-item">
@@ -112,41 +109,14 @@ export default function MintInput({
               ratioButton
             ) : (
               <Space>
-                {PROPORTIONS.map((val) => {
-                  let proportionActive = 0
-                  for (const idx in PROPORTIONS) {
-                    if (!balance) break
-                    const proportion = PROPORTIONS[idx]
-                    const proportionVal = (balance * proportion) / 100
-
-                    if (Number(amount).toFixed(4) === proportionVal.toFixed(4))
-                      proportionActive = proportion
-                  }
-                  const isActive = val <= proportionActive
-
-                  return (
-                    <Space size={4} direction="vertical" key={val}>
-                      <Radio.Button
-                        className="proportion-btn"
-                        disabled={!onChangeAmount}
-                        onClick={
-                          onChangeAmount
-                            ? () =>
-                                onChangeAmount(
-                                  ((balance * val) / 100).toFixed(9),
-                                )
-                            : undefined
-                        }
-                        style={{
-                          background: isActive ? '#63e0b3' : bg_default,
-                        }}
-                      />
-                      <Typography.Text type="secondary" className="caption">
-                        {`${val}%`}
-                      </Typography.Text>
-                    </Space>
-                  )
-                })}
+                {PROPORTIONS.map((val) => (
+                  <Proportion
+                    amount={amount}
+                    selectedMint={selectedMint}
+                    portionValue={val}
+                    onChangeAmount={onChangeAmount}
+                  />
+                ))}
               </Space>
             )}
           </Col>
