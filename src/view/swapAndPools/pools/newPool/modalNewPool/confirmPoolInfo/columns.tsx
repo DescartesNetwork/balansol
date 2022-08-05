@@ -4,6 +4,7 @@ import { Space, Typography } from 'antd'
 import { MintAvatar, MintSymbol } from '@sen-use/components'
 
 import { MintSetup } from '../index'
+import { PoolInfo } from './index'
 
 export const COLUMNS_CONFIG = [
   {
@@ -34,19 +35,26 @@ export const COLUMNS_CONFIG = [
   {
     title: 'AMOUNT',
     dataIndex: 'amount',
-    render: (amount: number) => (
-      <Typography.Text>
-        {util.numeric(amount).format('0,0.[00]')}
-      </Typography.Text>
-    ),
+    render: (amount: number, poolData: PoolInfo) => {
+      return (
+        <Typography.Text>
+          {util
+            .numeric(amount)
+            .format(`0,0.[${'0'.repeat(poolData.token.decimal || 9)}]a`)}
+        </Typography.Text>
+      )
+    },
   },
   {
     title: 'VALUE',
     dataIndex: 'value',
-    render: (value: number) => {
+    render: (value: number, poolData: PoolInfo) => {
       return (
         <Typography.Text>
-          ${util.numeric(value).format('0,0.[00]')}
+          $
+          {util
+            .numeric(value)
+            .format(`0,0.[${'0'.repeat(poolData.token.decimal || 9)}]`)}
         </Typography.Text>
       )
     },

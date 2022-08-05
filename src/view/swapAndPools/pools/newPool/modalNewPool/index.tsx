@@ -17,6 +17,7 @@ export type MintSetup = {
   addressToken: string
   weight: string
   isLocked: boolean
+  decimal?: number
 }
 
 export type ModalNewPoolProps = { onClose: () => void }
