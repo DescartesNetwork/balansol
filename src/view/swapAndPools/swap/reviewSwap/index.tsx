@@ -31,7 +31,7 @@ const ReviewSwap = () => {
           block
           size="large"
         >
-          Review
+          {!disabled ? 'Review' : 'Enter an amount'}
         </Button>
       </Col>
       <ConfirmSwap visible={visible} onCancel={() => setVisible(false)} />

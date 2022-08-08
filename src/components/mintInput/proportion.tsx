@@ -1,9 +1,11 @@
 import React, { useMemo } from 'react'
+import { useUI } from '@sentre/senhub'
+import { BN } from 'bn.js'
+import { useOracles } from 'hooks/useOracles'
 
 import { Radio, Space, Typography } from 'antd'
 
 import { useWrapAccountBalance } from 'hooks/useWrapAccountBalance'
-import { useMint, useUI } from '@sentre/senhub'
 
 const PROPORTIONS = [50, 100]
 
@@ -23,8 +25,8 @@ const Proportion = ({
   const {
     ui: { theme },
   } = useUI()
-  const balance = useWrapAccountBalance(selectedMint)
-  const { getDecimals } = useMint()
+  const { balance, amount: bigintBalance } = useWrapAccountBalance(selectedMint)
+  const { undecimalizeMintAmount } = useOracles()
 
   let proportionActive = useMemo(() => {
     let activePortion = 0
@@ -41,9 +43,11 @@ const Proportion = ({
 
   const onClick = async () => {
     if (!onChangeAmount) return
-    const mintDecimal = await getDecimals(selectedMint)
-
-    onChangeAmount(((balance * portionValue) / 100).toFixed(mintDecimal))
+    const newAmountBN = new BN(bigintBalance.toString())
+      .mul(new BN(portionValue))
+      .divRound(new BN(100))
+    const newAmount = await undecimalizeMintAmount(newAmountBN, selectedMint)
+    onChangeAmount(newAmount)
   }
 
   const bg_default = theme === 'dark' ? '#394360' : '#ced0d7'
