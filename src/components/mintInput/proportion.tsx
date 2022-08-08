@@ -43,7 +43,12 @@ const Proportion = ({
     if (!onChangeAmount) return
     const mintDecimal = await getDecimals(selectedMint)
 
-    onChangeAmount(((balance * portionValue) / 100).toFixed(mintDecimal))
+    onChangeAmount(
+      String(
+        Math.floor(((balance * portionValue) / 100) * 10 ** mintDecimal) /
+          10 ** mintDecimal,
+      ),
+    )
   }
 
   const bg_default = theme === 'dark' ? '#394360' : '#ced0d7'
