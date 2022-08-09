@@ -90,7 +90,7 @@ export default function MintInput({
           <Col flex="auto" style={{ justifyContent: 'left' }}>
             <Space className="caption">
               <Typography.Text type="secondary">Available:</Typography.Text>
-              <Typography.Text style={{ cursor: 'pointer' }} onClick={() => {}}>
+              <Typography.Text style={{ cursor: 'pointer' }}>
                 {util.numeric(balance).format('0,0.[00]')}
               </Typography.Text>
               <Typography.Text type="secondary">
