@@ -2180,14 +2180,13 @@
   resolved "https://registry.yarnpkg.com/@sen-use/components/-/components-1.0.8.tgz#193f8b51ac5bf9f3af120553f65aae2718532f99"
   integrity sha512-AxlRuV6Rk6xo7QXBtqkpCtkaAU6/hNe8nIbUFsw/Pdpk3aFbY+c6Rc8DrAhbYyDHnb5AFL8QmIcqyt3wN+clmw==
 
-"@senswap/balancer@^0.4.2":
-  version "0.4.2"
-  resolved "https://registry.yarnpkg.com/@senswap/balancer/-/balancer-0.4.2.tgz#13aa982126ab9518f9b312edea9e7df97d95d31e"
-  integrity sha512-KuRDAAw4MXwcu1LDO+lZWIbM03fhlCD5HiOdq+XsDRWuJRiH6ZZE+oN7labCnBFQq/lB2Eqq+KwdUtHWWF5B5w==
+"@senswap/balancer@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@senswap/balancer/-/balancer-1.0.1.tgz#a71c477bb462506d8589964cd2f36eaa9af478a1"
+  integrity sha512-DGviuZGsmHK4v7n9cGM0MLQVwWhhtCoklnwLW3txnBl7x+irx865cvgF7OTdzsSA0xAstXcT/aee8aT85sD8hg==
   dependencies:
     "@project-serum/anchor" "^0.24.2"
     "@solana/spl-token" "^0.2.0"
-    bn.js "^5.2.0"
 
 "@senswap/sen-js@^1.4.0":
   version "1.4.0"

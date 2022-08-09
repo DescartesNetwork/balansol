@@ -1,4 +1,4 @@
-import { ReactNode, useCallback } from 'react'
+import { ReactNode, useCallback, useMemo } from 'react'
 import { util } from '@sentre/senhub'
 
 import { Col, Row, Space, Typography } from 'antd'
@@ -24,6 +24,7 @@ type MintInputProps = {
   mintAvatar?: ReactNode
   ratioButton?: ReactNode
   mintSelection?: ReactNode
+  placeholder?: string
 }
 
 export default function MintInput({
@@ -38,6 +39,7 @@ export default function MintInput({
   unit,
   force, // Validate input with max = balance
   mintSelection,
+  placeholder = '0',
 }: MintInputProps) {
   const balance = useWrapAccountBalance(selectedMint)
 
@@ -73,8 +75,8 @@ export default function MintInput({
             <NumericInput
               bordered={false}
               controls={false}
-              placeholder="0"
-              value={amount}
+              placeholder={String(Number(placeholder))}
+              value={!Number(amount) ? undefined : amount}
               max={force ? balance : undefined}
               onValue={onInput}
               disabled={!onChangeAmount || (force && !balance)}

@@ -33,7 +33,8 @@ const AddLiquidity = ({
     baseTokenIndex !== idx &&
     Number(inputAmounts[baseTokenIndex]) > 0 &&
     Number(suggestedAmounts[idx]) > 0 &&
-    Number(suggestedAmounts[idx]) !== Number(inputAmounts[idx])
+    Number(suggestedAmounts[idx]) !== Number(inputAmounts[idx]) &&
+    !Number(inputAmounts[idx])
 
   const initInputAmountFromPoolData = useCallback(async () => {
     if (!poolData || inputAmounts.length !== 0) return
@@ -82,7 +83,7 @@ const AddLiquidity = ({
         const appliedTicket = appliedToken?.extensions?.coingeckoId
         if (!appliedTicket) return ''
         const appliedTokenCGKData = await util.fetchCGK(appliedTicket)
-        if (!appliedTokenCGKData.price) return ''
+        if (!appliedTokenCGKData.price) return '2'
         const appliedNormalizedWeight = calcNormalizedWeight(
           weights,
           weights[index],
@@ -113,6 +114,7 @@ const AddLiquidity = ({
                       ? (value: string) => onUpdateAmount(value, idx)
                       : undefined
                   }
+                  placeholder={suggestedAmounts[idx]}
                   force
                   ratioButton={
                     isVisibleSuggestion(idx) && (
