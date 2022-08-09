@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useState } from 'react'
+import { Fragment, useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useMint, util } from '@sentre/senhub'
 
-import { Button, Col, Row } from 'antd'
+import { Button, Col, Row, Typography } from 'antd'
 import LiquidityInfo from './liquidityInfo'
 import MintInput from 'components/mintInput'
 
@@ -10,6 +10,7 @@ import { PoolCreatingStep } from 'constant'
 import { AppState } from 'model'
 import { useOracles } from 'hooks/useOracles'
 import { calcNormalizedWeight } from 'helper/oracles'
+import { MintSymbol } from '@sen-use/components/dist'
 
 export type AddLiquidityProps = {
   setCurrentStep: (step: PoolCreatingStep) => void
@@ -83,7 +84,7 @@ const AddLiquidity = ({
         const appliedTicket = appliedToken?.extensions?.coingeckoId
         if (!appliedTicket) return ''
         const appliedTokenCGKData = await util.fetchCGK(appliedTicket)
-        if (!appliedTokenCGKData.price) return '2'
+        if (!appliedTokenCGKData.price) return ''
         const appliedNormalizedWeight = calcNormalizedWeight(
           weights,
           weights[index],
@@ -104,6 +105,10 @@ const AddLiquidity = ({
       <Col span={24}>
         <Row justify="center" gutter={[8, 8]}>
           {poolData.mints.map((mint, idx) => {
+            const normalizedWeight = calcNormalizedWeight(
+              poolData.weights,
+              poolData.weights[idx],
+            )
             return (
               <Col span={24} key={`${mint.toBase58() + idx}`}>
                 <MintInput
@@ -113,6 +118,16 @@ const AddLiquidity = ({
                     !poolData.reserves[idx].toNumber()
                       ? (value: string) => onUpdateAmount(value, idx)
                       : undefined
+                  }
+                  mintLabel={
+                    <Fragment>
+                      <Typography.Text>
+                        <MintSymbol mintAddress={mint.toBase58() || ''} />
+                      </Typography.Text>
+                      <Typography.Text type="secondary">
+                        {util.numeric(normalizedWeight).format('0,0.[0000]%')}
+                      </Typography.Text>
+                    </Fragment>
                   }
                   placeholder={suggestedAmounts[idx]}
                   force

@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { Button, Col, Input, Row, Select } from 'antd'
+import { Button, Col, Input, Select } from 'antd'
 import IonIcon from '@sentre/antd-ionicon'
 
 import { FilterPools } from 'constant'
@@ -20,8 +20,8 @@ const Search = () => {
   }
 
   return (
-    <Row className="search-pools" gutter={[12, 12]}>
-      <Col md={8} xs={10}>
+    <Fragment>
+      <Col md={6} xs={8}>
         <Select
           value={filterPool}
           onChange={(value: FilterPools) => {
@@ -69,7 +69,7 @@ const Search = () => {
           style={{ borderRadius: '24px', height: '32px' }}
         />
       </Col>
-    </Row>
+    </Fragment>
   )
 }
 

@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useMemo } from 'react'
+import { ReactNode, useCallback } from 'react'
 import { util } from '@sentre/senhub'
 
 import { Col, Row, Space, Typography } from 'antd'
@@ -90,11 +90,7 @@ export default function MintInput({
           <Col flex="auto" style={{ justifyContent: 'left' }}>
             <Space className="caption">
               <Typography.Text type="secondary">Available:</Typography.Text>
-              <Typography.Text
-                type="secondary"
-                style={{ cursor: 'pointer' }}
-                onClick={() => {}}
-              >
+              <Typography.Text style={{ cursor: 'pointer' }} onClick={() => {}}>
                 {util.numeric(balance).format('0,0.[00]')}
               </Typography.Text>
               <Typography.Text type="secondary">

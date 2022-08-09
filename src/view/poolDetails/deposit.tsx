@@ -194,7 +194,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
                       placeholder={suggestedAmounts[index]}
                       mintLabel={
                         <Fragment>
-                          <Typography.Text type="secondary">
+                          <Typography.Text>
                             <MintSymbol mintAddress={mintAddress || ''} />
                           </Typography.Text>
                           <Typography.Text type="secondary">
