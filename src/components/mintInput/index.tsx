@@ -39,7 +39,7 @@ export default function MintInput({
   force, // Validate input with max = balance
   mintSelection,
 }: MintInputProps) {
-  const balance = useWrapAccountBalance(selectedMint)
+  const { balance } = useWrapAccountBalance(selectedMint)
 
   const onInput = useCallback(
     (value: string) => {
