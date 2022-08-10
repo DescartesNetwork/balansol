@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { BN } from '@project-serum/anchor'
-import { util } from '@sentre/senhub'
+import { useGetMintDecimals, util } from '@sentre/senhub'
 import { Button, Checkbox, Col, Modal, Row, Typography } from 'antd'
 import MintInput from 'components/mintInput'
 import IonIcon from '@sentre/antd-ionicon'
@@ -11,7 +11,7 @@ import { notifyError, notifySuccess, priceImpactColor } from 'helper'
 import { AppState } from 'model'
 import { calcDepositPriceImpact, calcNormalizedWeight } from 'helper/oracles'
 import { useOracles } from 'hooks/useOracles'
-import { useMint } from '@sentre/senhub'
+import {} from '@sentre/senhub'
 import { useLptSupply } from 'hooks/useLptSupply'
 import { useMintBalance } from 'hooks/useMintBalance'
 import { PriceImpact } from 'constant'
@@ -29,7 +29,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   const [disable, setDisable] = useState(true)
   const [isAcceptHighPrice, setIsAcceptHighPrice] = useState(false)
   const [baseTokenIndex, setBaseTokenIndex] = useState(0)
-  const { getDecimals } = useMint()
+  const getDecimals = useGetMintDecimals()
   const { decimalizeMintAmount, undecimalizeMintAmount } = useOracles()
   const { getMintBalance } = useMintBalance()
 
@@ -39,7 +39,8 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
     let amountIns: BN[] = []
     let decimalIns: number[] = []
     for (let i in amounts) {
-      const decimalIn = await getDecimals(mints[i].toBase58())
+      const decimalIn =
+        (await getDecimals({ mintAddress: mints[i].toBase58() })) || 0
       const amountBn = await decimalizeMintAmount(amounts[i], mints[i])
       amountIns.push(amountBn)
       decimalIns.push(decimalIn)
@@ -97,7 +98,8 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
 
   const onApplySuggestion = async (index: number) => {
     const { reserves, mints } = poolData
-    const mintDecimal = await getDecimals(mints[index].toBase58())
+    const mintDecimal =
+      (await getDecimals({ mintAddress: mints[index].toBase58() })) || 0
     const baseBalance = await undecimalizeMintAmount(
       reserves[baseTokenIndex],
       mints[baseTokenIndex],

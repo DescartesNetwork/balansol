@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { BN } from '@project-serum/anchor'
-import { useMint, util } from '@sentre/senhub'
+import { useGetMintDecimals, util } from '@sentre/senhub'
 
 import { Button, Col, Row, Typography } from 'antd'
 import TokenWillReceive from '../tokenWillReceive'
@@ -34,7 +34,7 @@ const WithdrawSingleSide = ({
   const [amountReserve, setAmountReserve] = useState<BN>(new BN(0))
   const [impactPrice, setImpactPrice] = useState(0)
   const [loading, setLoading] = useState(false)
-  const { getDecimals } = useMint()
+  const getDecimals = useGetMintDecimals()
   const poolData = useSelector((state: AppState) => state.pools[poolAddress])
   const { decimalize } = useOracles()
   const { supply } = useLptSupply(poolData.mintLpt)
@@ -75,7 +75,10 @@ const WithdrawSingleSide = ({
     let decimals: number[] = []
 
     for (let i in poolData.reserves) {
-      const decimalIn = await getDecimals(poolData.mints[i].toBase58())
+      const decimalIn =
+        (await getDecimals({
+          mintAddress: poolData.mints[i].toBase58(),
+        })) || 0
       decimals.push(decimalIn)
     }
     const indexTokenOut = poolData.mints

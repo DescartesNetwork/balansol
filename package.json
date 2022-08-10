@@ -5,12 +5,13 @@
     "@jup-ag/react-hook": "^1.0.0-beta.27",
     "@project-serum/anchor": "^0.24.2",
     "@reduxjs/toolkit": "^1.8.0",
-    "@sen-use/components": "^1.0.8",
+    "@sen-use/components": "^2.0.11",
+    "@sen-use/web3": "^2.0.11",
     "@senswap/balancer": "^1.0.1",
     "@senswap/sen-js": "^1.4.0",
     "@sentre/antd-ionicon": "^1.0.31",
     "@sentre/react-lazyload": "^3.2.2",
-    "@sentre/senhub": "^3.0.44",
+    "@sentre/senhub": "3.2.3",
     "@solana/wallet-adapter-base": "^0.9.7",
     "antd": "^4.21.1",
     "bn.js": "^5.2.0",
@@ -28,7 +29,7 @@
     "web-vitals": "^2.1.1"
   },
   "scripts": {
-    "start": "craco start",
+    "start": "REACT_APP_HMR=$PWD/src/bootstrap.app.tsx craco start",
     "build": "yarn build:production",
     "build:production": "craco build",
     "build:staging": "env-cmd -f .env.staging craco build",
@@ -58,7 +59,7 @@
   },
   "devDependencies": {
     "@craco/craco": "^7.0.0-alpha.5",
-    "@sentre/craco-plugins": "^1.0.31",
+    "@sentre/craco-plugins": "^1.0.37",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.2.1",

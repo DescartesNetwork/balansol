@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { useMint } from '@sentre/senhub'
+import { tokenProvider, useGetMintDecimals } from '@sentre/senhub'
 
 import { Card, Col, Row, Typography } from 'antd'
 import DoughnutChart, { PoolWeightData } from './doughnutChart'
@@ -12,7 +12,7 @@ import { utilsBN } from 'helper/utilsBN'
 const PoolWeights = ({ poolAddress }: { poolAddress: string }) => {
   const [poolWeights, setPoolWeights] = useState<PoolWeightData[]>([])
   const poolData = useSelector((state: AppState) => state.pools[poolAddress])
-  const { tokenProvider, getDecimals } = useMint()
+  const getDecimals = useGetMintDecimals()
 
   const doughnutChartData = useCallback(async () => {
     if (!poolData) return
@@ -30,7 +30,8 @@ const PoolWeights = ({ poolAddress }: { poolAddress: string }) => {
             tokenAmount: utilsBN.undecimalize(reserve, tokenInfo.decimals),
             weight: normalizedWeight * 100,
           }
-        const decimal = await getDecimals(mint.toBase58())
+        const decimal =
+          (await getDecimals({ mintAddress: mint.toBase58() })) || 0
         return {
           symbol: mint.toBase58().substring(0, 4),
           tokenAmount: utilsBN.undecimalize(reserve, decimal) || '0',
@@ -39,7 +40,7 @@ const PoolWeights = ({ poolAddress }: { poolAddress: string }) => {
       }),
     )
     setPoolWeights(newData)
-  }, [getDecimals, poolData, tokenProvider])
+  }, [getDecimals, poolData])
 
   useEffect(() => {
     doughnutChartData()

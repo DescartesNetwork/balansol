@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { TokenInfo } from '@solana/spl-token-registry'
-import { useMint, useUI, util } from '@sentre/senhub'
+import { tokenProvider, useUI, util } from '@sentre/senhub'
 
 import { Card, Space, Typography } from 'antd'
 
@@ -13,7 +13,6 @@ export type PercentGroupMintsProps = { poolAddress: string }
 const PercentGroupMints = ({ poolAddress }: PercentGroupMintsProps) => {
   const poolData = useSelector((state: AppState) => state.pools[poolAddress])
   const [poolSymbol, setPoolSymbol] = useState<string[]>([])
-  const { tokenProvider } = useMint()
   const {
     ui: { theme },
   } = useUI()
@@ -36,7 +35,7 @@ const PercentGroupMints = ({ poolAddress }: PercentGroupMintsProps) => {
       )
       return setPoolSymbol(poolSymbols)
     })()
-  }, [poolData.mints, poolData.weights, tokenProvider])
+  }, [poolData.mints, poolData.weights])
 
   return (
     <Space size={[16, 8]} align="center" wrap={true}>

@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { PoolState } from '@senswap/balancer'
-import { useWallet } from '@sentre/senhub'
+import { useWalletAddress } from '@sentre/senhub'
 
 import { Button, Modal } from 'antd'
 import IonIcon from '@sentre/antd-ionicon'
@@ -18,17 +18,17 @@ const NewPool = () => {
   const pools = useSelector((state: AppState) => state.pools)
   const [visible, setVisible] = useState(false)
   const [isInProcess, setIsInProcess] = useState(false)
-  const { wallet } = useWallet()
+  const walletAddress = useWalletAddress()
 
   const checkUninitializedPool = useCallback(async () => {
     for (const poolAddress in pools) {
       const poolData = pools[poolAddress]
-      if (poolData.authority.toBase58() !== wallet.address) continue
+      if (poolData.authority.toBase58() !== walletAddress) continue
       if (!(poolData.state as PoolState)['uninitialized']) continue
       return setIsInProcess(true)
     }
     return setIsInProcess(false)
-  }, [pools, wallet.address])
+  }, [pools, walletAddress])
 
   useEffect(() => {
     checkUninitializedPool()

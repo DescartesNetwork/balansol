@@ -1,16 +1,17 @@
 import { useCallback } from 'react'
 import { Address, BN, web3 } from '@project-serum/anchor'
-import { useMint } from '@sentre/senhub'
+import { useGetMintDecimals } from '@sentre/senhub'
 import util from '@senswap/sen-js/dist/utils'
 
 export const useOracles = () => {
-  const { getDecimals } = useMint()
+  const getDecimals = useGetMintDecimals()
 
   const decimalizeMintAmount = useCallback(
     async (amount: number | string, mintAddress: Address) => {
-      const decimals = await getDecimals(
-        new web3.PublicKey(mintAddress).toString(),
-      )
+      const decimals =
+        (await getDecimals({
+          mintAddress: new web3.PublicKey(mintAddress).toString(),
+        })) || 0
       return new BN(util.decimalize(amount, decimals).toString())
     },
     [getDecimals],
@@ -18,9 +19,10 @@ export const useOracles = () => {
 
   const undecimalizeMintAmount = useCallback(
     async (amount: BN, mintAddress: Address) => {
-      const decimals = await getDecimals(
-        new web3.PublicKey(mintAddress).toString(),
-      )
+      const decimals =
+        (await getDecimals({
+          mintAddress: new web3.PublicKey(mintAddress).toString(),
+        })) || 0
       return util.undecimalize(BigInt(amount.toString()), decimals)
     },
     [getDecimals],

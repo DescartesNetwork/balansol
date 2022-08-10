@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { useMint } from '@sentre/senhub'
+import { tokenProvider } from '@sentre/senhub'
 
 import { Card, Input, Button } from 'antd'
 import IonIcon from '@sentre/antd-ionicon'
@@ -16,7 +16,6 @@ const Search = ({
   mints: string[]
 }) => {
   const [keyword, setKeyword] = useState('')
-  const { tokenProvider } = useMint()
 
   const search = useCallback(async () => {
     if (!keyword || keyword.length < KEYSIZE) return onChange(mints)
@@ -31,7 +30,7 @@ const Search = ({
       return data.push(mintAddress)
     })
     return onChange(data)
-  }, [keyword, onChange, tokenProvider, mints])
+  }, [keyword, onChange, mints])
 
   useEffect(() => {
     search()

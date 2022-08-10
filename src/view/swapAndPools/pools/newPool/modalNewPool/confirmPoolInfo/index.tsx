@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { util } from '@sentre/senhub'
+import { util, tokenProvider } from '@sentre/senhub'
 
 import { Button, Card, Col, Row, Table, Typography } from 'antd'
 import { MintSetup } from '../index'
 import { COLUMNS_CONFIG } from './columns'
 
-import { useMint } from '@sentre/senhub'
 import { AppState } from 'model'
 import { useOracles } from 'hooks/useOracles'
 import { getMintInfo } from 'helper/oracles'
@@ -27,7 +26,7 @@ const ConfirmPoolInfo = ({ onConfirm, poolAddress }: ConfirmPoolInfoProps) => {
   const [poolInfo, setPoolInfo] = useState<PoolInfo[]>([])
   const [poolTotalValue, setPoolTotalValue] = useState(0)
   const poolData = useSelector((state: AppState) => state.pools[poolAddress])
-  const { tokenProvider } = useMint()
+
   const { undecimalizeMintAmount } = useOracles()
 
   const getPoolInfo = useCallback(async () => {
@@ -79,7 +78,7 @@ const ConfirmPoolInfo = ({ onConfirm, poolAddress }: ConfirmPoolInfoProps) => {
     )
     setPoolTotalValue(totalValue)
     setPoolInfo(newPoolInfo)
-  }, [poolData, tokenProvider, undecimalizeMintAmount])
+  }, [poolData, undecimalizeMintAmount])
 
   useEffect(() => {
     getPoolInfo()
