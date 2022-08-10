@@ -32,6 +32,5 @@ export const priceImpactColor = (priceImpact: number) => {
   return '#FA8C16'
 }
 
-export const getMintState = (mintStates: MintActionState[], idx: number) => {
-  return Object.keys(mintStates[idx])[0]
-}
+export const getMintState = (mintStates: MintActionState[], idx: number) =>
+  Object.keys(mintStates[idx])[0]

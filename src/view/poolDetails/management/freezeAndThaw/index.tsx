@@ -1,5 +1,4 @@
 import { useSelector } from 'react-redux'
-import { PoolState } from '@senswap/balancer'
 
 import { Tabs } from 'antd'
 import ThawPool from './pool/thawPool'
@@ -10,7 +9,7 @@ import { AppState } from 'model'
 
 const FreezeAndThaw = ({ poolAddress }: { poolAddress: string }) => {
   const poolData = useSelector((state: AppState) => state.pools[poolAddress])
-  const state = poolData.state as PoolState
+  const state = poolData.state
 
   return (
     <Tabs className="freeze-thaw" type="card">
