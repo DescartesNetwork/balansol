@@ -25,6 +25,34 @@
   }
 }
 
+.balansol-tabs-card {
+  &.freeze-thaw{
+    .balansol-tabs-nav{
+      &::before {
+        display: none;
+      }
+    }
+    .balansol-tabs-tab {
+      border: none !important;
+      border-radius: 8px !important;
+      margin-right: 10px !important;
+      &-active{
+        background: rgba(99, 224, 179, 0.1) !important;
+      }
+    }
+  }
+} 
+
+.freezed-token {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0px;
+  left: 0px;
+  justify-content: center;
+  border-radius: 20px;
+  background:rgba(8, 20, 56, 0.7);
+}
 
 .card-detail-header {
   box-shadow: unset !important;
@@ -50,6 +78,20 @@
       }
     }
   }
+  .balansol-tabs-card {
+    &.freeze-thaw{
+      .balansol-btn {
+        &:active {
+          border-color: #394360 !important;
+          color: #F3F3F5 !important
+        }
+        &:focus {
+          border-color: #394360 !important;
+          color: #F3F3F5 !important
+        } 
+      }
+    }
+  } 
 }
 
 #light {

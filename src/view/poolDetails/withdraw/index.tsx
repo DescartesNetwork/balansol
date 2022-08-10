@@ -53,7 +53,7 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
                   {/* Button select all */}
                   <Col>
                     <Button
-                      className={`btn-toke-name ${
+                      className={`btn-token-name ${
                         isSelectedAll ? 'selected' : ''
                       }`}
                       onClick={() => setSelectedMints(mints)}
@@ -69,7 +69,7 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
                     return (
                       <Col key={mintAddress}>
                         <Button
-                          className={`btn-toke-name ${selected}`}
+                          className={`btn-token-name ${selected}`}
                           onClick={() => setSelectedMints([mintAddress])}
                         >
                           <span className="title">
