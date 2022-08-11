@@ -9,7 +9,11 @@ import { MintAvatar, MintSymbol } from '@sen-use/components'
 import { AppState } from 'model'
 import { getMintState, notifyError, notifySuccess } from 'helper'
 
-export const FreezeToken = ({ poolAddress }: { poolAddress: string }) => {
+export const FreezeAndThawToken = ({
+  poolAddress,
+}: {
+  poolAddress: string
+}) => {
   const { mints, actions } = useSelector(
     (state: AppState) => state.pools[poolAddress],
   )
@@ -18,7 +22,7 @@ export const FreezeToken = ({ poolAddress }: { poolAddress: string }) => {
   )
   const [loading, setLoading] = useState(false)
 
-  const onFreezeToken = async () => {
+  const onFreezeAndThawToken = async () => {
     setLoading(true)
     try {
       const { updateActions } = window.balansol
@@ -71,7 +75,7 @@ export const FreezeToken = ({ poolAddress }: { poolAddress: string }) => {
                     <MintSymbol mintAddress={mint.toBase58()} />
                   </Space>
                   {mintState === 'paused' && (
-                    <Space className="freezed-token" align="center">
+                    <Space className="disable-mask" align="center">
                       <IonIcon
                         name="snow-outline"
                         style={{ color: '#F3F3F5' }}
@@ -88,7 +92,7 @@ export const FreezeToken = ({ poolAddress }: { poolAddress: string }) => {
         <Button
           block
           ghost
-          onClick={onFreezeToken}
+          onClick={onFreezeAndThawToken}
           size="large"
           disabled={JSON.stringify(actions) === JSON.stringify(mintActions)}
           loading={loading}

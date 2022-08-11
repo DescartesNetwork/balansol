@@ -2,12 +2,19 @@ import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { BN } from '@project-serum/anchor'
 import { util } from '@sentre/senhub'
-import { Button, Checkbox, Col, Modal, Row, Typography } from 'antd'
+import { MintActionState } from '@senswap/balancer'
+
+import { Button, Checkbox, Col, Modal, Row, Tooltip, Typography } from 'antd'
 import MintInput from 'components/mintInput'
 import IonIcon from '@sentre/antd-ionicon'
 import { MintSymbol } from '@sen-use/components'
 
-import { notifyError, notifySuccess, priceImpactColor } from 'helper'
+import {
+  getMintState,
+  notifyError,
+  notifySuccess,
+  priceImpactColor,
+} from 'helper'
 import { AppState } from 'model'
 import { calcDepositPriceImpact, calcNormalizedWeight } from 'helper/oracles'
 import { useOracles } from 'hooks/useOracles'
@@ -164,6 +171,11 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
             <Row gutter={[24, 8]}>
               {poolData.mints.map((mint, index) => {
                 let mintAddress: string = mint.toBase58()
+                const mintStatus = getMintState(
+                  poolData.actions as MintActionState[],
+                  index,
+                )
+                const disabled = mintStatus === 'paused'
                 const normalizedWeight = calcNormalizedWeight(
                   poolData.weights,
                   poolData.weights[index],
@@ -173,7 +185,11 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
                     <MintInput
                       selectedMint={mintAddress}
                       amount={amounts[index]}
-                      onChangeAmount={(amount) => onChange(index, amount)}
+                      onChangeAmount={
+                        !disabled
+                          ? (amount) => onChange(index, amount)
+                          : undefined
+                      }
                       mintLabel={
                         <Fragment>
                           <Typography.Text type="secondary">
@@ -199,6 +215,12 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
                         )
                       }
                     />
+                    {disabled && (
+                      <Tooltip
+                        title="This token has been frozen by the pool owner."
+                        className="disable-mask deposit"
+                      />
+                    )}
                   </Col>
                 )
               })}

@@ -1,7 +1,8 @@
 import { Fragment, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { MintActionState } from '@senswap/balancer'
 
-import { Button, Col, Modal, Row, Space, Typography } from 'antd'
+import { Button, Col, Modal, Row, Space, Tooltip, Typography } from 'antd'
 import MintInput from 'components/mintInput'
 import { PoolAvatar } from 'components/pools/poolAvatar'
 import IonIcon from '@sentre/antd-ionicon'
@@ -10,6 +11,7 @@ import WithdrawFullSide from './fullSide'
 import WithdrawSingleSide from './singleSide'
 
 import { AppState } from 'model'
+import { getMintState } from 'helper'
 
 const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
   const [visible, setVisible] = useState(false)
@@ -19,7 +21,13 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
     if (!poolData) return []
     return poolData.mints.map((e) => e.toBase58())
   }, [poolData])
-  const [selectedMints, setSelectedMints] = useState<string[]>(mints)
+  const mintStatuses = useMemo(() => {
+    const mintActions = poolData.actions as MintActionState[]
+    return mintActions.map((_, idx) => getMintState(mintActions, idx))
+  }, [poolData.actions])
+  const [selectedMints, setSelectedMints] = useState<string[]>(
+    mints.filter((val, idx) => mintStatuses[idx] !== 'paused'),
+  )
 
   const isSelectedAll = selectedMints.length === poolData?.mints.length
 
@@ -57,25 +65,39 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
                         isSelectedAll ? 'selected' : ''
                       }`}
                       onClick={() => setSelectedMints(mints)}
+                      disabled={mintStatuses.includes('paused')}
                     >
                       <span className="title">All</span>
                     </Button>
                   </Col>
                   {/* Mints Symbol Button */}
-                  {mints.map((mintAddress) => {
+                  {mints.map((mintAddress, idx) => {
+                    const disabled = mintStatuses[idx] === 'paused'
                     let selected = selectedMints.includes(mintAddress)
                       ? 'selected'
                       : ''
                     return (
                       <Col key={mintAddress}>
                         <Button
-                          className={`btn-token-name ${selected}`}
-                          onClick={() => setSelectedMints([mintAddress])}
+                          className={`btn-token-name ${
+                            disabled ? '' : selected
+                          }`}
+                          onClick={() => {
+                            if (disabled) return
+                            setSelectedMints([mintAddress])
+                          }}
+                          disabled={disabled}
                         >
                           <span className="title">
                             <MintSymbol mintAddress={mintAddress} />
                           </span>
                         </Button>
+                        {disabled && (
+                          <Tooltip
+                            title="This token has been frozen by the pool owner."
+                            className="disable-mask withdraw"
+                          />
+                        )}
                       </Col>
                     )
                   })}

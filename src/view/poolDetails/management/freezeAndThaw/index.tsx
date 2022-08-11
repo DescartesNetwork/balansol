@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { Tabs } from 'antd'
 import ThawPool from './pool/thawPool'
 import FreezePool from './pool/freezePool'
-import { FreezeToken } from './freezeToken'
+import { FreezeAndThawToken } from './freezeAndThawToken'
 
 import { AppState } from 'model'
 
@@ -22,7 +22,7 @@ const FreezeAndThaw = ({ poolAddress }: { poolAddress: string }) => {
         tab="Individual token"
         disabled={!!state['frozen']}
       >
-        <FreezeToken poolAddress={poolAddress} />
+        <FreezeAndThawToken poolAddress={poolAddress} />
       </Tabs.TabPane>
     </Tabs>
   )
