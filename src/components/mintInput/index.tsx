@@ -4,7 +4,7 @@ import { util } from '@sentre/senhub'
 import { Col, Row, Space, Typography } from 'antd'
 import NumericInput from '../numericInput'
 import Selection from '../selection'
-import { MintSymbol } from '@sen-use/components'
+import { MintSymbol } from '@sen-use/app'
 import Proportion from './proportion'
 
 import { useWrapAccountBalance } from 'hooks/useWrapAccountBalance'

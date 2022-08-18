@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { util, tokenProvider } from '@sentre/senhub'
 
 import { Button, Col, Row, Typography } from 'antd'
-import { MintSymbol } from '@sen-use/components'
+import { MintSymbol } from '@sen-use/app'
 
 import { notifyError, notifySuccess } from 'helper'
 import { PoolCreatingStep } from 'constant'

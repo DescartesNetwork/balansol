@@ -27,7 +27,6 @@ const conf: Record<Env, Conf> = {
   development: {
     ...shared,
   },
-
   /**
    * Production configurations
    */
