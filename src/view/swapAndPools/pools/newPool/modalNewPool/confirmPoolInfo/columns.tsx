@@ -1,7 +1,7 @@
 import { util } from '@sentre/senhub'
 
 import { Space, Typography } from 'antd'
-import { MintAvatar, MintSymbol } from '@sen-use/components'
+import { MintAvatar, MintSymbol } from '@sen-use/app'
 
 import { MintSetup } from '../index'
 import { PoolInfo } from './index'

@@ -1,4 +1,4 @@
-import { MintAvatar, MintSymbol, MintName } from '@sen-use/components'
+import { MintAvatar, MintSymbol, MintName } from '@sen-use/app'
 import { Space, Typography, Card, Divider } from 'antd'
 
 const Mint = ({
