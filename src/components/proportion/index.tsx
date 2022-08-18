@@ -1,4 +1,4 @@
-import { MintAvatar } from '@sen-use/components'
+import { MintAvatar } from '@sen-use/app'
 import { util } from '@sentre/senhub'
 
 import { TokenInfo } from 'view/swapAndPools/pools/newPool'

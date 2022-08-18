@@ -4,7 +4,7 @@ import { MintActionState, MintActionStates } from '@senswap/balancer'
 
 import { Button, Row, Col, Typography, Space } from 'antd'
 import IonIcon from '@sentre/antd-ionicon'
-import { MintAvatar, MintSymbol } from '@sen-use/components'
+import { MintAvatar, MintSymbol } from '@sen-use/app'
 
 import { AppState } from 'model'
 import { getMintState, notifyError, notifySuccess } from 'helper'

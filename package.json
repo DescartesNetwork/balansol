@@ -3,14 +3,16 @@
   "version": "2.0.1",
   "dependencies": {
     "@jup-ag/react-hook": "^1.0.0-beta.27",
+    "@sen-use/app": "^3.0.3",
+    "@sen-use/components": "^3.0.3",
+    "@sen-use/web3": "^3.0.3",
     "@project-serum/anchor": "^0.24.2",
     "@reduxjs/toolkit": "^1.8.0",
-    "@sen-use/components": "^1.0.8",
     "@senswap/balancer": "^1.0.1",
     "@senswap/sen-js": "^1.4.0",
     "@sentre/antd-ionicon": "^1.0.31",
     "@sentre/react-lazyload": "^3.2.2",
-    "@sentre/senhub": "^3.0.44",
+    "@sentre/senhub": "^3.2.13",
     "@solana/wallet-adapter-base": "^0.9.7",
     "antd": "^4.21.1",
     "bn.js": "^5.2.0",
@@ -29,14 +31,10 @@
   },
   "scripts": {
     "start": "craco start",
-    "build": "yarn build:production",
-    "build:production": "craco build",
-    "build:staging": "env-cmd -f .env.staging craco build",
+    "build": "craco build",
     "test": "craco test",
-    "predeploy": "yarn build:production",
-    "deploy": "gh-pages -d build",
-    "preserve": "yarn build:staging",
-    "serve": "serve -s build -l 3000"
+    "predeploy": "yarn build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
@@ -58,7 +56,7 @@
   },
   "devDependencies": {
     "@craco/craco": "^7.0.0-alpha.5",
-    "@sentre/craco-plugins": "^1.0.31",
+    "@sentre/craco-plugins": "^1.0.37",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.2.1",

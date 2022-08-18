@@ -4,7 +4,7 @@ import { util } from '@sentre/senhub'
 
 import { Button, Space, Typography } from 'antd'
 import IonIcon from '@sentre/antd-ionicon'
-import { MintSymbol } from '@sen-use/components'
+import { MintSymbol } from '@sen-use/app'
 
 import { AppState } from 'model'
 import { useSwap } from 'hooks/useSwap'

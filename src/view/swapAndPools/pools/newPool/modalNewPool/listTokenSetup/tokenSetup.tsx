@@ -3,7 +3,7 @@ import WeightControl from './weightControl'
 
 import { useUI } from '@sentre/senhub'
 import { MintSetup } from '../index'
-import { MintSelection } from '@sen-use/components'
+import { MintSelection } from '@sen-use/app'
 
 export type TokenSetupProps = {
   tokenList: MintSetup[]
