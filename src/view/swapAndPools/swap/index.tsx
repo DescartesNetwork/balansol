@@ -20,12 +20,18 @@ const Swap = () => {
   const { askMint, bidMint, askAmount, bidAmount } = useSelector(
     (state: AppState) => state.swap,
   )
-  const { pushHistory } = useAppRouter()
+  const { pushHistory, getAllQuery } = useAppRouter()
 
   useEffect(() => {
-    if (!!askMint && !!bidMint)
+    if (!askMint || !bidMint) return
+    const { bid_mint, ask_mint } = getAllQuery<{
+      bid_mint: string
+      ask_mint: string
+    }>()
+    if (bidMint !== bid_mint || askMint !== ask_mint) {
       pushHistory(`/swap`, { bid_mint: bidMint, ask_mint: askMint }, false)
-  }, [askMint, bidMint, pushHistory])
+    }
+  }, [askMint, bidMint, getAllQuery, pushHistory])
 
   const onSwitch = () => {
     dispatch(
