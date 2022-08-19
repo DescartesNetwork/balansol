@@ -50,12 +50,13 @@ const ExtraTypography = ({
 }
 
 const SwapInfo = ({ extraStyle }: { extraStyle?: CSSProperties }) => {
-  const slippageTolerance = useSelector(
-    (state: AppState) => state.swap.slippageTolerance,
+  const { slippageTolerance, loading, bidAmount, askAmount } = useSelector(
+    (state: AppState) => state.swap,
   )
   const { priceImpact } = useSwap()
 
   const priceImpactDisplay = util.numeric(priceImpact).format('0.[0000]')
+  const swapLoading = loading && (!!Number(bidAmount) || !!Number(askAmount))
 
   return (
     <Row gutter={[12, 12]} style={{ ...extraStyle }}>
@@ -69,28 +70,28 @@ const SwapInfo = ({ extraStyle }: { extraStyle?: CSSProperties }) => {
                 : '~ 0%'}
             </Typography.Text>
           }
-          loading={false}
+          loading={swapLoading}
         />
       </Col>
       <Col span={24}>
         <ExtraTypography
           label="Price"
           content={<SpotPrice />}
-          loading={false}
+          loading={swapLoading}
         />
       </Col>
       <Col span={24}>
         <ExtraTypography
           label="Slippage Tolerance"
           content={`${slippageTolerance}%`}
-          loading={false}
+          loading={swapLoading}
         />
       </Col>
       <Col span={24} style={{ minHeight: 24 }}>
         <ExtraTypography
           label="Route"
           content={<RouteAvatar />}
-          loading={false}
+          loading={swapLoading}
         />
       </Col>
     </Row>
