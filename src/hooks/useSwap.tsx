@@ -80,8 +80,7 @@ const Provider = ({ children }: { children: ReactNode }) => {
     let platformSwap = balansol
     if (
       Number(askAmountJup) > 1.05 * Number(askAmountBalansol) &&
-      net === 'mainnet' &&
-      balansol.route.length
+      net === 'mainnet'
     )
       platformSwap = jupiter
     // Update platform
