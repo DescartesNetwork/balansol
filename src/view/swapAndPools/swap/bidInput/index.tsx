@@ -56,7 +56,8 @@ const BidInput = () => {
         <MintSelection
           value={bidMint}
           onChange={(mint) => {
-            dispatch(setSwapState({ bidMint: mint }))
+            const loading = bidMint !== mint
+            dispatch(setSwapState({ bidMint: mint, loading }))
           }}
           style={{ background: theme === 'dark' ? '#394360' : '#F2F4FA' }}
         />

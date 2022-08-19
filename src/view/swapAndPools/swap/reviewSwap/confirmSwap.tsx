@@ -56,7 +56,7 @@ const ConfirmSwap = ({
     try {
       const { txId } = await swap()
       onCancel()
-      dispatch(setSwapState({ bidAmount: '' }))
+      dispatch(setSwapState({ bidAmount: '', askAmount: '' }))
       notifySuccess('Swap', txId)
     } catch (error) {
       notifyError(error)

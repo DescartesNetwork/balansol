@@ -52,7 +52,8 @@ const AskInput = () => {
             <MintSelection
               value={askMint}
               onChange={(mint) => {
-                dispatch(setSwapState({ askMint: mint })).unwrap()
+                const loading = askMint !== mint
+                dispatch(setSwapState({ askMint: mint, loading })).unwrap()
               }}
               style={{ background: theme === 'dark' ? '#394360' : '#F2F4FA' }}
             />
