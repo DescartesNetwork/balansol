@@ -69,35 +69,37 @@ const Provider = ({ children }: { children: ReactNode }) => {
   // Route Jupiter
   const jupiter = useJupiterAggregator()
 
-  const choosePlatform = useCallback(() => {
-    if (
-      balansol.route.length ||
-      isReverse ||
-      net !== 'mainnet' ||
-      balansol.loading
-    )
-      return setPlatformSwap(balansol)
-    return setPlatformSwap(jupiter)
-  }, [balansol, isReverse, jupiter])
-  useDebounce(() => choosePlatform(), 300, [choosePlatform])
-
   const updateRouteFromBid = useCallback(() => {
     if (isReverse) return
+    if (balansol.loading || jupiter.loading)
+      return dispatch(setSwapState({ askAmount: '0', loading: true }))
+
+    let askAmountBalansol = balansol.askAmount.toString()
+    let askAmountJup = jupiter.askAmount.toString()
+    // Select platform
+    let platformSwap = balansol
+    if (
+      Number(askAmountJup) > 1.05 * Number(askAmountBalansol) &&
+      net === 'mainnet' &&
+      balansol.route.length
+    )
+      platformSwap = jupiter
+    // Update platform
     let askAmount = platformSwap.askAmount.toString()
-    const loading = platformSwap.loading
-    if (loading) askAmount = ''
-    dispatch(setSwapState({ askAmount, loading }))
-  }, [platformSwap, isReverse, dispatch])
-  useDebounce(() => updateRouteFromBid(), 300, [updateRouteFromBid])
+    dispatch(setSwapState({ askAmount, loading: false }))
+    return setPlatformSwap(platformSwap)
+  }, [balansol, dispatch, isReverse, jupiter])
+  useDebounce(() => updateRouteFromBid(), 1000, [updateRouteFromBid])
 
   const updateRouteFromAsk = useCallback(() => {
     if (!isReverse) return
-    let bidAmount = platformSwap.bidAmount.toString()
-    const loading = platformSwap.loading
+    let bidAmount = balansol.bidAmount.toString()
+    const loading = balansol.loading
     if (loading) bidAmount = ''
     dispatch(setSwapState({ bidAmount, loading }))
-  }, [dispatch, isReverse, platformSwap.bidAmount, platformSwap.loading])
-  useDebounce(() => updateRouteFromAsk(), 300, [updateRouteFromAsk])
+    return setPlatformSwap(balansol)
+  }, [balansol, dispatch, isReverse])
+  useDebounce(() => updateRouteFromAsk(), 500, [updateRouteFromAsk])
 
   const provider = useMemo((): SwapProvider => {
     return platformSwap
