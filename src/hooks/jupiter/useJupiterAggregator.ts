@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { web3, BN } from '@project-serum/anchor'
 import { useJupiter } from '@jup-ag/react-hook'
-import { rpc, useWalletAddress } from '@sentre/senhub'
+import { useWalletAddress, rpc } from '@sentre/senhub'
+import { useDebounce } from 'react-use'
 
 import { AppState } from 'model'
 
@@ -67,9 +68,7 @@ export const useJupiterAggregator = (): SwapProvider => {
     isReverse,
     slippageTolerance,
   ])
-  useEffect(() => {
-    composeJupiterProps()
-  }, [composeJupiterProps])
+  useDebounce(() => composeJupiterProps(), 300, [composeJupiterProps])
 
   const composeBestRoute = useCallback(async () => {
     const bestJupiterRoute = routes?.[0]
@@ -109,9 +108,7 @@ export const useJupiterAggregator = (): SwapProvider => {
       priceImpact: bestJupiterRoute.priceImpactPct,
     })
   }, [askMint, bidAmount, bidMint, isReverse, routes, undecimalizeMintAmount])
-  useEffect(() => {
-    composeBestRoute()
-  }, [composeBestRoute])
+  useDebounce(() => composeBestRoute(), 300, [composeBestRoute])
 
   const swap = useCallback(async () => {
     const {
