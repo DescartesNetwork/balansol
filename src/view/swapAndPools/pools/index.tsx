@@ -13,7 +13,7 @@ const Pools = () => {
   return (
     <Row gutter={[12, 12]} justify="center" align="middle">
       <Col xs={24} md={20} lg={16} xl={12} xxl={8}>
-        <Row gutter={[24, 24]} justify="space-between">
+        <Row gutter={[12, 12]} justify="space-between">
           <Col flex="auto">
             <Search />
           </Col>

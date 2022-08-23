@@ -22,6 +22,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   const [amounts, setAmounts] = useState<string[]>(
     new Array(poolData.mints.length).fill('0'),
   )
+  const [suggestedAmounts, setSuggestAmounts] = useState<string[]>([])
   const [visible, setVisible] = useState(false)
   const [impactPrice, setImpactPrice] = useState(0)
   const [lpOutTotal, setLpOutTotal] = useState(0)
@@ -60,11 +61,37 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
     estimateImpactPriceAndLP()
   }, [estimateImpactPriceAndLP])
 
-  const onChange = (idx: number, value: string) => {
+  const onChange = async (idx: number, value: string) => {
     let newAmounts = [...amounts]
     newAmounts[idx] = value
     setAmounts(newAmounts)
     setBaseTokenIndex(idx)
+    // handle suggestion for other tokens
+    const { mints, reserves } = poolData
+    const baseBalance = await undecimalizeMintAmount(
+      reserves[baseTokenIndex],
+      mints[baseTokenIndex],
+    )
+    const newSuggestAmounts = await Promise.all(
+      mints.map(async (_, index) => {
+        if (idx === index) return ''
+        const mintDecimal = await getDecimals(mints[index].toBase58())
+        const currentBalance = await undecimalizeMintAmount(
+          reserves[index],
+          mints[index],
+        )
+        const balanceRatio =
+          (Number(baseBalance) + Number(value)) / Number(baseBalance)
+
+        const suggestedAmount = (
+          Number(currentBalance) *
+          (balanceRatio - 1)
+        ).toFixed(mintDecimal)
+
+        return suggestedAmount
+      }),
+    )
+    setSuggestAmounts(newSuggestAmounts)
   }
 
   const onSubmit = async () => {
@@ -95,26 +122,16 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
     return clonedLp
   }, [lpOutTotal])
 
+  const isVisibleSuggestion = (idx: number) =>
+    baseTokenIndex !== idx &&
+    Number(amounts[baseTokenIndex]) > 0 &&
+    Number(suggestedAmounts[idx]) > 0 &&
+    Number(suggestedAmounts[idx]) !== Number(amounts[idx]) &&
+    !Number(amounts[idx])
+
   const onApplySuggestion = async (index: number) => {
-    const { reserves, mints } = poolData
-    const mintDecimal = await getDecimals(mints[index].toBase58())
-    const baseBalance = await undecimalizeMintAmount(
-      reserves[baseTokenIndex],
-      mints[baseTokenIndex],
-    )
-    const currentBalance = await undecimalizeMintAmount(
-      reserves[index],
-      mints[index],
-    )
-    const balanceRatio =
-      (Number(baseBalance) + Number(amounts[baseTokenIndex])) /
-      Number(baseBalance)
-    const suggestedAmount = (
-      Number(currentBalance) *
-      (balanceRatio - 1)
-    ).toFixed(mintDecimal)
-    let newAmounts = [...amounts]
-    newAmounts[index] = String(suggestedAmount)
+    const newAmounts = [...amounts]
+    newAmounts[index] = suggestedAmounts[index]
     setAmounts(newAmounts)
   }
 
@@ -174,9 +191,10 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
                       selectedMint={mintAddress}
                       amount={amounts[index]}
                       onChangeAmount={(amount) => onChange(index, amount)}
+                      placeholder={suggestedAmounts[index]}
                       mintLabel={
                         <Fragment>
-                          <Typography.Text type="secondary">
+                          <Typography.Text>
                             <MintSymbol mintAddress={mintAddress || ''} />
                           </Typography.Text>
                           <Typography.Text type="secondary">
@@ -187,8 +205,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
                         </Fragment>
                       }
                       ratioButton={
-                        baseTokenIndex !== index &&
-                        Number(amounts[baseTokenIndex]) > 0 && (
+                        isVisibleSuggestion(index) && (
                           <Button
                             type="text"
                             style={{ marginRight: -15 }}
