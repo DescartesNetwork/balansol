@@ -3,7 +3,7 @@ import { Redirect, Route, Switch } from 'react-router-dom'
 import { web3 } from '@project-serum/anchor'
 import { Connection } from '@solana/web3.js'
 import { JupiterProvider } from '@jup-ag/react-hook'
-import { useUI, rpc, useWalletAddress } from '@sentre/senhub'
+import { rpc, useWalletAddress, useSetBackground } from '@sentre/senhub'
 
 import { Empty } from 'antd'
 import PoolDetails from './poolDetails'
@@ -23,7 +23,7 @@ import './index.less'
 const connection = new Connection(rpc)
 
 const View = () => {
-  const { setBackground } = useUI()
+  const setBackground = useSetBackground()
   const { appRoute } = useAppRouter()
   const walletAddress = useWalletAddress()
 

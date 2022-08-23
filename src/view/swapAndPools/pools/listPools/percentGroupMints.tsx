@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { TokenInfo } from '@solana/spl-token-registry'
-import { tokenProvider, useUI, util } from '@sentre/senhub'
+import { tokenProvider, useTheme, util } from '@sentre/senhub'
 
 import { Card, Space, Typography } from 'antd'
 
@@ -13,9 +13,7 @@ export type PercentGroupMintsProps = { poolAddress: string }
 const PercentGroupMints = ({ poolAddress }: PercentGroupMintsProps) => {
   const poolData = useSelector((state: AppState) => state.pools[poolAddress])
   const [poolSymbol, setPoolSymbol] = useState<string[]>([])
-  const {
-    ui: { theme },
-  } = useUI()
+  const theme = useTheme()
 
   useEffect(() => {
     ;(async () => {

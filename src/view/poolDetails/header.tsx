@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
 import CopyToClipboard from 'react-copy-to-clipboard'
-import { useUI, util } from '@sentre/senhub'
+import { Infix, useInfix, util } from '@sentre/senhub'
 
 import { Row, Col, Space, Typography, Popover, Tooltip, Button } from 'antd'
 import IonIcon from '@sentre/antd-ionicon'
@@ -53,11 +53,8 @@ const Info = ({ title, value }: InfoProps) => {
 
 const Header = ({ poolAddress }: { poolAddress: string }) => {
   const poolData = useSelector((state: AppState) => state.pools[poolAddress])
-  const {
-    ui: { width },
-  } = useUI()
-
-  const isMobile = width < 768
+  const infix = useInfix()
+  const isMobile = infix < Infix.md
 
   return (
     <Row gutter={[24, 24]} justify="space-between">

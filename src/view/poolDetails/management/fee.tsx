@@ -2,31 +2,39 @@ import { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { BN } from '@project-serum/anchor'
 
-import { Col, Row, Typography, Button } from 'antd'
+import { Col, Row, Typography, Button, Tooltip, Space } from 'antd'
 import NumericInput, { InputStyle } from 'components/numericInput'
 
 import { PRECISION } from 'constant'
 import { notifyError, notifySuccess } from 'helper'
 import { AppState } from 'model'
+import IonIcon from '@sentre/antd-ionicon'
 
 const Content = ({
   title,
   percent,
   currentPercent,
   onChangeValue = () => {},
+  tooltipContent,
 }: {
   title: string
   percent: number | string
   currentPercent: number
   onChangeValue?: (percent: string) => void
+  tooltipContent: string
 }) => (
   <Row gutter={[8, 8]}>
     <Col span={24}>
       <Row>
         <Col flex="auto">
-          <Typography.Text style={{ textTransform: 'capitalize' }}>
-            {title} (%)
-          </Typography.Text>
+          <Space size={8}>
+            <Typography.Text style={{ textTransform: 'capitalize' }}>
+              {title} (%)
+            </Typography.Text>
+            <Tooltip title={tooltipContent}>
+              <IonIcon name="information-circle-outline" />
+            </Tooltip>
+          </Space>
         </Col>
         <Col>
           <Typography.Text type="secondary">Current {title}:</Typography.Text>{' '}
@@ -80,18 +88,24 @@ const Fee = ({ poolAddress }: { poolAddress: string }) => {
     <Row gutter={[16, 16]}>
       <Col span={24}>
         <Content
-          title="fee"
+          title="LP Reward Rate"
           percent={fee}
           currentPercent={currentFee}
           onChangeValue={setFee}
+          tooltipContent={
+            'The portion of trading fee a liquidity provider earns upon depositing into the pool'
+          }
         />
       </Col>
       <Col span={24}>
         <Content
-          title="tax"
+          title="Platform Fee"
           percent={taxFee}
           currentPercent={currentTaxFee}
           onChangeValue={setTaxFee}
+          tooltipContent={
+            'The portion of fee your pool will pay to Balansol for maintaining the system'
+          }
         />
       </Col>
       <Col span={24}>

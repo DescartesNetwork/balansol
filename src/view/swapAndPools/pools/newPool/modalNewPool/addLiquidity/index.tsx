@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useState } from 'react'
+import { Fragment, useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { tokenProvider, util } from '@sentre/senhub'
 
-import { Button, Col, Row } from 'antd'
+import { Button, Col, Row, Typography } from 'antd'
 import LiquidityInfo from './liquidityInfo'
 import MintInput from 'components/mintInput'
+import { MintSymbol } from '@sen-use/app'
 
 import { PoolCreatingStep } from 'constant'
 import { AppState } from 'model'
@@ -32,7 +33,8 @@ const AddLiquidity = ({
     baseTokenIndex !== idx &&
     Number(inputAmounts[baseTokenIndex]) > 0 &&
     Number(suggestedAmounts[idx]) > 0 &&
-    Number(suggestedAmounts[idx]) !== Number(inputAmounts[idx])
+    Number(suggestedAmounts[idx]) !== Number(inputAmounts[idx]) &&
+    !Number(inputAmounts[idx])
 
   const initInputAmountFromPoolData = useCallback(async () => {
     if (!poolData || inputAmounts.length !== 0) return
@@ -102,6 +104,10 @@ const AddLiquidity = ({
       <Col span={24}>
         <Row justify="center" gutter={[8, 8]}>
           {poolData.mints.map((mint, idx) => {
+            const normalizedWeight = calcNormalizedWeight(
+              poolData.weights,
+              poolData.weights[idx],
+            )
             return (
               <Col span={24} key={`${mint.toBase58() + idx}`}>
                 <MintInput
@@ -112,6 +118,17 @@ const AddLiquidity = ({
                       ? (value: string) => onUpdateAmount(value, idx)
                       : undefined
                   }
+                  mintLabel={
+                    <Fragment>
+                      <Typography.Text>
+                        <MintSymbol mintAddress={mint.toBase58() || ''} />
+                      </Typography.Text>
+                      <Typography.Text type="secondary">
+                        {util.numeric(normalizedWeight).format('0,0.[0000]%')}
+                      </Typography.Text>
+                    </Fragment>
+                  }
+                  placeholder={suggestedAmounts[idx]}
                   force
                   ratioButton={
                     isVisibleSuggestion(idx) && (

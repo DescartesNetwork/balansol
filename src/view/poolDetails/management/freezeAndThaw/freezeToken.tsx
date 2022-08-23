@@ -55,7 +55,7 @@ export const FreezeToken = ({ poolAddress }: { poolAddress: string }) => {
           <IonIcon name="alert-circle-outline" />
           <Typography.Text type="secondary" style={{ fontSize: 12 }}>
             Freezing tokens will prevent all actions until the tokens has been
-            thawed.
+            unfreezed.
           </Typography.Text>
         </Space>
       </Col>

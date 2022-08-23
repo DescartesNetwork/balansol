@@ -13,7 +13,7 @@ const PoolManagement = ({ poolAddress }: { poolAddress: string }) => {
         <Tabs.TabPane key="weights" tab="Weights">
           <Weight poolAddress={poolAddress} />
         </Tabs.TabPane>
-        <Tabs.TabPane key="freeze-thaw" tab="Freeze/Thaw">
+        <Tabs.TabPane key="freeze-thaw" tab="Freeze/Unfreeze">
           <FreezeAndThaw poolAddress={poolAddress} />
         </Tabs.TabPane>
         <Tabs.TabPane key="fee" tab="Fee">

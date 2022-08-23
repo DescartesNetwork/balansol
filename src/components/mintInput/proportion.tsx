@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { useUI } from '@sentre/senhub'
+import { useTheme } from '@sentre/senhub'
 import { BN } from 'bn.js'
 import { useOracles } from 'hooks/useOracles'
 
@@ -22,9 +22,7 @@ const Proportion = ({
   portionValue,
   onChangeAmount,
 }: ProportionProps) => {
-  const {
-    ui: { theme },
-  } = useUI()
+  const theme = useTheme()
   const { balance, amount: bigintBalance } = useWrapAccountBalance(selectedMint)
   const { undecimalizeMintAmount } = useOracles()
 
