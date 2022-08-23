@@ -44,6 +44,11 @@ const buildOptions = (data: VolumeData[]) => ({
       },
     },
   },
+  tooltip: {
+    trigger: 'item',
+    borderWidth: '1',
+    valueFormatter: (value: any) => '$' + value.toFixed(2),
+  },
   series: [
     {
       data: data.map((value) => value.data),

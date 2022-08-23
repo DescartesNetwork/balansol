@@ -1,7 +1,7 @@
 import { BN } from '@project-serum/anchor'
 import { Col, Row, Space, Typography } from 'antd'
 import MintAmount from 'components/mint/mintAmount'
-import { MintAvatar, MintSymbol } from '@sen-use/components'
+import { MintAvatar, MintSymbol } from '@sen-use/app'
 
 const TokenWillReceive = ({
   mintAddress,

@@ -1,7 +1,7 @@
 import { useState, Fragment, ReactNode } from 'react'
 
 import { Typography, Space } from 'antd'
-import { MintAvatar, MintSymbol } from '@sen-use/components'
+import { MintAvatar, MintSymbol } from '@sen-use/app'
 import IonIcon from '@sentre/antd-ionicon'
 import MintSelection from './mintSelection'
 
@@ -38,11 +38,11 @@ const Selection = ({
         {mintAvatar || <MintAvatar mintAddress={selectedMint} />}
         {mintLabel || (
           <Fragment>
-            <Typography.Text type="secondary">
+            <Typography.Text>
               <MintSymbol mintAddress={selectedMint} />
             </Typography.Text>
             {mints.length ? (
-              <Typography.Text type="secondary">
+              <Typography.Text>
                 <IonIcon name="chevron-down-outline" />
               </Typography.Text>
             ) : null}

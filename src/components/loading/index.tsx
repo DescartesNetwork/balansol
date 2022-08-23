@@ -12,7 +12,7 @@ const Loading = () => {
             <Col>
               <Space direction="vertical" align="center" size={32}>
                 <Spin size="large" />
-                <Typography.Title level={5}>
+                <Typography.Title level={5} style={{ textAlign: 'center' }}>
                   Welcome to Balansol. The application is loading...
                 </Typography.Title>
               </Space>

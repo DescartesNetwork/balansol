@@ -12,7 +12,7 @@ import {
   Button,
 } from 'antd'
 import IonIcon from '@sentre/antd-ionicon'
-import { MintAvatar, MintSymbol } from '@sen-use/components'
+import { MintAvatar, MintSymbol } from '@sen-use/app'
 import PreviewSwap from 'view/swapAndPools/swap/swapInfo'
 
 import { AppDispatch, AppState } from 'model'
@@ -56,7 +56,7 @@ const ConfirmSwap = ({
     try {
       const { txId } = await swap()
       onCancel()
-      dispatch(setSwapState({ bidAmount: '' }))
+      dispatch(setSwapState({ bidAmount: '', askAmount: '' }))
       notifySuccess('Swap', txId)
     } catch (error) {
       notifyError(error)

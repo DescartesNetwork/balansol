@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { BN } from '@project-serum/anchor'
-import { useUI, util } from '@sentre/senhub'
+import { useTheme, util } from '@sentre/senhub'
 
 import { Button, Col, Row, Space, Typography } from 'antd'
 import IonIcon from '@sentre/antd-ionicon'
-import { MintAvatar, MintSymbol } from '@sen-use/components'
+import { MintAvatar, MintSymbol } from '@sen-use/app'
 import NumericInput from 'components/numericInput'
 
 import { calcNormalizedWeight } from 'helper/oracles'
@@ -29,9 +29,7 @@ const Weight = ({ poolAddress }: { poolAddress: string }) => {
   const { mints, weights } = useSelector(
     (state: AppState) => state.pools[poolAddress],
   )
-  const {
-    ui: { theme },
-  } = useUI()
+  const theme = useTheme()
 
   const fetchWeights = useCallback(() => {
     const nextWeights: Record<string, TokenInfo> = {}
@@ -158,7 +156,7 @@ const Weight = ({ poolAddress }: { poolAddress: string }) => {
 
         return (
           <Col span={24} key={addressToken + idx} className="weight">
-            <Row gutter={12} align="middle">
+            <Row gutter={12} align="middle" wrap={false}>
               <Col
                 flex="auto"
                 className={

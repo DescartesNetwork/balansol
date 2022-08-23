@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useMint, util } from '@sentre/senhub'
 
 import { Button, Col, Row, Typography } from 'antd'
-import { MintSymbol } from '@sen-use/components'
+import { MintSymbol } from '@sen-use/app'
 
 import { notifyError, notifySuccess } from 'helper'
 import { PoolCreatingStep } from 'constant'
@@ -105,9 +105,8 @@ const LiquidityInfo = ({
       const { balance } = await getMintBalance(mints[i].toBase58())
       if (Number(amounts[i]) > balance || Number(amounts[i]) <= 0)
         return setDisabledSupply(true)
-
-      return setDisabledSupply(false)
     }
+    return setDisabledSupply(false)
   }, [amounts, getMintBalance, poolData])
 
   useEffect(() => {

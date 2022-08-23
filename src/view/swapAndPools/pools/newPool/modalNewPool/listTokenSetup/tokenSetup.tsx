@@ -1,9 +1,9 @@
 import { Col, Row } from 'antd'
 import WeightControl from './weightControl'
 
-import { useUI } from '@sentre/senhub'
 import { MintSetup } from '../index'
-import { MintSelection } from '@sen-use/components'
+import { MintSelection } from '@sen-use/app'
+import { useTheme } from '@sentre/senhub'
 
 export type TokenSetupProps = {
   tokenList: MintSetup[]
@@ -20,9 +20,7 @@ const TokenSetup = ({
   onRemoveToken,
   id,
 }: TokenSetupProps) => {
-  const {
-    ui: { theme },
-  } = useUI()
+  const theme = useTheme()
 
   const onChangeToken = (addressToken: string) => {
     onChangeTokenInfo(

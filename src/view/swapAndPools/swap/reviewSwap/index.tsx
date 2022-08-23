@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { memo, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import { Button, Col, Row } from 'antd'
@@ -47,4 +47,4 @@ const ReviewSwap = () => {
   )
 }
 
-export default ReviewSwap
+export default memo(ReviewSwap)
