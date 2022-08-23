@@ -43,7 +43,7 @@
   }
 } 
 
-.freezed-token {
+.disable-mask {
   position: absolute;
   height: 100%;
   width: 100%;
@@ -52,6 +52,13 @@
   justify-content: center;
   border-radius: 20px;
   background:rgba(8, 20, 56, 0.7);
+  &.deposit{
+    width: calc(100% - 24px);
+    left: 12px;
+  }
+  &.withdraw{
+    background: none;
+  }
 }
 
 .card-detail-header {
