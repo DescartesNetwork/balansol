@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useDebounce } from 'react-use'
 
-import { useMint } from '@sentre/senhub'
+import { useGetMintDecimals } from '@sentre/senhub'
 import {
   calcOutGivenInSwap,
   calcPriceImpactSwap,
@@ -19,7 +19,7 @@ export const useAllRouteFromBid = (metaRoutes: MetaRoute[]): Route[] => {
   const { activePools } = useBalansolPools()
   const { decimalizeMintAmount } = useOracles()
   const [routes, setRoutes] = useState<Route[]>([])
-  const { getDecimals } = useMint()
+  const getDecimals = useGetMintDecimals()
 
   const computeRouteInfos = useCallback(async () => {
     const routes = []
@@ -33,8 +33,8 @@ export const useAllRouteFromBid = (metaRoutes: MetaRoute[]): Route[] => {
         const poolData = activePools[pool]
         const bidMintInfo = getMintInfo(poolData, bidMint)
         const askMintInfo = getMintInfo(poolData, askMint)
-        const decimalIn = await getDecimals(bidMint)
-        const decimalOut = await getDecimals(askMint)
+        const decimalIn = (await getDecimals({ mintAddress: bidMint })) || 0
+        const decimalOut = (await getDecimals({ mintAddress: askMint })) || 0
 
         const tokenOutAmount = calcOutGivenInSwap(
           bidAmountBN,

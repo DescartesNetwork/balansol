@@ -1,6 +1,6 @@
-import { utils } from '@senswap/sen-js'
-import { useWallet } from '@sentre/senhub'
 import { useMemo } from 'react'
+import { utils } from '@senswap/sen-js'
+import { useWalletBalance } from '@sentre/senhub'
 
 import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
 
@@ -8,9 +8,7 @@ const WSOL_ADDRESS = 'So11111111111111111111111111111111111111112'
 const SOL_DECIMALS = 9
 
 export const useWrapAccountBalance = (mintAddress: string) => {
-  const {
-    wallet: { lamports },
-  } = useWallet()
+  const lamports = useWalletBalance()
 
   const balance = useAccountBalanceByMintAddress(mintAddress)
   const wsol = useAccountBalanceByMintAddress(WSOL_ADDRESS)

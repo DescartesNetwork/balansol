@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { web3, BN } from '@project-serum/anchor'
 import { useJupiter } from '@jup-ag/react-hook'
-import { useWallet, rpc } from '@sentre/senhub'
+import { rpc, useWalletAddress } from '@sentre/senhub'
 import { useDebounce } from 'react-use'
 
 import { AppState } from 'model'
@@ -45,9 +45,7 @@ export const useJupiterAggregator = (): SwapProvider => {
   })
   const { bidMint, askMint, bidAmount, slippageTolerance, isReverse } =
     useSelector((state: AppState) => state.swap)
-  const {
-    wallet: { address: walletAddress },
-  } = useWallet()
+  const walletAddress = useWalletAddress()
   const { decimalizeMintAmount, undecimalizeMintAmount } = useOracles()
   const { exchange, routes, loading } = useJupiter(jupiterProps)
 

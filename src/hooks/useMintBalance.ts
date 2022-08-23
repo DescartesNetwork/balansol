@@ -1,14 +1,18 @@
 import { useCallback } from 'react'
 
-import { useAccount, useMint, useWallet } from '@sentre/senhub'
+import {
+  useAccounts,
+  useGetMintDecimals,
+  useWalletAddress,
+  useWalletBalance,
+} from '@sentre/senhub'
 import { account, utils, DEFAULT_EMPTY_ADDRESS } from '@senswap/sen-js'
 
 export const useMintBalance = () => {
-  const {
-    wallet: { address: walletAddress, lamports },
-  } = useWallet()
-  const { getDecimals } = useMint()
-  const { accounts } = useAccount()
+  const walletAddress = useWalletAddress()
+  const lamports = useWalletBalance()
+  const getDecimals = useGetMintDecimals()
+  const accounts = useAccounts()
 
   const buildResult = (
     mintAddress?: string,
@@ -45,7 +49,7 @@ export const useMintBalance = () => {
           return buildResult(DEFAULT_EMPTY_ADDRESS, lamports, 9)
         }
         const { amount, mint: mintAddress } = accounts[accountAddress] || {}
-        const decimals = await getDecimals(mintAddress)
+        const decimals = await getDecimals({ mintAddress })
         return buildResult(mintAddress, amount, decimals)
       } catch (er) {
         return buildResult()

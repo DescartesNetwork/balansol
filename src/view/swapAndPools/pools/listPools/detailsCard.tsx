@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux'
-import { useWallet, util } from '@sentre/senhub'
+import { useWalletAddress, util } from '@sentre/senhub'
 
 import { Card, Col, Row, Space, Typography } from 'antd'
 import PercentGroupMints from './percentGroupMints'
@@ -16,9 +16,7 @@ export type DetailsCardProps = { poolAddress: string }
 
 const DetailsCard = ({ poolAddress }: DetailsCardProps) => {
   const poolData = useSelector((state: AppState) => state.pools[poolAddress])
-  const {
-    wallet: { address: walletAddress },
-  } = useWallet()
+  const walletAddress = useWalletAddress()
   const { vol24h } = useVolume24h(poolAddress)
   const { pushHistory } = useAppRouter()
 

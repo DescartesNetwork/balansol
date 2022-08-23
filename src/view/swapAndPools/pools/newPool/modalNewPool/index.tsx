@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { useWallet } from '@sentre/senhub'
+import { useWalletAddress } from '@sentre/senhub'
 
 import { Col, Row, Steps, Typography } from 'antd'
 import ListTokenSetup from './listTokenSetup'
@@ -26,20 +26,19 @@ const ModalNewPool = ({ onClose = () => {} }: ModalNewPoolProps) => {
   const pools = useSelector((state: AppState) => state.pools)
   const [currentStep, setCurrentStep] = useState(PoolCreatingStep.setupToken)
   const [poolAddress, setPoolAddress] = useState('')
-
-  const { wallet } = useWallet()
+  const walletAddress = useWalletAddress()
 
   const recoverCreatePoolProcess = useCallback(async () => {
     if (poolAddress) return
     for (const poolAddress in pools) {
       const poolData = pools[poolAddress]
-      if (poolData.authority.toBase58() !== wallet.address) continue
+      if (poolData.authority.toBase58() !== walletAddress) continue
       if (!(poolData.state as PoolState)['uninitialized']) continue
       setCurrentStep(PoolCreatingStep.addLiquidity)
       return setPoolAddress(poolAddress)
     }
     return setPoolAddress('')
-  }, [poolAddress, pools, wallet.address])
+  }, [poolAddress, pools, walletAddress])
 
   useEffect(() => {
     recoverCreatePoolProcess()

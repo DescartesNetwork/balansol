@@ -1,18 +1,18 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Address, BN, web3 } from '@project-serum/anchor'
-import { useMint } from '@sentre/senhub'
+import { useGetMintData } from '@sentre/senhub'
 
 export const useLptSupply = (mintLpt: Address) => {
   const [supply, setSupply] = useState<BN>(new BN(0))
 
-  const { getMint } = useMint()
+  const getMint = useGetMintData()
 
   const fetchLptSupply = useCallback(async () => {
     if (!mintLpt) return setSupply(new BN(0))
-    let address = new web3.PublicKey(mintLpt).toString()
+    let mintAddress = new web3.PublicKey(mintLpt).toString()
     try {
-      const supply = await getMint({ address }).then((data) =>
-        data[address].supply.toString(),
+      const supply = await getMint({ mintAddress }).then((data) =>
+        !!data ? data[mintAddress].supply.toString() : '0',
       )
       return setSupply(new BN(supply))
     } catch (error) {}

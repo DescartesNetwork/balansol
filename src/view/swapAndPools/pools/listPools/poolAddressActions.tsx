@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
-import { useWallet, util } from '@sentre/senhub'
+import { useWalletAddress, util } from '@sentre/senhub'
 import { PoolState } from '@senswap/balancer'
 
 import { Space, Tooltip, Typography } from 'antd'
@@ -14,9 +14,7 @@ export type PoolAddressActionsProps = { poolAddress: string }
 const PoolAddressActions = ({ poolAddress }: PoolAddressActionsProps) => {
   const [copied, setCopied] = useState(false)
   const poolData = useSelector((state: AppState) => state.pools[poolAddress])
-  const {
-    wallet: { address: walletAddress },
-  } = useWallet()
+  const walletAddress = useWalletAddress()
   const state = poolData.state as PoolState
 
   const onCopy = async (e: any) => {

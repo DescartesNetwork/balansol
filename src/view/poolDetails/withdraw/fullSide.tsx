@@ -5,7 +5,7 @@ import {
   createMultiTokenAccountIfNeededTransactions,
   getAnchorProvider,
 } from 'sentre-web3'
-import { useMint, rpc } from '@sentre/senhub'
+import { rpc, useGetMintData } from '@sentre/senhub'
 
 import { Button, Col, Row, Typography } from 'antd'
 import TokenWillReceive from '../tokenWillReceive'
@@ -28,7 +28,7 @@ const WithdrawFullSide = ({
   const [amounts, setAmounts] = useState<BN[]>([])
   const [loading, setLoading] = useState(false)
   const poolData = useSelector((state: AppState) => state.pools[poolAddress])
-  const { getMint } = useMint()
+  const getMint = useGetMintData()
   const { decimalize } = useOracles()
 
   const onSubmit = async () => {
@@ -75,7 +75,7 @@ const WithdrawFullSide = ({
 
   const calcMintReceiveFullSide = useCallback(async () => {
     let minPltAddress = poolData.mintLpt.toBase58()
-    let mintPool = await getMint({ address: minPltAddress })
+    let mintPool = (await getMint({ mintAddress: minPltAddress })) || {}
     let lptSupply = mintPool[minPltAddress]?.supply
     let amount = await decimalize(lptAmount, LPTDECIMALS)
 
