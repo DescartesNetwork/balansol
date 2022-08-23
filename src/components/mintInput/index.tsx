@@ -24,6 +24,7 @@ type MintInputProps = {
   mintAvatar?: ReactNode
   ratioButton?: ReactNode
   mintSelection?: ReactNode
+  footer?: ReactNode
 }
 
 export default function MintInput({
@@ -38,6 +39,7 @@ export default function MintInput({
   unit,
   force, // Validate input with max = balance
   mintSelection,
+  footer,
 }: MintInputProps) {
   const { balance } = useWrapAccountBalance(selectedMint)
 
@@ -122,6 +124,7 @@ export default function MintInput({
           </Col>
         </Row>
       </Col>
+      {footer}
     </Row>
   )
 }

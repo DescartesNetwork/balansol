@@ -105,9 +105,8 @@ const LiquidityInfo = ({
       const { balance } = await getMintBalance(mints[i].toBase58())
       if (Number(amounts[i]) > balance || Number(amounts[i]) <= 0)
         return setDisabledSupply(true)
-
-      return setDisabledSupply(false)
     }
+    return setDisabledSupply(false)
   }, [amounts, getMintBalance, poolData])
 
   useEffect(() => {

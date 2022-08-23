@@ -2,26 +2,26 @@ import { Fragment, useState } from 'react'
 
 import { Button, Modal } from 'antd'
 import IonIcon from '@sentre/antd-ionicon'
-import WithdrawModal from './withdrawModal'
+import DepositModal from './depositModal'
 
-const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
+const Deposit = ({ poolAddress }: { poolAddress: string }) => {
   const [visible, setVisible] = useState(false)
 
   return (
     <Fragment>
-      <Button ghost onClick={() => setVisible(true)} block>
-        Withdraw
+      <Button type="primary" onClick={() => setVisible(true)} block>
+        Deposit
       </Button>
-      {/* Modal withdraw */}
+      {/* Modal deposit */}
       <Modal
         visible={visible}
         onCancel={() => setVisible(false)}
         footer={null}
         destroyOnClose
-        centered
+        centered={true}
         closeIcon={<IonIcon name="close-outline" />}
       >
-        <WithdrawModal
+        <DepositModal
           poolAddress={poolAddress}
           hideModal={() => setVisible(false)}
         />
@@ -30,4 +30,4 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
   )
 }
 
-export default Withdraw
+export default Deposit

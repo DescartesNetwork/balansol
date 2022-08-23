@@ -158,7 +158,7 @@ const Weight = ({ poolAddress }: { poolAddress: string }) => {
 
         return (
           <Col span={24} key={addressToken + idx} className="weight">
-            <Row gutter={12} align="middle">
+            <Row gutter={12} align="middle" wrap={false}>
               <Col
                 flex="auto"
                 className={

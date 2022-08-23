@@ -36,7 +36,7 @@ const PoolAddressActions = ({ poolAddress }: PoolAddressActionsProps) => {
           <IonIcon name="person-outline" />
         </Tooltip>
       )}
-      <Tooltip title={poolAddress}>
+      <Tooltip title={`Pool Address: ${poolAddress}`}>
         <Typography.Text
           type="secondary"
           style={{ cursor: 'pointer' }}
