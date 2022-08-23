@@ -17,7 +17,7 @@ import './index.less'
 
 const Swap = () => {
   const dispatch = useDispatch()
-  const { askMint, bidMint, askAmount, bidAmount } = useSelector(
+  const { askMint, bidMint, askAmount } = useSelector(
     (state: AppState) => state.swap,
   )
   const { pushHistory } = useAppRouter()
@@ -33,8 +33,9 @@ const Swap = () => {
         askMint: bidMint,
         bidMint: askMint,
         bidAmount: askAmount,
-        askAmount: bidAmount,
+        askAmount: '',
         isReverse: false,
+        loading: true,
       }),
     )
   }

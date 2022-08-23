@@ -38,11 +38,11 @@ const Selection = ({
         {mintAvatar || <MintAvatar mintAddress={selectedMint} />}
         {mintLabel || (
           <Fragment>
-            <Typography.Text type="secondary">
+            <Typography.Text>
               <MintSymbol mintAddress={selectedMint} />
             </Typography.Text>
             {mints.length ? (
-              <Typography.Text type="secondary">
+              <Typography.Text>
                 <IonIcon name="chevron-down-outline" />
               </Typography.Text>
             ) : null}

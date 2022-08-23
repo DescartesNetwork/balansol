@@ -1,8 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
-import { useUI } from '@sentre/senhub'
 
-import { Card } from 'antd'
+import { Card, Spin } from 'antd'
 import MintInput from 'components/mintInput'
 import { MintSelection } from '@sen-use/app'
 
@@ -10,12 +9,13 @@ import { AppDispatch, AppState } from 'model'
 import { setSwapState } from 'model/swap.controller'
 import { useAppRouter } from 'hooks/useAppRouter'
 import configs from 'configs'
+import { useTheme } from '@sentre/senhub'
 
 const AskInput = () => {
-  const { askMint, askAmount } = useSelector((state: AppState) => state.swap)
-  const {
-    ui: { theme },
-  } = useUI()
+  const { askMint, askAmount, loading, isReverse, bidAmount } = useSelector(
+    (state: AppState) => state.swap,
+  )
+  const theme = useTheme()
   const dispatch = useDispatch<AppDispatch>()
   const { getAllQuery } = useAppRouter()
   const { ask_mint } = getAllQuery<{ ask_mint: string }>()
@@ -40,21 +40,24 @@ const AskInput = () => {
 
   return (
     <Card bordered={false} className="card-swap" bodyStyle={{ padding: 0 }}>
-      <MintInput
-        amount={askAmount}
-        selectedMint={askMint}
-        onChangeAmount={onChange}
-        ratioButton={null}
-        mintSelection={
-          <MintSelection
-            value={askMint}
-            onChange={(mint) => {
-              dispatch(setSwapState({ askMint: mint })).unwrap()
-            }}
-            style={{ background: theme === 'dark' ? '#394360' : '#F2F4FA' }}
-          />
-        }
-      />
+      <Spin spinning={loading && !isReverse && !!Number(bidAmount)}>
+        <MintInput
+          amount={askAmount}
+          selectedMint={askMint}
+          onChangeAmount={onChange}
+          ratioButton={null}
+          mintSelection={
+            <MintSelection
+              value={askMint}
+              onChange={(mint) => {
+                const loading = askMint !== mint
+                dispatch(setSwapState({ askMint: mint, loading })).unwrap()
+              }}
+              style={{ background: theme === 'dark' ? '#394360' : '#F2F4FA' }}
+            />
+          }
+        />
+      </Spin>
     </Card>
   )
 }

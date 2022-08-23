@@ -25,6 +25,7 @@ type MintInputProps = {
   ratioButton?: ReactNode
   mintSelection?: ReactNode
   footer?: ReactNode
+  placeholder?: string
 }
 
 export default function MintInput({
@@ -40,6 +41,7 @@ export default function MintInput({
   force, // Validate input with max = balance
   mintSelection,
   footer,
+  placeholder = '0',
 }: MintInputProps) {
   const { balance } = useWrapAccountBalance(selectedMint)
 
@@ -75,8 +77,8 @@ export default function MintInput({
             <NumericInput
               bordered={false}
               controls={false}
-              placeholder="0"
-              value={amount}
+              placeholder={String(Number(placeholder))}
+              value={!Number(amount) ? undefined : amount}
               max={force ? balance : undefined}
               onValue={onInput}
               disabled={!onChangeAmount || (force && !balance)}
@@ -90,11 +92,7 @@ export default function MintInput({
           <Col flex="auto" style={{ justifyContent: 'left' }}>
             <Space className="caption">
               <Typography.Text type="secondary">Available:</Typography.Text>
-              <Typography.Text
-                type="secondary"
-                style={{ cursor: 'pointer' }}
-                onClick={() => {}}
-              >
+              <Typography.Text style={{ cursor: 'pointer' }}>
                 {util.numeric(balance).format('0,0.[00]')}
               </Typography.Text>
               <Typography.Text type="secondary">
