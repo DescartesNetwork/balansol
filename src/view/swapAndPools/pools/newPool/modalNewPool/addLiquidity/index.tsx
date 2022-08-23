@@ -1,11 +1,11 @@
 import { Fragment, useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useMint, util } from '@sentre/senhub'
-import { MintSymbol } from '@sen-use/components'
 
 import { Button, Col, Row, Typography } from 'antd'
 import LiquidityInfo from './liquidityInfo'
 import MintInput from 'components/mintInput'
+import { MintSymbol } from '@sen-use/app'
 
 import { PoolCreatingStep } from 'constant'
 import { AppState } from 'model'
