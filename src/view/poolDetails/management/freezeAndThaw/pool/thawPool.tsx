@@ -14,7 +14,7 @@ const ThawPool = ({ poolAddress }: { poolAddress: string }) => {
     try {
       const { thawPool } = window.balansol
       const { txId } = await thawPool(poolAddress)
-      return notifySuccess('Thaw', txId)
+      return notifySuccess('Unfreeze', txId)
     } catch (err) {
       notifyError(err)
     } finally {
@@ -28,7 +28,7 @@ const ThawPool = ({ poolAddress }: { poolAddress: string }) => {
         <CardDescription
           statusColor="error"
           statusContent="Frozen"
-          description="Thaw a pool will active all actions"
+          description="Unfreeze a pool will active all actions"
         />
       </Col>
       <Col span={24}>
@@ -40,7 +40,7 @@ const ThawPool = ({ poolAddress }: { poolAddress: string }) => {
           loading={loading}
           size="large"
         >
-          Thaw Pool
+          Unfreeze Pool
         </Button>
       </Col>
     </Row>

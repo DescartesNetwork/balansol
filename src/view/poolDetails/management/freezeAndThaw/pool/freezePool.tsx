@@ -28,7 +28,7 @@ const FreezePool = ({ poolAddress }: { poolAddress: string }) => {
         <CardDescription
           statusColor="success"
           statusContent="Active"
-          description="Freezing a pool will prevent all actions until the pool has been thawed."
+          description="Freezing a pool will prevent all actions until the pool has been unfreezed."
         />
       </Col>
       <Col span={24}>

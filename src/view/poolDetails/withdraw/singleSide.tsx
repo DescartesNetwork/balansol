@@ -12,17 +12,15 @@ import { AppState } from 'model'
 import { LPTDECIMALS } from 'constant/index'
 import { useOracles } from 'hooks/useOracles'
 import { useLptSupply } from 'hooks/useLptSupply'
-import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
 
 import './index.less'
-
-const WITHDRAW_LIMIT = 0.3
 
 type WithdrawSingleSideProps = {
   lptAmount: string
   poolAddress: string
   mintAddress: string
   onSuccess?: () => void
+  withdrawableMax: number
 }
 
 const WithdrawSingleSide = ({
@@ -30,6 +28,7 @@ const WithdrawSingleSide = ({
   lptAmount,
   mintAddress,
   onSuccess = () => {},
+  withdrawableMax,
 }: WithdrawSingleSideProps) => {
   const [amountReserve, setAmountReserve] = useState<BN>(new BN(0))
   const [impactPrice, setImpactPrice] = useState(0)
@@ -38,17 +37,13 @@ const WithdrawSingleSide = ({
   const poolData = useSelector((state: AppState) => state.pools[poolAddress])
   const { decimalize } = useOracles()
   const { supply } = useLptSupply(poolData.mintLpt)
-  const { balance } = useAccountBalanceByMintAddress(
-    poolData.mintLpt.toBase58(),
-  )
 
-  const isExceedWithdrawLimitation =
-    Number(lptAmount) > balance * WITHDRAW_LIMIT
+  const isExceedWithdrawLimitation = Number(lptAmount) > withdrawableMax
 
   const onSubmit = async () => {
-    if (Number(lptAmount) > balance * WITHDRAW_LIMIT)
+    if (Number(lptAmount) > withdrawableMax)
       return notifyError({
-        message: 'Please input amount less than 30% available supply!',
+        message: 'Please input amount less than 30% Liquidity Provider!',
       })
 
     try {
