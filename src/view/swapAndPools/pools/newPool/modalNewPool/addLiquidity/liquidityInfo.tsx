@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useMint, util } from '@sentre/senhub'
+import { util, tokenProvider } from '@sentre/senhub'
 
 import { Button, Col, Row, Typography } from 'antd'
 import { MintSymbol } from '@sen-use/app'
@@ -31,7 +31,6 @@ const LiquidityInfo = ({
   const [loadingAdd, setLoadingAdd] = useState(false)
   const [loadingClose, setLoadingClose] = useState(false)
   const [disabledSupply, setDisabledSupply] = useState(true)
-  const { tokenProvider } = useMint()
   const { decimalizeMintAmount } = useOracles()
   const { getMintBalance } = useMintBalance()
 
@@ -46,7 +45,7 @@ const LiquidityInfo = ({
       }),
     )
     setTokenPrice(tokensPrice)
-  }, [poolData.mints, tokenProvider])
+  }, [poolData.mints])
 
   useEffect(() => {
     fetchMarketData()

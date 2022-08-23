@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { forceCheck } from '@sentre/react-lazyload'
-import { useMint } from '@sentre/senhub'
+import { tokenProvider } from '@sentre/senhub'
 
 import { AppState } from 'model'
 import { PoolsState } from 'model/pools.controller'
@@ -13,7 +13,6 @@ export const useSearchedPools = (pools: PoolsState) => {
   const searchInput = useSelector(
     (state: AppState) => state.searchPools.searchInput,
   )
-  const { tokenProvider } = useMint()
 
   const search = useCallback(async () => {
     const newPoolsSearch: PoolsState = {}
@@ -40,7 +39,7 @@ export const useSearchedPools = (pools: PoolsState) => {
       .sort()
       .map((poolAddress) => (newPoolsSearch[poolAddress] = pools[poolAddress]))
     setPoolsSearched(newPoolsSearch)
-  }, [pools, searchInput, tokenProvider])
+  }, [pools, searchInput])
 
   useEffect(() => {
     search().then(() => {

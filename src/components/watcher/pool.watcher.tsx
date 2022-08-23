@@ -6,7 +6,7 @@ import {
   useState,
 } from 'react'
 import { useDispatch } from 'react-redux'
-import { useMint } from '@sentre/senhub'
+import { tokenProvider } from '@sentre/senhub'
 
 import Loading from '../loading'
 
@@ -19,7 +19,6 @@ let watchId = 0
 const PoolWatcher: FunctionComponent = (props) => {
   const dispatch = useDispatch<AppDispatch>()
   const [loading, setLoading] = useState(true)
-  const { tokenProvider } = useMint()
 
   // First-time fetching
   const fetchData = useCallback(async () => {
@@ -33,7 +32,7 @@ const PoolWatcher: FunctionComponent = (props) => {
         description: 'Cannot fetch data of pools',
       })
     }
-  }, [dispatch, tokenProvider])
+  }, [dispatch])
 
   // Watch account changes
   const watchData = useCallback(async () => {

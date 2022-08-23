@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux'
-import { Infix, useInfix, useWallet } from '@sentre/senhub'
+import { Infix, useInfix, useWalletAddress } from '@sentre/senhub'
 
 import { Button, Col, Row } from 'antd'
 
@@ -18,9 +18,7 @@ const PoolDetails = () => {
   const { getQuery, pushHistory } = useAppRouter()
   const poolAddress = getQuery('pool') || ''
   const poolData = useSelector((state: AppState) => state.pools[poolAddress])
-  const {
-    wallet: { address: walletAddress },
-  } = useWallet()
+  const walletAddress = useWalletAddress()
   const infix = useInfix()
 
   if (!poolData || !poolAddress) return <PoolNotFound />

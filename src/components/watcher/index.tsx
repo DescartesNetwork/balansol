@@ -5,7 +5,7 @@ import {
   useEffect,
   useState,
 } from 'react'
-import { useWallet } from '@sentre/senhub'
+import { useWalletAddress } from '@sentre/senhub'
 import Balancer, { getAnchorProvider } from '@senswap/balancer'
 
 import configs from 'configs'
@@ -13,9 +13,7 @@ import PoolWatcher from './pool.watcher'
 
 export const AppWatcher: FunctionComponent = (props) => {
   const [loading, setLoading] = useState(true)
-  const {
-    wallet: { address },
-  } = useWallet()
+  const address = useWalletAddress()
 
   const watchWallet = useCallback(() => {
     if (!address) return

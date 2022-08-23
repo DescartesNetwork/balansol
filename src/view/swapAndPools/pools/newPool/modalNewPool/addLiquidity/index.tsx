@@ -1,6 +1,6 @@
 import { Fragment, useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { useMint, util } from '@sentre/senhub'
+import { tokenProvider, util } from '@sentre/senhub'
 
 import { Button, Col, Row, Typography } from 'antd'
 import LiquidityInfo from './liquidityInfo'
@@ -28,7 +28,6 @@ const AddLiquidity = ({
   const [baseTokenIndex, setBaseTokenIndex] = useState(0)
   const poolData = useSelector((state: AppState) => state.pools[poolAddress])
   const { undecimalizeMintAmount } = useOracles()
-  const { tokenProvider } = useMint()
 
   const isVisibleSuggestion = (idx: number) =>
     baseTokenIndex !== idx &&
