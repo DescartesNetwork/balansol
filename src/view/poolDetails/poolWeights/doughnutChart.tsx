@@ -1,4 +1,4 @@
-import { util } from '@sentre/senhub'
+import { useTheme, util } from '@sentre/senhub'
 import ReactEChartsCore from 'echarts-for-react/lib/core'
 import * as echarts from 'echarts/core'
 import { PieChart } from 'echarts/charts'
@@ -8,7 +8,6 @@ import {
   LegendComponent,
 } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
-import { useUI } from '@sentre/senhub'
 
 echarts.use([
   TitleComponent,
@@ -87,9 +86,7 @@ const STYLE = {
 }
 
 const DoughnutChart = ({ data }: { data: PoolWeightData[] }) => {
-  const {
-    ui: { theme },
-  } = useUI()
+  const theme = useTheme()
 
   return (
     <ReactEChartsCore

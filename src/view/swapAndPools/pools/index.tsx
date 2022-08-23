@@ -1,4 +1,4 @@
-import { useUI } from '@sentre/senhub'
+import { Infix, useInfix } from '@sentre/senhub'
 import { Col, Row } from 'antd'
 
 import ListPools from './listPools'
@@ -6,11 +6,9 @@ import New from './newPool'
 import Search from './search'
 
 const Pools = () => {
-  const {
-    ui: { width },
-  } = useUI()
+  const infix = useInfix()
 
-  const isMobile = width < 768
+  const isMobile = infix < Infix.md
 
   return (
     <Row gutter={[12, 12]} justify="center" align="middle">

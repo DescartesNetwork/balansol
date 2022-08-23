@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux'
-import { useUI, useWallet } from '@sentre/senhub'
+import { Infix, useInfix, useWallet } from '@sentre/senhub'
 
 import { Button, Col, Row } from 'antd'
 
@@ -21,16 +21,14 @@ const PoolDetails = () => {
   const {
     wallet: { address: walletAddress },
   } = useWallet()
-  const {
-    ui: { width },
-  } = useUI()
+  const infix = useInfix()
 
   if (!poolData || !poolAddress) return <PoolNotFound />
 
   const isOwner = walletAddress === poolData.authority.toBase58()
-  const isMobile = width < 768
+  const isMobile = infix < Infix.md
   return (
-    <Row justify="center">
+    <Row justify="center" style={{ paddingBottom: 12 }}>
       <Col lg={20} md={24} style={{ maxWidth: !isMobile ? 930 : '' }}>
         <Row gutter={[24, 24]}>
           <Col span={24}>
