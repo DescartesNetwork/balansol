@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { util } from '@sentre/senhub'
-import { MintSymbol, useGetMintPrice } from '@sen-use/app'
+import { rpc, useWalletAddress, util } from '@sentre/senhub'
+import { MintPrice, MintSymbol, useGetMintPrice } from '@sen-use/app'
+import { getAnchorProvider } from 'sentre-web3'
 
-import { Button, Col, Row, Typography } from 'antd'
+import { Button, Col, Row, Space, Typography } from 'antd'
 
 import { notifyError, notifySuccess } from 'helper'
 import { PoolCreatingStep } from 'constant'
@@ -34,6 +35,7 @@ const LiquidityInfo = ({
   const { decimalizeMintAmount } = useOracles()
   const { getMintBalance } = useMintBalance()
   const getPrice = useGetMintPrice()
+  const walletAddress = useWalletAddress()
 
   const fetchMarketData = useCallback(async () => {
     const tokensPrice = await Promise.all(
@@ -49,19 +51,29 @@ const LiquidityInfo = ({
   const onAddLiquidity = async () => {
     try {
       setLoadingAdd(true)
-      let lastTxID = ''
+      const txs: any[] = []
       for (const idx in poolData.mints) {
         const mintAddress = poolData.mints[idx]
         if (!poolData.reserves[idx].isZero()) continue
         const amount = await decimalizeMintAmount(amounts[idx], mintAddress)
-        const { txId } = await window.balansol.initializeJoin(
+        const { transaction } = await window.balansol.initializeJoin(
           poolAddress,
           mintAddress,
           amount,
+          false,
         )
-        lastTxID = txId
+        txs.push({
+          tx: transaction,
+          signers: [],
+        })
       }
-      notifySuccess('Fund pool', lastTxID)
+      const anchorProvider = getAnchorProvider(
+        rpc,
+        walletAddress,
+        window.sentre.wallet,
+      )
+      const txIds = await anchorProvider.sendAll(txs)
+      notifySuccess('Fund pool', txIds[txIds.length])
       setCurrentStep(PoolCreatingStep.confirmCreatePool)
     } catch (error) {
       notifyError(error)
@@ -114,19 +126,17 @@ const LiquidityInfo = ({
           {poolData.mints.map((mint, idx) => {
             const mintValue = Number(amounts[idx]) * (tokenPrice[idx] || 0)
             return (
-              <Col span={24}>
+              <Col span={24} key={mint.toBase58()}>
                 <Row key={idx}>
                   <Col flex={1}>
-                    <Typography.Text type="secondary">
-                      <MintSymbol mintAddress={mint.toBase58()} />
-                    </Typography.Text>
-                    <Typography.Text type="secondary">
-                      (
-                      {tokenPrice[idx]
-                        ? util.numeric(tokenPrice[idx]).format('$0,0.[0000]')
-                        : '--'}
-                      )
-                    </Typography.Text>
+                    <Space>
+                      <Typography.Text type="secondary">
+                        <MintSymbol mintAddress={mint.toBase58()} />
+                      </Typography.Text>
+                      <Typography.Text type="secondary">
+                        (<MintPrice mintAddress={mint} />)
+                      </Typography.Text>
+                    </Space>
                   </Col>
                   <Col>
                     <Typography.Text>
