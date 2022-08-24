@@ -26,7 +26,6 @@ const ModalNewPool = ({ onClose = () => {} }: ModalNewPoolProps) => {
   const pools = useSelector((state: AppState) => state.pools)
   const [currentStep, setCurrentStep] = useState(PoolCreatingStep.setupToken)
   const [poolAddress, setPoolAddress] = useState('')
-
   const walletAddress = useWalletAddress()
 
   const recoverCreatePoolProcess = useCallback(async () => {

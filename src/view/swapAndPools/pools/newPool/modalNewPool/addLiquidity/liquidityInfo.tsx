@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { util, tokenProvider } from '@sentre/senhub'
+import { util } from '@sentre/senhub'
+import { MintSymbol, useGetMintPrice } from '@sen-use/app'
 
 import { Button, Col, Row, Typography } from 'antd'
-import { MintSymbol } from '@sen-use/app'
 
 import { notifyError, notifySuccess } from 'helper'
 import { PoolCreatingStep } from 'constant'
@@ -27,25 +27,20 @@ const LiquidityInfo = ({
 }: LiquidityInfoProps) => {
   const poolData = useSelector((state: AppState) => state.pools[poolAddress])
   const dispatch = useDispatch<AppDispatch>()
-  const [tokenPrice, setTokenPrice] = useState<(CgkData | null)[]>([])
+  const [tokenPrice, setTokenPrice] = useState<number[]>([])
   const [loadingAdd, setLoadingAdd] = useState(false)
   const [loadingClose, setLoadingClose] = useState(false)
   const [disabledSupply, setDisabledSupply] = useState(true)
   const { decimalizeMintAmount } = useOracles()
   const { getMintBalance } = useMintBalance()
+  const getPrice = useGetMintPrice()
 
   const fetchMarketData = useCallback(async () => {
     const tokensPrice = await Promise.all(
-      poolData.mints.map(async (mint) => {
-        const token = await tokenProvider.findByAddress(mint.toBase58())
-        const ticket = token?.extensions?.coingeckoId
-        if (!ticket) return null
-        const cgkData = await util.fetchCGK(ticket)
-        return cgkData
-      }),
+      poolData.mints.map(async (mint) => getPrice(mint)),
     )
     setTokenPrice(tokensPrice)
-  }, [poolData.mints])
+  }, [getPrice, poolData.mints])
 
   useEffect(() => {
     fetchMarketData()
@@ -93,7 +88,7 @@ const LiquidityInfo = ({
     let total = 0
     amounts.forEach((amount, idx) => {
       if (!poolData.reserves[idx].isZero()) return
-      total += Number(amount) * (tokenPrice[idx]?.price || 0)
+      total += Number(amount) * (tokenPrice[idx] || 0)
     })
     return total
   }, [amounts, poolData.reserves, tokenPrice])
@@ -117,8 +112,7 @@ const LiquidityInfo = ({
       <Col span={24}>
         <Row gutter={[12, 12]}>
           {poolData.mints.map((mint, idx) => {
-            const mintValue =
-              Number(amounts[idx]) * (tokenPrice[idx]?.price || 0)
+            const mintValue = Number(amounts[idx]) * (tokenPrice[idx] || 0)
             return (
               <Col span={24}>
                 <Row key={idx}>
@@ -128,10 +122,8 @@ const LiquidityInfo = ({
                     </Typography.Text>
                     <Typography.Text type="secondary">
                       (
-                      {tokenPrice[idx]?.price
-                        ? util
-                            .numeric(tokenPrice[idx]?.price)
-                            .format('$0,0.[0000]')
+                      {tokenPrice[idx]
+                        ? util.numeric(tokenPrice[idx]).format('$0,0.[0000]')
                         : '--'}
                       )
                     </Typography.Text>

@@ -9,12 +9,11 @@ export const useLptSupply = (mintLpt: Address) => {
 
   const fetchLptSupply = useCallback(async () => {
     if (!mintLpt) return setSupply(new BN(0))
-    let address = new web3.PublicKey(mintLpt).toString()
+    let mintAddress = new web3.PublicKey(mintLpt).toString()
     try {
-      const supply = await getMint({ mintAddress: address }).then((data) => {
-        if (data) return data[address].supply.toString()
-        return ''
-      })
+      const supply = await getMint({ mintAddress }).then((data) =>
+        !!data ? data[mintAddress].supply.toString() : '0',
+      )
       return setSupply(new BN(supply))
     } catch (error) {}
   }, [getMint, mintLpt])

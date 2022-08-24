@@ -1,11 +1,11 @@
 import { Fragment, useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { tokenProvider, util } from '@sentre/senhub'
+import { useGetMintDecimals, util } from '@sentre/senhub'
+import { MintSymbol, useGetMintPrice } from '@sen-use/app'
 
 import { Button, Col, Row, Typography } from 'antd'
 import LiquidityInfo from './liquidityInfo'
 import MintInput from 'components/mintInput'
-import { MintSymbol } from '@sen-use/app'
 
 import { PoolCreatingStep } from 'constant'
 import { AppState } from 'model'
@@ -28,6 +28,8 @@ const AddLiquidity = ({
   const [baseTokenIndex, setBaseTokenIndex] = useState(0)
   const poolData = useSelector((state: AppState) => state.pools[poolAddress])
   const { undecimalizeMintAmount } = useOracles()
+  const getPrice = useGetMintPrice()
+  const getDecimals = useGetMintDecimals()
 
   const isVisibleSuggestion = (idx: number) =>
     baseTokenIndex !== idx &&
@@ -64,34 +66,27 @@ const AddLiquidity = ({
     setInputAmounts(newAmounts)
     // handle suggestion for other tokens
     const { mints, weights } = poolData
-    const baseToken = await tokenProvider.findByAddress(
-      mints[baseIdx].toBase58(),
-    )
-    const baseTicket = baseToken?.extensions?.coingeckoId
-    if (!baseTicket) return null
-    const baseTokenCGKData = await util.fetchCGK(baseTicket)
-    if (!baseTokenCGKData.price) return null
+    const price = await getPrice(mints[baseIdx])
+    if (!price) return null
+
     const baseNormalizedWeight = calcNormalizedWeight(
       weights,
       weights[baseTokenIndex],
     )
-
     const newSuggestAmounts = await Promise.all(
       mints.map(async (mint, index) => {
         if (baseIdx === index) return ''
-        const appliedToken = await tokenProvider.findByAddress(mint.toBase58())
-        const appliedTicket = appliedToken?.extensions?.coingeckoId
-        if (!appliedTicket) return ''
-        const appliedTokenCGKData = await util.fetchCGK(appliedTicket)
-        if (!appliedTokenCGKData.price) return ''
+        const price = await getPrice(mint)
+        if (!price) return ''
         const appliedNormalizedWeight = calcNormalizedWeight(
           weights,
           weights[index],
         )
+        const decimals = await getDecimals({ mintAddress: mint.toBase58() })
         const suggestedAmount = (
-          (baseTokenCGKData.price * Number(amount) * baseNormalizedWeight) /
-          (appliedTokenCGKData.price * appliedNormalizedWeight)
-        ).toFixed(appliedToken.decimals)
+          (price * Number(amount) * baseNormalizedWeight) /
+          (price * appliedNormalizedWeight)
+        ).toFixed(decimals)
 
         return suggestedAmount
       }),

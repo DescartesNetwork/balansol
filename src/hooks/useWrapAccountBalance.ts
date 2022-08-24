@@ -1,6 +1,6 @@
+import { useMemo } from 'react'
 import { utils } from '@senswap/sen-js'
 import { useWalletBalance } from '@sentre/senhub'
-import { useMemo } from 'react'
 
 import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
 
