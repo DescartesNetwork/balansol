@@ -79,14 +79,15 @@ const AddLiquidity = ({
         if (baseIdx === index) return ''
         const price = await getPrice(mint)
         if (!price) return ''
+
         const appliedNormalizedWeight = calcNormalizedWeight(
           weights,
           weights[index],
         )
         const decimals = await getDecimals({ mintAddress: mint.toBase58() })
         const suggestedAmount = (
-          (basePrice * Number(amount) * baseNormalizedWeight) /
-          (price * appliedNormalizedWeight)
+          ((basePrice * Number(amount)) / baseNormalizedWeight) *
+          (appliedNormalizedWeight / price)
         ).toFixed(decimals)
 
         return suggestedAmount
