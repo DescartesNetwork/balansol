@@ -126,7 +126,7 @@ const LiquidityInfo = ({
           {poolData.mints.map((mint, idx) => {
             const mintValue = Number(amounts[idx]) * (tokenPrice[idx] || 0)
             return (
-              <Col span={24}>
+              <Col span={24} key={mint.toBase58()}>
                 <Row key={idx}>
                   <Col flex={1}>
                     <Space>
