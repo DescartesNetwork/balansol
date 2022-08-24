@@ -51,10 +51,7 @@ export const COLUMNS_CONFIG = [
     render: (value: number, poolData: PoolInfo) => {
       return (
         <Typography.Text>
-          $
-          {util
-            .numeric(value)
-            .format(`0,0.[${'0'.repeat(poolData.token.decimal || 9)}]`)}
+          {util.numeric(value).format(`$0,0.[0000]`)}
         </Typography.Text>
       )
     },
