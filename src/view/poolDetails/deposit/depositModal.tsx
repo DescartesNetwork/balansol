@@ -6,7 +6,7 @@ import React, {
   useState,
 } from 'react'
 import { useSelector } from 'react-redux'
-import { useMint, util } from '@sentre/senhub'
+import { useGetMintDecimals, util } from '@sentre/senhub'
 import BN from 'bn.js'
 
 import { MintSymbol } from '@sen-use/app/dist'
@@ -38,7 +38,7 @@ const DepositModal = ({ poolAddress, hideModal }: DepositModalProps) => {
   const [impactPrice, setImpactPrice] = useState(0)
   const { supply } = useLptSupply(poolData.mintLpt)
   const { decimalizeMintAmount, undecimalizeMintAmount } = useOracles()
-  const { getDecimals } = useMint()
+  const getDecimals = useGetMintDecimals()
   const { getMintBalance } = useMintBalance()
 
   const onChange = (idx: number, value: string) => {
@@ -82,7 +82,8 @@ const DepositModal = ({ poolAddress, hideModal }: DepositModalProps) => {
     let amountIns: BN[] = []
     let decimalIns: number[] = []
     for (let i in amounts) {
-      const decimalIn = await getDecimals(mints[i].toBase58())
+      const decimalIn =
+        (await getDecimals({ mintAddress: mints[i].toBase58() })) || 0
       const amountBn = await decimalizeMintAmount(amounts[i], mints[i])
       amountIns.push(amountBn)
       decimalIns.push(decimalIn)
@@ -129,7 +130,8 @@ const DepositModal = ({ poolAddress, hideModal }: DepositModalProps) => {
 
   const onApplySuggestion = async (index: number) => {
     const { reserves, mints } = poolData
-    const mintDecimal = await getDecimals(mints[index].toBase58())
+    const mintDecimal =
+      (await getDecimals({ mintAddress: mints[index].toBase58() })) || 0
     const baseBalance = await undecimalizeMintAmount(
       reserves[baseTokenIndex],
       mints[baseTokenIndex],
