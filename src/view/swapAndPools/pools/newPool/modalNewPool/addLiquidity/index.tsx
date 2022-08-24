@@ -1,11 +1,11 @@
 import { Fragment, useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useGetMintDecimals, util } from '@sentre/senhub'
-import { MintSymbol, useGetMintPrice } from '@sen-use/app'
 
 import { Button, Col, Row, Typography } from 'antd'
 import LiquidityInfo from './liquidityInfo'
 import MintInput from 'components/mintInput'
+import { MintSymbol, useGetMintPrice } from '@sen-use/app'
 
 import { PoolCreatingStep } from 'constant'
 import { AppState } from 'model'
@@ -66,13 +66,14 @@ const AddLiquidity = ({
     setInputAmounts(newAmounts)
     // handle suggestion for other tokens
     const { mints, weights } = poolData
-    const price = await getPrice(mints[baseIdx])
-    if (!price) return null
+    const basePrice = await getPrice(mints[baseIdx])
 
+    if (!basePrice) return null
     const baseNormalizedWeight = calcNormalizedWeight(
       weights,
       weights[baseTokenIndex],
     )
+
     const newSuggestAmounts = await Promise.all(
       mints.map(async (mint, index) => {
         if (baseIdx === index) return ''
@@ -84,7 +85,7 @@ const AddLiquidity = ({
         )
         const decimals = await getDecimals({ mintAddress: mint.toBase58() })
         const suggestedAmount = (
-          (price * Number(amount) * baseNormalizedWeight) /
+          (basePrice * Number(amount) * baseNormalizedWeight) /
           (price * appliedNormalizedWeight)
         ).toFixed(decimals)
 
