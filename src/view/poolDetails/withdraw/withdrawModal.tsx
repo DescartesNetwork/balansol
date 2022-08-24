@@ -119,7 +119,7 @@ const WithdrawModal = ({ poolAddress, hideModal }: WithdrawModalProps) => {
             !isSelectedAll && (
               <Col span={24}>
                 <Tag
-                  style={{ width: '100%', border: 'none', padding: 5 }}
+                  style={{ width: '100%', border: 'none', padding: '5px 16px' }}
                   color="red"
                 >
                   <Space align="start" size={4}>

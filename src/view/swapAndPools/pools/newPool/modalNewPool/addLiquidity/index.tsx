@@ -2,7 +2,7 @@ import { Fragment, useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useGetMintDecimals, util } from '@sentre/senhub'
 
-import { Button, Col, Row, Typography } from 'antd'
+import { Button, Col, Row, Tooltip, Typography } from 'antd'
 import LiquidityInfo from './liquidityInfo'
 import MintInput from 'components/mintInput'
 import { MintSymbol, useGetMintPrice } from '@sen-use/app'
@@ -35,8 +35,7 @@ const AddLiquidity = ({
     baseTokenIndex !== idx &&
     Number(inputAmounts[baseTokenIndex]) > 0 &&
     Number(suggestedAmounts[idx]) > 0 &&
-    Number(suggestedAmounts[idx]) !== Number(inputAmounts[idx]) &&
-    !Number(inputAmounts[idx])
+    Number(suggestedAmounts[idx]) !== Number(inputAmounts[idx])
 
   const initInputAmountFromPoolData = useCallback(async () => {
     if (!poolData || inputAmounts.length !== 0) return
@@ -129,13 +128,15 @@ const AddLiquidity = ({
                   force
                   ratioButton={
                     isVisibleSuggestion(idx) && (
-                      <Button
-                        type="text"
-                        onClick={() => onApplySuggestion(idx)}
-                        style={{ marginRight: -15 }}
-                      >
-                        Apply suggestion
-                      </Button>
+                      <Tooltip title={suggestedAmounts[idx]}>
+                        <Button
+                          type="text"
+                          onClick={() => onApplySuggestion(idx)}
+                          style={{ marginRight: -15 }}
+                        >
+                          Apply suggestion
+                        </Button>
+                      </Tooltip>
                     )
                   }
                 />
