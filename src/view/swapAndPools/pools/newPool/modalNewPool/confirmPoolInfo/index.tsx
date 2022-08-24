@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { util, tokenProvider } from '@sentre/senhub'
+import { useGetMintPrice } from '@sen-use/app'
 
 import { Button, Card, Col, Row, Table, Typography } from 'antd'
 import { MintSetup } from '../index'
@@ -23,10 +24,12 @@ export type ConfirmPoolInfoProps = {
 }
 
 const ConfirmPoolInfo = ({ onConfirm, poolAddress }: ConfirmPoolInfoProps) => {
+  const poolData = useSelector((state: AppState) => state.pools[poolAddress])
   const [poolInfo, setPoolInfo] = useState<PoolInfo[]>([])
   const [poolTotalValue, setPoolTotalValue] = useState(0)
-  const poolData = useSelector((state: AppState) => state.pools[poolAddress])
+
   const { undecimalizeMintAmount } = useOracles()
+  const getPrice = useGetMintPrice()
 
   const getPoolInfo = useCallback(async () => {
     if (!poolData) {
@@ -44,24 +47,8 @@ const ConfirmPoolInfo = ({ onConfirm, poolAddress }: ConfirmPoolInfoProps) => {
           reserves[idx],
           mintAddress,
         )
-        const ticket = tokenInfo?.extensions?.coingeckoId
-        if (!ticket) {
-          return {
-            token: {
-              addressToken: mintAddress,
-              weight: util
-                .numeric(mintInfo.normalizedWeight)
-                .format('0,0.[00]'),
-              isLocked: true,
-              decimal: tokenInfo?.decimals,
-            },
-            amount: Number(mintAmount),
-            value: 0,
-          }
-        }
-        const cgkData = await util.fetchCGK(ticket)
-
-        let mintTotalValue = Number(mintAmount) * (cgkData?.price || 0)
+        const price = await getPrice(mintAddress)
+        let mintTotalValue = Number(mintAmount) * (price || 0)
         totalValue += mintTotalValue
         return {
           token: {
@@ -77,7 +64,7 @@ const ConfirmPoolInfo = ({ onConfirm, poolAddress }: ConfirmPoolInfoProps) => {
     )
     setPoolTotalValue(totalValue)
     setPoolInfo(newPoolInfo)
-  }, [poolData, undecimalizeMintAmount])
+  }, [getPrice, poolData, undecimalizeMintAmount])
 
   useEffect(() => {
     getPoolInfo()
