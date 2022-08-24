@@ -4,7 +4,7 @@ import { utils } from '@senswap/sen-js'
 import { util } from '@sentre/senhub'
 import BN from 'bn.js'
 
-import { Button, Col, Row, Space, Typography } from 'antd'
+import { Button, Col, Row, Space, Tag, Typography } from 'antd'
 import IonIcon from '@sentre/antd-ionicon'
 import { MintSymbol } from '@sen-use/app'
 import MintInput from 'components/mintInput'
@@ -118,17 +118,20 @@ const WithdrawModal = ({ poolAddress, hideModal }: WithdrawModalProps) => {
           footer={
             !isSelectedAll && (
               <Col span={24}>
-                <Space align="start" size={4}>
-                  <IonIcon
-                    name="warning-outline"
-                    style={{ fontSize: '16px', color: '#f2323f' }}
-                  />
-                  <Typography.Text type="danger">
+                <Tag
+                  style={{ width: '100%', border: 'none', padding: 5 }}
+                  color="red"
+                >
+                  <Space align="start" size={4}>
+                    <IonIcon
+                      name="warning-outline"
+                      style={{ fontSize: '16px', color: '#f2323f' }}
+                    />
                     You cannot withdraw more than 30% (
                     {util.numeric(withdrawableMax).format('0,0.[00]a')}) of the
                     Liquidity Provider
-                  </Typography.Text>
-                </Space>
+                  </Space>
+                </Tag>
               </Col>
             )
           }
