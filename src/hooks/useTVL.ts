@@ -19,6 +19,7 @@ export const useTVL = (poolAddress = '') => {
       let totalValueLocked = 0
       for (let i in poolData.reserves) {
         const tokenPrice = await getPrice(poolData.mints[i])
+        if (!tokenPrice) continue
         const reserver = await undecimalizeMintAmount(
           poolData.reserves[i],
           poolData.mints[i],
