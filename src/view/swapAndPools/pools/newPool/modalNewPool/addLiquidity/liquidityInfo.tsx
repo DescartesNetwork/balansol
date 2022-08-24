@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { tokenProvider, util } from '@sentre/senhub'
+import { util, tokenProvider } from '@sentre/senhub'
 
 import { Button, Col, Row, Typography } from 'antd'
 import { MintSymbol } from '@sen-use/app'

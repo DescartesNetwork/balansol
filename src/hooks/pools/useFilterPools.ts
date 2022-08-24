@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { useAccount, useWalletAddress } from '@sentre/senhub'
+import { useAccounts, useWalletAddress } from '@sentre/senhub'
 import { utils, web3 } from '@project-serum/anchor'
 
 import { AppState } from 'model'
@@ -14,7 +14,7 @@ export const useFilterPools = () => {
     (state: AppState) => state.searchPools.filterPool,
   )
   const walletAddress = useWalletAddress()
-  const { accounts } = useAccount()
+  const accounts = useAccounts()
 
   const checkIsYourPool = useCallback(
     (address: string) => pools[address].authority.toBase58() === walletAddress,

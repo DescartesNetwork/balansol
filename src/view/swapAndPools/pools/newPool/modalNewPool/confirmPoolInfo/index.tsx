@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { util } from '@sentre/senhub'
+import { util, tokenProvider } from '@sentre/senhub'
 
 import { Button, Card, Col, Row, Table, Typography } from 'antd'
 import { MintSetup } from '../index'
 import { COLUMNS_CONFIG } from './columns'
 
-import { tokenProvider } from '@sentre/senhub'
 import { AppState } from 'model'
 import { useOracles } from 'hooks/useOracles'
 import { getMintInfo } from 'helper/oracles'

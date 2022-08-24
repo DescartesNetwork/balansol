@@ -29,8 +29,8 @@
     "web-vitals": "^2.1.1"
   },
   "scripts": {
-    "start": "craco start",
-    "build": "craco build",
+    "start": "REACT_APP_HMR=$PWD/src/bootstrap.app.tsx craco start",
+    "build": "craco --max_old_space_size=4096 build",
     "test": "craco test",
     "predeploy": "yarn build",
     "deploy": "gh-pages -d build"

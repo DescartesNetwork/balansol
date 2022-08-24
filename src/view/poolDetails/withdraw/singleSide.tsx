@@ -71,7 +71,9 @@ const WithdrawSingleSide = ({
 
     for (let i in poolData.reserves) {
       const decimalIn =
-        (await getDecimals({ mintAddress: poolData.mints[i].toBase58() })) || 0
+        (await getDecimals({
+          mintAddress: poolData.mints[i].toBase58(),
+        })) || 0
       decimals.push(decimalIn)
     }
     const indexTokenOut = poolData.mints

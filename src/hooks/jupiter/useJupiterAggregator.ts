@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { web3, BN } from '@project-serum/anchor'
 import { useJupiter } from '@jup-ag/react-hook'
-import { rpc, useWalletAddress } from '@sentre/senhub'
+import { useWalletAddress, rpc } from '@sentre/senhub'
 import { useDebounce } from 'react-use'
 
 import { AppState } from 'model'

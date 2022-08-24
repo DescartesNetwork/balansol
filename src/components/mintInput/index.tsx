@@ -109,8 +109,9 @@ export default function MintInput({
               ratioButton
             ) : (
               <Space>
-                {PROPORTIONS.map((val) => (
+                {PROPORTIONS.map((val, key) => (
                   <Proportion
+                    key={key}
                     amount={amount}
                     selectedMint={selectedMint}
                     portionValue={val}

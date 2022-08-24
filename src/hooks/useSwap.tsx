@@ -71,7 +71,7 @@ const Provider = ({ children }: { children: ReactNode }) => {
 
   const updateRouteFromBid = useCallback(() => {
     if (isReverse) return
-    if (balansol.loading || jupiter.loading)
+    if (balansol.loading || (jupiter.loading && net === 'mainnet'))
       return dispatch(setSwapState({ askAmount: '0', loading: true }))
 
     let askAmountBalansol = balansol.askAmount.toString()
@@ -80,8 +80,7 @@ const Provider = ({ children }: { children: ReactNode }) => {
     let platformSwap = balansol
     if (
       Number(askAmountJup) > 1.05 * Number(askAmountBalansol) &&
-      net === 'mainnet' &&
-      balansol.route.length
+      net === 'mainnet'
     )
       platformSwap = jupiter
     // Update platform
