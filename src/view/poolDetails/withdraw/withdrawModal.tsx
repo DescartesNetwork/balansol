@@ -2,10 +2,8 @@ import React, { useState, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { utils } from '@senswap/sen-js'
 import { util } from '@sentre/senhub'
-import BN from 'bn.js'
 
-import { Button, Col, Row, Space, Tag, Typography } from 'antd'
-import IonIcon from '@sentre/antd-ionicon'
+import { Button, Checkbox, Col, Row, Space, Tag, Typography } from 'antd'
 import { MintSymbol } from '@sen-use/app'
 import MintInput from 'components/mintInput'
 import { PoolAvatar } from 'components/pools/poolAvatar'
@@ -31,17 +29,19 @@ const WithdrawModal = ({ poolAddress, hideModal }: WithdrawModalProps) => {
   }, [poolData])
   const [selectedMints, setSelectedMints] = useState<string[]>(mints)
   const [lptAmount, setLptAmount] = useState('')
+  const [acceptWithdrawLimit, setAcceptWithdrawLimit] = useState(true)
   const { balance } = useAccountBalanceByMintAddress(
     poolData.mintLpt.toBase58(),
   )
   const { supply } = useLptSupply(poolData.mintLpt)
 
-  const withdrawableMax = useMemo(() => {
-    const thirtyPercentSupply = supply.mul(new BN(30)).div(new BN(100))
-    return Number(
-      utils.undecimalize(BigInt(thirtyPercentSupply.toString()), LPTDECIMALS),
-    )
+  const supplyInNumber = useMemo(() => {
+    return Number(utils.undecimalize(BigInt(supply.toString()), LPTDECIMALS))
   }, [supply])
+
+  const recommendedMax = useMemo(() => {
+    return Number(((supplyInNumber * 30) / 100).toFixed(9))
+  }, [supplyInNumber])
 
   const isSelectedAll = selectedMints.length === poolData?.mints.length
 
@@ -106,7 +106,11 @@ const WithdrawModal = ({ poolAddress, hideModal }: WithdrawModalProps) => {
               <Button
                 onClick={() =>
                   setLptAmount(
-                    `${withdrawableMax > balance ? balance : withdrawableMax}`,
+                    `${
+                      !acceptWithdrawLimit || recommendedMax > balance
+                        ? balance
+                        : recommendedMax
+                    }`,
                   )
                 }
                 size="small"
@@ -125,17 +129,22 @@ const WithdrawModal = ({ poolAddress, hideModal }: WithdrawModalProps) => {
                     padding: '5px 16px',
                     whiteSpace: 'unset',
                   }}
-                  color="red"
+                  color="gold"
                 >
-                  <Space align="start" size={4}>
-                    <IonIcon
-                      name="warning-outline"
-                      style={{ fontSize: '16px', color: '#f2323f' }}
+                  <Space align="start" size={6}>
+                    <Checkbox
+                      className="warning-checkbox"
+                      checked={acceptWithdrawLimit}
+                      onChange={() =>
+                        setAcceptWithdrawLimit(!acceptWithdrawLimit)
+                      }
                     />
                     <Typography.Text style={{ color: 'inherit' }}>
-                      You cannot withdraw more than 30% (
-                      {util.numeric(withdrawableMax).format('0,0.[00]a')}) of
-                      the Liquidity Pool
+                      Prevent to withdraw more than 30% (Currently{' '}
+                      {util
+                        .numeric(Number(lptAmount) / supplyInNumber)
+                        .format('0,0.[00]%')}
+                      ) of the total LP.
                     </Typography.Text>
                   </Space>
                 </Tag>
@@ -158,7 +167,9 @@ const WithdrawModal = ({ poolAddress, hideModal }: WithdrawModalProps) => {
             lptAmount={lptAmount}
             onSuccess={hideModal}
             withdrawableMax={
-              withdrawableMax > balance ? balance : withdrawableMax
+              !acceptWithdrawLimit || recommendedMax > balance
+                ? balance
+                : recommendedMax
             }
           />
         )}
