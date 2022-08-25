@@ -87,7 +87,7 @@ export default function MintInput({
         </Row>
       </Col>
       <Col span={24}>
-        <Row align="middle" style={{ width: '100%' }}>
+        <Row align="middle" style={{ width: '100%' }} wrap={false}>
           {/* Available  */}
           <Col flex="auto" style={{ justifyContent: 'left' }}>
             <Space className="caption">

@@ -10,7 +10,7 @@ import { useGetMintDecimals, util } from '@sentre/senhub'
 import BN from 'bn.js'
 
 import { MintSymbol } from '@sen-use/app/dist'
-import { Button, Checkbox, Col, Row, Typography } from 'antd'
+import { Button, Checkbox, Col, Row, Tooltip, Typography } from 'antd'
 import MintInput from 'components/mintInput'
 
 import { notifyError, notifySuccess, priceImpactColor } from 'helper'
@@ -30,6 +30,7 @@ const DepositModal = ({ poolAddress, hideModal }: DepositModalProps) => {
   const [amounts, setAmounts] = useState<string[]>(
     new Array(poolData.mints.length).fill('0'),
   )
+  const [suggestedAmounts, setSuggestAmounts] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
   const [disable, setDisable] = useState(true)
   const [isAcceptHighPrice, setIsAcceptHighPrice] = useState(false)
@@ -41,11 +42,45 @@ const DepositModal = ({ poolAddress, hideModal }: DepositModalProps) => {
   const getDecimals = useGetMintDecimals()
   const { getMintBalance } = useMintBalance()
 
-  const onChange = (idx: number, value: string) => {
+  const isVisibleSuggestion = (idx: number) =>
+    baseTokenIndex !== idx &&
+    Number(amounts[baseTokenIndex]) > 0 &&
+    Number(suggestedAmounts[idx]) > 0 &&
+    Number(suggestedAmounts[idx]) !== Number(amounts[idx])
+
+  const onChange = async (idx: number, value: string) => {
+    const { reserves, mints } = poolData
     let newAmounts = [...amounts]
     newAmounts[idx] = value
     setAmounts(newAmounts)
     setBaseTokenIndex(idx)
+    setAmounts(newAmounts)
+
+    const newSuggestAmounts = await Promise.all(
+      mints.map(async (mint, index) => {
+        if (idx === index) return ''
+        const mintDecimal =
+          (await getDecimals({ mintAddress: mints[index].toBase58() })) || 0
+        const baseBalance = await undecimalizeMintAmount(
+          reserves[baseTokenIndex],
+          mints[baseTokenIndex],
+        )
+        const currentBalance = await undecimalizeMintAmount(
+          reserves[index],
+          mints[index],
+        )
+
+        const balanceRatio =
+          (Number(baseBalance) + Number(value)) / Number(baseBalance)
+        const suggestedAmount = (
+          Number(currentBalance) *
+          (balanceRatio - 1)
+        ).toFixed(mintDecimal)
+
+        return suggestedAmount
+      }),
+    )
+    setSuggestAmounts(newSuggestAmounts)
   }
 
   const onSubmit = async () => {
@@ -129,26 +164,8 @@ const DepositModal = ({ poolAddress, hideModal }: DepositModalProps) => {
   }, [checkAmountIns])
 
   const onApplySuggestion = async (index: number) => {
-    const { reserves, mints } = poolData
-    const mintDecimal =
-      (await getDecimals({ mintAddress: mints[index].toBase58() })) || 0
-    const baseBalance = await undecimalizeMintAmount(
-      reserves[baseTokenIndex],
-      mints[baseTokenIndex],
-    )
-    const currentBalance = await undecimalizeMintAmount(
-      reserves[index],
-      mints[index],
-    )
-    const balanceRatio =
-      (Number(baseBalance) + Number(amounts[baseTokenIndex])) /
-      Number(baseBalance)
-    const suggestedAmount = (
-      Number(currentBalance) *
-      (balanceRatio - 1)
-    ).toFixed(mintDecimal)
-    let newAmounts = [...amounts]
-    newAmounts[index] = String(suggestedAmount)
+    const newAmounts = [...amounts]
+    newAmounts[index] = suggestedAmounts[index]
     setAmounts(newAmounts)
   }
 
@@ -173,24 +190,25 @@ const DepositModal = ({ poolAddress, hideModal }: DepositModalProps) => {
                   onChangeAmount={(amount) => onChange(index, amount)}
                   mintLabel={
                     <Fragment>
-                      <Typography.Text type="secondary">
+                      <Typography.Text>
                         <MintSymbol mintAddress={mintAddress || ''} />
                       </Typography.Text>
-                      <Typography.Text type="secondary">
+                      <Typography.Text>
                         {util.numeric(normalizedWeight).format('0,0.[0000]%')}
                       </Typography.Text>
                     </Fragment>
                   }
                   ratioButton={
-                    baseTokenIndex !== index &&
-                    Number(amounts[baseTokenIndex]) > 0 && (
-                      <Button
-                        type="text"
-                        style={{ marginRight: -15 }}
-                        onClick={() => onApplySuggestion(index)}
-                      >
-                        Apply suggestion
-                      </Button>
+                    isVisibleSuggestion(index) && (
+                      <Tooltip title={suggestedAmounts[index]}>
+                        <Button
+                          type="text"
+                          style={{ marginRight: -15 }}
+                          onClick={() => onApplySuggestion(index)}
+                        >
+                          Apply suggestion
+                        </Button>
+                      </Tooltip>
                     )
                   }
                 />

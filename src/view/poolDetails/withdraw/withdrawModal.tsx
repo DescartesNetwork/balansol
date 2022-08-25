@@ -119,7 +119,12 @@ const WithdrawModal = ({ poolAddress, hideModal }: WithdrawModalProps) => {
             !isSelectedAll && (
               <Col span={24}>
                 <Tag
-                  style={{ width: '100%', border: 'none', padding: '5px 16px' }}
+                  style={{
+                    width: '100%',
+                    border: 'none',
+                    padding: '5px 16px',
+                    whiteSpace: 'unset',
+                  }}
                   color="red"
                 >
                   <Space align="start" size={4}>
@@ -127,9 +132,11 @@ const WithdrawModal = ({ poolAddress, hideModal }: WithdrawModalProps) => {
                       name="warning-outline"
                       style={{ fontSize: '16px', color: '#f2323f' }}
                     />
-                    You cannot withdraw more than 30% (
-                    {util.numeric(withdrawableMax).format('0,0.[00]a')}) of the
-                    Liquidity Provider
+                    <Typography.Text style={{ color: 'inherit' }}>
+                      You cannot withdraw more than 30% (
+                      {util.numeric(withdrawableMax).format('0,0.[00]a')}) of
+                      the Liquidity Pool
+                    </Typography.Text>
                   </Space>
                 </Tag>
               </Col>
