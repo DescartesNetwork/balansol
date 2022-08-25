@@ -69,7 +69,6 @@ const DepositModal = ({ poolAddress, hideModal }: DepositModalProps) => {
           reserves[index],
           mints[index],
         )
-
         const balanceRatio =
           (Number(baseBalance) + Number(value)) / Number(baseBalance)
         const suggestedAmount = (
