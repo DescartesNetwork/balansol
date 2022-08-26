@@ -40,8 +40,14 @@ const WithdrawModal = ({ poolAddress, hideModal }: WithdrawModalProps) => {
   }, [supply])
 
   const recommendedMax = useMemo(() => {
-    return Number(((supplyInNumber * 30) / 100).toFixed(9))
+    return Number(((supplyInNumber * 30) / 100).toFixed(LPTDECIMALS))
   }, [supplyInNumber])
+
+  const maxAmount = useMemo(() => {
+    return !acceptWithdrawLimit || recommendedMax > balance
+      ? balance
+      : recommendedMax
+  }, [acceptWithdrawLimit, balance, recommendedMax])
 
   const isSelectedAll = selectedMints.length === poolData?.mints.length
 
@@ -103,18 +109,7 @@ const WithdrawModal = ({ poolAddress, hideModal }: WithdrawModalProps) => {
           force
           ratioButton={
             !isSelectedAll && (
-              <Button
-                onClick={() =>
-                  setLptAmount(
-                    `${
-                      !acceptWithdrawLimit || recommendedMax > balance
-                        ? balance
-                        : recommendedMax
-                    }`,
-                  )
-                }
-                size="small"
-              >
+              <Button onClick={() => setLptAmount(`${maxAmount}`)} size="small">
                 Max
               </Button>
             )
@@ -131,7 +126,7 @@ const WithdrawModal = ({ poolAddress, hideModal }: WithdrawModalProps) => {
                   }}
                   color="gold"
                 >
-                  <Space align="start" size={6}>
+                  <Space align="center" size={6}>
                     <Checkbox
                       className="warning-checkbox"
                       checked={acceptWithdrawLimit}
@@ -166,11 +161,7 @@ const WithdrawModal = ({ poolAddress, hideModal }: WithdrawModalProps) => {
             mintAddress={selectedMints[0]}
             lptAmount={lptAmount}
             onSuccess={hideModal}
-            withdrawableMax={
-              !acceptWithdrawLimit || recommendedMax > balance
-                ? balance
-                : recommendedMax
-            }
+            withdrawableMax={maxAmount}
           />
         )}
       </Col>

@@ -388,10 +388,6 @@ const calcTokenOutGivenExactLpIn = (
   )
 
   const invariantRatio = (numTotalSupply - numAmountIn) / numTotalSupply
-  // Remove withdraw limit
-  // if (invariantRatio < 0.7) {
-  //   throw new Error('MIN_BPT_IN_FOR_TOKEN_OUT')
-  // }
   // Calculate by how much the token balance has to increase to cause `invariantRatio`
   const balanceRatio = invariantRatio ** (1 / normalizedWeight)
   // Because of rounding up, `balanceRatio` can be greater than one, so we use its complement
