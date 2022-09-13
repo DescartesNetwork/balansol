@@ -39,7 +39,7 @@ const LiquidityInfo = ({
 
   const fetchMarketData = useCallback(async () => {
     const tokensPrice = await Promise.all(
-      poolData.mints.map(async (mint) => getPrice(mint)),
+      poolData.mints.map(async (mint) => (await getPrice(mint)) || 0),
     )
     setTokenPrice(tokensPrice)
   }, [getPrice, poolData.mints])
@@ -107,8 +107,10 @@ const LiquidityInfo = ({
 
   const checkAmountIns = useCallback(async () => {
     const { mints } = poolData
+    console.log('amount: ', amounts)
     for (let i in amounts) {
       const { balance } = await getMintBalance(mints[i].toBase58())
+      console.log('Number(amounts[i])', Number(amounts[i]), balance, i)
       if (Number(amounts[i]) > balance || Number(amounts[i]) <= 0)
         return setDisabledSupply(true)
     }

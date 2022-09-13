@@ -68,10 +68,7 @@ const AddLiquidity = ({
     const basePrice = await getPrice(mints[baseIdx])
 
     if (!basePrice) return null
-    const baseNormalizedWeight = calcNormalizedWeight(
-      weights,
-      weights[baseTokenIndex],
-    )
+    const baseNormalizedWeight = calcNormalizedWeight(weights, weights[baseIdx])
 
     const newSuggestAmounts = await Promise.all(
       mints.map(async (mint, index) => {
