@@ -14,7 +14,7 @@ const Withdraw = ({ poolAddress }: { poolAddress: string }) => {
       </Button>
       {/* Modal withdraw */}
       <Modal
-        visible={visible}
+        open={visible}
         onCancel={() => setVisible(false)}
         footer={null}
         destroyOnClose

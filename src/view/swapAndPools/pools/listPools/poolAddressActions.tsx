@@ -46,7 +46,7 @@ const PoolAddressActions = ({ poolAddress }: PoolAddressActionsProps) => {
           {util.shortenAddress(poolAddress, 3, '...')}
         </Typography.Text>
       </Tooltip>
-      <Tooltip title="Copied" visible={copied}>
+      <Tooltip title="Copied" open={copied}>
         <CopyToClipboard text={poolAddress}>
           <Button
             type="text"

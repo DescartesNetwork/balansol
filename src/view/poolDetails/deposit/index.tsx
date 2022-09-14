@@ -14,7 +14,7 @@ const Deposit = ({ poolAddress }: { poolAddress: string }) => {
       </Button>
       {/* Modal deposit */}
       <Modal
-        visible={visible}
+        open={visible}
         onCancel={() => setVisible(false)}
         footer={null}
         destroyOnClose

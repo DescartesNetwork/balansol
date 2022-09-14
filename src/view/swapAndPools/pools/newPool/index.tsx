@@ -46,7 +46,7 @@ const NewPool = () => {
         {!isInProcess ? 'New Pool' : 'Resume'}
       </Button>
       <Modal
-        visible={visible}
+        open={visible}
         onCancel={() => {
           setVisible(false)
         }}

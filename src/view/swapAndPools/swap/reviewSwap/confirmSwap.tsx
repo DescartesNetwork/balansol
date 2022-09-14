@@ -70,7 +70,7 @@ const ConfirmSwap = ({
       onCancel={onCloseModal}
       closeIcon={<IonIcon name="close" />}
       footer={null}
-      visible={visible}
+      open={visible}
       forceRender
     >
       <Row gutter={[16, 24]}>
