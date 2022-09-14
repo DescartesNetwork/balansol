@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import { MouseEvent, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useWalletAddress, util } from '@sentre/senhub'
 import { PoolState } from '@senswap/balancer'
 
-import { Space, Tooltip, Typography } from 'antd'
+import { Button, Space, Tooltip, Typography } from 'antd'
 import CopyToClipboard from 'react-copy-to-clipboard'
 
 import IonIcon from '@sentre/antd-ionicon'
@@ -17,7 +17,7 @@ const PoolAddressActions = ({ poolAddress }: PoolAddressActionsProps) => {
   const walletAddress = useWalletAddress()
   const state = poolData.state as PoolState
 
-  const onCopy = async (e: any) => {
+  const onCopy = async (e: MouseEvent<HTMLElement>) => {
     setCopied(true)
     setTimeout(() => setCopied(false), 1500)
     e.stopPropagation()
@@ -46,11 +46,14 @@ const PoolAddressActions = ({ poolAddress }: PoolAddressActionsProps) => {
           {util.shortenAddress(poolAddress, 3, '...')}
         </Typography.Text>
       </Tooltip>
-      <Tooltip title="Copied" visible={copied}>
-        <CopyToClipboard text={poolAddress} onCopy={onCopy}>
-          <span onClick={onCopy} style={{ cursor: 'pointer' }}>
-            <IonIcon name="copy-outline" />
-          </span>
+      <Tooltip title="Copied" open={copied}>
+        <CopyToClipboard text={poolAddress}>
+          <Button
+            type="text"
+            icon={<IonIcon name="copy-outline" />}
+            onClick={onCopy}
+            style={{ width: 'unset', height: 'unset' }}
+          />
         </CopyToClipboard>
       </Tooltip>
     </Space>

@@ -20,8 +20,7 @@ export const useSearchedPools = (pools: PoolsState) => {
     const listTokenAddress = listTokenInfo.map((info) => info.address)
 
     const listPoolsAddress = Object.keys(pools).filter((poolAddress) => {
-      if (!searchInput || !pools || !pools || searchInput.length < KEY_SIZE)
-        return true
+      if (!searchInput || !pools || searchInput.length < KEY_SIZE) return true
       const poolData = pools[poolAddress]
       const { mintLpt, mints } = poolData
       // Search poolAddress

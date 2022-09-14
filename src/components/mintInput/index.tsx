@@ -78,7 +78,7 @@ export default function MintInput({
               bordered={false}
               controls={false}
               placeholder={String(Number(placeholder))}
-              value={!Number(amount) ? undefined : amount}
+              value={amount}
               max={force ? balance : undefined}
               onValue={onInput}
               disabled={!onChangeAmount || (force && !balance)}
@@ -87,7 +87,7 @@ export default function MintInput({
         </Row>
       </Col>
       <Col span={24}>
-        <Row align="middle" style={{ width: '100%' }}>
+        <Row align="middle" style={{ width: '100%' }} wrap={false}>
           {/* Available  */}
           <Col flex="auto" style={{ justifyContent: 'left' }}>
             <Space className="caption">

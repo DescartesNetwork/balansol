@@ -39,7 +39,7 @@ const LiquidityInfo = ({
 
   const fetchMarketData = useCallback(async () => {
     const tokensPrice = await Promise.all(
-      poolData.mints.map(async (mint) => getPrice(mint)),
+      poolData.mints.map(async (mint) => (await getPrice(mint)) || 0),
     )
     setTokenPrice(tokensPrice)
   }, [getPrice, poolData.mints])

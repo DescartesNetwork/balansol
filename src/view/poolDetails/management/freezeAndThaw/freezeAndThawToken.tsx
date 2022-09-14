@@ -68,11 +68,16 @@ export const FreezeAndThawToken = ({
           {mints.map((mint, idx) => {
             const mintState = getMintState(mintActions, idx)
             return (
-              <Col span={8}>
+              <Col span={12}>
                 <Button block onClick={() => onClickToken(idx)} size="large">
-                  <Space size={8}>
+                  <Space size={8} className="individual-token">
                     <MintAvatar mintAddress={mint.toBase58()} />
-                    <MintSymbol mintAddress={mint.toBase58()} />
+                    <Typography.Text
+                      ellipsis
+                      style={{ fontWeight: 400, fontSize: 14 }}
+                    >
+                      <MintSymbol mintAddress={mint.toBase58()} />
+                    </Typography.Text>
                   </Space>
                   {mintState === 'paused' && (
                     <Space className="disable-mask" align="center">

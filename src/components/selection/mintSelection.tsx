@@ -25,7 +25,7 @@ const MintSelection = ({
 
   return (
     <Modal
-      visible={visible}
+      open={visible}
       closeIcon={<IonIcon name="close" />}
       footer={null}
       destroyOnClose={true}

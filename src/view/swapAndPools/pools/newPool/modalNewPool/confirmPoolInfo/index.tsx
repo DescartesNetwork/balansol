@@ -79,6 +79,7 @@ const ConfirmPoolInfo = ({ onConfirm, poolAddress }: ConfirmPoolInfoProps) => {
           rowClassName={(_, index) => (index % 2 ? 'odd-row' : 'even-row')}
           pagination={false}
           rowKey={(record) => record.token.addressToken}
+          scroll={{ x: true }}
         />
       </Col>
       <Col span={24}>

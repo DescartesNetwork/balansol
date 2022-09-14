@@ -144,16 +144,18 @@ const ListTokenSetup = ({ setCurrentStep }: ListTokenSetupProps) => {
               />
             </Col>
           ))}
-          <Col span={24}>
-            <Button
-              icon={<IonIcon name="add-outline" />}
-              onClick={onAddNewToken}
-              ghost
-              disabled={loading}
-            >
-              Add a token
-            </Button>
-          </Col>
+          {listMintSetting.length < TOKEN_LIMIT && (
+            <Col span={24}>
+              <Button
+                icon={<IonIcon name="add-outline" />}
+                onClick={onAddNewToken}
+                ghost
+                disabled={loading}
+              >
+                Add a token
+              </Button>
+            </Col>
+          )}
         </Row>
       </Col>
       <Col span={24}>

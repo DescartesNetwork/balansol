@@ -36,7 +36,7 @@ const Info = ({ title, value }: InfoProps) => {
         <Typography.Text style={{ wordBreak: 'break-all' }}>
           {value}
         </Typography.Text>
-        <Tooltip title="Copied" visible={copied} arrowPointAtCenter>
+        <Tooltip title="Copied" open={copied} arrowPointAtCenter>
           <CopyToClipboard text={value}>
             <Button
               type="text"
