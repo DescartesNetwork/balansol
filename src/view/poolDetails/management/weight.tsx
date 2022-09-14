@@ -10,7 +10,7 @@ import NumericInput from 'components/numericInput'
 
 import { calcNormalizedWeight } from 'helper/oracles'
 import { AppState } from 'model'
-import { TokenInfo } from 'view/swapAndPools/pools/newPool'
+import { TokenInfo } from 'view/pools/newPool'
 import { notifyError, notifySuccess } from 'helper'
 import { GENERAL_NORMALIZED_NUMBER } from 'constant'
 

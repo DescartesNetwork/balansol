@@ -3,7 +3,7 @@ import { Fragment } from 'react'
 import { Divider, Space } from 'antd'
 import IonIcon from '@sentre/antd-ionicon'
 import { MintAvatar } from '@sen-use/app'
-import PoweredByJupiter from '../../../../components/poweredByJupiter'
+import PoweredByJupiter from 'components/poweredByJupiter'
 
 import { SwapPlatform, useSwap } from 'hooks/useSwap'
 

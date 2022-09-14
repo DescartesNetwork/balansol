@@ -1,11 +1,11 @@
-import { Net } from '@sentre/senhub'
+import { rpc, Net } from '@sentre/senhub'
+import { Connection } from '@solana/web3.js'
 
 /**
  * Contructor
  */
 type Conf = {
-  spltAddress: string
-  splataAddress: string
+  connection: Connection
   balancerAddress: string
   taxmanAddress: string
   bidMintDefault: string
@@ -17,8 +17,7 @@ const conf: Record<Net, Conf> = {
    * Development configurations
    */
   devnet: {
-    spltAddress: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
-    splataAddress: 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL',
+    connection: new Connection(rpc),
     balancerAddress: 'Hxzy3cvdPz48RodavEN4P41TZp4g6Vd1kEMaUiZMof1u',
     taxmanAddress: 'GJLqpmDxxrV9xruee2vFvEoTho7VVQHRtuHH8nfoAE54',
     bidMintDefault: '2z6Ci38Cx6PyL3tFrT95vbEeB3izqpoLdxxBkJk2euyj',
@@ -29,8 +28,7 @@ const conf: Record<Net, Conf> = {
    * Staging configurations
    */
   testnet: {
-    spltAddress: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
-    splataAddress: 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL',
+    connection: new Connection(rpc),
     balancerAddress: '',
     taxmanAddress: '',
     bidMintDefault: '',
@@ -41,8 +39,7 @@ const conf: Record<Net, Conf> = {
    * Production configurations
    */
   mainnet: {
-    spltAddress: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
-    splataAddress: 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL',
+    connection: new Connection(rpc),
     balancerAddress: 'D3BBjqUdCYuP18fNvvMbPAZ8DpcRi4io2EsYHQawJDag',
     taxmanAddress: '9doo2HZQEmh2NgfT3Yx12M89aoBheycYqH1eaR5gKb3e',
     bidMintDefault: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',

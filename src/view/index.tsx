@@ -1,37 +1,43 @@
 import { useEffect } from 'react'
 import { Redirect, Route, Switch } from 'react-router-dom'
 import { web3 } from '@project-serum/anchor'
-import { Connection } from '@solana/web3.js'
 import { JupiterProvider } from '@jup-ag/react-hook'
-import { rpc, useWalletAddress, useSetBackground } from '@sentre/senhub'
+import {
+  useWalletAddress,
+  useSetBackground,
+  useAppRoute,
+  util,
+} from '@sentre/senhub'
 
-import { Empty } from 'antd'
+import { Col, Empty, Row } from 'antd'
+import Navigation from './navigation'
 import PoolDetails from './poolDetails'
-import SwapAndPools from './swapAndPools'
+import Swap from './swap'
+import Pools from './pools'
 
+import configs from 'configs'
 import { AppWatcher } from 'components/watcher'
-import { useAppRouter } from 'hooks/useAppRouter'
 import BalansolPoolsProvider from 'hooks/useBalansolPools'
 import BalansolProvider from 'hooks/useSwap'
-import configs from 'configs'
 
 import BG_DARK from 'static/images/background-dark.png'
 import BG_LIGHT from 'static/images/background-light.png'
-
 import './index.less'
 
-const connection = new Connection(rpc)
+const {
+  sol: { connection, balancerAddress },
+} = configs
 
 const View = () => {
   const setBackground = useSetBackground()
-  const { appRoute } = useAppRouter()
+  const { extend } = useAppRoute()
   const walletAddress = useWalletAddress()
 
   useEffect(() => {
     setBackground({ light: BG_LIGHT, dark: BG_DARK })
   }, [setBackground])
 
-  if (!configs.sol.balancerAddress)
+  if (!util.isAddress(balancerAddress))
     return (
       <Empty
         description={'Coming soon.'}
@@ -49,18 +55,29 @@ const View = () => {
         {/* Balansol provider context */}
         <BalansolPoolsProvider>
           <BalansolProvider>
-            <Switch>
-              <Route path={`${appRoute}/details`} component={PoolDetails} />
-              <Route path={`${appRoute}/swap`}>
-                <SwapAndPools tabId={'swap'} />
-              </Route>
-              <Route path={`${appRoute}/pools`}>
-                <SwapAndPools tabId={'pools'} />
-              </Route>
-              <Route path="*">
-                <Redirect to={`${appRoute}/swap`} />
-              </Route>
-            </Switch>
+            <Row gutter={[24, 24]}>
+              <Col span={24}>
+                <Navigation />
+              </Col>
+              <Col span={24}>
+                <Switch>
+                  <Route path={extend('/details')} component={PoolDetails} />
+                  <Route path={extend('/swap')}>
+                    <Swap />
+                  </Route>
+                  <Route path={extend('/pools')}>
+                    <Pools />
+                  </Route>
+                  <Route path={extend('/farms')}>
+                    <Redirect to="/app/sen_farming_v2?autoInstall=true" />
+                  </Route>
+                  <Redirect
+                    from="*"
+                    to={extend('/swap', { absolutePath: true })}
+                  />
+                </Switch>
+              </Col>
+            </Row>
           </BalansolProvider>
         </BalansolPoolsProvider>
       </AppWatcher>
