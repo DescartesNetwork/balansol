@@ -7,11 +7,6 @@ export enum PoolTabs {
   Community = 'community-pools',
 }
 
-export const HOMEPAGE_TABS: Record<string, string> = {
-  Swap: 'swap',
-  Pools: 'pools',
-}
-
 export enum QueryParams {
   details = 'details',
   address = 'poolAddress',

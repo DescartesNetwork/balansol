@@ -1,5 +1,3 @@
-import React from 'react'
-
 import SentreIcon from 'static/images/sen.svg'
 import { Avatar, Space, Tooltip, Typography } from 'antd'
 

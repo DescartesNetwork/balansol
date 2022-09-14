@@ -1,33 +1,6 @@
-.swap-and-pool {
-  padding: 4px !important;
-  border-radius: 30px !important;
-  box-shadow: none !important;
-  background: #e6eaf5 !important;
-  .balansol-segmented {
-    &-item {
-      border-radius: 30px !important;
-      color: #6b7288 !important;
-      &-selected {
-        color: #081438 !important;
-        box-shadow: unset !important;
-        background: #f2f4fa !important;
-        font-weight: 700 !important;
-      }
-      &-label {
-        padding: 2px 11px !important;
-        min-width: 90px;
-      }
-    }
-    &-thumb-motion-appear {
-      border-radius: 30px !important;
-      background: #f2f4fa !important;
-    }
-  }
-}
-
 .balansol-tabs-card {
-  &.freeze-thaw{
-    .balansol-tabs-nav{
+  &.freeze-thaw {
+    .balansol-tabs-nav {
       &::before {
         display: none;
       }
@@ -36,12 +9,12 @@
       border: none !important;
       border-radius: 8px !important;
       margin-right: 10px !important;
-      &-active{
+      &-active {
         background: rgba(99, 224, 179, 0.1) !important;
       }
     }
   }
-} 
+}
 
 .disable-mask {
   position: absolute;
@@ -51,12 +24,12 @@
   left: 0px;
   justify-content: center;
   border-radius: 20px;
-  background:rgba(8, 20, 56, 0.7);
-  &.deposit{
+  background: rgba(8, 20, 56, 0.7);
+  &.deposit {
     width: calc(100% - 24px);
     left: 12px;
   }
-  &.withdraw{
+  &.withdraw {
     background: none;
   }
 }
@@ -82,37 +55,20 @@
   .balansol-checkbox-inner {
     border-color: #e6b33d !important;
   }
-  
 }
 
 #dark {
-  .swap-and-pool {
-    background: #081438 !important;
-    .balansol-segmented {
-      &-item {
-        &-selected {
-          background: #212c4c !important;
+  .balansol-tabs-card {
+    &.freeze-thaw {
+      .balansol-btn {
+        &:active,
+        &:focus {
+          border-color: #394360 !important;
+          color: #f3f3f5 !important;
         }
-        &-label {
-          color: #f4f4f5 !important;
-        }
-      }
-
-      &-thumb-motion-appear {
-        background: #212c4c !important;
       }
     }
   }
-  .balansol-tabs-card {
-    &.freeze-thaw{
-      .balansol-btn {
-        &:active, &:focus {
-          border-color: #394360 !important;
-          color: #F3F3F5 !important
-        }
-      }
-    }
-  } 
 }
 
 #light {
