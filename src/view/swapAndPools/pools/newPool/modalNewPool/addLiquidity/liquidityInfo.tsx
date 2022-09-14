@@ -107,10 +107,8 @@ const LiquidityInfo = ({
 
   const checkAmountIns = useCallback(async () => {
     const { mints } = poolData
-    console.log('amount: ', amounts)
     for (let i in amounts) {
       const { balance } = await getMintBalance(mints[i].toBase58())
-      console.log('Number(amounts[i])', Number(amounts[i]), balance, i)
       if (Number(amounts[i]) > balance || Number(amounts[i]) <= 0)
         return setDisabledSupply(true)
     }

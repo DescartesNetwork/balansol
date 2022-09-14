@@ -30,9 +30,7 @@ export const useSearchedPools = (pools: PoolsState) => {
       // Search Token
       for (const mint in mints) {
         if (listTokenAddress.includes(mints[mint].toBase58())) return true
-        if (searchInput.includes(mints[mint].toBase58())) {
-          return true
-        }
+        if (searchInput.includes(mints[mint].toBase58())) return true
       }
       return false
     })

@@ -29,9 +29,7 @@ export const useStat = (poolAddress: string) => {
       )
       // Calc Roi -> APY
       let totalVolume = 0
-      console.log('dailyInfo: ', dailyInfo)
       for (const date in dailyInfo) totalVolume += dailyInfo[date].volume
-      console.log('totalVolume: ', totalVolume, TVL)
       const roi = totalVolume / TVL
       const apy = Math.pow(1 + roi / 100, 365) - 1
 
