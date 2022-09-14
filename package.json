@@ -6,8 +6,6 @@
     "@project-serum/anchor": "^0.24.2",
     "@reduxjs/toolkit": "^1.8.0",
     "@sen-use/app": "^3.2.4",
-    "@sen-use/components": "^3.2.4",
-    "@sen-use/web3": "^3.2.4",
     "@senswap/balancer": "^1.0.1",
     "@senswap/sen-js": "^1.4.0",
     "@sentre/antd-ionicon": "^1.0.46",
@@ -29,7 +27,7 @@
     "web-vitals": "^2.1.1"
   },
   "scripts": {
-    "start": "REACT_APP_HMR=$PWD/src/bootstrap.app.tsx craco start",
+    "start": "craco start",
     "build": "craco --max_old_space_size=4096 build",
     "test": "craco test",
     "predeploy": "yarn build",
