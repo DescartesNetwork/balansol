@@ -2280,6 +2280,17 @@
     react-use "^17.4.0"
     web3.storage "^4.2.0"
 
+"@sen-use/web3@^3.3.1":
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/@sen-use/web3/-/web3-3.3.1.tgz#d2073a37c0267d56d337c5885116e47ceb603f7c"
+  integrity sha512-G8/3jFf9vfetNMGeVFlQOZnIuLMERUDP8LoU5WiJwyl3VB51BmhKTYELj1LbYZyfcDL2HJzXeOvX/C/tEpJTcg==
+  dependencies:
+    "@project-serum/anchor" "^0.24.2"
+    "@solana/web3.js" "^1.50.0"
+    bn.js "^5.2.1"
+    bs58 "^5.0.0"
+    web3.storage "^4.2.0"
+
 "@senswap/balancer@^1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@senswap/balancer/-/balancer-1.0.1.tgz#a71c477bb462506d8589964cd2f36eaa9af478a1"
@@ -2578,6 +2589,27 @@
     secp256k1 "^4.0.2"
     superstruct "^0.14.2"
     tweetnacl "^1.0.3"
+
+"@solana/web3.js@^1.50.0":
+  version "1.61.1"
+  resolved "https://registry.yarnpkg.com/@solana/web3.js/-/web3.js-1.61.1.tgz#183339352a69ef3c8db66ee804001ae511d46aea"
+  integrity sha512-rGxK1N/c+bGuY7ehpsT6q1jBzQ+8cmd+rPf7pQbMz0e9aBxI+67c/lBxq+0jOlj19salkT79d8R/OO+JNDyLsg==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+    "@noble/ed25519" "^1.7.0"
+    "@noble/hashes" "^1.1.2"
+    "@noble/secp256k1" "^1.6.3"
+    "@solana/buffer-layout" "^4.0.0"
+    bigint-buffer "^1.1.5"
+    bn.js "^5.0.0"
+    borsh "^0.7.0"
+    bs58 "^4.0.1"
+    buffer "6.0.1"
+    fast-stable-stringify "^1.0.0"
+    jayson "^3.4.4"
+    node-fetch "2"
+    rpc-websockets "^7.5.0"
+    superstruct "^0.14.2"
 
 "@solana/web3.js@^1.54.0":
   version "1.60.0"

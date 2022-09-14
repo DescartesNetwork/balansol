@@ -6,7 +6,7 @@ import { Col, Row, Segmented, Tooltip } from 'antd'
 
 import './index.less'
 
-export const VISIBLE_ROUTES = ['/swap', '/pools', '/launchpad']
+export const VISIBLE_ROUTES = ['swap', 'pools', 'launchpad']
 export const HOMEPAGE_TABS = [
   { label: 'Swap', value: 'swap', disabled: false },
   { label: 'Pools', value: 'pools', disabled: false },
@@ -19,14 +19,19 @@ export const HOMEPAGE_TABS = [
 ]
 
 const Navigation = () => {
-  const { to, extend } = useAppRoute()
+  const { to } = useAppRoute()
   const { pathname } = useLocation()
 
+  const activeRoute = useMemo(() => {
+    const temp = pathname.split('/')
+    return temp[temp.length - 1]
+  }, [pathname])
   const visible = useMemo(() => {
-    for (const route of VISIBLE_ROUTES)
-      if (pathname.includes(extend(route, { absolutePath: true }))) return true
+    for (const route of VISIBLE_ROUTES) {
+      if (activeRoute === route) return true
+    }
     return false
-  }, [pathname, extend])
+  }, [activeRoute])
 
   if (!visible) return <Fragment />
   return (
@@ -35,6 +40,7 @@ const Navigation = () => {
         <Segmented
           className="swap-and-pool"
           options={HOMEPAGE_TABS}
+          value={activeRoute}
           onChange={(val) => to(`/${val.toString()}`)}
           block
         />

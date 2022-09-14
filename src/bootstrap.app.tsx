@@ -1,6 +1,5 @@
 import { Provider } from 'react-redux'
 import {
-  WalletProvider,
   MintProvider,
   AccountProvider,
   PoolProvider,
@@ -22,17 +21,15 @@ const {
 export const Page = () => {
   return (
     <AntdProvider appId={appId} prefixCls={appId}>
-      <WalletProvider>
-        <AccountProvider>
-          <MintProvider>
-            <PoolProvider>
-              <Provider store={model}>
-                <View />
-              </Provider>
-            </PoolProvider>
-          </MintProvider>
-        </AccountProvider>
-      </WalletProvider>
+      <AccountProvider>
+        <MintProvider>
+          <PoolProvider>
+            <Provider store={model}>
+              <View />
+            </Provider>
+          </PoolProvider>
+        </MintProvider>
+      </AccountProvider>
     </AntdProvider>
   )
 }
