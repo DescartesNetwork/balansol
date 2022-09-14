@@ -26,6 +26,7 @@ const Pools = () => {
       <Col xs={24} md={20} lg={16} xl={12} xxl={8}>
         <ListPools />
       </Col>
+      <Col span={24} />
     </Row>
   )
 }
