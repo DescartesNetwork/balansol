@@ -24,7 +24,7 @@ const NumericInput = ({
 }) => {
   // Handle amount
   const onAmount = useCallback(
-    (val: string | number | string) => {
+    (val: string | number | null) => {
       if (
         val === null ||
         (max && parseFloat(val.toString()) > parseFloat(max.toString()))
@@ -36,7 +36,7 @@ const NumericInput = ({
     [max, onValue],
   )
 
-  const formatterNumber = (val: string | number | undefined) => {
+  const formatterNumber = (val: string | number | undefined | null) => {
     if (!val) return '0'
     let numberFormatted = `${val}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
     const chars = numberFormatted.split('.')
