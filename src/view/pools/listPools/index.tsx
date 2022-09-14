@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { PoolState } from '@senswap/balancer'
 import LazyLoad from '@sentre/react-lazyload'
 
-import { Col, Row } from 'antd'
+import { Col, Row, Spin } from 'antd'
 import DetailsCard from './detailsCard'
 
 import { useFilterPools } from 'hooks/pools/useFilterPools'
@@ -15,26 +15,41 @@ const ListPools = () => {
   const listPools = useSearchedPools(poolsFilter)
   const pools = useMemo(() => Object.keys(listPools), [listPools])
   const [filteredPools, setFilteredPools] = useState(pools)
+  const [loading, setLoading] = useState(false)
 
   const onFilteredPools = useCallback(async () => {
-    if (!pools.length) return setFilteredPools(pools)
-    const nextPools = await Promise.all(
-      Object.keys(listPools).map(async (poolAddress) => {
-        const tvl = await getTVL(listPools[poolAddress])
-        return {
-          poolAddress,
-          tvl,
-        }
-      }),
-    )
-    nextPools.sort((poolA, poolB) => poolB.tvl - poolA.tvl)
-    const result = nextPools.map(({ poolAddress }) => poolAddress)
-    return setFilteredPools(result)
+    try {
+      setLoading(true)
+      if (!pools.length) return setFilteredPools(pools)
+      const nextPools = await Promise.all(
+        Object.keys(listPools).map(async (poolAddress) => {
+          const tvl = await getTVL(listPools[poolAddress])
+          return {
+            poolAddress,
+            tvl,
+          }
+        }),
+      )
+      nextPools.sort((poolA, poolB) => poolB.tvl - poolA.tvl)
+      const result = nextPools.map(({ poolAddress }) => poolAddress)
+      return setFilteredPools(result)
+    } catch (err) {
+      return setFilteredPools(pools)
+    } finally {
+      setLoading(false)
+    }
   }, [getTVL, listPools, pools])
 
   useEffect(() => {
     onFilteredPools()
   }, [onFilteredPools])
+
+  if (loading)
+    return (
+      <Row justify="center">
+        <Spin />{' '}
+      </Row>
+    )
 
   return (
     <Row gutter={[24, 24]}>
