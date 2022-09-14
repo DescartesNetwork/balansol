@@ -53,7 +53,7 @@ const TokenSetup = ({
   }
 
   return (
-    <Row>
+    <Row wrap={false}>
       <Col flex="auto">
         <MintSelection
           value={mintSetup.addressToken}

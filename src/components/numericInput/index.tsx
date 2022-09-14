@@ -36,6 +36,24 @@ const NumericInput = ({
     [max, onValue],
   )
 
+  const formatterNumber = (val: string | number | undefined) => {
+    if (!val) return '0'
+    let numberFormatted = `${val}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    const chars = numberFormatted.split('.')
+    if (chars[1]) return `${chars[0]}.${chars[1].replace(/,/g, '')}`
+    return chars[0]
+  }
+
+  const parserNumber = (val: string | undefined): number => {
+    if (!val) return 0
+    const chars = val.split('.')
+    if (chars[1])
+      return Number.parseFloat(
+        `${chars[0].replace(/\D/g, '')}.${chars[1].replace(/\D/g, '')}`,
+      )
+    return Number.parseFloat(`${chars[0].replace(/\D/g, '')}`)
+  }
+
   return (
     <InputNumber
       {...props}
@@ -49,6 +67,8 @@ const NumericInput = ({
         }
       }}
       decimalSeparator="."
+      formatter={(val) => formatterNumber(val)}
+      parser={parserNumber}
     />
   )
 }

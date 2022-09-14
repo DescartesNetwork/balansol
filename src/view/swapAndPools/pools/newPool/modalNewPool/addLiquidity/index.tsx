@@ -116,7 +116,7 @@ const AddLiquidity = ({
                       <Typography.Text>
                         <MintSymbol mintAddress={mint.toBase58() || ''} />
                       </Typography.Text>
-                      <Typography.Text type="secondary">
+                      <Typography.Text>
                         {util.numeric(normalizedWeight).format('0,0.[0000]%')}
                       </Typography.Text>
                     </Fragment>
