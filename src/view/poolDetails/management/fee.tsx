@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { BN } from '@project-serum/anchor'
+import IonIcon from '@sentre/antd-ionicon'
 
 import { Col, Row, Typography, Button, Tooltip, Space } from 'antd'
 import NumericInput, { InputStyle } from 'components/numericInput'
@@ -8,7 +9,11 @@ import NumericInput, { InputStyle } from 'components/numericInput'
 import { PRECISION } from 'constant'
 import { notifyError, notifySuccess } from 'helper'
 import { AppState } from 'model'
-import IonIcon from '@sentre/antd-ionicon'
+import config from 'configs'
+
+const {
+  sol: { taxmanAddress },
+} = config
 
 const Content = ({
   title,
@@ -16,12 +21,14 @@ const Content = ({
   currentPercent,
   onChangeValue = () => {},
   tooltipContent,
+  disabled,
 }: {
   title: string
   percent: number | string
   currentPercent: number
   onChangeValue?: (percent: string) => void
   tooltipContent: string
+  disabled?: boolean
 }) => (
   <Row gutter={[8, 8]}>
     <Col span={24}>
@@ -51,6 +58,7 @@ const Content = ({
         value={percent}
         styles={{ fontSize: 14 }}
         onValue={onChangeValue}
+        disabled={disabled}
       />
     </Col>
   </Row>
@@ -106,6 +114,7 @@ const Fee = ({ poolAddress }: { poolAddress: string }) => {
           tooltipContent={
             'The portion of fee your pool will pay to Balansol for maintaining the system'
           }
+          disabled={poolData.authority.toBase58() !== taxmanAddress}
         />
       </Col>
       <Col span={24}>

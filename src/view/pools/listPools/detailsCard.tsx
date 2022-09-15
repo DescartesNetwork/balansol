@@ -37,7 +37,7 @@ const DetailsCard = ({ poolAddress }: DetailsCardProps) => {
     >
       <Row style={{ marginBottom: '16px' }}>
         <Col flex="auto">
-          <PoolAvatar size={32} poolAddress={poolAddress} />
+          <PoolAvatar size={32} poolAddress={poolAddress} max={3} />
         </Col>
         <Col>
           <PoolAddressActions poolAddress={poolAddress} />

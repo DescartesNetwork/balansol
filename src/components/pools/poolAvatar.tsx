@@ -24,11 +24,7 @@ export const PoolAvatar = ({
   const poolData = useSelector((state: AppState) => state.pools[poolAddress])
 
   return (
-    <Avatar.Group
-      style={{ display: 'block', whiteSpace: 'nowrap' }}
-      maxCount={max}
-      size={size}
-    >
+    <Avatar.Group style={{ whiteSpace: 'nowrap' }} maxCount={max} size={size}>
       {poolData &&
         poolData.mints.map((mint) => (
           <MintAvatar
