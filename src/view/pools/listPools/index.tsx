@@ -14,13 +14,13 @@ const ListPools = () => {
   const { poolsFilter } = useFilterPools()
   const listPools = useSearchedPools(poolsFilter)
   const pools = useMemo(() => Object.keys(listPools), [listPools])
-  const [filteredPools, setFilteredPools] = useState(pools)
+  const [sortedPools, setSortedPools] = useState(pools)
   const [loading, setLoading] = useState(false)
 
-  const onFilteredPools = useCallback(async () => {
+  const onSortedPools = useCallback(async () => {
     try {
       setLoading(true)
-      if (!pools.length) return setFilteredPools(pools)
+      if (!pools.length) return setSortedPools(pools)
       const nextPools = await Promise.all(
         Object.keys(listPools).map(async (poolAddress) => {
           const tvl = await getTVL(listPools[poolAddress])
@@ -32,28 +32,28 @@ const ListPools = () => {
       )
       nextPools.sort((poolA, poolB) => poolB.tvl - poolA.tvl)
       const result = nextPools.map(({ poolAddress }) => poolAddress)
-      return setFilteredPools(result)
+      return setSortedPools(result)
     } catch (err) {
-      return setFilteredPools(pools)
+      return setSortedPools(pools)
     } finally {
       setLoading(false)
     }
   }, [getTVL, listPools, pools])
 
   useEffect(() => {
-    onFilteredPools()
-  }, [onFilteredPools])
+    onSortedPools()
+  }, [onSortedPools])
 
   if (loading)
     return (
       <Row justify="center">
-        <Spin />{' '}
+        <Spin />
       </Row>
     )
 
   return (
     <Row gutter={[24, 24]}>
-      {filteredPools.map((poolAddress) => {
+      {sortedPools.map((poolAddress) => {
         const poolData = listPools[poolAddress]
         let poolState: PoolState = poolData.state
         if (poolState['uninitialized'] || poolState['deleted']) return null
