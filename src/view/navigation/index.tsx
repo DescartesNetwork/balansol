@@ -10,7 +10,7 @@ export const VISIBLE_ROUTES = ['swap', 'pools', 'launchpad']
 export const HOMEPAGE_TABS = [
   { label: 'Swap', value: 'swap', disabled: false },
   { label: 'Pools', value: 'pools', disabled: false },
-  { label: 'Farms', value: 'farms', disabled: false },
+  // { label: 'Farms', value: 'farms', disabled: false },
   {
     label: <Tooltip title="Comming Soon">Launchpad</Tooltip>,
     value: 'launchpad',
