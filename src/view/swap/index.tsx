@@ -47,7 +47,7 @@ const Swap = () => {
   }
 
   return (
-    <Row justify="center">
+    <Row gutter={[12, 12]} justify="center">
       <Col xs={24} md={14} lg={12} xl={8}>
         <Card style={{ boxShadow: 'unset' }}>
           <Row gutter={[0, 16]} justify="end">
@@ -82,6 +82,7 @@ const Swap = () => {
           </Row>
         </Card>
       </Col>
+      <Col span={24} />
     </Row>
   )
 }
