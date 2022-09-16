@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
 import { PoolState } from '@senswap/balancer'
 import LazyLoad from '@sentre/react-lazyload'
 
@@ -55,6 +55,7 @@ const ListPools = () => {
     <Row gutter={[24, 24]}>
       {sortedPools.map((poolAddress) => {
         const poolData = listPools[poolAddress]
+        if (!poolData) return <Fragment />
         let poolState: PoolState = poolData.state
         if (poolState['uninitialized'] || poolState['deleted']) return null
         if (poolData.reserves.map((val) => val.toString()).includes('0'))
