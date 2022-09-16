@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import { useBalansolPools } from '../useBalansolPools'
 
@@ -10,20 +10,27 @@ export type MintRoutes = Record<MintAddress, Record<MintAddress, PoolAddress[]>>
 export const useMintRoutes = (): MintRoutes => {
   const { activePools } = useBalansolPools()
 
-  const addPoolToRoute = (
-    routes: MintRoutes,
-    bidMint: string,
-    askMint: string,
-    pool: string,
-  ) => {
-    if (bidMint === askMint) return routes
-    // Init route if needed
-    if (!routes[bidMint]) routes[bidMint] = {}
-    if (!routes[bidMint][askMint]) routes[bidMint][askMint] = []
-    // Add pool in to route
-    routes[bidMint][askMint].push(pool)
-    return routes
-  }
+  const addPoolToRoute = useCallback(
+    (routes: MintRoutes, bidMint: string, askMint: string, pool: string) => {
+      let poolData = activePools[pool]
+      let mints = poolData.mints.map((m) => m.toBase58())
+      let bidMintIdx = mints.indexOf(bidMint)
+      let askMintIdx = mints.indexOf(askMint)
+
+      let actions = poolData.actions as { active: {} }[]
+      if (!actions[bidMintIdx]['active'] || !actions[askMintIdx]['active'])
+        return routes
+
+      if (bidMint === askMint) return routes
+      // Init route if needed
+      if (!routes[bidMint]) routes[bidMint] = {}
+      if (!routes[bidMint][askMint]) routes[bidMint][askMint] = []
+      // Add pool in to route
+      routes[bidMint][askMint].push(pool)
+      return routes
+    },
+    [activePools],
+  )
 
   return useMemo(() => {
     let mintRoutes: MintRoutes = {}
@@ -36,5 +43,5 @@ export const useMintRoutes = (): MintRoutes => {
       }
     }
     return mintRoutes
-  }, [activePools])
+  }, [activePools, addPoolToRoute])
 }
