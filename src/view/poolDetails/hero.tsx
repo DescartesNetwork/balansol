@@ -44,7 +44,7 @@ const Hero = ({ poolAddress }: { poolAddress: string }) => {
           title="APY"
           content={
             <Typography.Title level={3}>
-              {util.numeric(apy / 2).format('0,0.[00]a%')}
+              {util.numeric(apy).format('0,0.[00]a%')}
             </Typography.Title>
           }
           bg={apyBg}
