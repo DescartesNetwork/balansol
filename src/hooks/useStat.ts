@@ -28,11 +28,20 @@ export const useStat = (poolAddress: string) => {
         { cache: { ttl: TTL_5_MIN } },
       )
       // Calc Roi -> APY
-      let totalVolume = 0
-      for (const date in dailyInfo) totalVolume += dailyInfo[date].volume
-      const roi = totalVolume / TVL
-      const apy = Math.pow(1 + roi / 100, 365) - 1
-
+      let totalFee = 0
+      let dateCount = 0
+      for (const date in dailyInfo) {
+        totalFee += dailyInfo[date].fee
+        if (
+          dailyInfo[date].fee &&
+          dailyInfo[date].volume &&
+          dailyInfo[date].tvl
+        )
+          dateCount++
+      }
+      const feePerDay = totalFee / dateCount
+      const roi = feePerDay / TVL
+      const apy = Math.pow(1 + roi, 365) - 1
       setApy(apy)
       setDailyInfo(dailyInfo)
     } catch (error) {
