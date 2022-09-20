@@ -42,7 +42,7 @@ export const useStat = (poolAddress: string) => {
       const feePerDay = totalFee / dateCount
       const roi = feePerDay / TVL
       const apy = Math.pow(1 + roi, 365) - 1
-      setApy(apy)
+      setApy(Number.isFinite(apy) ? apy : 0)
       setDailyInfo(dailyInfo)
     } catch (error) {
     } finally {
