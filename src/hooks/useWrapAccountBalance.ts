@@ -3,9 +3,7 @@ import { utils } from '@senswap/sen-js'
 import { useWalletBalance } from '@sentre/senhub'
 
 import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
-
-const WSOL_ADDRESS = 'So11111111111111111111111111111111111111112'
-const SOL_DECIMALS = 9
+import { SOL_DECIMALS, WSOL_ADDRESS } from 'constant'
 
 export const useWrapAccountBalance = (mintAddress: string) => {
   const lamports = useWalletBalance()

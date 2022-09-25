@@ -1,12 +1,16 @@
 import { useCallback } from 'react'
-
 import {
   useAccounts,
   useGetMintDecimals,
   useWalletAddress,
   useWalletBalance,
 } from '@sentre/senhub'
-import { account, utils, DEFAULT_EMPTY_ADDRESS } from '@senswap/sen-js'
+import {
+  account,
+  utils,
+  DEFAULT_EMPTY_ADDRESS,
+  DEFAULT_WSOL,
+} from '@senswap/sen-js'
 
 export const useMintBalance = () => {
   const walletAddress = useWalletAddress()
@@ -34,7 +38,7 @@ export const useMintBalance = () => {
   }
 
   const getMintBalance = useCallback(
-    async (addressToken: string) => {
+    async (addressToken: string, wrapSol: boolean = false) => {
       if (!account.isAddress(walletAddress) || !account.isAddress(addressToken))
         return buildResult()
       const {
@@ -45,8 +49,14 @@ export const useMintBalance = () => {
           walletAddress,
           addressToken,
         )
-        if (accountAddress === walletAddress) {
-          return buildResult(DEFAULT_EMPTY_ADDRESS, lamports, 9)
+        const isWsolAddress = addressToken === DEFAULT_WSOL
+        if (accountAddress === walletAddress || isWsolAddress) {
+          const { amount = BigInt(0) } = accounts[accountAddress] || {}
+          return buildResult(
+            isWsolAddress ? DEFAULT_WSOL : DEFAULT_EMPTY_ADDRESS,
+            wrapSol ? lamports + amount : isWsolAddress ? amount : lamports,
+            9,
+          )
         }
         const { amount, mint: mintAddress } = accounts[accountAddress] || {}
         const decimals = await getDecimals({ mintAddress })

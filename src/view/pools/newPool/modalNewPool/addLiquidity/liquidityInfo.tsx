@@ -12,6 +12,7 @@ import { AppDispatch, AppState } from 'model'
 import { useOracles } from 'hooks/useOracles'
 import { useMintBalance } from 'hooks/useMintBalance'
 import { removePool } from 'model/pools.controller'
+import { useWrapAndUnwrapSolIfNeed } from 'hooks/useWrapAndUnwrapSolIfNeed'
 
 export type LiquidityInfoProps = {
   poolAddress: string
@@ -36,6 +37,7 @@ const LiquidityInfo = ({
   const { getMintBalance } = useMintBalance()
   const getPrice = useGetMintPrice()
   const walletAddress = useWalletAddress()
+  const { createWrapSolTxIfNeed } = useWrapAndUnwrapSolIfNeed()
 
   const fetchMarketData = useCallback(async () => {
     const tokensPrice = await Promise.all(
@@ -56,6 +58,12 @@ const LiquidityInfo = ({
         const mintAddress = poolData.mints[idx]
         if (!poolData.reserves[idx].isZero()) continue
         const amount = await decimalizeMintAmount(amounts[idx], mintAddress)
+        const wrapSolTx = await createWrapSolTxIfNeed(
+          mintAddress.toBase58(),
+          Number(amounts[idx]),
+        )
+        if (wrapSolTx) txs.push({ tx: wrapSolTx, signers: [] })
+
         const { transaction } = await window.balansol.initializeJoin(
           poolAddress,
           mintAddress,
@@ -108,7 +116,7 @@ const LiquidityInfo = ({
   const checkAmountIns = useCallback(async () => {
     const { mints } = poolData
     for (let i in amounts) {
-      const { balance } = await getMintBalance(mints[i].toBase58())
+      const { balance } = await getMintBalance(mints[i].toBase58(), true)
       if (Number(amounts[i]) > balance || Number(amounts[i]) <= 0)
         return setDisabledSupply(true)
     }
