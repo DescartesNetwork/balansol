@@ -104,7 +104,7 @@ const DepositModal = ({ poolAddress, hideModal }: DepositModalProps) => {
       for (const key in poolData.mints) {
         const wrapSolTx = await createWrapSolTxIfNeed(
           poolData.mints[key].toBase58(),
-          Number(amounts[key]),
+          amounts[key],
         )
         if (wrapSolTx) transactions.push(wrapSolTx)
       }

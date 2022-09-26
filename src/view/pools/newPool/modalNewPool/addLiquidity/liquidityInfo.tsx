@@ -61,7 +61,7 @@ const LiquidityInfo = ({
         const amount = await decimalizeMintAmount(amounts[idx], mintAddress)
         const wrapSolTx = await createWrapSolTxIfNeed(
           mintAddress.toBase58(),
-          Number(amounts[idx]),
+          amounts[idx],
         )
         if (wrapSolTx) txs.push(wrapSolTx)
 

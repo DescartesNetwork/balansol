@@ -45,7 +45,7 @@ export const useSwapBalansol = (): SwapProvider => {
     const limit = Number(bestRoute.askAmount) * (1 - slippageTolerance / 100)
     const limitBN = await decimalizeMintAmount(limit, askMint)
     const transactions = await initTokenAccountTxs()
-    const wrapSolTx = await createWrapSolTxIfNeed(bidMint, Number(bidAmount))
+    const wrapSolTx = await createWrapSolTxIfNeed(bidMint, bidAmount)
     if (wrapSolTx) transactions.push(wrapSolTx)
 
     const { transaction } = await window.balansol.createRouteTransaction(

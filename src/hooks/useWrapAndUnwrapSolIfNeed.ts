@@ -21,7 +21,7 @@ export const useWrapAndUnwrapSolIfNeed = () => {
   const createWrapSolTxIfNeed = useCallback(
     async (
       mint: string,
-      amount: number,
+      amount: number | string,
     ): Promise<web3.Transaction | undefined> => {
       const tx = new web3.Transaction()
       const walletAddress = await wallet.getAddress()
