@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { rpc, useWalletAddress, util } from '@sentre/senhub'
 import { MintPrice, MintSymbol, useGetMintPrice } from '@sen-use/app'
 import { getAnchorProvider } from 'sentre-web3'
+import { web3 } from '@project-serum/anchor'
 
 import { Button, Col, Row, Space, Typography } from 'antd'
 
@@ -53,7 +54,7 @@ const LiquidityInfo = ({
   const onAddLiquidity = async () => {
     try {
       setLoadingAdd(true)
-      const txs: any[] = []
+      const txs: web3.Transaction[] = []
       for (const idx in poolData.mints) {
         const mintAddress = poolData.mints[idx]
         if (!poolData.reserves[idx].isZero()) continue
@@ -62,7 +63,7 @@ const LiquidityInfo = ({
           mintAddress.toBase58(),
           Number(amounts[idx]),
         )
-        if (wrapSolTx) txs.push({ tx: wrapSolTx, signers: [] })
+        if (wrapSolTx) txs.push(wrapSolTx)
 
         const { transaction } = await window.balansol.initializeJoin(
           poolAddress,
@@ -70,17 +71,18 @@ const LiquidityInfo = ({
           amount,
           false,
         )
-        txs.push({
-          tx: transaction,
-          signers: [],
-        })
+        txs.push(transaction)
       }
       const anchorProvider = getAnchorProvider(
         rpc,
         walletAddress,
         window.sentre.wallet,
       )
-      const txIds = await anchorProvider.sendAll(txs)
+      const txIds = await anchorProvider.sendAll(
+        txs.map((tx) => {
+          return { tx, signers: [] }
+        }),
+      )
       notifySuccess('Fund pool', txIds[txIds.length])
       setCurrentStep(PoolCreatingStep.confirmCreatePool)
     } catch (error) {

@@ -6,7 +6,6 @@ import {
   NATIVE_MINT,
   getAssociatedTokenAddress,
   createAssociatedTokenAccountInstruction,
-  createSyncNativeInstruction,
   createCloseAccountInstruction,
 } from '@solana/spl-token-v3'
 
@@ -43,47 +42,32 @@ export const priceImpactColor = (priceImpact: number) => {
 export const getMintState = (mintStates: MintActionState[], idx: number) =>
   Object.keys(mintStates[idx])[0]
 
-export const createWrapSolTx = async (
-  amount: number,
-  wallet: web3.PublicKey,
-  hasATA: boolean = false,
-) => {
-  const wrappingTransaction = new web3.Transaction()
-  const associatedTokenAccount = await getAssociatedTokenAddress(
-    NATIVE_MINT,
+export const createATAIx = async (wallet: web3.PublicKey) => {
+  const ATA = await getAssociatedTokenAddress(NATIVE_MINT, wallet)
+
+  return createAssociatedTokenAccountInstruction(
     wallet,
+    ATA,
+    wallet,
+    NATIVE_MINT,
   )
-
-  // Create token account to hold your wrapped SOL if haven't existed
-  if (!hasATA)
-    wrappingTransaction.add(
-      createAssociatedTokenAccountInstruction(
-        wallet,
-        associatedTokenAccount,
-        wallet,
-        NATIVE_MINT,
-      ),
-    )
-
-  wrappingTransaction.add(
-    web3.SystemProgram.transfer({
-      fromPubkey: wallet,
-      toPubkey: associatedTokenAccount,
-      lamports: amount,
-    }),
-    createSyncNativeInstruction(associatedTokenAccount),
-  )
-
-  return wrappingTransaction
 }
 
-export const createUnWrapSolTx = async (wallet: web3.PublicKey) => {
-  const associatedTokenAccount = await getAssociatedTokenAddress(
-    NATIVE_MINT,
-    wallet,
-  )
+export const createWrapSolIx = async (
+  amount: number | bigint,
+  wallet: web3.PublicKey,
+) => {
+  const ATA = await getAssociatedTokenAddress(NATIVE_MINT, wallet)
 
-  return new web3.Transaction().add(
-    createCloseAccountInstruction(associatedTokenAccount, wallet, wallet),
-  )
+  return web3.SystemProgram.transfer({
+    fromPubkey: wallet,
+    toPubkey: ATA,
+    lamports: amount,
+  })
+}
+
+export const createUnWrapSolIx = async (wallet: web3.PublicKey) => {
+  const ATA = await getAssociatedTokenAddress(NATIVE_MINT, wallet)
+
+  return createCloseAccountInstruction(ATA, wallet, wallet)
 }

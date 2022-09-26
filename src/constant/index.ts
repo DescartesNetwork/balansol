@@ -70,4 +70,3 @@ export enum FilterPools {
 
 export const WSOL_ADDRESS = 'So11111111111111111111111111111111111111112'
 export const SOL_DECIMALS = 9
-export const EXPONENT = 10 ** 9

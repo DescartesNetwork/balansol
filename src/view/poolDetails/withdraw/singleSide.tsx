@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 import { BN } from '@project-serum/anchor'
 import { rpc, useGetMintDecimals, util } from '@sentre/senhub'
 import { getAnchorProvider } from 'sentre-web3'
+import { web3 } from '@project-serum/anchor'
 
 import { Button, Col, Row, Typography } from 'antd'
 import TokenWillReceive from '../tokenWillReceive'
@@ -53,7 +54,7 @@ const WithdrawSingleSide = ({
 
     try {
       setLoading(true)
-      const transactions: any[] = []
+      const transactions: web3.Transaction[] = []
       const walletAddress = await wallet.getAddress()
       const provider = getAnchorProvider(rpc, walletAddress, wallet)
       let lptAmountBN = decimalize(lptAmount, LPTDECIMALS)

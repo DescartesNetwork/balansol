@@ -1,10 +1,15 @@
 import { useCallback } from 'react'
 import { web3 } from '@project-serum/anchor'
-import { NATIVE_MINT, getAssociatedTokenAddress } from '@solana/spl-token-v3'
+import {
+  NATIVE_MINT,
+  getAssociatedTokenAddress,
+  createSyncNativeInstruction,
+} from '@solana/spl-token-v3'
 import { useAccounts } from '@sentre/senhub'
+import { utils } from '@senswap/sen-js'
 
-import { EXPONENT, WSOL_ADDRESS } from 'constant'
-import { createUnWrapSolTx, createWrapSolTx } from 'helper'
+import { SOL_DECIMALS, WSOL_ADDRESS } from 'constant'
+import { createWrapSolIx, createATAIx, createUnWrapSolIx } from 'helper'
 import { useMintBalance } from './useMintBalance'
 
 const { wallet } = window.sentre
@@ -18,22 +23,32 @@ export const useWrapAndUnwrapSolIfNeed = () => {
       mint: string,
       amount: number,
     ): Promise<web3.Transaction | undefined> => {
+      const tx = new web3.Transaction()
       const walletAddress = await wallet.getAddress()
       const { balance } = await getMintBalance(mint)
       if (mint !== WSOL_ADDRESS || balance >= amount) return
 
-      const associatedWrapSolAccount = await getAssociatedTokenAddress(
+      const decimalizedAmount = utils.decimalize(amount, SOL_DECIMALS)
+      const decimalizedBalance = utils.decimalize(balance, SOL_DECIMALS)
+      const neededWrappedSol = decimalizedAmount - decimalizedBalance
+      const wSolATA = await getAssociatedTokenAddress(
         NATIVE_MINT,
         new web3.PublicKey(walletAddress),
       )
-      const neededWrappedSol = amount * EXPONENT - balance * EXPONENT
-      const wrappingTransaction = await createWrapSolTx(
+      // Create token account to hold your wrapped SOL if haven't existed
+      if (!accounts[wSolATA.toBase58()]) {
+        const creatingATAIx = await createATAIx(
+          new web3.PublicKey(walletAddress),
+        )
+        tx.add(creatingATAIx)
+      }
+      const wSolIx = await createWrapSolIx(
         neededWrappedSol,
         new web3.PublicKey(walletAddress),
-        !!accounts[associatedWrapSolAccount.toBase58()],
       )
+      tx.add(wSolIx, createSyncNativeInstruction(wSolATA))
 
-      return wrappingTransaction
+      return tx
     },
     [accounts, getMintBalance],
   )
@@ -44,11 +59,9 @@ export const useWrapAndUnwrapSolIfNeed = () => {
     const walletAddress = await wallet.getAddress()
     if (mint !== WSOL_ADDRESS) return
 
-    const wrappingTransaction = await createUnWrapSolTx(
-      new web3.PublicKey(walletAddress),
-    )
+    const uwSolIx = await createUnWrapSolIx(new web3.PublicKey(walletAddress))
 
-    return wrappingTransaction
+    return new web3.Transaction().add(uwSolIx)
   }
 
   return { createWrapSolTxIfNeed, createUnWrapSolTxIfNeed }

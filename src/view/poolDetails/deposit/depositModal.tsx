@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux'
 import { rpc, useGetMintDecimals, util } from '@sentre/senhub'
 import BN from 'bn.js'
 import { getAnchorProvider } from 'sentre-web3'
+import { web3 } from '@project-serum/anchor'
 
 import { MintSymbol } from '@sen-use/app/dist'
 import { Button, Checkbox, Col, Row, Tooltip, Typography } from 'antd'
@@ -98,14 +99,14 @@ const DepositModal = ({ poolAddress, hideModal }: DepositModalProps) => {
           async (mint, idx) => await decimalizeMintAmount(amounts[idx], mint),
         ),
       )
-      const transactions: any[] = []
+      const transactions: web3.Transaction[] = []
 
       for (const key in poolData.mints) {
-        const unwrapSolTx = await createWrapSolTxIfNeed(
+        const wrapSolTx = await createWrapSolTxIfNeed(
           poolData.mints[key].toBase58(),
           Number(amounts[key]),
         )
-        if (unwrapSolTx) transactions.push(unwrapSolTx)
+        if (wrapSolTx) transactions.push(wrapSolTx)
       }
 
       const { tx: addLiquidityTx } = await window.balansol.addLiquidity(

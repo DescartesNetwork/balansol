@@ -49,17 +49,22 @@ export const useMintBalance = () => {
           walletAddress,
           addressToken,
         )
+
         const isWsolAddress = addressToken === DEFAULT_WSOL
-        if (accountAddress === walletAddress || isWsolAddress) {
+        const isSolAddress = accountAddress === walletAddress
+        if (isSolAddress || isWsolAddress) {
           const { amount = BigInt(0) } = accounts[accountAddress] || {}
-          return buildResult(
-            isWsolAddress ? DEFAULT_WSOL : DEFAULT_EMPTY_ADDRESS,
-            wrapSol ? lamports + amount : isWsolAddress ? amount : lamports,
-            9,
-          )
+          const mintAddress = isWsolAddress
+            ? DEFAULT_WSOL
+            : DEFAULT_EMPTY_ADDRESS
+          const returnedBalance = isWsolAddress ? amount : lamports
+          if (wrapSol) return buildResult(mintAddress, lamports + amount, 9)
+
+          return buildResult(mintAddress, returnedBalance, 9)
         }
         const { amount, mint: mintAddress } = accounts[accountAddress] || {}
         const decimals = await getDecimals({ mintAddress })
+
         return buildResult(mintAddress, amount, decimals)
       } catch (er) {
         return buildResult()
