@@ -10,12 +10,15 @@ import { useSearchedPools } from 'hooks/pools/useSearchedPools'
 
 const ListPools = () => {
   const { poolsFilter } = useFilterPools()
-  const listPools = useSearchedPools(poolsFilter)
+  const listPool = useSearchedPools(poolsFilter)
+  const sortPool = Object.keys(listPool).sort((a, b) => {
+    return (listPool[b].tvl || 0) - (listPool[a].tvl || 0)
+  })
 
   return (
     <Row gutter={[24, 24]}>
-      {Object.keys(listPools).map((poolAddress) => {
-        const poolData = listPools[poolAddress]
+      {sortPool.map((poolAddress) => {
+        const poolData = listPool[poolAddress]
         if (!poolData) return <Fragment />
         let poolState: PoolState = poolData.state
         if (poolState['uninitialized'] || poolState['deleted']) return null

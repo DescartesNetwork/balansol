@@ -3,6 +3,8 @@ import { util } from '@sentre/senhub'
 import { utils } from '@senswap/sen-js'
 import { MintActionState } from '@senswap/balancer'
 import { PriceImpact } from 'constant'
+import axios from 'axios'
+import configs from 'configs'
 
 export const notifySuccess = (content: string, txId: string) => {
   return window.notify({
@@ -34,3 +36,12 @@ export const priceImpactColor = (priceImpact: number) => {
 
 export const getMintState = (mintStates: MintActionState[], idx: number) =>
   Object.keys(mintStates[idx])[0]
+
+export const fetchServerTVL = async () => {
+  try {
+    const { data } = await axios.get(configs.api.version.detailTvl)
+    return data['balansol']
+  } catch (error) {
+    notifyError(error)
+  }
+}
