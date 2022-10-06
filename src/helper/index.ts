@@ -37,7 +37,10 @@ export const priceImpactColor = (priceImpact: number) => {
 export const getMintState = (mintStates: MintActionState[], idx: number) =>
   Object.keys(mintStates[idx])[0]
 
-export const fetchServerTVL = async () => {
+export const fetchServerTVL = async (): Promise<
+  { address: string; tvl: number }[]
+> => {
   const { data } = await axios.get(configs.api.version.detailTvl)
-  return data['balansol']
+  const balansolPoolTVL = data['balansol']
+  return balansolPoolTVL
 }
