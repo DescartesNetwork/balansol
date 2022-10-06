@@ -28,7 +28,6 @@ export const getPools = createAsyncThunk(`${NAME}/getPools`, async () => {
     if (poolState['deleted']) continue
     bulk[pool.publicKey.toBase58()] = poolData
   }
-
   return bulk
 })
 
