@@ -1,7 +1,6 @@
 import { useGetMintPrice } from '@sen-use/app'
 import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { net } from '@sentre/senhub'
 
 import { useOracles } from './useOracles'
 
@@ -33,7 +32,6 @@ export const useTVL = (poolAddress = '') => {
   )
 
   const updateTvl = useCallback(async () => {
-    if (net === 'mainnet') return setTVL(poolData.tvl || 0)
     const tvl = await getTVL(poolData)
     return setTVL(tvl)
   }, [getTVL, poolData])
