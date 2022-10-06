@@ -38,10 +38,6 @@ export const getMintState = (mintStates: MintActionState[], idx: number) =>
   Object.keys(mintStates[idx])[0]
 
 export const fetchServerTVL = async () => {
-  try {
-    const { data } = await axios.get(configs.api.version.detailTvl)
-    return data['balansol']
-  } catch (error) {
-    notifyError(error)
-  }
+  const { data } = await axios.get(configs.api.version.detailTvl)
+  return data['balansol']
 }

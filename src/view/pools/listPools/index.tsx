@@ -2,14 +2,16 @@ import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
 import { PoolState } from '@senswap/balancer'
 import LazyLoad from '@sentre/react-lazyload'
 
-import { Col, Row } from 'antd'
+import { Col, Row, Spin } from 'antd'
 import DetailsCard from './detailsCard'
 
 import { useFilterPools } from 'hooks/pools/useFilterPools'
 import { useSearchedPools } from 'hooks/pools/useSearchedPools'
 import { fetchServerTVL } from 'helper'
+import { notifyError } from '@sen-use/app/dist'
 
 const ListPools = () => {
+  const [loading, setLoading] = useState(false)
   const [tvls, setTVLs] = useState<Record<string, number>>({})
   const { poolsFilter } = useFilterPools()
   const listPool = useSearchedPools(poolsFilter)
@@ -19,16 +21,33 @@ const ListPools = () => {
   )
 
   const fetchTVL = useCallback(async () => {
-    const poolTVLs: { address: string; tvl: number }[] = await fetchServerTVL()
-    const newTVLs: Record<string, number> = {}
-    for (const { address, tvl } of poolTVLs) newTVLs[address] = tvl
+    try {
+      setLoading(true)
+      const poolTVLs: { address: string; tvl: number }[] =
+        await fetchServerTVL()
+      const newTVLs: Record<string, number> = {}
+      for (const { address, tvl } of poolTVLs) newTVLs[address] = tvl
 
-    setTVLs(newTVLs)
+      setTVLs(newTVLs)
+    } catch (err) {
+      notifyError(err)
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   useEffect(() => {
     fetchTVL()
   }, [fetchTVL])
+
+  if (loading)
+    return (
+      <Row justify="center">
+        <Col>
+          <Spin />
+        </Col>
+      </Row>
+    )
 
   return (
     <Row gutter={[24, 24]}>
