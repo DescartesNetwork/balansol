@@ -1,14 +1,12 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { PoolData, PoolState } from '@senswap/balancer'
 import { account } from '@senswap/sen-js'
-import { net } from '@sentre/senhub'
-import { fetchServerTVL } from 'helper'
 
 /**
  * Interface & Utility
  */
 
-export type PoolsState = Record<string, PoolData & { tvl?: number }>
+export type PoolsState = Record<string, PoolData>
 
 /**
  * Store constructor
@@ -29,13 +27,6 @@ export const getPools = createAsyncThunk(`${NAME}/getPools`, async () => {
     const poolState = poolData.state as PoolState
     if (poolState['deleted']) continue
     bulk[pool.publicKey.toBase58()] = poolData
-  }
-  if (net === 'mainnet') {
-    const poolTVLs: { address: string; tvl: number }[] = await fetchServerTVL()
-    for (const poolTvl of poolTVLs) {
-      if (!bulk[poolTvl.address]) continue
-      bulk[poolTvl.address].tvl = poolTvl.tvl
-    }
   }
 
   return bulk
