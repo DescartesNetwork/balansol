@@ -15,6 +15,7 @@
     "@solana/spl-token-v3": "npm:@solana/spl-token@0.3.5",
     "@solana/wallet-adapter-base": "^0.9.7",
     "antd": "^4.23.1",
+    "axios": "^1.0.0",
     "bn.js": "^5.2.0",
     "echarts": "^5.3.1",
     "echarts-for-react": "^3.0.2",

@@ -10,6 +10,8 @@ import {
 } from '@solana/spl-token-v3'
 
 import { PriceImpact } from 'constant'
+import axios from 'axios'
+import configs from 'configs'
 
 export const notifySuccess = (content: string, txId: string) => {
   return window.notify({
@@ -70,4 +72,12 @@ export const createUnWrapSolIx = async (wallet: web3.PublicKey) => {
   const ATA = await getAssociatedTokenAddress(NATIVE_MINT, wallet)
 
   return createCloseAccountInstruction(ATA, wallet, wallet)
+}
+
+export const fetchServerTVL = async (): Promise<
+  { address: string; tvl: number }[]
+> => {
+  const { data } = await axios.get(configs.api.version.detailTvl)
+  const balansolPoolTVL = data['balansol']
+  return balansolPoolTVL
 }

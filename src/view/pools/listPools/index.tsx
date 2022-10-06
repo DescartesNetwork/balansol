@@ -1,60 +1,58 @@
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
 import { PoolState } from '@senswap/balancer'
 import LazyLoad from '@sentre/react-lazyload'
+import { notifyError } from '@sen-use/app'
 
 import { Col, Row, Spin } from 'antd'
 import DetailsCard from './detailsCard'
 
 import { useFilterPools } from 'hooks/pools/useFilterPools'
 import { useSearchedPools } from 'hooks/pools/useSearchedPools'
-import { useTVL } from 'hooks/useTVL'
+import { fetchServerTVL } from 'helper'
 
 const ListPools = () => {
-  const { getTVL } = useTVL()
+  const [loading, setLoading] = useState(true)
+  const [tvls, setTVLs] = useState<Record<string, number>>({})
   const { poolsFilter } = useFilterPools()
-  const listPools = useSearchedPools(poolsFilter)
-  const pools = useMemo(() => Object.keys(listPools), [listPools])
-  const [sortedPools, setSortedPools] = useState(pools)
-  const [loading, setLoading] = useState(false)
+  const listPool = useSearchedPools(poolsFilter)
 
-  const onSortedPools = useCallback(async () => {
+  const sortedPool = useMemo(
+    () => Object.keys(listPool).sort((a, b) => (tvls[b] || 0) - (tvls[a] || 0)),
+    [listPool, tvls],
+  )
+
+  const fetchTVL = useCallback(async () => {
     try {
       setLoading(true)
-      if (!pools.length) return setSortedPools(pools)
-      const nextPools = await Promise.all(
-        Object.keys(listPools).map(async (poolAddress) => {
-          const tvl = await getTVL(listPools[poolAddress])
-          return {
-            poolAddress,
-            tvl,
-          }
-        }),
-      )
-      nextPools.sort((poolA, poolB) => poolB.tvl - poolA.tvl)
-      const result = nextPools.map(({ poolAddress }) => poolAddress)
-      return setSortedPools(result)
+      const poolTVLs = await fetchServerTVL()
+      const newTVLs: Record<string, number> = {}
+      for (const { address, tvl } of poolTVLs) newTVLs[address] = tvl
+
+      setTVLs(newTVLs)
     } catch (err) {
-      return setSortedPools(pools)
+      notifyError(err)
     } finally {
       setLoading(false)
     }
-  }, [getTVL, listPools, pools])
+  }, [])
 
   useEffect(() => {
-    onSortedPools()
-  }, [onSortedPools])
+    fetchTVL()
+  }, [fetchTVL])
 
   if (loading)
     return (
       <Row justify="center">
-        <Spin />
+        <Col>
+          <Spin />
+        </Col>
       </Row>
     )
 
   return (
     <Row gutter={[24, 24]}>
-      {sortedPools.map((poolAddress) => {
-        const poolData = listPools[poolAddress]
+      {sortedPool.map((poolAddress) => {
+        const poolData = listPool[poolAddress]
         if (!poolData) return <Fragment />
         let poolState: PoolState = poolData.state
         if (poolState['uninitialized'] || poolState['deleted']) return null
