@@ -2,7 +2,7 @@ import { Fragment } from 'react'
 import { useSelector } from 'react-redux'
 import { util } from '@sentre/senhub'
 
-import { Col, Row, Skeleton, Space, Spin, Typography } from 'antd'
+import { Col, Row, Skeleton, Typography } from 'antd'
 
 import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
 import CardPoolDetail from './components/cardPoolDetail'

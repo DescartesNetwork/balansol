@@ -8,7 +8,7 @@ import {
 import { useAccounts } from '@sentre/senhub'
 import { utils } from '@senswap/sen-js'
 
-import { SOL_DECIMALS, WSOL_ADDRESS } from 'constant'
+import { SOL_DECIMALS } from 'constant'
 import { createWrapSolIx, createATAIx, createUnWrapSolIx } from 'helper'
 import { useMintBalance } from './useMintBalance'
 
@@ -26,7 +26,7 @@ export const useWrapAndUnwrapSolIfNeed = () => {
       const tx = new web3.Transaction()
       const walletAddress = await wallet.getAddress()
       const { balance } = await getMintBalance(mint)
-      if (mint !== WSOL_ADDRESS || balance >= amount) return
+      if (mint !== NATIVE_MINT.toBase58() || balance >= amount) return
 
       const decimalizedAmount = utils.decimalize(amount, SOL_DECIMALS)
       const decimalizedBalance = utils.decimalize(balance, SOL_DECIMALS)
@@ -57,7 +57,7 @@ export const useWrapAndUnwrapSolIfNeed = () => {
     mint: string,
   ): Promise<web3.Transaction | undefined> => {
     const walletAddress = await wallet.getAddress()
-    if (mint !== WSOL_ADDRESS) return
+    if (mint !== NATIVE_MINT.toBase58()) return
 
     const uwSolIx = await createUnWrapSolIx(new web3.PublicKey(walletAddress))
 

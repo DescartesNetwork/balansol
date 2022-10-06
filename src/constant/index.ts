@@ -68,5 +68,4 @@ export enum FilterPools {
   YourPools = 'your-pools',
 }
 
-export const WSOL_ADDRESS = 'So11111111111111111111111111111111111111112'
 export const SOL_DECIMALS = 9
