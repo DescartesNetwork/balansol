@@ -1,17 +1,16 @@
 import { useMemo } from 'react'
 import { utils } from '@senswap/sen-js'
 import { useWalletBalance } from '@sentre/senhub'
+import { NATIVE_MINT } from '@solana/spl-token-v3'
 
 import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
-
-const WSOL_ADDRESS = 'So11111111111111111111111111111111111111112'
-const SOL_DECIMALS = 9
+import { SOL_DECIMALS } from 'constant'
 
 export const useWrapAccountBalance = (mintAddress: string) => {
   const lamports = useWalletBalance()
 
   const balance = useAccountBalanceByMintAddress(mintAddress)
-  const wsol = useAccountBalanceByMintAddress(WSOL_ADDRESS)
+  const wsol = useAccountBalanceByMintAddress(NATIVE_MINT.toBase58())
 
   const totalSolBalance = useMemo(() => {
     const total = wsol.amount + lamports
@@ -19,5 +18,5 @@ export const useWrapAccountBalance = (mintAddress: string) => {
     return { balance: totalBalance, amount: total }
   }, [lamports, wsol.amount])
 
-  return mintAddress === WSOL_ADDRESS ? totalSolBalance : balance
+  return mintAddress === NATIVE_MINT.toBase58() ? totalSolBalance : balance
 }

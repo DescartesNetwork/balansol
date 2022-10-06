@@ -15,6 +15,7 @@ import { calcMintReceivesRemoveFullSide } from 'helper/oracles'
 import { AppState } from 'model'
 import { LPTDECIMALS } from 'constant/index'
 import { useOracles } from 'hooks/useOracles'
+import { useWrapAndUnwrapSolIfNeed } from 'hooks/useWrapAndUnwrapSolIfNeed'
 
 const WithdrawFullSide = ({
   poolAddress,
@@ -30,6 +31,7 @@ const WithdrawFullSide = ({
   const poolData = useSelector((state: AppState) => state.pools[poolAddress])
   const getMint = useGetMintData()
   const { decimalize } = useOracles()
+  const { createUnWrapSolTxIfNeed } = useWrapAndUnwrapSolIfNeed()
 
   const onSubmit = async () => {
     try {
@@ -46,6 +48,11 @@ const WithdrawFullSide = ({
           amount,
         )
       transactions.push(transaction)
+
+      for (const mint of poolData.mints) {
+        const unwrapSolTx = await createUnWrapSolTxIfNeed(mint.toBase58())
+        if (unwrapSolTx) transactions.push(unwrapSolTx)
+      }
       const txIds = await provider.sendAll(
         transactions.map((tx) => {
           return { tx, signers: [] }

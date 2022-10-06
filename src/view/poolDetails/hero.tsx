@@ -1,7 +1,8 @@
 import { Fragment } from 'react'
 import { useSelector } from 'react-redux'
 import { util } from '@sentre/senhub'
-import { Col, Row, Typography } from 'antd'
+
+import { Col, Row, Skeleton, Typography } from 'antd'
 
 import { useAccountBalanceByMintAddress } from 'shared/hooks/useAccountBalance'
 import CardPoolDetail from './components/cardPoolDetail'
@@ -24,7 +25,7 @@ const Hero = ({ poolAddress }: { poolAddress: string }) => {
     poolData.mintLpt.toBase58(),
   )
 
-  const { apy } = useStat(poolAddress)
+  const { apy, loading } = useStat(poolAddress)
 
   return (
     <Row gutter={[24, 24]}>
@@ -43,9 +44,18 @@ const Hero = ({ poolAddress }: { poolAddress: string }) => {
         <CardPoolDetail
           title="APY"
           content={
-            <Typography.Title level={3}>
-              {util.numeric(apy).format('0,0.[00]a%')}
-            </Typography.Title>
+            loading ? (
+              <Skeleton
+                style={{ width: 150 }}
+                active
+                paragraph={{ rows: 1 }}
+                title={false}
+              />
+            ) : (
+              <Typography.Title level={3}>
+                {util.numeric(apy).format('0,0.[00]a%')}
+              </Typography.Title>
+            )
           }
           bg={apyBg}
         />

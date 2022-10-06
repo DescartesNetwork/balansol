@@ -43,12 +43,7 @@ const SpotPrice = () => {
         type="text"
         onClick={onReversed}
         shape="circle"
-        icon={
-          <IonIcon
-            name="swap-horizontal-outline"
-            style={{ color: '#F3F3F5' }}
-          />
-        }
+        icon={<IonIcon name="swap-horizontal-outline" />}
         style={{ background: 'transparent' }}
       />
       <Typography.Text>1</Typography.Text>
