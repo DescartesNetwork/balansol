@@ -67,3 +67,5 @@ export enum FilterPools {
   DepositedPools = 'deposited-pools',
   YourPools = 'your-pools',
 }
+
+export const SOL_DECIMALS = 9

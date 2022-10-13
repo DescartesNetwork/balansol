@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { rpc, useWalletAddress, util } from '@sentre/senhub'
+import { getAnchorProvider, util } from '@sentre/senhub'
 import { MintPrice, MintSymbol, useGetMintPrice } from '@sen-use/app'
-import { getAnchorProvider } from 'sentre-web3'
+import { web3 } from '@project-serum/anchor'
 
 import { Button, Col, Row, Space, Typography } from 'antd'
 
@@ -12,6 +12,7 @@ import { AppDispatch, AppState } from 'model'
 import { useOracles } from 'hooks/useOracles'
 import { useMintBalance } from 'hooks/useMintBalance'
 import { removePool } from 'model/pools.controller'
+import { useWrapAndUnwrapSolIfNeed } from 'hooks/useWrapAndUnwrapSolIfNeed'
 
 export type LiquidityInfoProps = {
   poolAddress: string
@@ -35,7 +36,7 @@ const LiquidityInfo = ({
   const { decimalizeMintAmount } = useOracles()
   const { getMintBalance } = useMintBalance()
   const getPrice = useGetMintPrice()
-  const walletAddress = useWalletAddress()
+  const { createWrapSolTxIfNeed } = useWrapAndUnwrapSolIfNeed()
 
   const fetchMarketData = useCallback(async () => {
     const tokensPrice = await Promise.all(
@@ -51,28 +52,32 @@ const LiquidityInfo = ({
   const onAddLiquidity = async () => {
     try {
       setLoadingAdd(true)
-      const txs: any[] = []
+      const txs: web3.Transaction[] = []
       for (const idx in poolData.mints) {
         const mintAddress = poolData.mints[idx]
         if (!poolData.reserves[idx].isZero()) continue
         const amount = await decimalizeMintAmount(amounts[idx], mintAddress)
+        const wrapSolTx = await createWrapSolTxIfNeed(
+          mintAddress.toBase58(),
+          amounts[idx],
+        )
+        if (wrapSolTx) txs.push(wrapSolTx)
+
         const { transaction } = await window.balansol.initializeJoin(
           poolAddress,
           mintAddress,
           amount,
           false,
         )
-        txs.push({
-          tx: transaction,
-          signers: [],
-        })
+        txs.push(transaction)
       }
-      const anchorProvider = getAnchorProvider(
-        rpc,
-        walletAddress,
-        window.sentre.wallet,
+
+      const anchorProvider = getAnchorProvider()!
+      const txIds = await anchorProvider.sendAll(
+        txs.map((tx) => {
+          return { tx, signers: [] }
+        }),
       )
-      const txIds = await anchorProvider.sendAll(txs)
       notifySuccess('Fund pool', txIds[txIds.length])
       setCurrentStep(PoolCreatingStep.confirmCreatePool)
     } catch (error) {
@@ -108,7 +113,7 @@ const LiquidityInfo = ({
   const checkAmountIns = useCallback(async () => {
     const { mints } = poolData
     for (let i in amounts) {
-      const { balance } = await getMintBalance(mints[i].toBase58())
+      const { balance } = await getMintBalance(mints[i].toBase58(), true)
       if (Number(amounts[i]) > balance || Number(amounts[i]) <= 0)
         return setDisabledSupply(true)
     }

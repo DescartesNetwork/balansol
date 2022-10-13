@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { BN } from '@project-serum/anchor'
-import { useGetMintDecimals, util } from '@sentre/senhub'
+import { getAnchorProvider, useGetMintDecimals, util } from '@sentre/senhub'
+import { web3 } from '@project-serum/anchor'
 
 import { Button, Col, Row, Typography } from 'antd'
 import TokenWillReceive from '../tokenWillReceive'
@@ -12,6 +13,7 @@ import { AppState } from 'model'
 import { LPTDECIMALS } from 'constant/index'
 import { useOracles } from 'hooks/useOracles'
 import { useLptSupply } from 'hooks/useLptSupply'
+import { useWrapAndUnwrapSolIfNeed } from 'hooks/useWrapAndUnwrapSolIfNeed'
 
 import './index.less'
 
@@ -37,6 +39,7 @@ const WithdrawSingleSide = ({
   const poolData = useSelector((state: AppState) => state.pools[poolAddress])
   const { decimalize } = useOracles()
   const { supply } = useLptSupply(poolData.mintLpt)
+  const { createUnWrapSolTxIfNeed } = useWrapAndUnwrapSolIfNeed()
 
   const isExceedWithdrawLimitation = Number(lptAmount) > withdrawableMax
 
@@ -48,13 +51,27 @@ const WithdrawSingleSide = ({
 
     try {
       setLoading(true)
+      const transactions: web3.Transaction[] = []
+      const provider = getAnchorProvider()!
       let lptAmountBN = decimalize(lptAmount, LPTDECIMALS)
-      const { txId } = await window.balansol.removeSidedLiquidity(
+      const { tx: transaction } = await window.balansol.removeSidedLiquidity(
         poolAddress,
         mintAddress,
         lptAmountBN,
+        false,
       )
-      notifySuccess('Withdraw', txId)
+      transactions.push(transaction)
+
+      const unwrapSolTx = await createUnWrapSolTxIfNeed(mintAddress)
+      if (unwrapSolTx) transactions.push(unwrapSolTx)
+
+      const txIds = await provider.sendAll(
+        transactions.map((tx) => {
+          return { tx, signers: [] }
+        }),
+      )
+
+      notifySuccess('Withdraw', txIds[txIds.length - 1])
       onSuccess()
     } catch (error) {
       notifyError(error)

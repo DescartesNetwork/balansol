@@ -1,13 +1,7 @@
-import React, {
-  Fragment,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { useGetMintDecimals, util } from '@sentre/senhub'
-import BN from 'bn.js'
+import { getAnchorProvider, useGetMintDecimals, util } from '@sentre/senhub'
+import { web3, BN } from '@project-serum/anchor'
 
 import { MintSymbol } from '@sen-use/app/dist'
 import { Button, Checkbox, Col, Row, Tooltip, Typography } from 'antd'
@@ -20,11 +14,13 @@ import { useLptSupply } from 'hooks/useLptSupply'
 import { useMintBalance } from 'hooks/useMintBalance'
 import { PriceImpact } from 'constant'
 import { AppState } from 'model'
+import { useWrapAndUnwrapSolIfNeed } from 'hooks/useWrapAndUnwrapSolIfNeed'
 
 type DepositModalProps = {
   poolAddress: string
   hideModal: () => void
 }
+
 const DepositModal = ({ poolAddress, hideModal }: DepositModalProps) => {
   const poolData = useSelector((state: AppState) => state.pools[poolAddress])
   const [amounts, setAmounts] = useState<string[]>(
@@ -41,6 +37,7 @@ const DepositModal = ({ poolAddress, hideModal }: DepositModalProps) => {
   const { decimalizeMintAmount, undecimalizeMintAmount } = useOracles()
   const getDecimals = useGetMintDecimals()
   const { getMintBalance } = useMintBalance()
+  const { createWrapSolTxIfNeed } = useWrapAndUnwrapSolIfNeed()
 
   const isVisibleSuggestion = (idx: number) =>
     baseTokenIndex !== idx &&
@@ -85,16 +82,34 @@ const DepositModal = ({ poolAddress, hideModal }: DepositModalProps) => {
   const onSubmit = async () => {
     setLoading(true)
     try {
+      const provider = getAnchorProvider()!
       const amountsIn = await Promise.all(
         poolData.mints.map(
           async (mint, idx) => await decimalizeMintAmount(amounts[idx], mint),
         ),
       )
-      const { txId } = await window.balansol.addLiquidity(
+      const transactions: web3.Transaction[] = []
+
+      for (const key in poolData.mints) {
+        const wrapSolTx = await createWrapSolTxIfNeed(
+          poolData.mints[key].toBase58(),
+          amounts[key],
+        )
+        if (wrapSolTx) transactions.push(wrapSolTx)
+      }
+
+      const { tx: addLiquidityTx } = await window.balansol.addLiquidity(
         poolAddress,
         amountsIn,
+        false,
       )
-      notifySuccess('Deposit', txId)
+      transactions.push(addLiquidityTx)
+      const txIds = await provider.sendAll(
+        transactions.map((tx) => {
+          return { tx, signers: [] }
+        }),
+      )
+      notifySuccess('Deposit', txIds[txIds.length - 1])
       hideModal()
     } catch (error) {
       notifyError(error)
@@ -141,7 +156,7 @@ const DepositModal = ({ poolAddress, hideModal }: DepositModalProps) => {
   const checkAmountIns = useCallback(async () => {
     const { mints } = poolData
     for (let i in amounts) {
-      const { balance } = await getMintBalance(mints[i].toBase58())
+      const { balance } = await getMintBalance(mints[i].toBase58(), true)
       if (Number(amounts[i]) > balance) return setDisable(true)
     }
     if (!lpOutTotal) return setDisable(true)

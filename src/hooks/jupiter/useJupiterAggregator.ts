@@ -111,13 +111,11 @@ export const useJupiterAggregator = (): SwapProvider => {
   useDebounce(() => composeBestRoute(), 300, [composeBestRoute])
 
   const swap = useCallback(async () => {
-    const {
-      sentre: { wallet },
-    } = window
-    if (!wallet) throw new Error('Wallet is not connected')
     if (!routes?.length) throw new Error('No available route')
-
-    const wrappedWallet = new JupiterWalletWrapper(walletAddress, wallet)
+    const wrappedWallet = new JupiterWalletWrapper(
+      walletAddress,
+      window.sentre.solana,
+    )
     const result: any = await exchange({
       wallet: wrappedWallet,
       routeInfo: routes[0],

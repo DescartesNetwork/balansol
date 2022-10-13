@@ -1,16 +1,14 @@
 import { useCallback, useMemo } from 'react'
 import { useSelector } from 'react-redux'
-import {
-  createMultiTokenAccountIfNeededTransactions,
-  getAnchorProvider,
-} from 'sentre-web3'
-import { rpc } from '@sentre/senhub'
+import { initTxCreateMultiTokenAccount } from '@sen-use/web3'
+import { getAnchorProvider } from '@sentre/senhub'
 
 import { AppState } from 'model'
 import { SwapPlatform, SwapProvider } from '../useSwap'
 import { useOracles } from '../useOracles'
 import { useBestRouteFromAsk } from './routeFromAsk/useBestRouteFromAsk'
 import { useBestRouteFromBid } from './routeFromBid/useBestRouteFromBid'
+import { useWrapAndUnwrapSolIfNeed } from 'hooks/useWrapAndUnwrapSolIfNeed'
 
 export const useSwapBalansol = (): SwapProvider => {
   const { bidAmount, bidMint, askMint, slippageTolerance, isReverse } =
@@ -18,36 +16,38 @@ export const useSwapBalansol = (): SwapProvider => {
   const { decimalizeMintAmount } = useOracles()
   const routesFromBid = useBestRouteFromBid()
   const routesFromAsk = useBestRouteFromAsk()
+  const { createWrapSolTxIfNeed, createUnWrapSolTxIfNeed } =
+    useWrapAndUnwrapSolIfNeed()
+
   const { loading, bestRoute } = isReverse ? routesFromAsk : routesFromBid
 
   const initTokenAccountTxs = useCallback(async () => {
-    const { wallet } = window.sentre
-    const walletAddress = await wallet.getAddress()
-    const provider = getAnchorProvider(rpc, walletAddress, wallet)
-    const transactions = await createMultiTokenAccountIfNeededTransactions(
-      provider,
-      {
-        mints: bestRoute.route.map((route) => route.askMint),
-      },
-    )
+    const provider = getAnchorProvider()!
+    const transactions = await initTxCreateMultiTokenAccount(provider, {
+      mints: bestRoute.route.map((route) => route.askMint),
+    })
     return transactions
   }, [bestRoute.route])
 
   const swap = useCallback(async () => {
-    const { wallet } = window.sentre
-    const walletAddress = await wallet.getAddress()
-    const provider = getAnchorProvider(rpc, walletAddress, wallet)
-
+    const provider = getAnchorProvider()!
     const bidAmountBN = await decimalizeMintAmount(bidAmount, bidMint)
     const limit = Number(bestRoute.askAmount) * (1 - slippageTolerance / 100)
     const limitBN = await decimalizeMintAmount(limit, askMint)
     const transactions = await initTokenAccountTxs()
+    const wrapSolTx = await createWrapSolTxIfNeed(bidMint, bidAmount)
+    if (wrapSolTx) transactions.push(wrapSolTx)
+
     const { transaction } = await window.balansol.createRouteTransaction(
       bidAmountBN,
       bestRoute.route,
       limitBN,
     )
     transactions.push(transaction)
+
+    const unwrapSolTx = await createUnWrapSolTxIfNeed(askMint)
+    if (unwrapSolTx) transactions.push(unwrapSolTx)
+
     const txIds = await provider.sendAll(
       transactions.map((tx) => {
         return { tx, signers: [] }
@@ -56,12 +56,14 @@ export const useSwapBalansol = (): SwapProvider => {
     return { txId: txIds[txIds.length - 1] }
   }, [
     askMint,
-    bidAmount,
-    bidMint,
-    decimalizeMintAmount,
-    initTokenAccountTxs,
     bestRoute.askAmount,
     bestRoute.route,
+    bidAmount,
+    bidMint,
+    createUnWrapSolTxIfNeed,
+    createWrapSolTxIfNeed,
+    decimalizeMintAmount,
+    initTokenAccountTxs,
     slippageTolerance,
   ])
 
