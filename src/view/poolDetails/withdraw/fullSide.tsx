@@ -1,11 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { BN } from '@project-serum/anchor'
-import {
-  createMultiTokenAccountIfNeededTransactions,
-  getAnchorProvider,
-} from 'sentre-web3'
-import { useGetMintData, rpc } from '@sentre/senhub'
+import { initTxCreateMultiTokenAccount } from '@sen-use/web3'
+import { useGetMintData, getAnchorProvider } from '@sentre/senhub'
 
 import { Button, Col, Row, Typography } from 'antd'
 import TokenWillReceive from '../tokenWillReceive'
@@ -37,9 +34,7 @@ const WithdrawFullSide = ({
     try {
       setLoading(true)
       let amount = decimalize(lptAmount, LPTDECIMALS)
-      const { wallet } = window.sentre
-      const walletAddress = await wallet.getAddress()
-      const provider = getAnchorProvider(rpc, walletAddress, wallet)
+      const provider = getAnchorProvider()!
 
       const transactions = await initTokenAccountTxs()
       const { transaction } =
@@ -68,15 +63,10 @@ const WithdrawFullSide = ({
   }
 
   async function initTokenAccountTxs() {
-    const { wallet } = window.sentre
-    const walletAddress = await wallet.getAddress()
-    const provider = getAnchorProvider(rpc, walletAddress, wallet)
-    const transactions = await createMultiTokenAccountIfNeededTransactions(
-      provider,
-      {
-        mints: poolData.mints,
-      },
-    )
+    const provider = getAnchorProvider()!
+    const transactions = await initTxCreateMultiTokenAccount(provider, {
+      mints: poolData.mints,
+    })
     return transactions
   }
 

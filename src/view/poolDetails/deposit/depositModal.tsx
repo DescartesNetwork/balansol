@@ -1,15 +1,7 @@
-import React, {
-  Fragment,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { rpc, useGetMintDecimals, util } from '@sentre/senhub'
-import BN from 'bn.js'
-import { getAnchorProvider } from 'sentre-web3'
-import { web3 } from '@project-serum/anchor'
+import { getAnchorProvider, useGetMintDecimals, util } from '@sentre/senhub'
+import { web3, BN } from '@project-serum/anchor'
 
 import { MintSymbol } from '@sen-use/app/dist'
 import { Button, Checkbox, Col, Row, Tooltip, Typography } from 'antd'
@@ -28,8 +20,6 @@ type DepositModalProps = {
   poolAddress: string
   hideModal: () => void
 }
-
-const { wallet } = window.sentre
 
 const DepositModal = ({ poolAddress, hideModal }: DepositModalProps) => {
   const poolData = useSelector((state: AppState) => state.pools[poolAddress])
@@ -92,8 +82,7 @@ const DepositModal = ({ poolAddress, hideModal }: DepositModalProps) => {
   const onSubmit = async () => {
     setLoading(true)
     try {
-      const walletAddress = await wallet.getAddress()
-      const provider = getAnchorProvider(rpc, walletAddress, wallet)
+      const provider = getAnchorProvider()!
       const amountsIn = await Promise.all(
         poolData.mints.map(
           async (mint, idx) => await decimalizeMintAmount(amounts[idx], mint),

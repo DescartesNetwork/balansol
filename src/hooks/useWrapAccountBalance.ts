@@ -1,5 +1,7 @@
+import { utilsBN } from '@sen-use/web3'
+import { BN } from '@project-serum/anchor'
 import { useMemo } from 'react'
-import { utils } from '@senswap/sen-js'
+
 import { useWalletBalance } from '@sentre/senhub'
 import { NATIVE_MINT } from '@solana/spl-token-v3'
 
@@ -13,8 +15,8 @@ export const useWrapAccountBalance = (mintAddress: string) => {
   const wsol = useAccountBalanceByMintAddress(NATIVE_MINT.toBase58())
 
   const totalSolBalance = useMemo(() => {
-    const total = wsol.amount + lamports
-    const totalBalance = Number(utils.undecimalize(total, SOL_DECIMALS))
+    const total = wsol.amount.add(new BN(lamports))
+    const totalBalance = Number(utilsBN.undecimalize(total, SOL_DECIMALS))
     return { balance: totalBalance, amount: total }
   }, [lamports, wsol.amount])
 

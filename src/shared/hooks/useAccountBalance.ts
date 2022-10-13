@@ -1,35 +1,34 @@
+import { utilsBN } from '@sen-use/web3'
+import { BN } from '@project-serum/anchor'
 import { useEffect, useState } from 'react'
-import { account, DEFAULT_EMPTY_ADDRESS, utils } from '@senswap/sen-js'
+import { account, DEFAULT_EMPTY_ADDRESS } from '@senswap/sen-js'
 import {
   useWalletAddress,
   useWalletBalance,
   useMintDecimals,
   useAccountSelector,
+  splt,
 } from '@sentre/senhub'
 
 export type AccountBalanceReturn = {
-  amount: bigint
+  amount: BN
   decimals: number
   balance: number
   mintAddress: string
 }
 
-const buildResult = (
-  mintAddress?: string,
-  amount?: bigint,
-  decimals?: number,
-) => {
+const buildResult = (mintAddress?: string, amount?: BN, decimals?: number) => {
   if (
     !account.isAddress(mintAddress) ||
     amount === undefined ||
     decimals === undefined
   )
-    return { amount: BigInt(0), decimals: 0, balance: 0 }
+    return { amount: new BN(0), decimals: 0, balance: 0 }
   return {
     mintAddress,
     amount,
     decimals,
-    balance: Number(utils.undecimalize(amount, decimals)),
+    balance: Number(utilsBN.undecimalize(amount, decimals)),
   }
 }
 
@@ -55,9 +54,9 @@ const useAccountBalance = (accountAddress: string) => {
   if (!account.isAddress(walletAddress) || !account.isAddress(accountAddress))
     return buildResult()
   if (accountAddress === walletAddress)
-    return buildResult(DEFAULT_EMPTY_ADDRESS, lamports, 9)
+    return buildResult(DEFAULT_EMPTY_ADDRESS, new BN(lamports), 9)
 
-  return buildResult(mintAddress, amount, decimals)
+  return buildResult(mintAddress, new BN(amount?.toString() || 0), decimals)
 }
 
 export default useAccountBalance
@@ -76,9 +75,6 @@ export const useAccountBalanceByMintAddress = (mintAddress: string) => {
     ;(async () => {
       if (!account.isAddress(walletAddress) || !account.isAddress(mintAddress))
         return setAccountAddress('')
-      const {
-        sentre: { splt },
-      } = window
       try {
         const address = await splt.deriveAssociatedAddress(
           walletAddress,

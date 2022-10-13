@@ -1,16 +1,14 @@
+import { utilsBN } from '@sen-use/web3'
+import { BN, utils, web3 } from '@project-serum/anchor'
 import { useCallback } from 'react'
 import {
   useAccounts,
   useGetMintDecimals,
   useWalletAddress,
   useWalletBalance,
+  util,
 } from '@sentre/senhub'
-import {
-  account,
-  utils,
-  DEFAULT_EMPTY_ADDRESS,
-  DEFAULT_WSOL,
-} from '@senswap/sen-js'
+import { DEFAULT_EMPTY_ADDRESS, DEFAULT_WSOL } from '@senswap/sen-js'
 
 export const useMintBalance = () => {
   const walletAddress = useWalletAddress()
@@ -20,35 +18,34 @@ export const useMintBalance = () => {
 
   const buildResult = (
     mintAddress?: string,
-    amount?: bigint,
+    amount?: BN,
     decimals?: number,
   ) => {
     if (
-      !account.isAddress(mintAddress) ||
+      !util.isAddress(mintAddress) ||
       amount === undefined ||
       decimals === undefined
     )
-      return { amount: BigInt(0), decimals: 0, balance: 0 }
+      return { amount: new BN(0), decimals: 0, balance: 0 }
     return {
       mintAddress,
       amount,
       decimals,
-      balance: Number(utils.undecimalize(amount, decimals)),
+      balance: Number(utilsBN.undecimalize(amount, decimals)),
     }
   }
 
   const getMintBalance = useCallback(
     async (addressToken: string, wrapSol: boolean = false) => {
-      if (!account.isAddress(walletAddress) || !account.isAddress(addressToken))
+      if (!util.isAddress(walletAddress) || !util.isAddress(addressToken))
         return buildResult()
-      const {
-        sentre: { splt },
-      } = window
       try {
-        const accountAddress = await splt.deriveAssociatedAddress(
-          walletAddress,
-          addressToken,
-        )
+        const accountAddress = await utils.token
+          .associatedAddress({
+            mint: new web3.PublicKey(addressToken),
+            owner: new web3.PublicKey(walletAddress),
+          })
+          .then((r) => r.toBase58())
 
         const isWsolAddress = addressToken === DEFAULT_WSOL
         const isSolAddress = accountAddress === walletAddress
@@ -57,15 +54,27 @@ export const useMintBalance = () => {
           const mintAddress = isWsolAddress
             ? DEFAULT_WSOL
             : DEFAULT_EMPTY_ADDRESS
-          const returnedBalance = isWsolAddress ? amount : lamports
-          if (wrapSol) return buildResult(mintAddress, lamports + amount, 9)
+          const returnedBalance = isWsolAddress
+            ? new BN(amount?.toString() || 0)
+            : new BN(lamports?.toString() || 0)
+
+          if (wrapSol)
+            return buildResult(
+              mintAddress,
+              new BN(lamports?.toString() || 0 + amount?.toString() || 0),
+              9,
+            )
 
           return buildResult(mintAddress, returnedBalance, 9)
         }
         const { amount, mint: mintAddress } = accounts[accountAddress] || {}
         const decimals = await getDecimals({ mintAddress })
 
-        return buildResult(mintAddress, amount, decimals)
+        return buildResult(
+          mintAddress,
+          new BN(amount?.toString() || 0),
+          decimals,
+        )
       } catch (er) {
         return buildResult()
       }

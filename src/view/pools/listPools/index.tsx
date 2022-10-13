@@ -61,7 +61,7 @@ const ListPools = () => {
 
         return (
           <Col xs={24} md={24} key={poolAddress}>
-            <LazyLoad height={198}>
+            <LazyLoad height={198} overflow>
               <DetailsCard poolAddress={poolAddress} />
             </LazyLoad>
           </Col>

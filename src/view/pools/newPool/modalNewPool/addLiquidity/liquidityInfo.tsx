@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { rpc, useWalletAddress, util } from '@sentre/senhub'
+import { getAnchorProvider, util } from '@sentre/senhub'
 import { MintPrice, MintSymbol, useGetMintPrice } from '@sen-use/app'
-import { getAnchorProvider } from 'sentre-web3'
 import { web3 } from '@project-serum/anchor'
 
 import { Button, Col, Row, Space, Typography } from 'antd'
@@ -37,7 +36,6 @@ const LiquidityInfo = ({
   const { decimalizeMintAmount } = useOracles()
   const { getMintBalance } = useMintBalance()
   const getPrice = useGetMintPrice()
-  const walletAddress = useWalletAddress()
   const { createWrapSolTxIfNeed } = useWrapAndUnwrapSolIfNeed()
 
   const fetchMarketData = useCallback(async () => {
@@ -73,11 +71,8 @@ const LiquidityInfo = ({
         )
         txs.push(transaction)
       }
-      const anchorProvider = getAnchorProvider(
-        rpc,
-        walletAddress,
-        window.sentre.wallet,
-      )
+
+      const anchorProvider = getAnchorProvider()!
       const txIds = await anchorProvider.sendAll(
         txs.map((tx) => {
           return { tx, signers: [] }

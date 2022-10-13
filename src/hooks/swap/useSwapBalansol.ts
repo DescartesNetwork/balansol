@@ -1,10 +1,7 @@
 import { useCallback, useMemo } from 'react'
 import { useSelector } from 'react-redux'
-import {
-  createMultiTokenAccountIfNeededTransactions,
-  getAnchorProvider,
-} from 'sentre-web3'
-import { rpc } from '@sentre/senhub'
+import { initTxCreateMultiTokenAccount } from '@sen-use/web3'
+import { getAnchorProvider } from '@sentre/senhub'
 
 import { AppState } from 'model'
 import { SwapPlatform, SwapProvider } from '../useSwap'
@@ -12,8 +9,6 @@ import { useOracles } from '../useOracles'
 import { useBestRouteFromAsk } from './routeFromAsk/useBestRouteFromAsk'
 import { useBestRouteFromBid } from './routeFromBid/useBestRouteFromBid'
 import { useWrapAndUnwrapSolIfNeed } from 'hooks/useWrapAndUnwrapSolIfNeed'
-
-const { wallet } = window.sentre
 
 export const useSwapBalansol = (): SwapProvider => {
   const { bidAmount, bidMint, askMint, slippageTolerance, isReverse } =
@@ -27,20 +22,15 @@ export const useSwapBalansol = (): SwapProvider => {
   const { loading, bestRoute } = isReverse ? routesFromAsk : routesFromBid
 
   const initTokenAccountTxs = useCallback(async () => {
-    const walletAddress = await wallet.getAddress()
-    const provider = getAnchorProvider(rpc, walletAddress, wallet)
-    const transactions = await createMultiTokenAccountIfNeededTransactions(
-      provider,
-      {
-        mints: bestRoute.route.map((route) => route.askMint),
-      },
-    )
+    const provider = getAnchorProvider()!
+    const transactions = await initTxCreateMultiTokenAccount(provider, {
+      mints: bestRoute.route.map((route) => route.askMint),
+    })
     return transactions
   }, [bestRoute.route])
 
   const swap = useCallback(async () => {
-    const walletAddress = await wallet.getAddress()
-    const provider = getAnchorProvider(rpc, walletAddress, wallet)
+    const provider = getAnchorProvider()!
     const bidAmountBN = await decimalizeMintAmount(bidAmount, bidMint)
     const limit = Number(bestRoute.askAmount) * (1 - slippageTolerance / 100)
     const limitBN = await decimalizeMintAmount(limit, askMint)

@@ -5,17 +5,16 @@ import {
   getAssociatedTokenAddress,
   createSyncNativeInstruction,
 } from '@solana/spl-token-v3'
-import { useAccounts } from '@sentre/senhub'
+import { useAccounts, useWalletAddress } from '@sentre/senhub'
 import { utils } from '@senswap/sen-js'
 
 import { SOL_DECIMALS } from 'constant'
 import { createWrapSolIx, createATAIx, createUnWrapSolIx } from 'helper'
 import { useMintBalance } from './useMintBalance'
 
-const { wallet } = window.sentre
-
 export const useWrapAndUnwrapSolIfNeed = () => {
   const { getMintBalance } = useMintBalance()
+  const walletAddress = useWalletAddress()
   const accounts = useAccounts()
 
   const createWrapSolTxIfNeed = useCallback(
@@ -24,7 +23,6 @@ export const useWrapAndUnwrapSolIfNeed = () => {
       amount: number | string,
     ): Promise<web3.Transaction | undefined> => {
       const tx = new web3.Transaction()
-      const walletAddress = await wallet.getAddress()
       const { balance } = await getMintBalance(mint)
       if (mint !== NATIVE_MINT.toBase58() || balance >= amount) return
 
@@ -50,17 +48,14 @@ export const useWrapAndUnwrapSolIfNeed = () => {
 
       return tx
     },
-    [accounts, getMintBalance],
+    [accounts, getMintBalance, walletAddress],
   )
 
   const createUnWrapSolTxIfNeed = async (
     mint: string,
   ): Promise<web3.Transaction | undefined> => {
-    const walletAddress = await wallet.getAddress()
     if (mint !== NATIVE_MINT.toBase58()) return
-
     const uwSolIx = await createUnWrapSolIx(new web3.PublicKey(walletAddress))
-
     return new web3.Transaction().add(uwSolIx)
   }
 
