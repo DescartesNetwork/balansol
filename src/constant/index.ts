@@ -68,4 +68,10 @@ export enum FilterPools {
   YourPools = 'your-pools',
 }
 
+export enum LaunchpadSate {
+  active = 'active',
+  upcoming = 'upcoming',
+  completed = 'completed',
+}
+
 export const SOL_DECIMALS = 9

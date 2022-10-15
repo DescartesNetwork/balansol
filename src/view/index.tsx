@@ -14,6 +14,7 @@ import Navigation from './navigation'
 import PoolDetails from './poolDetails'
 import Swap from './swap'
 import Pools from './pools'
+import Launchpad from './launchpad'
 
 import configs from 'configs'
 import { AppWatcher } from 'components/watcher'
@@ -55,7 +56,7 @@ const View = () => {
         {/* Balansol provider context */}
         <BalansolPoolsProvider>
           <BalansolProvider>
-            <Row gutter={[24, 24]} style={{ paddingTop: 32 }}>
+            <Row gutter={[0, 24]} style={{ paddingTop: 32 }}>
               <Col span={24}>
                 <Navigation />
               </Col>
@@ -67,6 +68,9 @@ const View = () => {
                   </Route>
                   <Route path={extend('/pools')}>
                     <Pools />
+                  </Route>
+                  <Route path={extend('/launchpad')}>
+                    <Launchpad />
                   </Route>
                   <Route path={extend('/farms')}>
                     <Redirect to="/app/sen_farming_v2?autoInstall=true" />
