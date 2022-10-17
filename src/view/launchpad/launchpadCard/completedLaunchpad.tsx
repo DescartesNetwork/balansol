@@ -1,7 +1,7 @@
 import { Card, Col, Row, Typography } from 'antd'
-import Fundraising from './fundraising'
-import LaunchpadProfile from './launchpadProfile'
-import Price from './price'
+import Fundraising from './components/fundraising'
+import LaunchpadProfile from './components/launchpadProfile'
+import Price from './components/price'
 
 const CompletedLaunchpad = () => {
   return (

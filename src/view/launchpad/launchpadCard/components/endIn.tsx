@@ -1,7 +1,7 @@
 import { useTheme } from '@sentre/senhub'
 
 import { Col, Progress, Row, Space, Typography } from 'antd'
-import TimeCountDown from '../timeCountDown'
+import TimeCountDown from '../../../../components/timeCountDown'
 
 const EndIn = () => {
   const theme = useTheme()

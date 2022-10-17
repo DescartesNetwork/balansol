@@ -14,6 +14,7 @@ import Navigation from './navigation'
 import PoolDetails from './poolDetails'
 import Swap from './swap'
 import Pools from './pools'
+import AllLaunchpad from './launchpad/allLaunchpad'
 import Launchpad from './launchpad'
 
 import configs from 'configs'
@@ -60,7 +61,7 @@ const View = () => {
               <Col span={24}>
                 <Navigation />
               </Col>
-              <Col span={24}>
+              <Col span={24} id="balansol-body">
                 <Switch>
                   <Route path={extend('/details')} component={PoolDetails} />
                   <Route path={extend('/swap')}>
@@ -72,6 +73,11 @@ const View = () => {
                   <Route path={extend('/launchpad')}>
                     <Launchpad />
                   </Route>
+                  <Route
+                    path={extend('/launchpad-all')}
+                    component={AllLaunchpad}
+                  />
+
                   <Route path={extend('/farms')}>
                     <Redirect to="/app/sen_farming_v2?autoInstall=true" />
                   </Route>

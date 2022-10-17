@@ -1,4 +1,4 @@
-import { Col, Row } from 'antd'
+import { Button, Col, Row, Space, Typography } from 'antd'
 import Banner from './banner'
 import ListLaunchpad from './listLaunchpad'
 
@@ -13,10 +13,21 @@ const Launchpad = () => {
             <Banner />
           </Col>
           <Col span={24}>
-            <ListLaunchpad type={LaunchpadSate.active} />
+            <ListLaunchpad state={LaunchpadSate.active} />
           </Col>
           <Col span={24}>
-            <ListLaunchpad type={LaunchpadSate.upcoming} />
+            <ListLaunchpad state={LaunchpadSate.upcoming} />
+          </Col>
+          <Col span={24}>
+            <ListLaunchpad state={LaunchpadSate.completed} />
+          </Col>
+          <Col span={24} style={{ textAlign: 'center' }}>
+            <Space direction="vertical" size={24}>
+              <Typography.Title>Ready to launch your project?</Typography.Title>
+              <Button size="large" type="primary">
+                Apply now
+              </Button>
+            </Space>
           </Col>
           <Col span={24} />
         </Row>
