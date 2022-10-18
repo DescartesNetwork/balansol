@@ -16,6 +16,7 @@ import Swap from './swap'
 import Pools from './pools'
 import AllLaunchpad from './launchpad/allLaunchpad'
 import Launchpad from './launchpad'
+import InitLaunchPad from './launchpad/initLaunchpad'
 
 import configs from 'configs'
 import { AppWatcher } from 'components/watcher'
@@ -72,6 +73,9 @@ const View = () => {
                   </Route>
                   <Route path={extend('/launchpad')}>
                     <Launchpad />
+                  </Route>
+                  <Route path={extend('/init-launchpad')}>
+                    <InitLaunchPad />
                   </Route>
                   <Route
                     path={extend('/launchpad-all')}

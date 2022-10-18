@@ -2,20 +2,7 @@ import { useCallback, useEffect } from 'react'
 
 import { Tag } from 'antd'
 
-const CATEGORY = {
-  defi: [49, 100, 0],
-  gamefi: [4, 100, 253],
-  DAO: [114, 100, 7],
-  multisig: [248, 100, 176],
-  lending: [147, 100, 156],
-  portfolio: [72, 100, 5],
-  liquidity: [242, 100, 21],
-  AMM: [161, 100, 253],
-  privacy: [136, 100, 35],
-  payment: [108, 100, 145],
-  utility: [156, 100, 45],
-  NFT: [4, 100, 253],
-}
+import { CATEGORY } from 'constant'
 
 type CategoryTagProps = {
   category: keyof typeof CATEGORY
