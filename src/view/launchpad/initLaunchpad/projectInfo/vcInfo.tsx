@@ -5,7 +5,7 @@ import AvatarUploaded from '../avatarUploaded'
 import { UploadChangeParam } from 'antd/lib/upload'
 import { fileToBase64 } from 'helper'
 
-export type VC = { logo: string | ArrayBuffer | null; link: string }
+export type VC = { logo: string; link: string }
 
 type VCInfoProps = {
   vCs: VC[]
@@ -31,10 +31,7 @@ const VCInfo = ({ vCs, onChangeVC }: VCInfoProps) => {
     fileToBase64(originFile, formatImg, index)
   }
 
-  const formatImg = async (
-    imgBase64: string | ArrayBuffer | null,
-    index: number,
-  ) => {
+  const formatImg = async (imgBase64: string, index: number) => {
     const vCInfo: VC = {
       ...vCs[index],
       logo: imgBase64,

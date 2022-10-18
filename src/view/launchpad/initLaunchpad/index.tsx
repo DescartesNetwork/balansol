@@ -19,18 +19,18 @@ const DEFAULT_INFO: ProjectInfoData = {
   vCs: [{ logo: '', link: '' }],
   socials: [''],
   coverPhoto: '',
+  category: [],
+  fundraisingGoal: 0,
 }
 
 const DEFAULT_LAUNCHPAD: Launchpad = {
   projectInfo: DEFAULT_INFO,
-  token_a: '',
-  purchaseToken: '',
-  total_raise: 0,
-  fundraising: 0,
+  mint: '',
+  baseMint: '',
+  baseAmount: 0,
   fee: 0,
-  category: [],
-  startPrice: 0,
-  floorPrice: 0,
+  startWeights: 0,
+  endWeights: 0,
   startTime: 0,
   endTime: 0,
 }
@@ -40,7 +40,6 @@ export const useGlobalLaunchpad =
 
 const InitLaunchPad = () => {
   const [step, setStep] = useState(InitLaunchpadStep.projectInfo)
-  const [launchpad] = useGlobalLaunchpad()
 
   const processInit = useMemo(() => {
     switch (step) {
@@ -53,15 +52,13 @@ const InitLaunchPad = () => {
     }
   }, [step])
 
-  console.log(launchpad)
-
   return (
     <Row justify="center">
       <Col xs={24} md={12}>
         <Card style={{ marginBottom: 24 }}>
           <Row gutter={[32, 32]}>
             <Col span={24}>
-              <Steps size="small" current={step}>
+              <Steps size="small" current={step} direction="horizontal">
                 <Steps.Step title="Project info" />
                 <Steps.Step title="Cover photo" />
                 <Steps.Step title="Configuration" />

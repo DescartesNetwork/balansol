@@ -5,6 +5,7 @@ import VCInfo, { VC } from './vcInfo'
 
 import { useGlobalLaunchpad } from '../index'
 import { InitLaunchpadStep, ProjectInfoData } from 'constant'
+import { useAppRouter } from 'hooks/useAppRouter'
 
 type ProjectInfoProp = {
   setStep: (val: InitLaunchpadStep) => void
@@ -12,10 +13,10 @@ type ProjectInfoProp = {
 
 const ProjectInfo = ({ setStep }: ProjectInfoProp) => {
   const [launchpadData, setLaunchpadData] = useGlobalLaunchpad()
+  const { pushHistory } = useAppRouter()
 
-  const { projectName, description, github, website } =
-    launchpadData.projectInfo
-  const { whitepaper, vCs, socials } = launchpadData.projectInfo
+  const { description, projectName, socials } = launchpadData.projectInfo
+  const { whitepaper, vCs, github, website } = launchpadData.projectInfo
 
   const onChangeInfo = (name: keyof ProjectInfoData, value: string) => {
     const nextProjectInfo = {
@@ -157,7 +158,12 @@ const ProjectInfo = ({ setStep }: ProjectInfoProp) => {
       <Col span={24} style={{ marginTop: 12 }}>
         <Row gutter={[12, 12]}>
           <Col span={12}>
-            <Button block ghost size="large">
+            <Button
+              onClick={() => pushHistory('/launchpad')}
+              block
+              ghost
+              size="large"
+            >
               Cancel
             </Button>
           </Col>

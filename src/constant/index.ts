@@ -87,21 +87,21 @@ export type ProjectInfoData = {
   website: string
   github: string
   whitepaper: string
-  vCs: { logo: string | ArrayBuffer | null; link: string }[]
+  vCs: { logo: string; link: string }[]
   socials: string[]
-  coverPhoto: string | ArrayBuffer | null
+  coverPhoto: string
+  category: string[]
+  fundraisingGoal: number
 }
 
 export type Launchpad = {
   projectInfo: ProjectInfoData
-  token_a: string
-  purchaseToken: string
-  total_raise: number
-  fundraising: number
+  mint: string
+  baseMint: string
+  baseAmount: number
   fee: number
-  category: string[]
-  startPrice: number
-  floorPrice: number
+  startWeights: number
+  endWeights: number
   startTime: number
   endTime: number
 }

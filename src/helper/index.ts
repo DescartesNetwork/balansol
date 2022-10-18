@@ -84,13 +84,13 @@ export const fetchServerTVL = async (): Promise<
 
 export const fileToBase64 = (
   file: File,
-  callBack: (result: string | ArrayBuffer | null, index: number) => void,
+  callBack: (result: string, index: number) => void,
   index: number,
 ) => {
   const reader = new FileReader()
   reader.readAsDataURL(file)
   reader.onload = async () => {
-    if (reader.result) callBack(reader.result, index)
+    if (reader.result) callBack(reader.result.toString(), index)
   }
 }
 export const validURL = (value: string) => {

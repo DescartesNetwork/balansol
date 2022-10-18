@@ -21,7 +21,7 @@ const ProjectPhoto = ({ setStep }: ProjectPhotoProp) => {
     fileToBase64(originFile, onChangePhoto, 0)
   }
 
-  const onChangePhoto = async (imgBase64: string | ArrayBuffer | null) => {
+  const onChangePhoto = async (imgBase64: string ) => {
     const nextProjectInfo = {
       ...launchpadData.projectInfo,
       coverPhoto: imgBase64,
