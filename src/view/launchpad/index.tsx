@@ -1,6 +1,6 @@
 import { Button, Col, Row, Space, Typography } from 'antd'
 import Banner from './banner'
-import ListLaunchpad from './listLaunchpad'
+import ListLaunchpad from './components/listLaunchpad'
 
 import { LaunchpadSate } from 'constant'
 

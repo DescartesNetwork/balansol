@@ -54,7 +54,7 @@ const InitLaunchPad = () => {
 
   return (
     <Row justify="center">
-      <Col xs={24} md={12}>
+      <Col sm={24} xs={18} md={12}>
         <Card style={{ marginBottom: 24 }}>
           <Row gutter={[32, 32]}>
             <Col span={24}>

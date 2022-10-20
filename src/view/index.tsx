@@ -17,6 +17,7 @@ import Pools from './pools'
 import AllLaunchpad from './launchpad/allLaunchpad'
 import Launchpad from './launchpad'
 import InitLaunchPad from './launchpad/initLaunchpad'
+import LaunchpadDetails from './launchpad/launchpadDetails'
 
 import configs from 'configs'
 import { AppWatcher } from 'components/watcher'
@@ -80,6 +81,10 @@ const View = () => {
                   <Route
                     path={extend('/launchpad-all')}
                     component={AllLaunchpad}
+                  />
+                  <Route
+                    path={extend('/launchpad-details')}
+                    component={LaunchpadDetails}
                   />
 
                   <Route path={extend('/farms')}>

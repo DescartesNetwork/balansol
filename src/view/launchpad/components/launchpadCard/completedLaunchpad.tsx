@@ -1,11 +1,18 @@
 import { Card, Col, Row, Typography } from 'antd'
-import Fundraising from './components/fundraising'
-import LaunchpadProfile from './components/launchpadProfile'
-import Price from './components/price'
+import Fundraising from '../fundraising'
+import LaunchpadProfile from '../launchpadProfile'
+import Price from '../price'
+
+import { useAppRouter } from 'hooks/useAppRouter'
 
 const CompletedLaunchpad = () => {
+  const { pushHistory } = useAppRouter()
   return (
-    <Card>
+    <Card
+      hoverable
+      style={{ cursor: 'pointer' }}
+      onClick={() => pushHistory('/launchpad-details')}
+    >
       <Row gutter={[8, 8]} align="middle">
         <Col span={8}>
           <LaunchpadProfile />

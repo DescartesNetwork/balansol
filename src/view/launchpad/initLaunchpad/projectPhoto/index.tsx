@@ -1,11 +1,11 @@
 import { Button, Col, Image, Row, Space, Typography, Upload } from 'antd'
 import IonIcon from '@sentre/antd-ionicon'
-import AvatarUploaded from './avatarUploaded'
+import AvatarUploaded from '../avatarUploaded'
 
 import { InitLaunchpadStep } from 'constant'
 import { UploadChangeParam } from 'antd/lib/upload'
 import { fileToBase64 } from 'helper'
-import { useGlobalLaunchpad } from './index'
+import { useGlobalLaunchpad } from '../index'
 
 type ProjectPhotoProp = {
   setStep: (val: InitLaunchpadStep) => void
@@ -21,7 +21,7 @@ const ProjectPhoto = ({ setStep }: ProjectPhotoProp) => {
     fileToBase64(originFile, onChangePhoto, 0)
   }
 
-  const onChangePhoto = async (imgBase64: string ) => {
+  const onChangePhoto = async (imgBase64: string) => {
     const nextProjectInfo = {
       ...launchpadData.projectInfo,
       coverPhoto: imgBase64,

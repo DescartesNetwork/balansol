@@ -1,7 +1,7 @@
 import { Button, Col, Row, Space, Typography } from 'antd'
 import IonIcon from '@sentre/antd-ionicon'
-import LaunchpadCard from './launchpadCard'
-import CompletedLaunchpad from './launchpadCard/completedLaunchpad'
+import LaunchpadCard from './components/launchpadCard'
+import CompletedLaunchpad from './components/launchpadCard/completedLaunchpad'
 
 import { LaunchpadSate } from 'constant'
 import { useAppRouter } from 'hooks/useAppRouter'
