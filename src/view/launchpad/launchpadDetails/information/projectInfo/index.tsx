@@ -1,17 +1,22 @@
 import moment from 'moment'
 import { util } from '@sentre/senhub'
 
-import { Col, Row, Space, Typography } from 'antd'
+import { Avatar, Col, Divider, Row, Space, Typography } from 'antd'
 import { MintName, MintSymbol } from '@sen-use/app'
 import Resource from './resource'
 
 import { DATE_FORMAT } from 'constant'
+import { useLaunchpadData } from 'hooks/launchpad/useLaunchpadData'
+import IonIcon from '@sentre/antd-ionicon'
+import { getDataWebsite } from 'helper'
 
-const ProjectInfo = () => {
+const ProjectInfo = ({ launchpadAddress }: { launchpadAddress: string }) => {
+  const { metadata, launchpadData } = useLaunchpadData(launchpadAddress)
+  const mintAddress = launchpadData?.mint.toBase58()
   return (
     <Row gutter={[24, 24]}>
       <Col span={24}>
-        <Resource />
+        <Resource launchpadAddress={launchpadAddress} />
       </Col>
 
       {/* Description */}
@@ -19,11 +24,7 @@ const ProjectInfo = () => {
         <Space direction="vertical">
           <Typography.Title level={5}>Description</Typography.Title>
           <Typography.Paragraph style={{ margin: 0 }}>
-            13M USDT tokens from the Public Sale will be distributed (unpaused)
-            to Balansol Liquidity Bootstrapping Pool (LBP) on Oct 3rd at around
-            10:00 am UTC. The LBP will run for 48 hours, starting from 10:00 am
-            UTC Oct 3rd, and ending at 10:00 am UTC Oct 5th. The weight of
-            Balancer Pool will be adjusted according to the market buying power.
+            {metadata?.description}
           </Typography.Paragraph>
         </Space>
       </Col>
@@ -36,32 +37,37 @@ const ProjectInfo = () => {
           <Space direction="vertical">
             <Typography.Text>
               <span style={{ color: '#9CA1AF' }}>Token Name: </span>
-              <MintName mintAddress={''} /> (<MintSymbol mintAddress={''} />)
+              <MintName mintAddress={mintAddress} /> (
+              <MintSymbol mintAddress={mintAddress} />)
             </Typography.Text>
             <Typography.Text
               style={{ cursor: 'pointer' }}
-              onClick={() => window.open(util.explorer(''), '_blank')}
+              onClick={() => window.open(util.explorer(mintAddress), '_blank')}
             >
               <span style={{ color: '#9CA1AF' }}>Token Address: </span>
-              {util.shortenAddress('sVsAdfsdfsdasdasdfsdKDDsd', 6)}
+              {util.shortenAddress(mintAddress, 6)}
             </Typography.Text>
             <Typography.Text>
               <span style={{ color: '#9CA1AF' }}>Token supply: </span>
               {util.numeric(2342342342).format('0,0.[00000]')} (
-              <MintSymbol mintAddress={''} />)
+              <MintSymbol mintAddress={mintAddress} />)
             </Typography.Text>
             <Typography.Text>
               <span style={{ color: '#9CA1AF' }}>Launchpad supply: </span>
               {util.numeric(2342342342).format('0,0.[00000]')} (
-              <MintSymbol mintAddress={''} />)
+              <MintSymbol mintAddress={mintAddress} />)
             </Typography.Text>
             <Typography.Text>
               <span style={{ color: '#9CA1AF' }}>Launchpad start time: </span>
-              {moment(Date.now()).format(DATE_FORMAT)}
+              {moment(launchpadData?.startTime.toNumber() * 1000).format(
+                DATE_FORMAT,
+              )}
             </Typography.Text>
             <Typography.Text>
               <span style={{ color: '#9CA1AF' }}>Launchpad end time: </span>
-              {moment(Date.now()).format(DATE_FORMAT)}
+              {moment(launchpadData?.endTime.toNumber() * 1000).format(
+                DATE_FORMAT,
+              )}
             </Typography.Text>
           </Space>
         </Space>
@@ -69,13 +75,45 @@ const ProjectInfo = () => {
       <Col span={24}>
         <Space direction="vertical">
           <Typography.Title level={5}>Social media</Typography.Title>
-          <Resource />
+          <Space style={{ cursor: 'pointer' }}>
+            {metadata?.socials.map((social, index) => {
+              const data = getDataWebsite(social)
+              return (
+                <Space key={index}>
+                  <IonIcon style={{ fontSize: 21 }} name={data?.iconName} />
+                  <Typography.Text>{data?.websiteName}</Typography.Text>
+                  {index !== metadata.socials.length - 1 && (
+                    <Divider
+                      style={{ borderColor: '#D3D3D6', margin: 2 }}
+                      type="vertical"
+                    />
+                  )}
+                </Space>
+              )
+            })}
+          </Space>
         </Space>
       </Col>
       <Col span={24}>
         <Space direction="vertical">
           <Typography.Title level={5}>Leading venture capital</Typography.Title>
-          <Resource />
+          <Space style={{ cursor: 'pointer' }}>
+            {!!metadata?.vCs.length &&
+              metadata?.vCs.map(({ link, logo }, index) => {
+                return (
+                  <Space key={index}>
+                    <Avatar size={21} src={logo} />
+                    <Typography.Text>{link}</Typography.Text>
+                    {index !== metadata.vCs.length - 1 && (
+                      <Divider
+                        style={{ borderColor: '#D3D3D6', margin: 2 }}
+                        type="vertical"
+                      />
+                    )}
+                  </Space>
+                )
+              })}
+          </Space>
         </Space>
       </Col>
     </Row>

@@ -18,7 +18,7 @@ const conf: Record<Net, Conf> = {
    */
   devnet: {
     connection: new Connection(rpc),
-    balancerAddress: 'Ff5wgqZ7B63J3iySASitrD6u3h5JHgrHyfSpAmm1Ufmw',
+    balancerAddress: 'BqBCY6rLv8BXq3s7wFbALsQP255zAH77uAJFpDBDev8X',
     taxmanAddress: 'GJLqpmDxxrV9xruee2vFvEoTho7VVQHRtuHH8nfoAE54',
     bidMintDefault: '2z6Ci38Cx6PyL3tFrT95vbEeB3izqpoLdxxBkJk2euyj',
     askMintDefault: '5YwUkPdXLoujGkZuo9B4LsLKj3hdkDcfP4derpspifSJ',

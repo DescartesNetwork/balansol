@@ -1,5 +1,4 @@
-import { useTheme } from '@sentre/senhub'
-import type { CustomTagProps } from 'rc-select/lib/BaseSelect'
+import { useTheme, util } from '@sentre/senhub'
 import moment from 'moment'
 
 import { Button, Col, DatePicker, InputNumber } from 'antd'
@@ -17,8 +16,12 @@ import {
   Launchpad,
   ProjectInfoData,
 } from 'constant'
-import { useGlobalLaunchpad } from '../index'
-import { Ipfs } from 'shared/ipfs'
+import { DEFAULT_LAUNCHPAD, useGlobalLaunchpad } from '../index'
+import { useCreateLaunchpad } from 'hooks/launchpad/actions/useCreateLaunchpad'
+import { useWrapAccountBalance } from 'hooks/useWrapAccountBalance'
+import { RangePickerProps } from 'antd/lib/date-picker'
+import type { CustomTagProps } from 'rc-select/lib/BaseSelect'
+import { useAppRouter } from 'hooks/useAppRouter'
 
 type ConfigurationProps = {
   setStep: (val: InitLaunchpadStep) => void
@@ -31,9 +34,12 @@ const tagRender = (props: CustomTagProps) => {
 
 const Configuration = ({ setStep }: ConfigurationProps) => {
   const [launchpadData, setLaunchpadData] = useGlobalLaunchpad()
+  const { onCreateLaunchpad, loading } = useCreateLaunchpad()
+  const { stableMint, startPrice, endPrice, mint, fee } = launchpadData
+  const { startTime, endTime, projectInfo, amount } = launchpadData
+  const { balance } = useWrapAccountBalance(mint)
   const theme = useTheme()
-  const { baseMint, startWeights, endWeights, mint, fee } = launchpadData
-  const { startTime, endTime, projectInfo, baseAmount } = launchpadData
+  const { pushHistory } = useAppRouter()
 
   const onChange = (name: keyof Launchpad, value: string | number) =>
     setLaunchpadData({ ...launchpadData, [name]: value })
@@ -47,21 +53,33 @@ const Configuration = ({ setStep }: ConfigurationProps) => {
   }
 
   const onCreate = async () => {
-    const { digest } = await Ipfs.methods.launchpad.set(projectInfo)
-    console.log(digest)
+    await onCreateLaunchpad(launchpadData)
+    setLaunchpadData(DEFAULT_LAUNCHPAD)
+    return pushHistory('/launchpad')
+  }
+
+  const disabledStartDate: RangePickerProps['disabledDate'] = (current) => {
+    return current < moment().subtract(1, 'minutes')
+  }
+
+  const disabledEndDate: RangePickerProps['disabledDate'] = (current) => {
+    return (
+      (current && current > moment(startTime).add(7, 'days')) ||
+      current < moment()
+    )
   }
 
   const disabled =
     !mint ||
-    !baseAmount ||
-    !baseMint ||
-    !projectInfo.fundraisingGoal ||
+    !amount ||
+    !stableMint ||
+    !projectInfo.baseAmount ||
     !fee ||
     !projectInfo.category.length ||
     !startTime ||
     !endTime ||
-    !startWeights ||
-    !endWeights
+    !startPrice ||
+    !endPrice
 
   return (
     <Row gutter={[20, 20]}>
@@ -74,8 +92,13 @@ const Configuration = ({ setStep }: ConfigurationProps) => {
                 <Typography.Text>Your token</Typography.Text>
               </Col>
               <Col>
-                <Typography.Text className="caption" type="secondary">
-                  Available: 0
+                <Typography.Text
+                  onClick={() => onChange('amount', balance)}
+                  style={{ cursor: 'pointer' }}
+                  className="caption"
+                  type="secondary"
+                >
+                  Available: {util.numeric(balance).format('0,0.[0000]')}
                 </Typography.Text>
               </Col>
             </Row>
@@ -98,8 +121,8 @@ const Configuration = ({ setStep }: ConfigurationProps) => {
             </Col>
             <Col span={12}>
               <InputNumber
-                onChange={(val) => onChange('baseAmount', val)}
-                value={baseAmount ? baseAmount : undefined}
+                onChange={(val) => onChange('amount', val)}
+                value={amount ? amount : undefined}
                 placeholder="Input total raise"
               />
             </Col>
@@ -130,18 +153,16 @@ const Configuration = ({ setStep }: ConfigurationProps) => {
                   background: theme === 'dark' ? '#142042' : '#e6eaf5',
                 }}
                 placeholder="Select a token"
-                value={baseMint}
-                onChange={(val) => onChange('baseMint', val)}
+                value={stableMint}
+                onChange={(val) => onChange('stableMint', val)}
               />
             </Col>
             <Col span={12}>
               <InputNumber
                 placeholder="Input fundraising goal"
-                onChange={(val) => onChangeProjectInfo('fundraisingGoal', val)}
+                onChange={(val) => onChangeProjectInfo('baseAmount', val)}
                 value={
-                  projectInfo.fundraisingGoal
-                    ? projectInfo.fundraisingGoal
-                    : undefined
+                  projectInfo.baseAmount ? projectInfo.baseAmount : undefined
                 }
               />
             </Col>
@@ -203,8 +224,8 @@ const Configuration = ({ setStep }: ConfigurationProps) => {
         <SpaceVertical label="Start price">
           <InputNumber
             placeholder="Input price"
-            onChange={(val) => onChange('startWeights', val)}
-            value={startWeights ? startWeights : undefined}
+            onChange={(val) => onChange('startPrice', val)}
+            value={startPrice ? startPrice : undefined}
           />
         </SpaceVertical>
       </Col>
@@ -212,8 +233,8 @@ const Configuration = ({ setStep }: ConfigurationProps) => {
         <SpaceVertical label="Floor price">
           <InputNumber
             placeholder="Input price"
-            onChange={(val) => onChange('endWeights', val)}
-            value={endWeights ? endWeights : undefined}
+            onChange={(val) => onChange('endPrice', val)}
+            value={endPrice ? endPrice : undefined}
           />
         </SpaceVertical>
       </Col>
@@ -231,6 +252,7 @@ const Configuration = ({ setStep }: ConfigurationProps) => {
             showTime={{ showSecond: false }}
             placement="bottomRight"
             format={DATE_FORMAT}
+            disabledDate={disabledStartDate}
           />
         </SpaceVertical>
       </Col>
@@ -246,6 +268,7 @@ const Configuration = ({ setStep }: ConfigurationProps) => {
             showTime={{ showSecond: false }}
             placement="bottomRight"
             format={DATE_FORMAT}
+            disabledDate={disabledEndDate}
           />
         </SpaceVertical>
       </Col>
@@ -282,6 +305,7 @@ const Configuration = ({ setStep }: ConfigurationProps) => {
               block
               type="primary"
               size="large"
+              loading={loading}
             >
               Create
             </Button>

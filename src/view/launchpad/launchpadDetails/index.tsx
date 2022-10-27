@@ -3,13 +3,16 @@ import IonIcon from '@sentre/antd-ionicon'
 import BuyToken from './buyToken'
 import Information from './information'
 import Progress from './progress'
+
 import { useAppRouter } from 'hooks/useAppRouter'
 
 const LaunchpadDetails = () => {
-  const { pushHistory } = useAppRouter()
+  const { pushHistory, getQuery } = useAppRouter()
+  const launchpadAddress = getQuery('launchpadAddress') || ''
+
   return (
     <Row justify="center">
-      <Col xs={24} md={18}>
+      <Col xs={24} md={24}>
         <Row gutter={[0, 24]}>
           <Col span={24}>
             <Button
@@ -23,15 +26,15 @@ const LaunchpadDetails = () => {
           <Col span={24}>
             <Row gutter={[24, 24]}>
               <Col xs={24} md={14}>
-                <Information />
+                <Information launchpadAddress={launchpadAddress} />
               </Col>
               <Col xs={24} md={10}>
                 <Row gutter={[0, 24]}>
                   <Col span={24}>
-                    <BuyToken />
+                    <BuyToken launchpadAddress={launchpadAddress} />
                   </Col>
                   <Col span={24}>
-                    <Progress />
+                    <Progress launchpadAddress={launchpadAddress} />
                   </Col>
                 </Row>
               </Col>

@@ -1,11 +1,13 @@
 import { useTheme } from '@sentre/senhub'
 
 import { Col, Progress, Row, Space, Typography } from 'antd'
+import { useLaunchpadData } from 'hooks/launchpad/useLaunchpadData'
 import TimeCountDown from '../../../components/timeCountDown'
+import { LaunchpadCardProps } from './launchpadCard'
 
-const EndIn = () => {
+const EndIn = ({ launchpadAddress }: LaunchpadCardProps) => {
   const theme = useTheme()
-
+  const { launchpadData } = useLaunchpadData(launchpadAddress)
   return (
     <Row align="middle">
       <Col flex="auto">
@@ -13,7 +15,7 @@ const EndIn = () => {
       </Col>
       <Col>
         <Space>
-          <TimeCountDown endTime={1665722319066 / 1000 + 30 * 24 * 60 * 60} />
+          <TimeCountDown endTime={launchpadData?.endTime.toString()} />
           <Progress
             type="circle"
             percent={80}

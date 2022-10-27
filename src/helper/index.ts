@@ -98,3 +98,31 @@ export const validURL = (value: string) => {
     value,
   )
 }
+
+export const getDataWebsite = (url: string) => {
+  const socialIcons: Record<string, { icon: string; name: string }> = {
+    t: { icon: 'logo-telegram', name: 'Telegram' },
+    twitter: { icon: 'logo-twitter', name: 'Twitter' },
+    facebook: { icon: 'logo-facebook', name: 'Facebook' },
+    discord: { icon: 'logo-discord', name: 'Discord' },
+    global: { icon: 'globe', name: 'Social media' },
+    medium: { icon: 'logo-medium', name: 'Medium' },
+  }
+
+  if (!validURL(url)) return
+  let socialName = ''
+  const domain = new URL(url)
+  const host = domain.hostname.replace('www.', '')
+  for (const char of host) {
+    if (char === '.') break
+    socialName += char
+  }
+
+  const valid = socialIcons[socialName.toLowerCase()]
+  if (!valid) socialName = 'global'
+
+  const websiteName = socialIcons[socialName.toLowerCase()].name
+  const iconName = socialIcons[socialName.toLowerCase()].icon
+
+  return { iconName, websiteName }
+}

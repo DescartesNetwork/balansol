@@ -1,13 +1,14 @@
-import { MintSelection } from '@sen-use/app'
+import { MintSelection, MintSymbol } from '@sen-use/app'
 import { useTheme, util } from '@sentre/senhub'
 
 import { Button, Card, Col, Row, Space, Typography } from 'antd'
 import MintInput from 'components/mintInput'
 
-import configs from 'configs'
 import { priceImpactColor } from 'helper'
+import { useLaunchpadData } from 'hooks/launchpad/useLaunchpadData'
 
-const BuyToken = () => {
+const BuyToken = ({ launchpadAddress }: { launchpadAddress: string }) => {
+  const { launchpadData } = useLaunchpadData(launchpadAddress)
   const theme = useTheme()
   return (
     <Card>
@@ -23,11 +24,11 @@ const BuyToken = () => {
             >
               <MintInput
                 amount={0}
-                selectedMint={configs.sol.askMintDefault}
+                selectedMint={launchpadData?.mint.toBase58()}
                 onChangeAmount={() => {}}
                 mintSelection={
                   <MintSelection
-                    value={configs.sol.askMintDefault}
+                    value={launchpadData?.mint.toBase58()}
                     style={{
                       background: theme === 'dark' ? '#394360' : '#F2F4FA',
                     }}
@@ -46,7 +47,7 @@ const BuyToken = () => {
             <Row align="middle">
               <Col flex="auto">
                 <MintSelection
-                  value={configs.sol.bidMintDefault}
+                  value={launchpadData?.stableMint.toBase58()}
                   style={{
                     background: theme === 'dark' ? '#394360' : '#F2F4FA',
                   }}
@@ -77,7 +78,13 @@ const BuyToken = () => {
                 <Typography.Text type="secondary">Rate</Typography.Text>
               </Col>
               <Col>
-                <Typography.Text>1 ZET = 0.5 USDC</Typography.Text>
+                <Typography.Text>
+                  1 <MintSymbol mintAddress={launchpadData?.mint.toBase58()} />{' '}
+                  = 0.5{' '}
+                  <MintSymbol
+                    mintAddress={launchpadData?.stableMint.toBase58()}
+                  />
+                </Typography.Text>
               </Col>
             </Row>
           </Space>

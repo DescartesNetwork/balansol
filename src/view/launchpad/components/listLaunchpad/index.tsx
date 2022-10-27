@@ -1,9 +1,10 @@
-import { Button, Col, Row, Space, Typography } from 'antd'
+import { Button, Col, Empty, Row, Space, Typography } from 'antd'
 import LaunchpadCard from '../launchpadCard'
 import CompletedLaunchpad from '../launchpadCard/completedLaunchpad'
 
 import { LaunchpadSate } from 'constant'
 import { useAppRouter } from 'hooks/useAppRouter'
+import { useFilterLaunchpad } from 'hooks/launchpad/useFilterLaunchpad'
 
 import './index.less'
 
@@ -12,6 +13,7 @@ type ListLaunchpadProps = {
 }
 
 const ListLaunchpad = ({ state }: ListLaunchpadProps) => {
+  const launchpads = useFilterLaunchpad(state)
   const { pushHistory } = useAppRouter()
   const completed = state === LaunchpadSate.completed
 
@@ -27,13 +29,16 @@ const ListLaunchpad = ({ state }: ListLaunchpadProps) => {
               >
                 {state}
               </Typography.Title>
-              <Typography.Text className="amount-launchpad">2</Typography.Text>
+              <Typography.Text className="amount-launchpad">
+                {launchpads.length}
+              </Typography.Text>
             </Space>
           </Col>
           <Col>
             <Button
               onClick={() => pushHistory('/launchpad-all', { state })}
               type="text"
+              disabled={!launchpads.length}
             >
               View all
             </Button>
@@ -41,13 +46,21 @@ const ListLaunchpad = ({ state }: ListLaunchpadProps) => {
         </Row>
       </Col>
       <Col span={24}>
-        <Row gutter={[24, 24]}>
-          {[1, 2].map((project) => (
-            <Col key={project} xs={24} md={completed ? 24 : 12}>
-              {completed ? <CompletedLaunchpad /> : <LaunchpadCard />}
-            </Col>
-          ))}
-        </Row>
+        {launchpads.length ? (
+          <Row gutter={[24, 24]}>
+            {launchpads.map((launchpadAddress) => (
+              <Col key={launchpadAddress} xs={24} md={completed ? 24 : 12}>
+                {completed ? (
+                  <CompletedLaunchpad launchpadAddress={launchpadAddress} />
+                ) : (
+                  <LaunchpadCard launchpadAddress={launchpadAddress} />
+                )}
+              </Col>
+            ))}
+          </Row>
+        ) : (
+          <Empty description={`No ${state} launchpads`} />
+        )}
       </Col>
     </Row>
   )

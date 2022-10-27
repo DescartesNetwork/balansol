@@ -58,7 +58,7 @@ const VCInfo = ({ vCs, onChangeVC }: VCInfoProps) => {
       {vCs.map(({ link, logo }, index) => (
         <Col span={24} key={index}>
           <Row gutter={12} align="middle">
-            <Col span={2}>
+            <Col xs={4} md={2}>
               {logo ? (
                 <AvatarUploaded onRemove={() => onRemoveLogo(index)}>
                   <Avatar size={40} src={logo} />
@@ -75,16 +75,15 @@ const VCInfo = ({ vCs, onChangeVC }: VCInfoProps) => {
                     block
                     type="dashed"
                     icon={<IonIcon name="attach-outline" />}
-                    style={{ borderRadius: '50%' }}
                   />
                 </Upload>
               )}
             </Col>
-            <Col span={22}>
+            <Col xs={20} md={22}>
               <Space style={{ width: '100%' }} className="input-vc">
                 <Input
                   value={link}
-                  placeholder="Input link"
+                  placeholder="Input name"
                   style={{ width: '100%' }}
                   onChange={(e) => onLinkChange(e.target.value, index)}
                 />

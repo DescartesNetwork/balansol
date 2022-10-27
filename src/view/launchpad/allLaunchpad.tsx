@@ -5,12 +5,14 @@ import CompletedLaunchpad from './components/launchpadCard/completedLaunchpad'
 
 import { LaunchpadSate } from 'constant'
 import { useAppRouter } from 'hooks/useAppRouter'
+import { useFilterLaunchpad } from 'hooks/launchpad/useFilterLaunchpad'
 
 const AllLaunchpad = () => {
   const { getQuery, pushHistory } = useAppRouter()
-
-  const launchpadState = getQuery('state') || ''
+  const launchpadState = (getQuery('state') || '') as LaunchpadSate
+  const launchpads = useFilterLaunchpad(launchpadState)
   const completed = launchpadState === LaunchpadSate.completed
+
   return (
     <Row justify="center">
       <Col span={18}>
@@ -36,9 +38,13 @@ const AllLaunchpad = () => {
           {/* List launchpad */}
           <Col span={24}>
             <Row gutter={[12, 12]}>
-              {[1, 2, 3, 4].map((launchpad) => (
-                <Col key={launchpad} xs={24} md={completed ? 24 : 12}>
-                  {completed ? <CompletedLaunchpad /> : <LaunchpadCard />}
+              {launchpads.slice(0, 2).map((launchpadAddress) => (
+                <Col key={launchpadAddress} xs={24} md={completed ? 24 : 12}>
+                  {completed ? (
+                    <CompletedLaunchpad launchpadAddress={launchpadAddress} />
+                  ) : (
+                    <LaunchpadCard launchpadAddress={launchpadAddress} />
+                  )}
                 </Col>
               ))}
             </Row>

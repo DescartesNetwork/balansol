@@ -20,19 +20,19 @@ const DEFAULT_INFO: ProjectInfoData = {
   socials: [''],
   coverPhoto: '',
   category: [],
-  fundraisingGoal: 0,
+  baseAmount: 0,
 }
 
-const DEFAULT_LAUNCHPAD: Launchpad = {
+export const DEFAULT_LAUNCHPAD: Launchpad = {
   projectInfo: DEFAULT_INFO,
   mint: '',
-  baseMint: '',
-  baseAmount: 0,
+  stableMint: '',
+  amount: 0,
   fee: 0,
-  startWeights: 0,
-  endWeights: 0,
-  startTime: 0,
-  endTime: 0,
+  startPrice: 0,
+  endPrice: 0,
+  startTime: Date.now(), //now
+  endTime: Date.now() + 3 * (24 * 60 * 60 * 1000), // Add more 3 days
 }
 
 export const useGlobalLaunchpad =
@@ -54,7 +54,7 @@ const InitLaunchPad = () => {
 
   return (
     <Row justify="center">
-      <Col sm={24} xs={18} md={12}>
+      <Col xs={24} sm={20} md={18} lg={12}>
         <Card style={{ marginBottom: 24 }}>
           <Row gutter={[32, 32]}>
             <Col span={24}>

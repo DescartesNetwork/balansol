@@ -4,15 +4,15 @@ import ProjectInfo from './projectInfo'
 
 import './index.less'
 
-const Information = () => {
+const Information = ({ launchpadAddress }: { launchpadAddress: string }) => {
   return (
     <Card style={{ marginBottom: 24 }}>
       <Tabs>
         <Tabs.TabPane key="launchpad-info" tab="Launchpad info">
-          <LaunchpadInfo />
+          <LaunchpadInfo launchpadAddress={launchpadAddress} />
         </Tabs.TabPane>
         <Tabs.TabPane key="project-info" tab="Project info">
-          <ProjectInfo />
+          <ProjectInfo launchpadAddress={launchpadAddress} />
         </Tabs.TabPane>
       </Tabs>
     </Card>

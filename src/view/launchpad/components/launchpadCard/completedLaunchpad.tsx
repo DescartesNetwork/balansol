@@ -4,18 +4,19 @@ import LaunchpadProfile from '../launchpadProfile'
 import Price from '../price'
 
 import { useAppRouter } from 'hooks/useAppRouter'
+import { LaunchpadCardProps } from './index'
 
-const CompletedLaunchpad = () => {
+const CompletedLaunchpad = ({ launchpadAddress }: LaunchpadCardProps) => {
   const { pushHistory } = useAppRouter()
   return (
     <Card
       hoverable
       style={{ cursor: 'pointer' }}
-      onClick={() => pushHistory('/launchpad-details')}
+      onClick={() => pushHistory('/launchpad-details', { launchpadAddress })}
     >
       <Row gutter={[8, 8]} align="middle">
         <Col span={8}>
-          <LaunchpadProfile />
+          <LaunchpadProfile launchpadAddress={launchpadAddress} />
         </Col>
         <Col span={16}>
           <Row gutter={[8, 8]} style={{ height: '100%' }}>
@@ -36,10 +37,13 @@ const CompletedLaunchpad = () => {
               </Row>
             </Col>
             <Col span={8}>
-              <Price direction="column" />
+              <Price launchpadAddress={launchpadAddress} direction="column" />
             </Col>
             <Col span={8}>
-              <Fundraising direction="column" />
+              <Fundraising
+                launchpadAddress={launchpadAddress}
+                direction="column"
+              />
             </Col>
           </Row>
         </Col>

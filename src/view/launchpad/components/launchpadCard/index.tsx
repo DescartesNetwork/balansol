@@ -8,12 +8,17 @@ import Price from '../price'
 
 import { useLayout } from 'hooks/useLayout'
 import { useAppRouter } from 'hooks/useAppRouter'
+import { useLaunchpadData } from 'hooks/launchpad/useLaunchpadData'
 
 import './index.less'
 
-import BG from 'static/images/panel1.png'
+export type LaunchpadCardProps = {
+  launchpadAddress: string
+}
 
-const LaunchpadCard = () => {
+const LaunchpadCard = ({ launchpadAddress }: LaunchpadCardProps) => {
+  const { metadata } = useLaunchpadData(launchpadAddress)
+
   const width = useLayout('balansol-body')
   const { pushHistory } = useAppRouter()
   const rate = 18 / 24
@@ -23,14 +28,14 @@ const LaunchpadCard = () => {
   return (
     <Row
       className="project-card"
-      onClick={() => pushHistory('/launchpad-details')}
+      onClick={() => pushHistory('/launchpad-details', { launchpadAddress })}
     >
       <Col
         span={24}
         className="project-card_header"
         style={{ height: bodyWidth / 2 / HEIGHT_RATIO }}
       >
-        <Image src={BG} preview={false} />
+        <Image src={metadata?.coverPhoto} preview={false} />
       </Col>
       <Col span={24}>
         <Card className="project-card_body">
@@ -38,7 +43,7 @@ const LaunchpadCard = () => {
             <Col span={24}>
               <Row>
                 <Col flex="auto">
-                  <LaunchpadProfile />
+                  <LaunchpadProfile launchpadAddress={launchpadAddress} />
                 </Col>
                 <Col>
                   <IonIcon className="owner" name="person-outline" />
@@ -46,26 +51,23 @@ const LaunchpadCard = () => {
               </Row>
             </Col>
             <Col span={24}>
-              <EndIn />
+              <EndIn launchpadAddress={launchpadAddress} />
             </Col>
             <Col span={24}>
-              <Price />
+              <Price launchpadAddress={launchpadAddress} />
             </Col>
             <Col span={24}>
-              <Fundraising />
+              <Fundraising launchpadAddress={launchpadAddress} />
             </Col>
             <Col span={24}>
-              <Sold />
+              <Sold launchpadAddress={launchpadAddress} />
             </Col>
             <Col span={24}>
               <Typography.Paragraph
                 ellipsis={{ rows: 2 }}
                 style={{ margin: 0 }}
               >
-                Codyfight introduces Create2Earn, an innovative model to create,
-                engage and play in a competitive environment Codyfight
-                introduces Create2Earn, an innovative model to create, engage
-                and play in a competitive environment
+                {metadata?.description}
               </Typography.Paragraph>
             </Col>
           </Row>

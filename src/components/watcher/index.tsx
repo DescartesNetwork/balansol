@@ -10,6 +10,7 @@ import Balancer from '@senswap/balancer'
 
 import configs from 'configs'
 import PoolWatcher from './pool.watcher'
+import LaunchpadWatcher from './launchpad.watcher'
 
 export const AppWatcher: FunctionComponent = (props) => {
   const [loading, setLoading] = useState(true)
@@ -28,5 +29,9 @@ export const AppWatcher: FunctionComponent = (props) => {
   }, [watchWallet])
 
   if (loading) return <Fragment />
-  return <PoolWatcher>{props.children}</PoolWatcher>
+  return (
+    <PoolWatcher>
+      <LaunchpadWatcher>{props.children}</LaunchpadWatcher>
+    </PoolWatcher>
+  )
 }

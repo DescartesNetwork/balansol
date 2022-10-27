@@ -1,25 +1,44 @@
+import { MouseEvent } from 'react'
+
 import IonIcon from '@sentre/antd-ionicon'
-import { Avatar, Space, Typography } from 'antd'
+import { Avatar, Button, Space, Typography } from 'antd'
 import CategoryTag from 'components/categoryTag'
 
-import BG from 'static/images/panel1.png'
+import { LaunchpadCardProps } from './launchpadCard'
+import { useLaunchpadData } from 'hooks/launchpad/useLaunchpadData'
+import { getDataWebsite, validURL } from 'helper'
 
-const LaunchpadProfile = () => {
+const LaunchpadProfile = ({ launchpadAddress }: LaunchpadCardProps) => {
+  const { metadata } = useLaunchpadData(launchpadAddress)
+  const onRedirect = (e: MouseEvent<HTMLElement>, url?: string) => {
+    e.stopPropagation()
+    if (!url || !validURL(url)) return
+    return window.open(url, '_blank')
+  }
+
   return (
     <Space size={24}>
-      <Avatar shape="square" size={68} src={BG} />
+      <Avatar shape="square" size={68} src={metadata?.coverPhoto} />
       <Space size={4} direction="vertical">
-        <Typography.Title level={4}>Sentre Protocol</Typography.Title>
+        <Typography.Title level={4}>{metadata?.projectName}</Typography.Title>
         <Space size={0}>
-          {['defi', 'gamefi', 'DAO', 'AMM'].map((tag: any) => (
+          {metadata?.category.map((tag: any) => (
             <CategoryTag key={tag} category={tag} />
           ))}
         </Space>
-
-        <IonIcon
-          style={{ fontSize: 14, color: '#6B7288' }}
-          name="logo-youtube"
-        />
+        <Space>
+          {metadata?.socials.map((social, index) => {
+            const data = getDataWebsite(social)
+            return (
+              <Button
+                key={index}
+                type="text"
+                icon={<IonIcon name={data?.iconName} />}
+                onClick={(e) => onRedirect(e, social)}
+              />
+            )
+          })}
+        </Space>
       </Space>
     </Space>
   )

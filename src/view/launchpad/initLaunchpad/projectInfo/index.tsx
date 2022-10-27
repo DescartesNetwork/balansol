@@ -6,6 +6,8 @@ import VCInfo, { VC } from './vcInfo'
 import { useGlobalLaunchpad } from '../index'
 import { InitLaunchpadStep, ProjectInfoData } from 'constant'
 import { useAppRouter } from 'hooks/useAppRouter'
+import { validURL } from 'helper'
+import { useMemo } from 'react'
 
 type ProjectInfoProp = {
   setStep: (val: InitLaunchpadStep) => void
@@ -42,14 +44,22 @@ const ProjectInfo = ({ setStep }: ProjectInfoProp) => {
     return setStep(InitLaunchpadStep.projectPhoto)
   }
 
-  const disabled =
-    !projectName ||
-    !description ||
-    !website ||
-    !whitepaper ||
-    !github ||
-    projectName.length > 20 ||
-    description.length > 150
+  console.log(launchpadData)
+
+  const disabled = useMemo(() => {
+    if (socials.length > 1)
+      for (const social of socials) if (!validURL(social)) return true
+
+    return (
+      !projectName ||
+      !description ||
+      (!website && !validURL(website)) ||
+      (!whitepaper && !validURL(whitepaper)) ||
+      (!github && !validURL(github)) ||
+      projectName.length > 20 ||
+      description.length > 150
+    )
+  }, [description, github, projectName, socials, website, whitepaper])
 
   return (
     <Row gutter={[20, 20]}>

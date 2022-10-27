@@ -3,8 +3,8 @@ import { useSelector } from 'react-redux'
 import { getAnchorProvider, useGetMintDecimals, util } from '@sentre/senhub'
 import { web3, BN } from '@project-serum/anchor'
 
-import { MintSymbol } from '@sen-use/app/dist'
 import { Button, Checkbox, Col, Row, Tooltip, Typography } from 'antd'
+import { MintSymbol } from '@sen-use/app'
 import MintInput from 'components/mintInput'
 
 import { notifyError, notifySuccess, priceImpactColor } from 'helper'

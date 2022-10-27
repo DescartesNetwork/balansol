@@ -3,7 +3,12 @@ import EndIn from 'view/launchpad/components/endIn'
 import Fundraising from 'view/launchpad/components/fundraising'
 import Sold from 'view/launchpad/components/sold'
 
-const Progress = () => {
+import { LaunchpadCardProps } from 'view/launchpad/components/launchpadCard'
+import { useLaunchpadData } from 'hooks/launchpad/useLaunchpadData'
+import { MintSymbol } from '@sen-use/app/dist'
+
+const Progress = ({ launchpadAddress }: LaunchpadCardProps) => {
+  const { launchpadData } = useLaunchpadData(launchpadAddress)
   return (
     <Card>
       <Row gutter={[16, 16]}>
@@ -13,7 +18,9 @@ const Progress = () => {
               <Typography.Text type="secondary">Your bought</Typography.Text>
             </Col>
             <Col>
-              <Typography.Title level={3}>0 ZET</Typography.Title>
+              <Typography.Title level={3}>
+                0 <MintSymbol mintAddress={launchpadData?.mint.toBase58()} />
+              </Typography.Title>
             </Col>
           </Row>
         </Col>
@@ -28,13 +35,13 @@ const Progress = () => {
           </Row>
         </Col>
         <Col span={24}>
-          <EndIn />
+          <EndIn launchpadAddress={launchpadAddress} />
         </Col>
         <Col span={24}>
-          <Fundraising />
+          <Fundraising launchpadAddress={launchpadAddress} />
         </Col>
         <Col span={24}>
-          <Sold />
+          <Sold launchpadAddress={launchpadAddress} />
         </Col>
       </Row>
     </Card>

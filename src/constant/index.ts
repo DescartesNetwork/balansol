@@ -91,17 +91,17 @@ export type ProjectInfoData = {
   socials: string[]
   coverPhoto: string
   category: string[]
-  fundraisingGoal: number
+  baseAmount: number
 }
 
 export type Launchpad = {
   projectInfo: ProjectInfoData
   mint: string
-  baseMint: string
-  baseAmount: number
+  stableMint: string
+  amount: number
   fee: number
-  startWeights: number
-  endWeights: number
+  startPrice: number
+  endPrice: number
   startTime: number
   endTime: number
 }
@@ -121,3 +121,5 @@ export const CATEGORY = {
   NFT: [4, 100, 253],
 }
 export const SOL_DECIMALS = 9
+
+export const DEFAULT_BALANCER_IDL = require('./balancer_amm.json')
