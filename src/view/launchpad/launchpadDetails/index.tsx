@@ -12,7 +12,7 @@ const LaunchpadDetails = () => {
 
   return (
     <Row justify="center">
-      <Col xs={24} md={24}>
+      <Col sm={24} xs={24} md={24} lg={18}>
         <Row gutter={[0, 24]}>
           <Col span={24}>
             <Button
@@ -40,6 +40,7 @@ const LaunchpadDetails = () => {
               </Col>
             </Row>
           </Col>
+          <Col span={24} />
         </Row>
       </Col>
     </Row>

@@ -3,19 +3,11 @@ import Banner from './banner'
 import ListLaunchpad from './components/listLaunchpad'
 
 import { LaunchpadSate } from 'constant'
-import { useGetWeight } from 'hooks/launchpad/useGetWeight'
-import { useEffect } from 'react'
 
 const Launchpad = () => {
-  const getWeight = useGetWeight()
-
-  useEffect(() => {
-    const weights = getWeight()
-    console.log(weights)
-  }, [getWeight])
   return (
     <Row justify="center">
-      <Col span={18}>
+      <Col xs={24} sm={24} md={20} lg={18}>
         <Row gutter={[0, 48]}>
           <Col span={24}>
             <Banner />

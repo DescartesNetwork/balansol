@@ -29,12 +29,12 @@ export const useLaunchpad = () => {
   }, [provider])
 
   const deriveMasterAddress = useCallback(
-    async (launchpad: Address) => {
+    async (launchpad: Address, author = provider.wallet.publicKey) => {
       const [master] = await web3.PublicKey.findProgramAddress(
         [
           Buffer.from('master'),
           new web3.PublicKey(launchpad).toBuffer(),
-          provider.wallet.publicKey.toBuffer(),
+          author.toBuffer(),
         ],
         new web3.PublicKey(configs.sol.balancerAddress),
       )
@@ -151,5 +151,130 @@ export const useLaunchpad = () => {
     [balancerLaunchpad.methods, deriveMasterAddress, provider],
   )
 
-  return { initializeLaunchpad, activeLaunchpad }
+  const buyLaunchpad = useCallback(
+    async (
+      launchpad: Address,
+      bidAmount: BN,
+      limit: BN = new BN(0),
+      sendAndConfirm = true,
+    ): Promise<{ txId: string; tx: web3.Transaction }> => {
+      const { mint, baseMint, pool } =
+        await balancerLaunchpad.account.launchpad.fetch(launchpad)
+      const swapData = balancerLaunchpad.coder.instruction.encode('swap', {
+        bidAmount,
+        limit,
+      })
+      const updateWeightsData = balancerLaunchpad.coder.instruction.encode(
+        'updateWeights',
+        {
+          weights: [],
+        },
+      )
+
+      const master = await deriveMasterAddress(launchpad)
+
+      const { treasuries, taxMan } = await window.balansol.getPoolData(pool)
+      const treasurer = await window.balansol.deriveTreasurerAddress(pool)
+
+      const masterTreasuryBaseMint = await utils.token.associatedAddress({
+        mint: baseMint,
+        owner: master,
+      })
+      const srcTokenAccountBaseMint = await utils.token.associatedAddress({
+        mint: baseMint,
+        owner: provider.wallet.publicKey,
+      })
+      const masterTreasury = await utils.token.associatedAddress({
+        mint: mint,
+        owner: master,
+      })
+      const taxmanTokenAccount = await utils.token.associatedAddress({
+        mint: mint,
+        owner: taxMan,
+      })
+
+      const tx = await balancerLaunchpad.methods
+        .buyLaunchpad(bidAmount, updateWeightsData, swapData)
+        .accounts({
+          authority: provider.wallet.publicKey,
+          pool,
+          taxMan,
+          treasurer,
+          master,
+          launchpad,
+          // Bid Mint
+          baseMint,
+          balansolTreasuryBaseMint: treasuries[1],
+          masterTreasuryBaseMint,
+          srcTokenAccountBaseMint,
+          // Ask Mint
+          mint,
+          balansolTreasury: treasuries[0],
+          masterTreasury,
+          taxmanTokenAccount,
+          ...PROGRAMS,
+          balansolProgram: balancerLaunchpad.programId,
+        })
+        .transaction()
+      let txId = ''
+      if (sendAndConfirm) {
+        txId = await provider.sendAndConfirm(tx, [])
+      }
+
+      return { txId, tx }
+    },
+    [balancerLaunchpad, deriveMasterAddress, provider],
+  )
+  const printBaseMint = useCallback(
+    async ({
+      launchpad,
+      amount,
+      sendAndConfirm = false,
+    }: {
+      launchpad: web3.PublicKey
+      amount: BN
+      sendAndConfirm: boolean
+    }) => {
+      const { authority, baseMint, stableMint } =
+        await balancerLaunchpad.account.launchpad.fetch(launchpad)
+      const master = await deriveMasterAddress(launchpad, authority)
+      const signer = provider.wallet.publicKey
+
+      const dstTokenAccountBaseMint = await utils.token.associatedAddress({
+        mint: baseMint,
+        owner: signer,
+      })
+      const srcTokenAccountStableMint = await utils.token.associatedAddress({
+        mint: stableMint,
+        owner: signer,
+      })
+      const masterTreasuryStableMint = await utils.token.associatedAddress({
+        mint: stableMint,
+        owner: master,
+      })
+      const tx = await balancerLaunchpad.methods
+        .printBaseMint(amount)
+        .accounts({
+          sigher: provider.wallet.publicKey,
+          authority,
+          launchpad,
+          baseMint,
+          stableMint,
+          dstTokenAccountBaseMint,
+          master,
+          masterTreasuryStableMint,
+          srcTokenAccountStableMint,
+          ...PROGRAMS,
+        })
+        .transaction()
+      let txId = ''
+      if (sendAndConfirm) {
+        txId = await provider.sendAndConfirm(tx)
+      }
+
+      return { txId, tx }
+    },
+    [balancerLaunchpad, deriveMasterAddress, provider],
+  )
+  return { initializeLaunchpad, activeLaunchpad, buyLaunchpad, printBaseMint }
 }

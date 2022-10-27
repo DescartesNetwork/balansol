@@ -6,10 +6,15 @@ import MintInput from 'components/mintInput'
 
 import { priceImpactColor } from 'helper'
 import { useLaunchpadData } from 'hooks/launchpad/useLaunchpadData'
+import { useTokenPrice } from 'hooks/launchpad/useTokenPrice'
 
 const BuyToken = ({ launchpadAddress }: { launchpadAddress: string }) => {
   const { launchpadData } = useLaunchpadData(launchpadAddress)
+  const price = useTokenPrice(launchpadAddress)
   const theme = useTheme()
+
+  console.log(price)
+
   return (
     <Card>
       <Row gutter={[24, 24]}>
@@ -24,11 +29,11 @@ const BuyToken = ({ launchpadAddress }: { launchpadAddress: string }) => {
             >
               <MintInput
                 amount={0}
-                selectedMint={launchpadData?.mint.toBase58()}
+                selectedMint={launchpadData.stableMint.toBase58()}
                 onChangeAmount={() => {}}
                 mintSelection={
                   <MintSelection
-                    value={launchpadData?.mint.toBase58()}
+                    value={launchpadData?.stableMint.toBase58()}
                     style={{
                       background: theme === 'dark' ? '#394360' : '#F2F4FA',
                     }}
@@ -47,7 +52,7 @@ const BuyToken = ({ launchpadAddress }: { launchpadAddress: string }) => {
             <Row align="middle">
               <Col flex="auto">
                 <MintSelection
-                  value={launchpadData?.stableMint.toBase58()}
+                  value={launchpadData.mint.toBase58()}
                   style={{
                     background: theme === 'dark' ? '#394360' : '#F2F4FA',
                   }}
@@ -79,10 +84,10 @@ const BuyToken = ({ launchpadAddress }: { launchpadAddress: string }) => {
               </Col>
               <Col>
                 <Typography.Text>
-                  1 <MintSymbol mintAddress={launchpadData?.mint.toBase58()} />{' '}
-                  = 0.5{' '}
+                  1 <MintSymbol mintAddress={launchpadData.mint.toBase58()} /> =
+                  0.5{' '}
                   <MintSymbol
-                    mintAddress={launchpadData?.stableMint.toBase58()}
+                    mintAddress={launchpadData.stableMint.toBase58()}
                   />
                 </Typography.Text>
               </Col>

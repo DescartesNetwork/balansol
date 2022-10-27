@@ -5,16 +5,22 @@ import ProjectInfo from './projectInfo'
 import './index.less'
 
 const Information = ({ launchpadAddress }: { launchpadAddress: string }) => {
+  const items = [
+    {
+      label: 'Launchpad info',
+      key: 'launchpad-info"',
+      children: <LaunchpadInfo launchpadAddress={launchpadAddress} />,
+    },
+    {
+      label: 'Project info',
+      key: 'project-info',
+      children: <ProjectInfo launchpadAddress={launchpadAddress} />,
+    },
+  ]
+
   return (
     <Card style={{ marginBottom: 24 }}>
-      <Tabs>
-        <Tabs.TabPane key="launchpad-info" tab="Launchpad info">
-          <LaunchpadInfo launchpadAddress={launchpadAddress} />
-        </Tabs.TabPane>
-        <Tabs.TabPane key="project-info" tab="Project info">
-          <ProjectInfo launchpadAddress={launchpadAddress} />
-        </Tabs.TabPane>
-      </Tabs>
+      <Tabs items={items} />
     </Card>
   )
 }

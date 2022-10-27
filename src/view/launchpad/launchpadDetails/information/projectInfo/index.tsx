@@ -8,11 +8,16 @@ import Resource from './resource'
 import { DATE_FORMAT } from 'constant'
 import { useLaunchpadData } from 'hooks/launchpad/useLaunchpadData'
 import IonIcon from '@sentre/antd-ionicon'
-import { getDataWebsite } from 'helper'
+import { getDataWebsite, validURL } from 'helper'
 
 const ProjectInfo = ({ launchpadAddress }: { launchpadAddress: string }) => {
   const { metadata, launchpadData } = useLaunchpadData(launchpadAddress)
   const mintAddress = launchpadData?.mint.toBase58()
+
+  const onRedirect = (url?: string) => {
+    if (!url || !validURL(url)) return
+    return window.open(url, '_blank')
+  }
   return (
     <Row gutter={[24, 24]}>
       <Col span={24}>
@@ -79,7 +84,7 @@ const ProjectInfo = ({ launchpadAddress }: { launchpadAddress: string }) => {
             {metadata?.socials.map((social, index) => {
               const data = getDataWebsite(social)
               return (
-                <Space key={index}>
+                <Space key={index} onClick={() => onRedirect(social)}>
                   <IonIcon style={{ fontSize: 21 }} name={data?.iconName} />
                   <Typography.Text>{data?.websiteName}</Typography.Text>
                   {index !== metadata.socials.length - 1 && (

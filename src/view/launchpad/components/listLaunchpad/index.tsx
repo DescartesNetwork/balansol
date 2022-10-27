@@ -49,7 +49,7 @@ const ListLaunchpad = ({ state }: ListLaunchpadProps) => {
         {launchpads.length ? (
           <Row gutter={[24, 24]}>
             {launchpads.map((launchpadAddress) => (
-              <Col key={launchpadAddress} xs={24} md={completed ? 24 : 12}>
+              <Col key={launchpadAddress} md={24} lg={completed ? 24 : 12}>
                 {completed ? (
                   <CompletedLaunchpad launchpadAddress={launchpadAddress} />
                 ) : (

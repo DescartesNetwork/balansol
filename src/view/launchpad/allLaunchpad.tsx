@@ -31,10 +31,11 @@ const AllLaunchpad = () => {
               <Typography.Title level={2}>
                 All {launchpadState} launchpad
               </Typography.Title>
-              <Typography.Text className="amount-launchpad">2</Typography.Text>
+              <Typography.Text className="amount-launchpad">
+                {launchpads.length}
+              </Typography.Text>
             </Space>
           </Col>
-          <Col span={24} />
           {/* List launchpad */}
           <Col span={24}>
             <Row gutter={[12, 12]}>
