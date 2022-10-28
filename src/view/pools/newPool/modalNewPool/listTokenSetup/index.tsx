@@ -68,7 +68,7 @@ const ListTokenSetup = ({ setCurrentStep }: ListTokenSetupProps) => {
   const onCreatePool = async () => {
     try {
       setLoading(true)
-      const mintsConfig = listMintSetting.map(({ addressToken, weight }) => {
+      const mintsConfigs = listMintSetting.map(({ addressToken, weight }) => {
         const normalizeWeight = Number(weight) * GENERAL_NORMALIZED_NUMBER
         return {
           publicKey: new web3.PublicKey(addressToken),
@@ -77,12 +77,13 @@ const ListTokenSetup = ({ setCurrentStep }: ListTokenSetupProps) => {
           weight: new BN(normalizeWeight),
         }
       })
-      const { txId } = await window.balansol.initializePool(
-        DEFAULT_SWAP_FEE,
-        DEFAULT_TAX_FEE,
-        mintsConfig,
-        configs.sol.taxmanAddress,
-      )
+      const { txId } = await window.balansol.initializePool({
+        fee: DEFAULT_SWAP_FEE,
+        taxFee: DEFAULT_TAX_FEE,
+        mintsConfigs,
+        taxMan: configs.sol.taxmanAddress,
+        sendAndConfirm: true,
+      })
       notifySuccess('Create pool', txId)
       setCurrentStep(PoolCreatingStep.addLiquidity)
     } catch (error) {

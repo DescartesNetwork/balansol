@@ -26,7 +26,10 @@ export const FreezeAndThawToken = ({
     setLoading(true)
     try {
       const { updateActions } = window.balansol
-      const { txId } = await updateActions(poolAddress, mintActions)
+      const { txId } = await updateActions({
+        poolAddress,
+        actions: mintActions,
+      })
       return notifySuccess('Freeze', txId)
     } catch (err) {
       notifyError(err)

@@ -7,10 +7,15 @@ import {
 } from 'react'
 import { getAnchorProvider, useWalletAddress, util } from '@sentre/senhub'
 import Balancer from '@senswap/balancer'
+import Launchpad from '@senswap/launchpad'
 
 import configs from 'configs'
 import PoolWatcher from './pool.watcher'
 import LaunchpadWatcher from './launchpad.watcher'
+
+const {
+  sol: { balancerAddress, launchpadAddress },
+} = configs
 
 export const AppWatcher: FunctionComponent = (props) => {
   const [loading, setLoading] = useState(true)
@@ -20,7 +25,12 @@ export const AppWatcher: FunctionComponent = (props) => {
     if (!util.isAddress(address)) return
     // init window balancer
     const anchorProvider = getAnchorProvider()!
-    window.balansol = new Balancer(anchorProvider, configs.sol.balancerAddress)
+    window.balansol = new Balancer(anchorProvider, balancerAddress)
+    window.launchpad = new Launchpad(
+      anchorProvider,
+      launchpadAddress,
+      balancerAddress,
+    )
     setLoading(false)
   }, [address])
 

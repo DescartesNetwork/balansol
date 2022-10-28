@@ -13,7 +13,7 @@ const ThawPool = ({ poolAddress }: { poolAddress: string }) => {
     setLoading(true)
     try {
       const { thawPool } = window.balansol
-      const { txId } = await thawPool(poolAddress)
+      const { txId } = await thawPool({ poolAddress })
       return notifySuccess('Unfreeze', txId)
     } catch (err) {
       notifyError(err)

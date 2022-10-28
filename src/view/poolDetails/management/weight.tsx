@@ -134,7 +134,7 @@ const Weight = ({ poolAddress }: { poolAddress: string }) => {
 
     try {
       const { updateWeights } = window.balansol
-      const { txId } = await updateWeights(poolAddress, weights)
+      const { txId } = await updateWeights({ poolAddress, weights })
       return notifySuccess('Update weights', txId)
     } catch (err) {
       notifyError(err)

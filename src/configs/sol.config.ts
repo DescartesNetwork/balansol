@@ -10,6 +10,7 @@ type Conf = {
   taxmanAddress: string
   bidMintDefault: string
   askMintDefault: string
+  launchpadAddress: string
 }
 
 const conf: Record<Net, Conf> = {
@@ -22,6 +23,7 @@ const conf: Record<Net, Conf> = {
     taxmanAddress: 'GJLqpmDxxrV9xruee2vFvEoTho7VVQHRtuHH8nfoAE54',
     bidMintDefault: '2z6Ci38Cx6PyL3tFrT95vbEeB3izqpoLdxxBkJk2euyj',
     askMintDefault: '5YwUkPdXLoujGkZuo9B4LsLKj3hdkDcfP4derpspifSJ',
+    launchpadAddress: 'F8NQTtDEEqmrcdTdgSY9R9tZsYszxzNbbSQ6XxewPqVG',
   },
 
   /**
@@ -33,6 +35,7 @@ const conf: Record<Net, Conf> = {
     taxmanAddress: '',
     bidMintDefault: '',
     askMintDefault: '',
+    launchpadAddress: '',
   },
 
   /**
@@ -44,6 +47,7 @@ const conf: Record<Net, Conf> = {
     taxmanAddress: '9doo2HZQEmh2NgfT3Yx12M89aoBheycYqH1eaR5gKb3e',
     bidMintDefault: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
     askMintDefault: 'SENBBKVCM7homnf5RX9zqpf1GFe935hnbU4uVzY1Y6M',
+    launchpadAddress: 'F8NQTtDEEqmrcdTdgSY9R9tZsYszxzNbbSQ6XxewPqVG',
   },
 }
 

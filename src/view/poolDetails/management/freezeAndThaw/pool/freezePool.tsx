@@ -13,7 +13,7 @@ const FreezePool = ({ poolAddress }: { poolAddress: string }) => {
     setLoading(true)
     try {
       const { freezePool } = window.balansol
-      const { txId } = await freezePool(poolAddress)
+      const { txId } = await freezePool({ poolAddress })
       return notifySuccess('Freeze', txId)
     } catch (err) {
       notifyError(err)

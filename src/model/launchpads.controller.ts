@@ -1,10 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { Program } from '@project-serum/anchor'
-import { getAnchorProvider } from '@sentre/senhub'
 
-import { BalancerAmm } from 'hooks/launchpad/balancer_amm'
-import { DEFAULT_BALANCER_IDL } from 'constant'
-import configs from 'configs'
 import { account } from '@senswap/sen-js'
 
 /**
@@ -24,20 +19,10 @@ const initialState: LaunchpadsState = {}
  * Actions
  */
 
-const getBalancerProgram = () => {
-  const provider = getAnchorProvider()!
-  return new Program<BalancerAmm>(
-    DEFAULT_BALANCER_IDL,
-    configs.sol.balancerAddress,
-    provider,
-  )
-}
-
 export const getLaunchpads = createAsyncThunk(
   `${NAME}/getLaunchpads`,
   async () => {
-    const balancerProgram = getBalancerProgram()
-    const launchpads = await balancerProgram.account.launchpad.all()
+    const launchpads = await window.launchpad.program.account.launchpad.all()
     let bulk: LaunchpadsState = {}
     for (const launchpad of launchpads) {
       const launchpadData = launchpad.account

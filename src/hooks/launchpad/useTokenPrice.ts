@@ -10,8 +10,6 @@ export const useTokenPrice = (launchpadAddress: string) => {
   const { launchpadData } = useLaunchpadData(launchpadAddress)
   const pools = useSelector((state: AppState) => state.pools)
 
-  console.log(launchpadData)
-
   const getMintPrice = useCallback(async () => {
     const { endWeights, stableMint, pool } = launchpadData
     const { reserves } = pools[pool.toBase58()]

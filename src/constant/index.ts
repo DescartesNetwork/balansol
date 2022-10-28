@@ -121,5 +121,3 @@ export const CATEGORY = {
   NFT: [4, 100, 253],
 }
 export const SOL_DECIMALS = 9
-
-export const DEFAULT_BALANCER_IDL = require('./balancer_amm.json')
