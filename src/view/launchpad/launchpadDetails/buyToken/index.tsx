@@ -2,9 +2,11 @@ import { MintSelection, MintSymbol } from '@sen-use/app'
 import { useTheme, util } from '@sentre/senhub'
 
 import { Button, Card, Col, Row, Space, Typography } from 'antd'
+import { BN } from '@project-serum/anchor'
 import MintInput from 'components/mintInput'
 
 import { priceImpactColor } from 'helper'
+import { useBuyToken } from 'hooks/launchpad/actions/useBuyToken'
 import { useLaunchpadData } from 'hooks/launchpad/useLaunchpadData'
 import { useTokenPrice } from 'hooks/launchpad/useTokenPrice'
 
@@ -12,8 +14,14 @@ const BuyToken = ({ launchpadAddress }: { launchpadAddress: string }) => {
   const { launchpadData } = useLaunchpadData(launchpadAddress)
   const price = useTokenPrice(launchpadAddress)
   const theme = useTheme()
+  const { onBuyToken, loading } = useBuyToken()
 
-  console.log(price)
+  const handleBuyToken = () => {
+    onBuyToken({
+      amount: 1,
+      launchpadAddress,
+    })
+  }
 
   return (
     <Card>
@@ -96,7 +104,13 @@ const BuyToken = ({ launchpadAddress }: { launchpadAddress: string }) => {
         </Col>
 
         <Col span={24}>
-          <Button size="large" type="primary" block>
+          <Button
+            size="large"
+            type="primary"
+            block
+            onClick={handleBuyToken}
+            loading={loading}
+          >
             Purchase
           </Button>
         </Col>

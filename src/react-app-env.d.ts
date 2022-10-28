@@ -2,5 +2,5 @@
 
 interface Window {
   balansol: import('@senswap/balancer').default
-  launchpad: import('@senswap/launchpad').default
+  launchpad: import('@sentre/launchpad').default
 }

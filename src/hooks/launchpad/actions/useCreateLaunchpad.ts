@@ -133,12 +133,12 @@ export const useCreateLaunchpad = () => {
         transactions.push(txUpdateAction)
 
         //Transfer pool Owner
-        const master = await window.launchpad.deriveMasterAddress(
+        const treasurer = await window.launchpad.deriveTreasurerAddress(
           launchpad.publicKey,
         )
         const { tx: txTransfer } = await window.balansol.transferOwnership({
           poolAddress,
-          newOwner: master,
+          newOwner: treasurer,
           sendAndConfirm: false,
         })
         transactions.push(txTransfer)

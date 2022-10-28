@@ -7,7 +7,7 @@ import {
 } from 'react'
 import { getAnchorProvider, useWalletAddress, util } from '@sentre/senhub'
 import Balancer from '@senswap/balancer'
-import Launchpad from '@senswap/launchpad'
+import Launchpad from '@sentre/launchpad'
 
 import configs from 'configs'
 import PoolWatcher from './pool.watcher'
