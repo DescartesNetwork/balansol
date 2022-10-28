@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { ChequeData } from '@senswap/launchpad'
+import { ChequeData } from '@sentre/launchpad'
 
 import { account } from '@senswap/sen-js'
 
