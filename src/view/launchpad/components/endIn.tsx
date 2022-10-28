@@ -8,6 +8,11 @@ import { LaunchpadCardProps } from './launchpadCard'
 const EndIn = ({ launchpadAddress }: LaunchpadCardProps) => {
   const theme = useTheme()
   const { launchpadData } = useLaunchpadData(launchpadAddress)
+  const { startTime, endTime } = launchpadData
+  const totalTime = endTime.toNumber() - startTime.toNumber()
+  const recent = Date.now() / 1000 - startTime.toNumber()
+  const percent = recent / totalTime
+
   return (
     <Row align="middle">
       <Col flex="auto">
@@ -15,10 +20,10 @@ const EndIn = ({ launchpadAddress }: LaunchpadCardProps) => {
       </Col>
       <Col>
         <Space>
-          <TimeCountDown endTime={launchpadData?.endTime.toString()} />
+          <TimeCountDown endTime={launchpadData.endTime.toNumber()} />
           <Progress
             type="circle"
-            percent={80}
+            percent={percent * 100}
             showInfo={false}
             className="end-time-progress"
             strokeWidth={10}

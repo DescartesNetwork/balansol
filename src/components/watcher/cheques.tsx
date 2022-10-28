@@ -3,21 +3,21 @@ import { useDispatch } from 'react-redux'
 import { web3 } from '@project-serum/anchor'
 
 import Watcher from './watcher'
-import { initLaunchpads, upsetLaunchpad } from 'model/launchpads.controller'
+import { initCheques, upsetCheque } from 'model/cheques.controller'
 
 // TODO: Config
-const NAME = 'launchpad'
+const NAME = 'cheque'
 const FILTER: web3.GetProgramAccountsFilter[] = []
 
 const LaunchpadWatcher = () => {
   const dispatch = useDispatch()
 
   // TODO: init all account data
-  const init = useCallback((data) => dispatch(initLaunchpads(data)), [dispatch])
+  const init = useCallback((data) => dispatch(initCheques(data)), [dispatch])
   // TODO: upset account data
   const upset = useCallback(
     (key: string, value: any) =>
-      dispatch(upsetLaunchpad({ address: key, data: value })),
+      dispatch(upsetCheque({ address: key, data: value })),
     [dispatch],
   )
 

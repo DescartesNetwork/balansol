@@ -2268,10 +2268,10 @@
   dependencies:
     "@project-serum/anchor" "^0.24.2"
 
-"@senswap/launchpad@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@senswap/launchpad/-/launchpad-0.1.0.tgz#852996804bcd4610b0131548ff517adc73d4a36c"
-  integrity sha512-+B95z7zMhxpAkpxXZL6Js4QYkuozdkUFNbIqwiYYGf8t1PmI22mdeJe/s5u0P2Y34KkL3FBw2yqRbNpJBsJdsg==
+"@senswap/launchpad@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@senswap/launchpad/-/launchpad-0.1.2.tgz#6ecbc39f3b7a2b596e2896eb4db64aac153f79d6"
+  integrity sha512-PTtpO9v07KyFbkcVYDJoZMyDhbPjIwtMbJMz+0BmdS8pd6AGnkE6d3LuuZ8s4LDoMNRiIT+r7bbvFOIDj3A5gQ==
   dependencies:
     "@project-serum/anchor" "^0.24.2"
     "@senswap/balancer" "^3.0.1"

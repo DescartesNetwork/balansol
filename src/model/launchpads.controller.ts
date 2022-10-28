@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { LaunchpadData } from '@senswap/launchpad'
 
 import { account } from '@senswap/sen-js'
 
@@ -6,7 +7,7 @@ import { account } from '@senswap/sen-js'
  * Interface & Utility
  */
 
-export type LaunchpadsState = Record<string, any>
+export type LaunchpadsState = Record<string, LaunchpadData>
 
 /**
  * Store constructor
@@ -19,15 +20,10 @@ const initialState: LaunchpadsState = {}
  * Actions
  */
 
-export const getLaunchpads = createAsyncThunk(
-  `${NAME}/getLaunchpads`,
-  async () => {
-    const launchpads = await window.launchpad.program.account.launchpad.all()
-    let bulk: LaunchpadsState = {}
-    for (const launchpad of launchpads) {
-      const launchpadData = launchpad.account
-      bulk[launchpad.publicKey.toBase58()] = launchpadData
-    }
+export const initLaunchpads = createAsyncThunk(
+  `${NAME}/initLaunchpads
+  `,
+  async (bulk: LaunchpadsState) => {
     return bulk
   },
 )
@@ -42,6 +38,15 @@ export const upsetLaunchpad = createAsyncThunk<
   return { [address]: data }
 })
 
+export const getLaunchpads = createAsyncThunk<
+  LaunchpadsState,
+  void,
+  { state: any }
+>(`${NAME}/getLaunchpads`, async (_, { getState }) => {
+  const { launchpads } = getState()
+  return launchpads
+})
+
 /**
  * Usual procedure
  */
@@ -52,7 +57,7 @@ const slice = createSlice({
   reducers: {},
   extraReducers: (builder) =>
     void builder
-      .addCase(getLaunchpads.fulfilled, (state, { payload }) => payload)
+      .addCase(initLaunchpads.fulfilled, (state, { payload }) => payload)
       .addCase(
         upsetLaunchpad.fulfilled,
         (state, { payload }) => void Object.assign(state, payload),

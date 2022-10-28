@@ -69,7 +69,6 @@ export const useCreateLaunchpad = () => {
         const baseMint = await window.launchpad.deriveBaseMintAddress(
           launchpad.publicKey,
         )
-
         const stablePrice = (await tokenProvider.getPrice(stableMint)) || 0
         const startWeights = getWeight(
           startPrice,
@@ -105,7 +104,7 @@ export const useCreateLaunchpad = () => {
           })
         transactionsInit.push(txInitPool)
 
-        /** Deposit to Pool  */
+        /** Join to Pool  */
         const { transaction: txMintJoin } =
           await window.balansol.initializeJoin({
             poolAddress,
