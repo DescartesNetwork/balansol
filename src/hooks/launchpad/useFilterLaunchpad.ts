@@ -18,8 +18,8 @@ export const useFilterLaunchpad = (state?: LaunchpadSate) => {
     for (const address of validLaunchpads) {
       const launchpadData = launchpads[address]
       let valid = true
-      const startTime = launchpadData.startTime * 1000
-      const endTime = launchpadData.endTime * 1000
+      const startTime = launchpadData.startTime.toNumber() * 1000
+      const endTime = launchpadData.endTime.toNumber() * 1000
       const now = Date.now()
 
       switch (state) {

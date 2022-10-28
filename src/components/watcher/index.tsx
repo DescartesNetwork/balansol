@@ -9,9 +9,11 @@ import { getAnchorProvider, useWalletAddress, util } from '@sentre/senhub'
 import Balancer from '@senswap/balancer'
 import Launchpad from '@senswap/launchpad'
 
-import configs from 'configs'
 import PoolWatcher from './pool.watcher'
 import LaunchpadWatcher from './launchpad.watcher'
+import ChequesWatcher from './cheques'
+
+import configs from 'configs'
 
 const {
   sol: { balancerAddress, launchpadAddress },
@@ -41,7 +43,9 @@ export const AppWatcher: FunctionComponent = (props) => {
   if (loading) return <Fragment />
   return (
     <PoolWatcher>
-      <LaunchpadWatcher>{props.children}</LaunchpadWatcher>
+      <LaunchpadWatcher />
+      <ChequesWatcher />
+      {props.children}
     </PoolWatcher>
   )
 }

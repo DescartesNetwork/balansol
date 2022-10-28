@@ -6,6 +6,7 @@ import pools from 'model/pools.controller'
 import swap from 'model/swap.controller'
 import searchPools from 'model/searchPools.controller'
 import launchpads from 'model/launchpads.controller'
+import cheques from 'model/cheques.controller'
 
 /**
  * Isolated store
@@ -22,6 +23,7 @@ const model = configureStore({
     swap,
     searchPools,
     launchpads,
+    cheques,
   },
 })
 
