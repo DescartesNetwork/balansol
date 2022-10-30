@@ -100,16 +100,18 @@ export const validURL = (value: string) => {
 }
 
 export const getDataWebsite = (url: string) => {
-  const socialIcons: Record<string, { icon: string; name: string }> = {
-    t: { icon: 'logo-telegram', name: 'Telegram' },
-    twitter: { icon: 'logo-twitter', name: 'Twitter' },
-    facebook: { icon: 'logo-facebook', name: 'Facebook' },
-    discord: { icon: 'logo-discord', name: 'Discord' },
-    global: { icon: 'globe', name: 'Social media' },
-    medium: { icon: 'logo-medium', name: 'Medium' },
-  }
+  const socialIcons: Record<string, { iconName: string; websiteName: string }> =
+    {
+      t: { iconName: 'logo-telegram', websiteName: 'Telegram' },
+      twitter: { iconName: 'logo-twitter', websiteName: 'Twitter' },
+      facebook: { iconName: 'logo-facebook', websiteName: 'Facebook' },
+      discord: { iconName: 'logo-discord', websiteName: 'Discord' },
+      global: { iconName: 'globe', websiteName: 'Social media' },
+      medium: { iconName: 'logo-medium', websiteName: 'Medium' },
+    }
 
-  if (!validURL(url)) return
+  if (!validURL(url)) return socialIcons['global']
+
   let socialName = ''
   const domain = new URL(url)
   const host = domain.hostname.replace('www.', '')
@@ -121,8 +123,5 @@ export const getDataWebsite = (url: string) => {
   const valid = socialIcons[socialName.toLowerCase()]
   if (!valid) socialName = 'global'
 
-  const websiteName = socialIcons[socialName.toLowerCase()].name
-  const iconName = socialIcons[socialName.toLowerCase()].icon
-
-  return { iconName, websiteName }
+  return socialIcons[socialName.toLowerCase()]
 }

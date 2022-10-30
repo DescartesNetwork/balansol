@@ -1,14 +1,16 @@
 import { Card, Col, Row, Typography } from 'antd'
+import { MintSymbol } from '@sen-use/app'
 import EndIn from 'view/launchpad/components/endIn'
 import Fundraising from 'view/launchpad/components/fundraising'
 import Sold from 'view/launchpad/components/sold'
 
 import { LaunchpadCardProps } from 'view/launchpad/components/launchpadCard'
 import { useLaunchpadData } from 'hooks/launchpad/useLaunchpadData'
-import { MintSymbol } from '@sen-use/app/dist'
+import { useParticipants } from 'hooks/launchpad/useParticipants'
 
 const Progress = ({ launchpadAddress }: LaunchpadCardProps) => {
   const { launchpadData } = useLaunchpadData(launchpadAddress)
+  const participants = useParticipants(launchpadAddress)
   return (
     <Card>
       <Row gutter={[16, 16]}>
@@ -30,7 +32,7 @@ const Progress = ({ launchpadAddress }: LaunchpadCardProps) => {
               <Typography.Text type="secondary">Participants</Typography.Text>
             </Col>
             <Col>
-              <Typography.Text>99</Typography.Text>
+              <Typography.Text>{participants.total}</Typography.Text>
             </Col>
           </Row>
         </Col>
@@ -41,7 +43,7 @@ const Progress = ({ launchpadAddress }: LaunchpadCardProps) => {
           <Fundraising launchpadAddress={launchpadAddress} />
         </Col>
         <Col span={24}>
-          <Sold launchpadAddress={launchpadAddress} />
+          <Sold isDetail launchpadAddress={launchpadAddress} />
         </Col>
       </Row>
     </Card>

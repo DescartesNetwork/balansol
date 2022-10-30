@@ -44,8 +44,6 @@ const ProjectInfo = ({ setStep }: ProjectInfoProp) => {
     return setStep(InitLaunchpadStep.projectPhoto)
   }
 
-  console.log(launchpadData)
-
   const disabled = useMemo(() => {
     if (socials.length > 1)
       for (const social of socials) if (!validURL(social)) return true
@@ -53,9 +51,12 @@ const ProjectInfo = ({ setStep }: ProjectInfoProp) => {
     return (
       !projectName ||
       !description ||
-      (!website && !validURL(website)) ||
-      (!whitepaper && !validURL(whitepaper)) ||
-      (!github && !validURL(github)) ||
+      !website ||
+      !validURL(website) ||
+      !whitepaper ||
+      !validURL(whitepaper) ||
+      !github ||
+      !validURL(github) ||
       projectName.length > 20 ||
       description.length > 150
     )

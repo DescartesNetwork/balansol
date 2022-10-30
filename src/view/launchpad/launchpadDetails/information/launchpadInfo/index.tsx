@@ -52,7 +52,7 @@ const LaunchpadInfo = ({ launchpadAddress }: LaunchpadCardProps) => {
         <LaunchpadLineChart />
       </Col>
       <Col span={24}>
-        <TransHistory />
+        <TransHistory launchpadAddress={launchpadAddress} />
       </Col>
     </Row>
   )

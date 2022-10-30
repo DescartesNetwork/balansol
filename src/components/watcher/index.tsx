@@ -14,6 +14,8 @@ import LaunchpadWatcher from './launchpad.watcher'
 import ChequesWatcher from './cheques'
 
 import configs from 'configs'
+import Loading from 'components/loading'
+import { useWatcherLoading } from './watcher'
 
 const {
   sol: { balancerAddress, launchpadAddress },
@@ -21,6 +23,8 @@ const {
 
 export const AppWatcher: FunctionComponent = (props) => {
   const [loading, setLoading] = useState(true)
+  const [loadingInfo] = useWatcherLoading()
+
   const address = useWalletAddress()
 
   const watchWallet = useCallback(() => {
@@ -40,12 +44,13 @@ export const AppWatcher: FunctionComponent = (props) => {
     watchWallet()
   }, [watchWallet])
 
-  if (loading) return <Fragment />
+  if (loading || Object.values(loadingInfo).includes(true)) return <Loading />
+
   return (
-    <PoolWatcher>
+    <Fragment>
       <LaunchpadWatcher />
       <ChequesWatcher />
-      {props.children}
-    </PoolWatcher>
+      <PoolWatcher>{props.children}</PoolWatcher>
+    </Fragment>
   )
 }

@@ -1,12 +1,27 @@
-import { Button, Col, Row, Table, Typography } from 'antd'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
+import { useSelector } from 'react-redux'
 
-import { DATA, TRANS_HISTORY_COLUMN } from './column'
+import { Button, Col, Row, Table, Typography } from 'antd'
+
+import { TRANS_HISTORY_COLUMN } from './column'
+import { useCheques } from 'hooks/launchpad/useCheques'
+import { AppState } from 'model'
 
 const ROW_PER_PAGE = 4
 
-const TransHistory = () => {
+type TransHistoryProps = {
+  launchpadAddress: string
+}
+
+const TransHistory = ({ launchpadAddress }: TransHistoryProps) => {
   const [pageSize, setPageSize] = useState(ROW_PER_PAGE)
+  const cheques = useSelector((state: AppState) => state.cheques)
+  const ownCheques = useCheques(launchpadAddress)
+
+  const historyData = useMemo(
+    () => ownCheques.map((address) => cheques[address]),
+    [cheques, ownCheques],
+  )
   return (
     <Row gutter={[0, 16]}>
       <Col span={24}>
@@ -15,15 +30,15 @@ const TransHistory = () => {
       <Col span={24}>
         <Table
           columns={TRANS_HISTORY_COLUMN}
-          dataSource={DATA.slice(0, pageSize)}
-          rowKey={(record) => record.index}
+          dataSource={historyData.slice(0, pageSize)}
+          rowKey={(record) => record.createAt.toString()}
           pagination={false}
           rowClassName={(_, index) => (index % 2 ? 'odd-row' : 'even-row')}
         />
       </Col>
       <Col span={24} style={{ textAlign: 'center' }}>
         <Button
-          disabled={pageSize >= DATA.length}
+          disabled={pageSize >= historyData.length}
           onClick={() => setPageSize(pageSize + ROW_PER_PAGE)}
           ghost
         >

@@ -5,9 +5,16 @@ import Price from '../price'
 
 import { useAppRouter } from 'hooks/useAppRouter'
 import { LaunchpadCardProps } from './index'
+import { useWidth } from '@sentre/senhub'
+import { useParticipants } from 'hooks/launchpad/useParticipants'
 
 const CompletedLaunchpad = ({ launchpadAddress }: LaunchpadCardProps) => {
   const { pushHistory } = useAppRouter()
+  const width = useWidth()
+  const participants = useParticipants(launchpadAddress)
+
+  const isMobile = width < 983
+  const direction = isMobile ? 'row' : 'column'
   return (
     <Card
       hoverable
@@ -15,15 +22,15 @@ const CompletedLaunchpad = ({ launchpadAddress }: LaunchpadCardProps) => {
       onClick={() => pushHistory('/launchpad-details', { launchpadAddress })}
     >
       <Row gutter={[8, 8]} align="middle">
-        <Col span={8}>
+        <Col sm={24} xs={24} md={24} lg={8}>
           <LaunchpadProfile launchpadAddress={launchpadAddress} />
         </Col>
-        <Col span={16}>
+        <Col sm={24} xs={24} md={24} lg={16}>
           <Row gutter={[8, 8]} style={{ height: '100%' }}>
-            <Col span={8}>
+            <Col xs={24} sm={24} md={24} lg={8}>
               <Row
                 gutter={[12, 12]}
-                style={{ flexFlow: 'column' }}
+                style={{ flexFlow: direction }}
                 align="middle"
               >
                 <Col flex="auto">
@@ -32,17 +39,20 @@ const CompletedLaunchpad = ({ launchpadAddress }: LaunchpadCardProps) => {
                   </Typography.Text>
                 </Col>
                 <Col>
-                  <Typography.Text>83</Typography.Text>
+                  <Typography.Text>{participants.total}</Typography.Text>
                 </Col>
               </Row>
             </Col>
-            <Col span={8}>
-              <Price launchpadAddress={launchpadAddress} direction="column" />
+            <Col xs={24} sm={24} md={24} lg={8}>
+              <Price
+                launchpadAddress={launchpadAddress}
+                direction={direction}
+              />
             </Col>
-            <Col span={8}>
+            <Col xs={24} sm={24} md={24} lg={8}>
               <Fundraising
                 launchpadAddress={launchpadAddress}
-                direction="column"
+                direction={direction}
               />
             </Col>
           </Row>

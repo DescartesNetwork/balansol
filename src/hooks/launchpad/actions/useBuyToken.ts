@@ -33,7 +33,6 @@ export const useBuyToken = () => {
           })) || 0
         const bnAmount = utilsBN.decimalize(amount, decimals)
 
-        console.log('bnAmount', bnAmount.toNumber())
         const txPrint = await window.launchpad.printBaseMint({
           launchpad,
           amount: bnAmount,

@@ -38,8 +38,6 @@ const AskInput = () => {
     ).unwrap()
   }
 
-  console.log('askAmount: ', askAmount)
-
   return (
     <Card bordered={false} className="card-swap" bodyStyle={{ padding: 0 }}>
       <Spin spinning={loading && !isReverse && !!Number(bidAmount)}>

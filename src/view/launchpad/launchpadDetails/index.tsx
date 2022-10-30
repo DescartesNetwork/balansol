@@ -5,11 +5,13 @@ import Information from './information'
 import Progress from './progress'
 
 import { useAppRouter } from 'hooks/useAppRouter'
+import { useLaunchpadData } from 'hooks/launchpad/useLaunchpadData'
 
 const LaunchpadDetails = () => {
   const { pushHistory, getQuery } = useAppRouter()
   const launchpadAddress = getQuery('launchpadAddress') || ''
-
+  const { launchpadData } = useLaunchpadData(launchpadAddress)
+  const completed = Number(launchpadData.endTime) < Date.now() / 1000
   return (
     <Row justify="center">
       <Col sm={24} xs={24} md={24} lg={18}>
@@ -30,9 +32,11 @@ const LaunchpadDetails = () => {
               </Col>
               <Col xs={24} md={10}>
                 <Row gutter={[0, 24]}>
-                  <Col span={24}>
-                    <BuyToken launchpadAddress={launchpadAddress} />
-                  </Col>
+                  {!completed && (
+                    <Col span={24}>
+                      <BuyToken launchpadAddress={launchpadAddress} />
+                    </Col>
+                  )}
                   <Col span={24}>
                     <Progress launchpadAddress={launchpadAddress} />
                   </Col>

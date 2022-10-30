@@ -17,28 +17,30 @@ const LaunchpadProfile = ({ launchpadAddress }: LaunchpadCardProps) => {
   }
 
   return (
-    <Space size={24}>
-      <Avatar shape="square" size={68} src={metadata?.coverPhoto} />
-      <Space size={4} direction="vertical">
+    <Space size={24} align="center">
+      <Avatar shape="square" size={69} src={metadata?.coverPhoto} />
+      <Space size={0} direction="vertical">
         <Typography.Title level={4}>{metadata?.projectName}</Typography.Title>
         <Space size={0}>
           {metadata?.category.map((tag: any) => (
             <CategoryTag key={tag} category={tag} />
           ))}
         </Space>
-        <Space>
-          {metadata?.socials.map((social, index) => {
-            const data = getDataWebsite(social)
-            return (
-              <Button
-                key={index}
-                type="text"
-                icon={<IonIcon name={data?.iconName} />}
-                onClick={(e) => onRedirect(e, social)}
-              />
-            )
-          })}
-        </Space>
+        {!!metadata?.socials.length && (
+          <Space size={2}>
+            {metadata?.socials.map((social, index) => {
+              const data = getDataWebsite(social)
+              return (
+                <Button
+                  key={index}
+                  type="text"
+                  icon={<IonIcon name={data?.iconName} />}
+                  onClick={(e) => onRedirect(e, social)}
+                />
+              )
+            })}
+          </Space>
+        )}
       </Space>
     </Space>
   )

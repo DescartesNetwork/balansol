@@ -12,7 +12,7 @@
     "@sentre/antd-ionicon": "^2.0.2",
     "@sentre/launchpad": "^0.2.1",
     "@sentre/react-lazyload": "^3.2.2",
-    "@sentre/senhub": "^4.1.8",
+    "@sentre/senhub": "^4.3.1",
     "@solana/spl-token-v3": "npm:@solana/spl-token@0.3.5",
     "@solana/wallet-adapter-base": "^0.9.7",
     "antd": "^4.23.1",

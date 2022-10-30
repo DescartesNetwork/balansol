@@ -1,61 +1,54 @@
 import moment from 'moment'
 import { util } from '@sentre/senhub'
-import { BN } from '@project-serum/anchor'
+import { BN, web3 } from '@project-serum/anchor'
 
-import { Space, Typography } from 'antd'
-import { MintSymbol } from '@sen-use/app'
+import { Typography } from 'antd'
+import ColumnAmount from './columnAmount'
 
 import { DATE_FORMAT } from 'constant'
+import { ChequeData } from '@sentre/launchpad'
 
 export const TRANS_HISTORY_COLUMN = [
   {
     title: 'TIME',
-    dataIndex: 'time',
-    render: (time: number) => (
+    dataIndex: 'createAt',
+    render: (createAt: BN) => (
       <Typography.Text>
-        {moment(time * 1000).format(DATE_FORMAT)}
+        {moment(createAt.toNumber() * 1000).format(DATE_FORMAT)}
       </Typography.Text>
     ),
   },
   {
     title: 'ACCOUNT',
     dataIndex: 'authority',
-    render: (authority: string) => (
+    render: (authority: web3.PublicKey) => (
       <Typography.Text
         underline
-        onClick={() => window.open(util.explorer(authority), '_blank')}
+        onClick={() =>
+          window.open(util.explorer(authority.toBase58()), '_blank')
+        }
         style={{ cursor: 'pointer', color: '#63E0B3' }}
       >
-        {util.shortenAddress(authority)}
+        {util.shortenAddress(authority.toBase58())}
       </Typography.Text>
     ),
   },
   {
     title: 'PAY',
-    dataIndex: 'payAmount',
-    render: (payAmount: BN) => (
-      <Space>
-        <Typography.Text>{payAmount.toString()}</Typography.Text>
-        <MintSymbol mintAddress={''} />
-      </Space>
+    dataIndex: 'amount',
+    render: (amount: BN, { launchpad }: ChequeData) => (
+      <ColumnAmount
+        amount={amount}
+        launchpadAddress={launchpad.toBase58()}
+        isBaseAmount
+      />
     ),
   },
   {
     title: 'RECEIVE',
-    dataIndex: 'receiveAmount',
-    render: (receiveAmount: BN) => (
-      <Space>
-        <Typography.Text>{receiveAmount.toString()}</Typography.Text>
-        <MintSymbol mintAddress={''} />
-      </Space>
+    dataIndex: 'amount',
+    render: (amount: BN, { launchpad }: ChequeData) => (
+      <ColumnAmount amount={amount} launchpadAddress={launchpad.toBase58()} />
     ),
   },
 ]
-
-export const DATA = [1, 2, 3, 4, 5, 6, 7].map((item) => ({
-  index: item,
-  time: 1666236337,
-  authority: '2vAEiACep3J1N2J6YY9gt4gAbbFEvuVdWgyu8KUkgzgn',
-  payAmount: new BN(100 + item * 10),
-  receiveAmount: new BN(10000 + item * 10),
-}))
