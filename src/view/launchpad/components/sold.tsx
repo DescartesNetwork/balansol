@@ -2,7 +2,7 @@ import { useMintDecimals, useTheme, util } from '@sentre/senhub'
 import { utilsBN } from '@sen-use/web3'
 
 import { Col, Progress, Row, Space, Typography } from 'antd'
-import { MintSymbol } from '@sen-use/app'
+import { MintAmount, MintSymbol } from '@sen-use/app'
 
 import { useLaunchpadData } from 'hooks/launchpad/useLaunchpadData'
 import { useParticipants } from 'hooks/launchpad/useParticipants'
@@ -28,14 +28,23 @@ const Sold = ({ launchpadAddress, isDetail = false }: SoldProps) => {
       <Col>
         <Space>
           <Typography.Title level={5}>
-            {util.numeric(participants.baseAmount).format('0,0.[000]')}/
-            {util.numeric(amount).format('0,0.[000]')}{' '}
+            <MintAmount
+              mintAddress={launchpadData.stableMint}
+              amount={participants.totalBid}
+              formatter="0,0.[000]"
+            />
+            /
+            <MintAmount
+              mintAddress={launchpadData.mint}
+              amount={launchpadData?.startReserves[0]}
+              formatter="0,0.[000]"
+            />
             <MintSymbol mintAddress={launchpadData?.mint.toBase58()} />
           </Typography.Title>
           <Typography.Title level={5}>
             (
             {util
-              .numeric(Number(participants.baseAmount) / Number(amount))
+              .numeric(Number(participants.totalBid) / Number(amount))
               .format('%0,0.[00]')}
             )
           </Typography.Title>

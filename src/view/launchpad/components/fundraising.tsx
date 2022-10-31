@@ -1,4 +1,5 @@
 import { util } from '@sentre/senhub'
+import { MintAmount } from '@sen-use/app'
 
 import { Col, Row, Space, Typography } from 'antd'
 
@@ -14,7 +15,7 @@ const Fundraising = ({
   direction = 'row',
   launchpadAddress,
 }: FundraisingProps) => {
-  const { metadata } = useLaunchpadData(launchpadAddress)
+  const { metadata, launchpadData } = useLaunchpadData(launchpadAddress)
   const participants = useParticipants(launchpadAddress)
 
   return (
@@ -25,13 +26,17 @@ const Fundraising = ({
       <Col>
         <Space>
           <Typography.Title level={5}>
-            {util.numeric(participants.baseAmount).format('0,0.[000]')}/
-            {metadata?.baseAmount} USDC
+            <MintAmount
+              mintAddress={launchpadData.stableMint}
+              amount={participants.totalBid}
+              formatter="0,0.[000]"
+            />
+            /{metadata?.baseAmount} USDC
           </Typography.Title>
           <Typography.Title level={5}>
             {util
               .numeric(
-                Number(participants.baseAmount) / Number(metadata?.baseAmount),
+                Number(participants.totalBid) / Number(metadata?.baseAmount),
               )
               .format('%0,0.[00]')}
           </Typography.Title>

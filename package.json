@@ -10,7 +10,7 @@
     "@senswap/balancer": "^3.0.1",
     "@senswap/sen-js": "^1.4.0",
     "@sentre/antd-ionicon": "^2.0.2",
-    "@sentre/launchpad": "^0.2.1",
+    "@sentre/launchpad": "^0.3.1",
     "@sentre/react-lazyload": "^3.2.2",
     "@sentre/senhub": "^4.3.1",
     "@solana/spl-token-v3": "npm:@solana/spl-token@0.3.5",
