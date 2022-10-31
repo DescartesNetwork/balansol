@@ -145,7 +145,9 @@ const BuyToken = ({ launchpadAddress }: { launchpadAddress: string }) => {
                       amount={askAmount}
                       formatter={(val) => {
                         return util
-                          .numeric(Number(amount) / Number(val))
+                          .numeric(
+                            !Number(val) ? 0 : Number(amount) / Number(val),
+                          )
                           .format('0.[0000]')
                       }}
                     />
