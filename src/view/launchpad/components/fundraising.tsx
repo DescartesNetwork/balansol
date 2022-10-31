@@ -1,10 +1,12 @@
-import { util } from '@sentre/senhub'
-import { MintAmount } from '@sen-use/app'
+import { useMemo } from 'react'
+import { useMintDecimals, util } from '@sentre/senhub'
+import { MintAmount, MintSymbol } from '@sen-use/app'
 
 import { Col, Row, Space, Typography } from 'antd'
 
 import { useLaunchpadData } from 'hooks/launchpad/useLaunchpadData'
-import { useParticipants } from 'hooks/launchpad/useParticipants'
+import { utilsBN } from 'helper/utilsBN'
+import { useExchanges } from 'hooks/launchpad/useExchanges'
 
 type FundraisingProps = {
   direction?: string
@@ -15,8 +17,20 @@ const Fundraising = ({
   direction = 'row',
   launchpadAddress,
 }: FundraisingProps) => {
-  const { metadata, launchpadData } = useLaunchpadData(launchpadAddress)
-  const participants = useParticipants(launchpadAddress)
+  const { launchpadData } = useLaunchpadData(launchpadAddress)
+  const { totalBid } = useExchanges(launchpadAddress)
+  const stableDecimal =
+    useMintDecimals({ mintAddress: launchpadData.stableMint.toBase58() }) || 0
+
+  const fundraisingRatio = useMemo(() => {
+    const totalBidNum = Number(
+      utilsBN.undecimalize(totalBid, stableDecimal || 0),
+    )
+    const reserveBidNum = Number(
+      utilsBN.undecimalize(launchpadData?.startReserves[1], stableDecimal),
+    )
+    return totalBidNum / reserveBidNum
+  }, [launchpadData?.startReserves, stableDecimal, totalBid])
 
   return (
     <Row gutter={[12, 12]} align="middle" style={{ flexFlow: direction }}>
@@ -28,17 +42,19 @@ const Fundraising = ({
           <Typography.Title level={5}>
             <MintAmount
               mintAddress={launchpadData.stableMint}
-              amount={participants.totalBid}
+              amount={totalBid}
               formatter="0,0.[000]"
             />
-            /{metadata?.baseAmount} USDC
+            /
+            <MintAmount
+              mintAddress={launchpadData.stableMint}
+              amount={launchpadData?.startReserves[1]}
+              formatter="0,0.[000]"
+            />{' '}
+            <MintSymbol mintAddress={launchpadData.stableMint} />
           </Typography.Title>
           <Typography.Title level={5}>
-            {util
-              .numeric(
-                Number(participants.totalBid) / Number(metadata?.baseAmount),
-              )
-              .format('%0,0.[00]')}
+            {util.numeric(fundraisingRatio).format('%0,0.[00]')}
           </Typography.Title>
         </Space>
       </Col>
