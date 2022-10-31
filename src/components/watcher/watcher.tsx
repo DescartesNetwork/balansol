@@ -58,7 +58,6 @@ const Watcher = (props: UseWatcherProps) => {
       },
       'confirmed',
       [
-        { dataSize: accountClient.size },
         {
           memcmp: {
             offset: 0,
@@ -71,7 +70,6 @@ const Watcher = (props: UseWatcherProps) => {
     setWatchId(newWatcherId)
   }, [
     accountClient.programId,
-    accountClient.size,
     connection,
     filter,
     name,

@@ -3,7 +3,11 @@ import { useDispatch } from 'react-redux'
 import { web3 } from '@project-serum/anchor'
 
 import Watcher from './watcher'
-import { initLaunchpads, upsetLaunchpad } from 'model/launchpads.controller'
+import {
+  initLaunchpads,
+  LaunchpadsState,
+  upsetLaunchpad,
+} from 'model/launchpads.controller'
 
 // TODO: Config
 const NAME = 'launchpad'
@@ -13,7 +17,21 @@ const LaunchpadWatcher = () => {
   const dispatch = useDispatch()
 
   // TODO: init all account data
-  const init = useCallback((data) => dispatch(initLaunchpads(data)), [dispatch])
+  const init = useCallback(
+    async (launchpads: LaunchpadsState) => {
+      const pools = await window.balansol.program.account.pool.all()
+      const filterLaunchpad: LaunchpadsState = {}
+      for (const key in launchpads) {
+        const poolData = pools.find((pool) =>
+          pool.publicKey.equals(launchpads[key].pool),
+        )
+        if (!poolData) continue
+        filterLaunchpad[key] = launchpads[key]
+      }
+      dispatch(initLaunchpads(filterLaunchpad))
+    },
+    [dispatch],
+  )
   // TODO: upset account data
   const upset = useCallback(
     (key: string, value: any) =>

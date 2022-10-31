@@ -1,30 +1,32 @@
 import { useMemo } from 'react'
-import { useSelector } from 'react-redux'
+import { MintAmount, MintAvatar, MintSymbol } from '@sen-use/app'
 
 import { Button, Col, Row, Space, Typography } from 'antd'
-import { MintAmount, MintAvatar, MintSymbol } from '@sen-use/app'
 import IonIcon from '@sentre/antd-ionicon'
 
-import { useLaunchpadData } from 'hooks/launchpad/useLaunchpadData'
-import { AppState } from 'model'
+import usePoolData from 'hooks/launchpad/usePoolData'
+import { useLaunchpad } from 'hooks/launchpad/useLaunchpad'
 
 type ManagementProps = {
   launchpadAddress: string
 }
 
 const Management = ({ launchpadAddress }: ManagementProps) => {
-  const { launchpadData } = useLaunchpadData(launchpadAddress)
-  const poolData = useSelector(
-    (state: AppState) => state.pools[launchpadData.pool.toBase58()],
-  )
+  const launchpadData = useLaunchpad(launchpadAddress)!
+  const poolData = usePoolData(launchpadAddress)
+
   const assets = useMemo(() => {
     const { stableMint, mint } = launchpadData
     const { reserves } = poolData
     return [
       { mint, amount: reserves[0] },
-      { mint: stableMint, amount: reserves[1] },
+      {
+        mint: stableMint,
+        amount: reserves[1].sub(launchpadData.startReserves[1]),
+      },
     ]
   }, [launchpadData, poolData])
+
   return (
     <Row gutter={[0, 16]}>
       <Col span={24}>
