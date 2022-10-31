@@ -28,14 +28,14 @@ const Sold = ({ launchpadAddress, isDetail = false }: SoldProps) => {
       <Col>
         <Space>
           <Typography.Title level={5}>
-            {util.numeric(participants.basePrice).format('0,0.[000]')}/
+            {util.numeric(participants.baseAmount).format('0,0.[000]')}/
             {util.numeric(amount).format('0,0.[000]')}{' '}
             <MintSymbol mintAddress={launchpadData?.mint.toBase58()} />
           </Typography.Title>
           <Typography.Title level={5}>
             (
             {util
-              .numeric(Number(participants.basePrice) / Number(amount))
+              .numeric(Number(participants.baseAmount) / Number(amount))
               .format('%0,0.[00]')}
             )
           </Typography.Title>
@@ -53,7 +53,7 @@ const Sold = ({ launchpadAddress, isDetail = false }: SoldProps) => {
         <Col span={24}>
           <Space>
             <Typography.Text type="secondary">Participants:</Typography.Text>
-            <Typography.Text>{participants.total}</Typography.Text>
+            <Typography.Text>{participants.totalUsers}</Typography.Text>
           </Space>
         </Col>
       )}

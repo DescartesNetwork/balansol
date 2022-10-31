@@ -17,17 +17,20 @@ export const useParticipants = (launchpadAddress: string) => {
     useMintDecimals({ mintAddress: launchpadData?.mint.toBase58() }) || 0
 
   const participants = useMemo(() => {
-    let total = 0
-    let basePrice = new BN(0)
+    let totalUsers = 0
+    let baseAmount = new BN(0)
     const boughtAddress: string[] = []
     for (const address of filteredCheques) {
       const { authority, amount } = cheques[address]
-      basePrice = basePrice.add(amount)
+      baseAmount = baseAmount.add(amount)
       if (boughtAddress.includes(authority.toBase58())) continue
       boughtAddress.push(authority.toBase58())
-      total += 1
+      totalUsers += 1
     }
-    return { total, basePrice: utilsBN.undecimalize(basePrice, decimals) }
+    return {
+      totalUsers,
+      baseAmount: utilsBN.undecimalize(baseAmount, decimals),
+    }
   }, [cheques, decimals, filteredCheques])
 
   return participants

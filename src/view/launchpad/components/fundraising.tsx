@@ -25,13 +25,13 @@ const Fundraising = ({
       <Col>
         <Space>
           <Typography.Title level={5}>
-            {util.numeric(participants.basePrice).format('0,0.[000]')}/
+            {util.numeric(participants.baseAmount).format('0,0.[000]')}/
             {metadata?.baseAmount} USDC
           </Typography.Title>
           <Typography.Title level={5}>
             {util
               .numeric(
-                Number(participants.basePrice) / Number(metadata?.baseAmount),
+                Number(participants.baseAmount) / Number(metadata?.baseAmount),
               )
               .format('%0,0.[00]')}
           </Typography.Title>

@@ -39,7 +39,7 @@ const CompletedLaunchpad = ({ launchpadAddress }: LaunchpadCardProps) => {
                   </Typography.Text>
                 </Col>
                 <Col>
-                  <Typography.Text>{participants.total}</Typography.Text>
+                  <Typography.Text>{participants.totalUsers}</Typography.Text>
                 </Col>
               </Row>
             </Col>
