@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useMintDecimals, useTheme, util } from '@sentre/senhub'
 import { utilsBN } from '@sen-use/web3'
 
@@ -6,6 +7,7 @@ import { MintAmount, MintSymbol } from '@sen-use/app'
 
 import { useLaunchpadData } from 'hooks/launchpad/useLaunchpadData'
 import { useParticipants } from 'hooks/launchpad/useParticipants'
+import { useExchanges } from 'hooks/launchpad/useExchanges'
 
 type SoldProps = {
   launchpadAddress: string
@@ -14,11 +16,19 @@ type SoldProps = {
 
 const Sold = ({ launchpadAddress, isDetail = false }: SoldProps) => {
   const participants = useParticipants(launchpadAddress)
+  const { totalAsk } = useExchanges(launchpadAddress)
   const { launchpadData } = useLaunchpadData(launchpadAddress)
   const decimals =
     useMintDecimals({ mintAddress: launchpadData?.mint.toBase58() }) || 0
-  const amount = utilsBN.undecimalize(launchpadData?.startReserves[0], decimals)
   const theme = useTheme()
+
+  const soldRatio = useMemo(() => {
+    const totalAskNum = Number(utilsBN.undecimalize(totalAsk, decimals || 0))
+    const reserveAskNum = Number(
+      utilsBN.undecimalize(launchpadData?.startReserves[0], decimals),
+    )
+    return totalAskNum / reserveAskNum
+  }, [decimals, launchpadData?.startReserves, totalAsk])
 
   return (
     <Row align="middle">
@@ -29,8 +39,8 @@ const Sold = ({ launchpadAddress, isDetail = false }: SoldProps) => {
         <Space>
           <Typography.Title level={5}>
             <MintAmount
-              mintAddress={launchpadData.stableMint}
-              amount={participants.totalBid}
+              mintAddress={launchpadData.mint}
+              amount={totalAsk}
               formatter="0,0.[000]"
             />
             /
@@ -38,22 +48,18 @@ const Sold = ({ launchpadAddress, isDetail = false }: SoldProps) => {
               mintAddress={launchpadData.mint}
               amount={launchpadData?.startReserves[0]}
               formatter="0,0.[000]"
-            />
+            />{' '}
             <MintSymbol mintAddress={launchpadData?.mint.toBase58()} />
           </Typography.Title>
           <Typography.Title level={5}>
-            (
-            {util
-              .numeric(Number(participants.totalBid) / Number(amount))
-              .format('%0,0.[00]')}
-            )
+            ({util.numeric(soldRatio).format('%0,0.[00]')})
           </Typography.Title>
         </Space>
       </Col>
       <Col span={24}>
         <Progress
           strokeColor={theme === 'dark' ? '#63E0B3' : '#081438'}
-          percent={(0 / Number(amount)) * 100}
+          percent={soldRatio * 100}
           showInfo={false}
           className="sold-progress"
         />
