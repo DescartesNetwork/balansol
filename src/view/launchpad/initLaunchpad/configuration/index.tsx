@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useTheme, util } from '@sentre/senhub'
 import moment from 'moment'
 
@@ -22,6 +23,7 @@ import { useWrapAccountBalance } from 'hooks/useWrapAccountBalance'
 import { RangePickerProps } from 'antd/lib/date-picker'
 import type { CustomTagProps } from 'rc-select/lib/BaseSelect'
 import { useAppRouter } from 'hooks/useAppRouter'
+import { notifyError } from '@sen-use/app'
 
 type ConfigurationProps = {
   setStep: (val: InitLaunchpadStep) => void
@@ -33,8 +35,9 @@ const tagRender = (props: CustomTagProps) => {
 }
 
 const Configuration = ({ setStep }: ConfigurationProps) => {
+  const [loading, setLoading] = useState(false)
   const [launchpadData, setLaunchpadData] = useGlobalLaunchpad()
-  const { onCreateLaunchpad, loading } = useCreateLaunchpad()
+  const { onCreateLaunchpad } = useCreateLaunchpad()
   const { stableMint, startPrice, endPrice, mint, fee } = launchpadData
   const { startTime, endTime, projectInfo, amount } = launchpadData
   const { balance } = useWrapAccountBalance(mint)
@@ -53,9 +56,26 @@ const Configuration = ({ setStep }: ConfigurationProps) => {
   }
 
   const onCreate = async () => {
-    await onCreateLaunchpad(launchpadData)
-    setLaunchpadData(DEFAULT_LAUNCHPAD)
-    return pushHistory('/launchpad')
+    try {
+      setLoading(true)
+      const nextData: Launchpad = JSON.parse(JSON.stringify(launchpadData))
+      const nextSocials = []
+
+      for (const social of launchpadData.projectInfo.socials)
+        if (social) nextSocials.push(social)
+
+      nextData.projectInfo.socials = nextSocials
+
+      console.log(nextData)
+
+      await onCreateLaunchpad(nextData)
+      setLaunchpadData(DEFAULT_LAUNCHPAD)
+      return pushHistory('/launchpad')
+    } catch (error) {
+      notifyError(error)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const disabledStartDate: RangePickerProps['disabledDate'] = (current) => {

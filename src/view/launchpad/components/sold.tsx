@@ -36,7 +36,7 @@ const Sold = ({ launchpadAddress, isDetail = false }: SoldProps) => {
             (
             {util
               .numeric(Number(participants.basePrice) / Number(amount))
-              .format('%')}
+              .format('%0,0.[00]')}
             )
           </Typography.Title>
         </Space>

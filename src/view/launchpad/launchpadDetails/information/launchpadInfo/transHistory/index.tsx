@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 
-import { Button, Col, Row, Table, Typography } from 'antd'
+import { Button, Col, Row, Space, Table, Typography } from 'antd'
 
 import { TRANS_HISTORY_COLUMN } from './column'
 import { useCheques } from 'hooks/launchpad/useCheques'
@@ -19,13 +19,23 @@ const TransHistory = ({ launchpadAddress }: TransHistoryProps) => {
   const ownCheques = useCheques(launchpadAddress)
 
   const historyData = useMemo(
-    () => ownCheques.map((address) => cheques[address]),
+    () =>
+      ownCheques
+        .map((address) => cheques[address])
+        .sort((a, b) => {
+          return b.createAt.toNumber() - a.createAt.toNumber()
+        }),
     [cheques, ownCheques],
   )
   return (
     <Row gutter={[0, 16]}>
       <Col span={24}>
-        <Typography.Title level={5}>Recent transactions</Typography.Title>
+        <Space>
+          <Typography.Title level={5}>Recent transactions</Typography.Title>
+          <Typography.Text className="amount-trans">
+            {historyData.length}
+          </Typography.Text>
+        </Space>
       </Col>
       <Col span={24}>
         <Table

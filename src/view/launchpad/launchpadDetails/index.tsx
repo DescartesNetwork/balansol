@@ -12,6 +12,7 @@ const LaunchpadDetails = () => {
   const launchpadAddress = getQuery('launchpadAddress') || ''
   const { launchpadData } = useLaunchpadData(launchpadAddress)
   const completed = Number(launchpadData.endTime) < Date.now() / 1000
+
   return (
     <Row justify="center">
       <Col sm={24} xs={24} md={24} lg={18}>

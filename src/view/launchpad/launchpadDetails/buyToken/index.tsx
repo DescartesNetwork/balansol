@@ -1,24 +1,26 @@
-import { MintSelection, MintSymbol } from '@sen-use/app'
+import { useState } from 'react'
 import { useTheme, util } from '@sentre/senhub'
 
 import { Button, Card, Col, Row, Space, Typography } from 'antd'
-// import { BN } from '@project-serum/anchor'
 import MintInput from 'components/mintInput'
+import { MintSelection, MintSymbol } from '@sen-use/app'
 
 import { priceImpactColor } from 'helper'
 import { useBuyToken } from 'hooks/launchpad/actions/useBuyToken'
 import { useLaunchpadData } from 'hooks/launchpad/useLaunchpadData'
-// import { useTokenPrice } from 'hooks/launchpad/useTokenPrice'
+import { useWrapAccountBalance } from 'hooks/useWrapAccountBalance'
 
 const BuyToken = ({ launchpadAddress }: { launchpadAddress: string }) => {
+  const [amount, setAmount] = useState(0)
   const { launchpadData } = useLaunchpadData(launchpadAddress)
-  // const price = useTokenPrice(launchpadAddress)
   const theme = useTheme()
   const { onBuyToken, loading } = useBuyToken()
+  const { balance } = useWrapAccountBalance(launchpadData.stableMint.toBase58())
 
   const handleBuyToken = () => {
+    if (!amount) return
     onBuyToken({
-      amount: 1,
+      amount,
       launchpadAddress,
     })
   }
@@ -36,16 +38,15 @@ const BuyToken = ({ launchpadAddress }: { launchpadAddress: string }) => {
               bodyStyle={{ padding: 0 }}
             >
               <MintInput
-                amount={0}
+                amount={amount}
                 selectedMint={launchpadData.stableMint.toBase58()}
-                onChangeAmount={() => {}}
+                onChangeAmount={(val) => setAmount(Number(val))}
                 mintSelection={
                   <MintSelection
                     value={launchpadData?.stableMint.toBase58()}
                     style={{
                       background: theme === 'dark' ? '#394360' : '#F2F4FA',
                     }}
-                    onChange={() => {}}
                     disabled
                   />
                 }
@@ -110,6 +111,7 @@ const BuyToken = ({ launchpadAddress }: { launchpadAddress: string }) => {
             block
             onClick={handleBuyToken}
             loading={loading}
+            disabled={!amount || amount > balance}
           >
             Purchase
           </Button>

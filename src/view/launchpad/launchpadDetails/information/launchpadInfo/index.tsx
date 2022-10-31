@@ -1,4 +1,4 @@
-import { useTheme } from '@sentre/senhub'
+import { useTheme, util } from '@sentre/senhub'
 
 import { Card, Col, Row, Space, Typography } from 'antd'
 import LaunchpadProfile from 'view/launchpad/components/launchpadProfile'
@@ -6,9 +6,11 @@ import LaunchpadLineChart from 'view/launchpad/launchpadLineChart'
 import TransHistory from './transHistory'
 
 import { LaunchpadCardProps } from 'view/launchpad/components/launchpadCard'
+import { useTokenPrice } from 'hooks/launchpad/useTokenPrice'
 
 const LaunchpadInfo = ({ launchpadAddress }: LaunchpadCardProps) => {
   const theme = useTheme()
+  const mintPrice = useTokenPrice(launchpadAddress)
   return (
     <Row gutter={[16, 16]}>
       <Col span={24}>
@@ -28,7 +30,7 @@ const LaunchpadInfo = ({ launchpadAddress }: LaunchpadCardProps) => {
                   level={4}
                   style={{ color: theme === 'dark' ? '#63E0B3' : '' }}
                 >
-                  $0.5
+                  ${util.numeric(mintPrice).format('0,0.[000]')}
                 </Typography.Title>
               </Space>
             </Col>

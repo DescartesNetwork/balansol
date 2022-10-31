@@ -33,7 +33,7 @@ const Fundraising = ({
               .numeric(
                 Number(participants.basePrice) / Number(metadata?.baseAmount),
               )
-              .format('%')}
+              .format('%0,0.[00]')}
           </Typography.Title>
         </Space>
       </Col>
