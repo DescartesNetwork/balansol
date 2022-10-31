@@ -35,10 +35,10 @@ export const TRANS_HISTORY_COLUMN = [
   },
   {
     title: 'PAY',
-    dataIndex: 'amount',
-    render: (amount: BN, { launchpad }: ChequeData) => (
+    dataIndex: 'bidAmount',
+    render: (bidAmount: BN, { launchpad }: ChequeData) => (
       <ColumnAmount
-        amount={amount}
+        amount={bidAmount}
         launchpadAddress={launchpad.toBase58()}
         isBaseAmount
       />
@@ -46,9 +46,12 @@ export const TRANS_HISTORY_COLUMN = [
   },
   {
     title: 'RECEIVE',
-    dataIndex: 'amount',
-    render: (amount: BN, { launchpad }: ChequeData) => (
-      <ColumnAmount amount={amount} launchpadAddress={launchpad.toBase58()} />
+    dataIndex: 'askAmount',
+    render: (askAmount: BN, { launchpad }: ChequeData) => (
+      <ColumnAmount
+        amount={askAmount}
+        launchpadAddress={launchpad.toBase58()}
+      />
     ),
   },
 ]
