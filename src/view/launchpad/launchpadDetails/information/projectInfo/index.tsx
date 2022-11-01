@@ -4,20 +4,26 @@ import { util } from '@sentre/senhub'
 import { Avatar, Col, Divider, Row, Space, Typography } from 'antd'
 import { MintName, MintSymbol } from '@sen-use/app'
 import Resource from './resource'
+import IonIcon from '@sentre/antd-ionicon'
 
 import { DATE_FORMAT } from 'constant'
+import useMintSupply from 'shared/hooks/useMintSupply'
 import { useLaunchpadData } from 'hooks/launchpad/useLaunchpadData'
-import IonIcon from '@sentre/antd-ionicon'
 import { getDataWebsite, validURL } from 'helper'
 
 const ProjectInfo = ({ launchpadAddress }: { launchpadAddress: string }) => {
   const { metadata, launchpadData } = useLaunchpadData(launchpadAddress)
-  const mintAddress = launchpadData?.mint.toBase58()
+  const mintAddress = launchpadData.mint.toBase58()
+  const tokenAddress = launchpadData.baseMint.toBase58()
+
+  const launchpadSupply = useMintSupply(mintAddress)
+  const tokenSupply = useMintSupply(tokenAddress)
 
   const onRedirect = (url?: string) => {
     if (!url || !validURL(url)) return
     return window.open(url, '_blank')
   }
+
   return (
     <Row gutter={[24, 24]}>
       <Col span={24}>
@@ -54,12 +60,18 @@ const ProjectInfo = ({ launchpadAddress }: { launchpadAddress: string }) => {
             </Typography.Text>
             <Typography.Text>
               <span style={{ color: '#9CA1AF' }}>Token supply: </span>
-              {util.numeric(2342342342).format('0,0.[00000]')} (
+              {util
+                .numeric(tokenSupply && tokenSupply.toString())
+                .format('0,0.[00000]')}{' '}
+              (
               <MintSymbol mintAddress={mintAddress} />)
             </Typography.Text>
             <Typography.Text>
               <span style={{ color: '#9CA1AF' }}>Launchpad supply: </span>
-              {util.numeric(2342342342).format('0,0.[00000]')} (
+              {util
+                .numeric(launchpadSupply && launchpadSupply.toString())
+                .format('0,0.[00000]')}{' '}
+              (
               <MintSymbol mintAddress={mintAddress} />)
             </Typography.Text>
             <Typography.Text>
@@ -77,34 +89,38 @@ const ProjectInfo = ({ launchpadAddress }: { launchpadAddress: string }) => {
           </Space>
         </Space>
       </Col>
-      <Col span={24}>
-        <Space direction="vertical">
-          <Typography.Title level={5}>Social media</Typography.Title>
-          <Space style={{ cursor: 'pointer' }}>
-            {metadata?.socials.map((social, index) => {
-              const data = getDataWebsite(social)
-              return (
-                <Space key={index} onClick={() => onRedirect(social)}>
-                  <IonIcon style={{ fontSize: 21 }} name={data?.iconName} />
-                  <Typography.Text>{data?.websiteName}</Typography.Text>
-                  {index !== metadata.socials.length - 1 && (
-                    <Divider
-                      style={{ borderColor: '#D3D3D6', margin: 2 }}
-                      type="vertical"
-                    />
-                  )}
-                </Space>
-              )
-            })}
+      {!!metadata && !!metadata.socials.length && (
+        <Col span={24}>
+          <Space direction="vertical">
+            <Typography.Title level={5}>Social media</Typography.Title>
+            <Space style={{ cursor: 'pointer' }}>
+              {metadata.socials.map((social, index) => {
+                const data = getDataWebsite(social)
+                return (
+                  <Space key={index} onClick={() => onRedirect(social)}>
+                    <IonIcon style={{ fontSize: 21 }} name={data?.iconName} />
+                    <Typography.Text>{data?.websiteName}</Typography.Text>
+                    {index !== metadata.socials.length - 1 && (
+                      <Divider
+                        style={{ borderColor: '#D3D3D6', margin: 2 }}
+                        type="vertical"
+                      />
+                    )}
+                  </Space>
+                )
+              })}
+            </Space>
           </Space>
-        </Space>
-      </Col>
-      <Col span={24}>
-        <Space direction="vertical">
-          <Typography.Title level={5}>Leading venture capital</Typography.Title>
-          <Space style={{ cursor: 'pointer' }}>
-            {!!metadata?.vCs.length &&
-              metadata?.vCs.map(({ link, logo }, index) => {
+        </Col>
+      )}
+      {!!metadata && !!metadata.vCs.length && (
+        <Col span={24}>
+          <Space direction="vertical">
+            <Typography.Title level={5}>
+              Leading venture capital
+            </Typography.Title>
+            <Space style={{ cursor: 'pointer' }}>
+              {metadata.vCs.map(({ link, logo }, index) => {
                 return (
                   <Space key={index}>
                     <Avatar size={21} src={logo} />
@@ -118,9 +134,10 @@ const ProjectInfo = ({ launchpadAddress }: { launchpadAddress: string }) => {
                   </Space>
                 )
               })}
+            </Space>
           </Space>
-        </Space>
-      </Col>
+        </Col>
+      )}
     </Row>
   )
 }
