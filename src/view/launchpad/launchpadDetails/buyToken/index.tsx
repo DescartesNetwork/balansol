@@ -69,7 +69,7 @@ const BuyToken = ({ launchpadAddress }: { launchpadAddress: string }) => {
         {/* Ask amount */}
         <Col span={24}>
           <Space direction="vertical">
-            <Typography.Text>You pay</Typography.Text>
+            <Typography.Text type="secondary">You pay</Typography.Text>
             <Card
               bordered={false}
               className="card-swap"
@@ -95,7 +95,7 @@ const BuyToken = ({ launchpadAddress }: { launchpadAddress: string }) => {
         {/* Bid amount */}
         <Col span={24}>
           <Space direction="vertical" style={{ width: '100%' }}>
-            <Typography.Text>You receive</Typography.Text>
+            <Typography.Text type="secondary">You receive</Typography.Text>
             <Row align="middle">
               <Col flex="auto">
                 <MintSelection

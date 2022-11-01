@@ -37,7 +37,7 @@ const Sold = ({ launchpadAddress, isDetail = false }: SoldProps) => {
       </Col>
       <Col>
         <Space>
-          <Typography.Title level={5}>
+          <Typography.Title level={5} type="success">
             <MintAmount
               mintAddress={launchpadData.mint}
               amount={totalAsk}

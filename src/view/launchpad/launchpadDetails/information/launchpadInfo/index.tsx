@@ -19,17 +19,17 @@ const LaunchpadInfo = ({ launchpadAddress }: LaunchpadCardProps) => {
       <Col span={24}>
         <Card
           bordered={false}
-          style={{ background: theme === 'dark' ? '#394360' : '#ffffff' }}
+          style={{
+            background: theme === 'dark' ? '#394360' : '#ffffff',
+            borderRadius: 20,
+          }}
           bodyStyle={{ padding: '12px 16px' }}
         >
           <Row align="middle">
             <Col span={12}>
               <Space direction="vertical">
                 <Typography.Text type="secondary">Token price</Typography.Text>
-                <Typography.Title
-                  level={4}
-                  style={{ color: theme === 'dark' ? '#63E0B3' : '' }}
-                >
+                <Typography.Title level={4} type="success">
                   ${util.numeric(mintPrice).format('0,0.[000]')}
                 </Typography.Title>
               </Space>
@@ -39,10 +39,7 @@ const LaunchpadInfo = ({ launchpadAddress }: LaunchpadCardProps) => {
                 <Typography.Text type="secondary">
                   AVG users price
                 </Typography.Text>
-                <Typography.Title
-                  level={4}
-                  style={{ color: theme === 'dark' ? '#63E0B3' : '' }}
-                >
+                <Typography.Title level={4} type="success">
                   $0.5
                 </Typography.Title>
               </Space>

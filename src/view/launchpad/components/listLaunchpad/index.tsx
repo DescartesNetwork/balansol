@@ -29,7 +29,7 @@ const ListLaunchpad = ({ state }: ListLaunchpadProps) => {
               >
                 {state}
               </Typography.Title>
-              <Typography.Text className="amount-launchpad">
+              <Typography.Text className="amount-launchpad" type="success">
                 {launchpads.length}
               </Typography.Text>
             </Space>
@@ -37,8 +37,9 @@ const ListLaunchpad = ({ state }: ListLaunchpadProps) => {
           <Col>
             <Button
               onClick={() => pushHistory('/launchpad-all', { state })}
-              type="text"
+              type="link"
               disabled={!launchpads.length}
+              style={{ padding: 4 }}
             >
               View all
             </Button>

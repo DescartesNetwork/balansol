@@ -70,6 +70,7 @@ const LaunchpadCard = ({ launchpadAddress }: LaunchpadCardProps) => {
               <Typography.Paragraph
                 ellipsis={{ rows: 2 }}
                 style={{ margin: 0 }}
+                type="secondary"
               >
                 {metadata?.description}
               </Typography.Paragraph>
