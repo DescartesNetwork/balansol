@@ -1,31 +1,63 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
+import { web3, BN } from '@project-serum/anchor'
+import { getAnchorProvider } from '@sentre/senhub'
 import { MintAmount, MintAvatar, MintSymbol } from '@sen-use/app'
 
 import { Button, Col, Row, Space, Typography } from 'antd'
 import IonIcon from '@sentre/antd-ionicon'
 
+import { notifySuccess } from 'helper'
 import usePoolData from 'hooks/launchpad/usePoolData'
 import { useLaunchpad } from 'hooks/launchpad/useLaunchpad'
+import { useLptSupply } from 'hooks/useLptSupply'
 
 type ManagementProps = {
   launchpadAddress: string
 }
 
 const Management = ({ launchpadAddress }: ManagementProps) => {
+  const [loading, setLoading] = useState(false)
   const launchpadData = useLaunchpad(launchpadAddress)!
   const poolData = usePoolData(launchpadAddress)
+  const { supply } = useLptSupply(poolData.mintLpt)
 
   const assets = useMemo(() => {
     const { stableMint, mint } = launchpadData
     const { reserves } = poolData
+    const stableAmount = reserves[1].gt(launchpadData.startReserves[1])
+      ? reserves[1].sub(launchpadData.startReserves[1])
+      : new BN(0)
+
     return [
       { mint, amount: reserves[0] },
       {
         mint: stableMint,
-        amount: reserves[1].sub(launchpadData.startReserves[1]),
+        amount: stableAmount,
       },
     ]
   }, [launchpadData, poolData])
+
+  const onWithdraw = async () => {
+    setLoading(true)
+    try {
+      let { tx } = await window.launchpad.claim({
+        launchpad: new web3.PublicKey(launchpadAddress),
+        sendAndConfirm: false,
+      })
+      const { transaction } =
+        await window.balansol.createRemoveLiquidityTransaction(
+          launchpadData.pool,
+          supply,
+        )
+
+      const provider = getAnchorProvider()!
+      const txId = await provider.sendAndConfirm(tx.add(transaction))
+      notifySuccess('Withdraw', txId)
+    } catch (error) {
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <Row gutter={[0, 16]}>
@@ -59,7 +91,13 @@ const Management = ({ launchpadAddress }: ManagementProps) => {
       </Col>
       <Col span={24} />
       <Col span={24}>
-        <Button block type="primary" size="large">
+        <Button
+          block
+          type="primary"
+          size="large"
+          onClick={onWithdraw}
+          loading={loading}
+        >
           Withdraw
         </Button>
       </Col>

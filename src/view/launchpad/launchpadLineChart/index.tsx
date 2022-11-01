@@ -67,7 +67,7 @@ const buildOptions = (props: LaunchpadLineChartProps) => {
   const times = getTimes(startTime, endTime)
   const xAxis = times.map((time) => moment(time).format('DD/MM HH:MM'))
   const yAxis = prices.map((price) => utilsBN.undecimalize(price, 9))
-  const tmpValue = [0.6, 0.7, 0.4]
+  const tmpValue = [0.6, 0.7, 0.5, 0.1]
   return {
     xAxis: {
       type: 'category',
