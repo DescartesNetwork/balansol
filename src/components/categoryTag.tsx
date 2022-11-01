@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react'
+import { CSSProperties, useCallback, useEffect } from 'react'
 
 import { Tag } from 'antd'
 
@@ -6,9 +6,10 @@ import { CATEGORY } from 'constant'
 
 type CategoryTagProps = {
   category: keyof typeof CATEGORY
+  style?: CSSProperties
 }
 
-const CategoryTag = ({ category }: CategoryTagProps) => {
+const CategoryTag = ({ category, style }: CategoryTagProps) => {
   const categoryColor = useCallback(
     (opacity?: string) => {
       const color = CATEGORY[category]
@@ -21,7 +22,10 @@ const CategoryTag = ({ category }: CategoryTagProps) => {
     categoryColor()
   }, [categoryColor])
   return (
-    <Tag style={{ color: categoryColor() }} color={categoryColor('0.1')}>
+    <Tag
+      style={{ color: categoryColor(), ...style }}
+      color={categoryColor('0.1')}
+    >
       {category}
     </Tag>
   )

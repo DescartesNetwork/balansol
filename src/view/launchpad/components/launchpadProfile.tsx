@@ -21,9 +21,9 @@ const LaunchpadProfile = ({ launchpadAddress }: LaunchpadCardProps) => {
       <Avatar shape="square" size={69} src={metadata?.coverPhoto} />
       <Space size={0} direction="vertical">
         <Typography.Title level={4}>{metadata?.projectName}</Typography.Title>
-        <Space size={0}>
+        <Space size={4} wrap>
           {metadata?.category.map((tag: any) => (
-            <CategoryTag key={tag} category={tag} />
+            <CategoryTag key={tag} category={tag} style={{ margin: 0 }} />
           ))}
         </Space>
         {!!metadata?.socials.length && (

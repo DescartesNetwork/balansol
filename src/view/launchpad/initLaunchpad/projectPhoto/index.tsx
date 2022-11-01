@@ -36,7 +36,7 @@ const ProjectPhoto = ({ setStep }: ProjectPhotoProp) => {
           attract users.
         </Typography.Text>
       </Col>
-      <Col span={24} style={{ height: 241 }} className="project-photo">
+      <Col span={24} style={{ minHeight: 240 }} className="project-photo">
         {!coverPhoto ? (
           <Upload.Dragger
             accept="image/png,image/jpg,image/webp"
@@ -58,7 +58,13 @@ const ProjectPhoto = ({ setStep }: ProjectPhotoProp) => {
             <Image
               src={coverPhoto.toString()}
               preview={false}
-              style={{ width: '100%', height: '100%' }}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                objectPosition: 'center',
+                aspectRatio: '16/9',
+              }}
               className="cover-photo"
             />
           </AvatarUploaded>

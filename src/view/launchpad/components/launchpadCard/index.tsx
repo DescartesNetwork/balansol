@@ -1,5 +1,4 @@
-import { useMemo } from 'react'
-import { useAppWidth, useWalletAddress, useWidth } from '@sentre/senhub'
+import { useWalletAddress } from '@sentre/senhub'
 
 import { Col, Row, Image, Card, Typography } from 'antd'
 import IonIcon from '@sentre/antd-ionicon'
@@ -24,19 +23,7 @@ const LaunchpadCard = ({ launchpadAddress }: LaunchpadCardProps) => {
     launchpadData: { authority },
   } = useLaunchpadData(launchpadAddress)
   const walletAddress = useWalletAddress()
-  const width = useWidth()
-  const appWidth = useAppWidth()
   const { pushHistory } = useAppRouter()
-
-  const rate = width > 769 ? 18 / 24 : 1
-  const padding = 15 + 24 //scroll width + body padding
-  const HEIGHT_RATIO = 1.77777777
-  const bodyWidth = (appWidth - padding) * rate
-
-  const height = useMemo(() => {
-    if (appWidth > 991) return (bodyWidth - 24) / 2
-    return bodyWidth
-  }, [appWidth, bodyWidth])
 
   const owner = authority.toBase58() === walletAddress
 
@@ -45,19 +32,19 @@ const LaunchpadCard = ({ launchpadAddress }: LaunchpadCardProps) => {
       className="project-card"
       onClick={() => pushHistory('/launchpad-details', { launchpadAddress })}
     >
-      <Col
-        span={24}
-        className="project-card_header"
-        style={{ height: height / HEIGHT_RATIO }}
-      >
-        <Image src={metadata?.coverPhoto} preview={false} />
+      <Col span={24} className="project-card_header">
+        <Image
+          style={{ aspectRatio: '16/9', objectFit: 'cover' }}
+          src={metadata?.coverPhoto}
+          preview={false}
+        />
       </Col>
       <Col span={24}>
         <Card className="project-card_body">
           <Row gutter={[16, 16]}>
             <Col span={24}>
-              <Row>
-                <Col flex="auto">
+              <Row gutter={[24, 24]} wrap={false} justify="space-between">
+                <Col>
                   <LaunchpadProfile launchpadAddress={launchpadAddress} />
                 </Col>
                 {owner && (
