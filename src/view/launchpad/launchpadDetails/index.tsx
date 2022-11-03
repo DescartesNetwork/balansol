@@ -6,11 +6,15 @@ import Progress from './progress'
 
 import { useAppRouter } from 'hooks/useAppRouter'
 import { useLaunchpadData } from 'hooks/launchpad/useLaunchpadData'
+import PageNotFound from 'components/pageNotFound'
 
 const LaunchpadDetails = () => {
   const { pushHistory, getQuery } = useAppRouter()
   const launchpadAddress = getQuery('launchpadAddress') || ''
   const { launchpadData } = useLaunchpadData(launchpadAddress)
+  if (!launchpadData || !launchpadAddress)
+    return <PageNotFound label="launchpad" redirect="/launchpad" />
+
   const completed = Number(launchpadData.endTime) < Date.now() / 1000
 
   return (

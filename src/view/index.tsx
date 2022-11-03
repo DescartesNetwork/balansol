@@ -18,6 +18,7 @@ import AllLaunchpad from './launchpad/allLaunchpad'
 import Launchpad from './launchpad'
 import InitLaunchPad from './launchpad/initLaunchpad'
 import LaunchpadDetails from './launchpad/launchpadDetails'
+import YourPurchased from './launchpad/yourPurchased'
 
 import configs from 'configs'
 import { AppWatcher } from 'components/watcher'
@@ -86,7 +87,10 @@ const View = () => {
                     path={extend('/launchpad-details')}
                     component={LaunchpadDetails}
                   />
-
+                  <Route
+                    path={extend('/your-purchased')}
+                    component={YourPurchased}
+                  />
                   <Route path={extend('/farms')}>
                     <Redirect to="/app/sen_farming_v2?autoInstall=true" />
                   </Route>

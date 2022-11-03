@@ -1,5 +1,4 @@
 import { Card, Col, Row, Typography } from 'antd'
-import Fundraising from '../fundraising'
 import LaunchpadProfile from '../launchpadProfile'
 import Price from '../price'
 
@@ -7,6 +6,7 @@ import { useAppRouter } from 'hooks/useAppRouter'
 import { LaunchpadCardProps } from './index'
 import { useWidth } from '@sentre/senhub'
 import { useParticipants } from 'hooks/launchpad/useParticipants'
+import Fundraising from '../fundraising'
 
 const CompletedLaunchpad = ({ launchpadAddress }: LaunchpadCardProps) => {
   const { pushHistory } = useAppRouter()
@@ -28,11 +28,7 @@ const CompletedLaunchpad = ({ launchpadAddress }: LaunchpadCardProps) => {
         <Col sm={24} xs={24} md={24} lg={16}>
           <Row gutter={[8, 8]} style={{ height: '100%' }}>
             <Col xs={24} sm={24} md={24} lg={8}>
-              <Row
-                gutter={[12, 12]}
-                style={{ flexFlow: direction }}
-                align="middle"
-              >
+              <Row gutter={[12, 12]} style={{ flexFlow: direction }}>
                 <Col flex="auto">
                   <Typography.Text type="secondary">
                     Participants
@@ -52,6 +48,7 @@ const CompletedLaunchpad = ({ launchpadAddress }: LaunchpadCardProps) => {
             <Col xs={24} sm={24} md={24} lg={8}>
               <Fundraising
                 launchpadAddress={launchpadAddress}
+                isDetail
                 direction={direction}
               />
             </Col>

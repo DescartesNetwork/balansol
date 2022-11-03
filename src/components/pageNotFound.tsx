@@ -3,19 +3,24 @@ import IonIcon from '@sentre/antd-ionicon'
 
 import { useAppRouter } from 'hooks/useAppRouter'
 
-const PoolNotFound = () => {
+type PageNotFoundProps = {
+  label: string
+  redirect: string
+}
+
+const PageNotFound = ({ label, redirect }: PageNotFoundProps) => {
   const { pushHistory } = useAppRouter()
 
   return (
     <Row justify="center">
       <Col span={24} style={{ textAlign: 'center' }}>
-        <Empty description="Pool not found" />
+        <Empty description={`${label} not found`} />
       </Col>
       <Col span={24} style={{ textAlign: 'center' }}>
         <Button
           type="text"
           icon={<IonIcon name="arrow-back-outline" />}
-          onClick={() => pushHistory(`/pools`)}
+          onClick={() => pushHistory(redirect)}
         >
           Go Back Home
         </Button>
@@ -24,4 +29,4 @@ const PoolNotFound = () => {
   )
 }
 
-export default PoolNotFound
+export default PageNotFound

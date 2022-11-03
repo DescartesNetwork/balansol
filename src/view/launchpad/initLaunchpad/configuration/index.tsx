@@ -10,20 +10,15 @@ import SpaceVertical from '../projectInfo/spaceVertical'
 import IonIcon from '@sentre/antd-ionicon'
 import LaunchpadLineChart from 'view/launchpad/launchpadLineChart'
 
-import {
-  CATEGORY,
-  DATE_FORMAT,
-  InitLaunchpadStep,
-  Launchpad,
-  ProjectInfoData,
-} from 'constant'
+import { CATEGORY, Launchpad, ProjectInfoData } from 'constant'
+import { DATE_FORMAT, InitLaunchpadStep } from 'constant'
 import { DEFAULT_LAUNCHPAD, useGlobalLaunchpad } from '../index'
 import { useCreateLaunchpad } from 'hooks/launchpad/actions/useCreateLaunchpad'
 import { useWrapAccountBalance } from 'hooks/useWrapAccountBalance'
 import { RangePickerProps } from 'antd/lib/date-picker'
-import type { CustomTagProps } from 'rc-select/lib/BaseSelect'
 import { useAppRouter } from 'hooks/useAppRouter'
 import { notifyError } from '@sen-use/app'
+import type { CustomTagProps } from 'rc-select/lib/BaseSelect'
 
 type ConfigurationProps = {
   setStep: (val: InitLaunchpadStep) => void
@@ -38,7 +33,7 @@ const Configuration = ({ setStep }: ConfigurationProps) => {
   const [loading, setLoading] = useState(false)
   const [launchpadData, setLaunchpadData] = useGlobalLaunchpad()
   const { onCreateLaunchpad } = useCreateLaunchpad()
-  const { stableMint, startPrice, endPrice, mint, fee } = launchpadData
+  const { stableMint, startPrice, endPrice, mint } = launchpadData
   const { startTime, endTime, projectInfo, amount } = launchpadData
   const { balance } = useWrapAccountBalance(mint)
   const theme = useTheme()
@@ -66,8 +61,6 @@ const Configuration = ({ setStep }: ConfigurationProps) => {
 
       nextData.projectInfo.socials = nextSocials
 
-      console.log(nextData)
-
       await onCreateLaunchpad(nextData)
       setLaunchpadData(DEFAULT_LAUNCHPAD)
       return pushHistory('/launchpad')
@@ -94,7 +87,6 @@ const Configuration = ({ setStep }: ConfigurationProps) => {
     !amount ||
     !stableMint ||
     !projectInfo.baseAmount ||
-    !fee ||
     !projectInfo.category.length ||
     !startTime ||
     !endTime ||
@@ -187,17 +179,6 @@ const Configuration = ({ setStep }: ConfigurationProps) => {
               />
             </Col>
           </Row>
-        </SpaceVertical>
-      </Col>
-
-      {/* Fee */}
-      <Col span={24}>
-        <SpaceVertical label="Swap fee">
-          <InputNumber
-            onChange={(val) => onChange('fee', val)}
-            value={fee ? fee : undefined}
-            placeholder="Input swap fee"
-          />
         </SpaceVertical>
       </Col>
 
@@ -300,7 +281,12 @@ const Configuration = ({ setStep }: ConfigurationProps) => {
             <Typography.Text>Preview</Typography.Text>
           </Col>
           <Col span={24}>
-            <LaunchpadLineChart />
+            <LaunchpadLineChart
+              startTime={startTime}
+              endTime={endTime}
+              startPrice={startPrice}
+              endPrice={endPrice}
+            />
           </Col>
         </Row>
       </Col>

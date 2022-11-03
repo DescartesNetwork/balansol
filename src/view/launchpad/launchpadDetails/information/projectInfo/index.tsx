@@ -1,8 +1,9 @@
 import moment from 'moment'
 import { util } from '@sentre/senhub'
+import { BN } from '@project-serum/anchor'
 
 import { Avatar, Col, Divider, Row, Space, Typography } from 'antd'
-import { MintName, MintSymbol } from '@sen-use/app'
+import { MintAmount, MintName, MintSymbol } from '@sen-use/app'
 import Resource from './resource'
 import IonIcon from '@sentre/antd-ionicon'
 
@@ -14,10 +15,7 @@ import { getDataWebsite, validURL } from 'helper'
 const ProjectInfo = ({ launchpadAddress }: { launchpadAddress: string }) => {
   const { metadata, launchpadData } = useLaunchpadData(launchpadAddress)
   const mintAddress = launchpadData.mint.toBase58()
-  const tokenAddress = launchpadData.baseMint.toBase58()
-
-  const launchpadSupply = useMintSupply(mintAddress)
-  const tokenSupply = useMintSupply(tokenAddress)
+  const tokenSupply = useMintSupply(mintAddress)
 
   const onRedirect = (url?: string) => {
     if (!url || !validURL(url)) return
@@ -60,19 +58,19 @@ const ProjectInfo = ({ launchpadAddress }: { launchpadAddress: string }) => {
             </Typography.Text>
             <Typography.Text>
               <span style={{ color: '#9CA1AF' }}>Token supply: </span>
-              {util
-                .numeric(tokenSupply && tokenSupply.toString())
-                .format('0,0.[00000]')}{' '}
-              (
-              <MintSymbol mintAddress={mintAddress} />)
+              <MintAmount
+                amount={tokenSupply || new BN(0)}
+                mintAddress={mintAddress}
+              />{' '}
+              (<MintSymbol mintAddress={mintAddress} />)
             </Typography.Text>
             <Typography.Text>
               <span style={{ color: '#9CA1AF' }}>Launchpad supply: </span>
-              {util
-                .numeric(launchpadSupply && launchpadSupply.toString())
-                .format('0,0.[00000]')}{' '}
-              (
-              <MintSymbol mintAddress={mintAddress} />)
+              <MintAmount
+                amount={launchpadData.startReserves[0]}
+                mintAddress={mintAddress}
+              />{' '}
+              (<MintSymbol mintAddress={mintAddress} />)
             </Typography.Text>
             <Typography.Text>
               <span style={{ color: '#9CA1AF' }}>Launchpad start time: </span>
@@ -89,12 +87,13 @@ const ProjectInfo = ({ launchpadAddress }: { launchpadAddress: string }) => {
           </Space>
         </Space>
       </Col>
-      {!!metadata && !!metadata.socials.length && (
+      {!!metadata && (
         <Col span={24}>
           <Space direction="vertical">
             <Typography.Title level={5}>Social media</Typography.Title>
             <Space style={{ cursor: 'pointer' }}>
               {metadata.socials.map((social, index) => {
+                if (!social) return null
                 const data = getDataWebsite(social)
                 return (
                   <Space key={index} onClick={() => onRedirect(social)}>
@@ -121,6 +120,7 @@ const ProjectInfo = ({ launchpadAddress }: { launchpadAddress: string }) => {
             </Typography.Title>
             <Space style={{ cursor: 'pointer' }}>
               {metadata.vCs.map(({ link, logo }, index) => {
+                if (!link) return null
                 return (
                   <Space key={index}>
                     <Avatar size={21} src={logo} />

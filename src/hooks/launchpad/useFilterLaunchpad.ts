@@ -13,6 +13,14 @@ export const useFilterLaunchpad = (state?: LaunchpadSate) => {
     const validLaunchpads = Object.keys(launchpads).filter(
       (address) => !launchpads[address].state['uninitialized'],
     )
+
+    validLaunchpads.sort((a, b) => {
+      const a_startTime = launchpads[a].startTime.toNumber()
+      const b_startTime = launchpads[b].startTime.toNumber()
+
+      return b_startTime - a_startTime
+    })
+
     if (!state) return validLaunchpads
 
     for (const address of validLaunchpads) {

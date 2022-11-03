@@ -10,6 +10,8 @@ import {
 } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
 import { LineChart } from 'echarts/charts'
+import { useLaunchpadData } from 'hooks/launchpad/useLaunchpadData'
+import { useMemo } from 'react'
 
 echarts.use([
   TitleComponent,
@@ -20,16 +22,17 @@ echarts.use([
 ])
 
 type LaunchpadLineChartProps = {
-  price_a?: number
-  price_b?: number
-  balance_a?: number
-  balance_b?: number
+  startPrice?: number
+  endPrice?: number
+  startTime?: number
+  endTime?: number
+  launchpadAddress?: string
 }
 
 const getTimes = (starTime: number, endTime: number) => {
   const result: number[] = []
-  const blockTime = (endTime - starTime) / 5
-  for (let i = 0; i < 3; i++) {
+  const blockTime = (endTime - starTime) / 3
+  for (let i = 0; i < 4; i++) {
     if (i === 0) {
       result[i] = starTime
       continue
@@ -40,13 +43,13 @@ const getTimes = (starTime: number, endTime: number) => {
   return result
 }
 
-const getPrices = (starPrice: number, endPrice: number) => {
+const getPrices = (starPrice = 0, endPrice = 0) => {
   const result: BN[] = []
   const bnStartPrice = utilsBN.decimalize(starPrice, 9)
   const bnEndPrice = utilsBN.decimalize(endPrice, 9)
 
-  const singlePrice = bnStartPrice.sub(bnEndPrice).div(new BN(5))
-  for (let i = 0; i < 3; i++) {
+  const singlePrice = bnStartPrice.sub(bnEndPrice).div(new BN(3))
+  for (let i = 0; i < 4; i++) {
     if (i === 0) {
       result[i] = bnStartPrice
       continue
@@ -57,17 +60,15 @@ const getPrices = (starPrice: number, endPrice: number) => {
   return result
 }
 
-const buildOptions = (props: LaunchpadLineChartProps) => {
-  const startTime = Date.now()
-  const endTime = startTime + 3 * (24 * 60 * 60 * 1000)
-  const startPrice = 0.6
-  const endPrice = 0.1
-
-  const prices = getPrices(startPrice, endPrice)
+const buildOptions = (
+  defaultValue: string[],
+  currentValue: string[],
+  startTime: number,
+  endTime: number,
+) => {
   const times = getTimes(startTime, endTime)
   const xAxis = times.map((time) => moment(time).format('DD/MM HH:MM'))
-  const yAxis = prices.map((price) => utilsBN.undecimalize(price, 9))
-  const tmpValue = [0.6, 0.7, 0.5, 0.1]
+
   return {
     xAxis: {
       type: 'category',
@@ -78,12 +79,12 @@ const buildOptions = (props: LaunchpadLineChartProps) => {
     },
     series: [
       {
-        data: yAxis,
+        data: defaultValue,
         type: 'line',
         smooth: true,
       },
       {
-        data: tmpValue,
+        data: currentValue,
         type: 'line',
         smooth: true,
       },
@@ -91,11 +92,35 @@ const buildOptions = (props: LaunchpadLineChartProps) => {
   }
 }
 
-const LaunchpadLineChart = (props: LaunchpadLineChartProps) => {
+const LaunchpadLineChart = ({
+  launchpadAddress,
+  startPrice,
+  endPrice,
+  startTime = 0,
+  endTime = 0,
+}: LaunchpadLineChartProps) => {
+  const { launchpadData } = useLaunchpadData(launchpadAddress || '')
+
+  const defaultValue = useMemo(() => {
+    let prices: BN[] = []
+    if (!launchpadAddress && startPrice && endPrice)
+      prices = getPrices(startPrice, endPrice)
+    // prices = getPrices(startPrice, endPrice)
+    return prices.map((price) => utilsBN.undecimalize(price, 9))
+  }, [endPrice, launchpadAddress, startPrice])
+
+  const startDate = launchpadAddress
+    ? launchpadData.startTime.toNumber() * 1000
+    : startTime
+
+  const endDate = launchpadAddress
+    ? launchpadData.endTime.toNumber() * 1000
+    : endTime
+
   return (
     <ReactEChartsCore
       echarts={echarts}
-      option={buildOptions(props)}
+      option={buildOptions(defaultValue, [], startDate, endDate)}
       notMerge={true}
       lazyUpdate={true}
     />

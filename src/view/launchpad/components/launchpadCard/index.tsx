@@ -3,8 +3,8 @@ import { useWalletAddress } from '@sentre/senhub'
 import { Col, Row, Image, Card, Typography } from 'antd'
 import IonIcon from '@sentre/antd-ionicon'
 import EndIn from '../endIn'
-import Fundraising from '../fundraising'
 import Sold from '../sold'
+import Fundraising from '../fundraising'
 import LaunchpadProfile from '../launchpadProfile'
 import Price from '../price'
 
@@ -61,10 +61,10 @@ const LaunchpadCard = ({ launchpadAddress }: LaunchpadCardProps) => {
               <Price launchpadAddress={launchpadAddress} />
             </Col>
             <Col span={24}>
-              <Fundraising launchpadAddress={launchpadAddress} />
+              <Sold launchpadAddress={launchpadAddress} />
             </Col>
             <Col span={24}>
-              <Sold launchpadAddress={launchpadAddress} />
+              <Fundraising launchpadAddress={launchpadAddress} />
             </Col>
             <Col span={24}>
               <Typography.Paragraph

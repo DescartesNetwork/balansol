@@ -1,13 +1,14 @@
 import { MintAmount, MintSymbol } from '@sen-use/app'
-import { Button, Col, Row, Space, Typography } from 'antd'
+import { Button, Col, Row, Space, Tooltip, Typography } from 'antd'
 
 import { utils, web3 } from '@project-serum/anchor'
 import { useCallback, useEffect, useState } from 'react'
 import { splt } from '@sentre/senhub'
 
 import { notifySuccess } from 'helper'
-import { useExchanges } from 'hooks/launchpad/useExchanges'
 import { useLaunchpad } from 'hooks/launchpad/useLaunchpad'
+import { useParticipants } from 'hooks/launchpad/useParticipants'
+import IonIcon from '@sentre/antd-ionicon'
 
 type YourBoughtProps = {
   launchpadAddress: string
@@ -18,7 +19,7 @@ const YourBought = ({ launchpadAddress }: YourBoughtProps) => {
   const [claimed, setClaimed] = useState(true)
   const launchpadData = useLaunchpad(launchpadAddress)
   const completed = Number(launchpadData.endTime) < Date.now() / 1000
-  const { totalAsk } = useExchanges(launchpadAddress, true)
+  const { totalAsk } = useParticipants(launchpadAddress, true)
 
   const onClaim = async () => {
     setLoading(true)
@@ -43,6 +44,7 @@ const YourBought = ({ launchpadAddress }: YourBoughtProps) => {
     const accountData = await splt.getAccountData(treasury.toBase58())
     setClaimed(!Number(accountData.amount.toString()))
   }, [launchpadAddress, launchpadData.mint])
+
   useEffect(() => {
     fetchBalance()
   }, [fetchBalance])
@@ -50,7 +52,15 @@ const YourBought = ({ launchpadAddress }: YourBoughtProps) => {
   return (
     <Row align="middle">
       <Col flex="auto">
-        <Typography.Text type="secondary">Your bought</Typography.Text>
+        <Space className="align-middle-icon">
+          <Typography.Text type="secondary">Your bought</Typography.Text>
+          <Tooltip title="The tokens you bought will be locked while the launchpad is active, you can claim your tokens after it ends.">
+            <IonIcon
+              style={{ color: '#9CA1AF', fontSize: 16 }}
+              name="information-circle-outline"
+            />
+          </Tooltip>
+        </Space>
       </Col>
       <Col>
         {!completed ? (

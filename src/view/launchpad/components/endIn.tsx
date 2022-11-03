@@ -13,22 +13,29 @@ const EndIn = ({ launchpadAddress }: LaunchpadCardProps) => {
   const recent = Date.now() / 1000 - startTime.toNumber()
   const percent = recent / totalTime
 
+  const isStarted = Date.now() / 1000 > startTime.toNumber()
+  const time = !isStarted ? startTime : endTime
+
   return (
     <Row align="middle">
       <Col flex="auto">
-        <Typography.Text type="secondary">End in</Typography.Text>
+        <Typography.Text type="secondary">
+          {isStarted ? ' End in' : 'Start in'}
+        </Typography.Text>
       </Col>
       <Col>
         <Space>
-          <TimeCountDown endTime={launchpadData.endTime.toNumber()} />
-          <Progress
-            type="circle"
-            percent={percent * 100}
-            showInfo={false}
-            className="end-time-progress"
-            strokeWidth={10}
-            strokeColor={theme === 'dark' ? '#63E0B3' : '#081438'}
-          />
+          <TimeCountDown endTime={time.toNumber()} />
+          {isStarted && (
+            <Progress
+              type="circle"
+              percent={percent * 100}
+              showInfo={false}
+              className="end-time-progress"
+              strokeWidth={10}
+              strokeColor={theme === 'dark' ? '#63E0B3' : '#081438'}
+            />
+          )}
         </Space>
       </Col>
     </Row>

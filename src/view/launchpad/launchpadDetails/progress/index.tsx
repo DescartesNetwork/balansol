@@ -1,7 +1,7 @@
 import { Card, Col, Row, Typography } from 'antd'
 import EndIn from 'view/launchpad/components/endIn'
-import Fundraising from 'view/launchpad/components/fundraising'
 import Sold from 'view/launchpad/components/sold'
+import Fundraising from 'view/launchpad/components/fundraising'
 import YourBought from 'view/launchpad/components/yourBought'
 import { LaunchpadCardProps } from 'view/launchpad/components/launchpadCard'
 import { useParticipants } from 'hooks/launchpad/useParticipants'
@@ -29,10 +29,10 @@ const Progress = ({ launchpadAddress }: LaunchpadCardProps) => {
           <EndIn launchpadAddress={launchpadAddress} />
         </Col>
         <Col span={24}>
-          <Fundraising launchpadAddress={launchpadAddress} />
+          <Sold launchpadAddress={launchpadAddress} />
         </Col>
         <Col span={24}>
-          <Sold isDetail launchpadAddress={launchpadAddress} />
+          <Fundraising isDetail launchpadAddress={launchpadAddress} />
         </Col>
       </Row>
     </Card>

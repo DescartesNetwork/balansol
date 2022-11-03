@@ -1,20 +1,19 @@
 import { useCallback, useState } from 'react'
+import { useDebounce } from 'react-use'
 import { useGetMintDecimals, useTheme, util } from '@sentre/senhub'
 import { BN } from '@project-serum/anchor'
+import { utilsBN } from '@sen-use/web3'
 
 import { Button, Card, Col, Row, Space, Typography } from 'antd'
 import MintInput from 'components/mintInput'
 import { MintAmount, MintSelection, MintSymbol } from '@sen-use/app'
 
-import { priceImpactColor } from 'helper'
 import { useBuyToken } from 'hooks/launchpad/actions/useBuyToken'
 import { useWrapAccountBalance } from 'hooks/useWrapAccountBalance'
-import useLaunchpadWeights from 'hooks/launchpad/useLaunchpadWeights'
-import { calcOutGivenInSwap } from 'helper/oracles'
+import { useLaunchpadWeights } from 'hooks/launchpad/useLaunchpadWeights'
 import { useLaunchpad } from 'hooks/launchpad/useLaunchpad'
-import { utilsBN } from '@sen-use/web3'
-import usePoolData from 'hooks/launchpad/usePoolData'
-import { useDebounce } from 'react-use'
+import { usePoolData } from 'hooks/launchpad/usePoolData'
+import { calcOutGivenInSwap } from 'helper/oracles'
 
 const BuyToken = ({ launchpadAddress }: { launchpadAddress: string }) => {
   const [amount, setAmount] = useState(0)
@@ -27,6 +26,7 @@ const BuyToken = ({ launchpadAddress }: { launchpadAddress: string }) => {
   const { balance } = useWrapAccountBalance(launchpadData.stableMint.toBase58())
   const currentWeights = useLaunchpadWeights(launchpadAddress, 5000)
   const getMintDecimals = useGetMintDecimals()
+  const isStarted = Date.now() / 1000 > launchpadData.startTime.toNumber()
 
   const handleBuyToken = () => {
     if (!amount) return
@@ -57,9 +57,7 @@ const BuyToken = ({ launchpadAddress }: { launchpadAddress: string }) => {
     currentWeights,
     getMintDecimals,
     launchpadData.stableMint,
-    poolData.fee,
-    poolData.reserves,
-    poolData.taxFee,
+    poolData,
   ])
   useDebounce(syncsAskAmount, 500, [syncsAskAmount])
 
@@ -120,7 +118,7 @@ const BuyToken = ({ launchpadAddress }: { launchpadAddress: string }) => {
 
         <Col span={24}>
           <Space direction="vertical" style={{ width: '100%' }}>
-            <Row align="middle">
+            {/* <Row align="middle">
               <Col flex="auto">
                 <Typography.Text type="secondary">Price impact</Typography.Text>
               </Col>
@@ -129,7 +127,7 @@ const BuyToken = ({ launchpadAddress }: { launchpadAddress: string }) => {
                   {1.2 > 0 ? util.numeric(0.0012).format('0.[0000]%') : '~ 0%'}
                 </Typography.Text>
               </Col>
-            </Row>
+            </Row> */}
             <Row align="middle">
               <Col flex="auto">
                 <Typography.Text type="secondary">Rate</Typography.Text>
@@ -166,7 +164,7 @@ const BuyToken = ({ launchpadAddress }: { launchpadAddress: string }) => {
             block
             onClick={handleBuyToken}
             loading={loading}
-            disabled={!amount || amount > balance}
+            disabled={!amount || amount > balance || !isStarted}
           >
             Purchase
           </Button>

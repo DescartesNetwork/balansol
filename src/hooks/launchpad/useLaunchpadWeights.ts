@@ -20,7 +20,7 @@ function calc_new_weight(
   return new_weight
 }
 
-const useLaunchpadWeights = (launchpad: string, timeout = 10000) => {
+export const useLaunchpadWeights = (launchpad: string, timeout = 10000) => {
   const launchpadData = useLaunchpad(launchpad)!
   const [currentTime, setCurrentTime] = useState(new Date().getTime() / 1000)
 
@@ -56,5 +56,3 @@ const useLaunchpadWeights = (launchpad: string, timeout = 10000) => {
 
   return currentWeights
 }
-
-export default useLaunchpadWeights

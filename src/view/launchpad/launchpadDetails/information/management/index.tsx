@@ -1,13 +1,13 @@
 import { useMemo, useState } from 'react'
 import { web3, BN } from '@project-serum/anchor'
 import { getAnchorProvider } from '@sentre/senhub'
-import { MintAmount, MintAvatar, MintSymbol } from '@sen-use/app'
+import { MintAmount, MintAvatar, MintSymbol, notifyError } from '@sen-use/app'
 
 import { Button, Col, Row, Space, Typography } from 'antd'
 import IonIcon from '@sentre/antd-ionicon'
 
 import { notifySuccess } from 'helper'
-import usePoolData from 'hooks/launchpad/usePoolData'
+import { usePoolData } from 'hooks/launchpad/usePoolData'
 import { useLaunchpad } from 'hooks/launchpad/useLaunchpad'
 import { useLptSupply } from 'hooks/useLptSupply'
 
@@ -20,6 +20,8 @@ const Management = ({ launchpadAddress }: ManagementProps) => {
   const launchpadData = useLaunchpad(launchpadAddress)!
   const poolData = usePoolData(launchpadAddress)
   const { supply } = useLptSupply(poolData.mintLpt)
+
+  const completed = Date.now() / 1000 >= launchpadData.endTime.toNumber()
 
   const assets = useMemo(() => {
     const { stableMint, mint } = launchpadData
@@ -54,6 +56,7 @@ const Management = ({ launchpadAddress }: ManagementProps) => {
       const txId = await provider.sendAndConfirm(tx.add(transaction))
       notifySuccess('Withdraw', txId)
     } catch (error) {
+      notifyError(error)
     } finally {
       setLoading(false)
     }
@@ -97,6 +100,7 @@ const Management = ({ launchpadAddress }: ManagementProps) => {
           size="large"
           onClick={onWithdraw}
           loading={loading}
+          disabled={!completed}
         >
           Withdraw
         </Button>

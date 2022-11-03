@@ -1,5 +1,3 @@
-import { useTheme } from '@sentre/senhub'
-
 import {
   CSSProperties,
   Fragment,
@@ -10,6 +8,7 @@ import {
   useState,
 } from 'react'
 import moment from 'moment'
+import { useTheme } from '@sentre/senhub'
 
 import { Space, Tag, Typography } from 'antd'
 
@@ -31,8 +30,8 @@ const TimeTag = ({ children, style }: TimeTagProps) => {
   )
 }
 
-type TimeCountDownProps = { endTime: number; label?: string }
-const TimeCountDown = memo(({ endTime, label }: TimeCountDownProps) => {
+type TimeCountDownProps = { endTime: number }
+const TimeCountDown = memo(({ endTime }: TimeCountDownProps) => {
   const startTime = Math.floor(Date.now() / 1000)
   const currentTime = Date.now() / 1000
   const duration = moment.duration(endTime - startTime, 'seconds')
@@ -69,33 +68,30 @@ const TimeCountDown = memo(({ endTime, label }: TimeCountDownProps) => {
     )
 
   return (
-    <Space size={6}>
-      {!!label && <Typography.Text type="secondary">{label}</Typography.Text>}
-      <Space size={4}>
-        {!!countDown.days && (
-          <Fragment>
-            <TimeTag>
-              <Typography.Text>{countDown.days}d</Typography.Text>
-            </TimeTag>
-            :
-          </Fragment>
-        )}
-        <TimeTag>
-          <Typography.Text>{countDown.hours}h</Typography.Text>
-        </TimeTag>
-        :
-        <TimeTag>
-          <Typography.Text>{countDown.minutes}m</Typography.Text>
-        </TimeTag>
-        {!countDown.days && (
-          <Fragment>
-            :
-            <TimeTag>
-              <Typography.Text>{countDown.seconds}s</Typography.Text>
-            </TimeTag>
-          </Fragment>
-        )}
-      </Space>
+    <Space size={4}>
+      {!!countDown.days && (
+        <Fragment>
+          <TimeTag>
+            <Typography.Text>{countDown.days}d</Typography.Text>
+          </TimeTag>
+          :
+        </Fragment>
+      )}
+      <TimeTag>
+        <Typography.Text>{countDown.hours}h</Typography.Text>
+      </TimeTag>
+      :
+      <TimeTag>
+        <Typography.Text>{countDown.minutes}m</Typography.Text>
+      </TimeTag>
+      {!countDown.days && (
+        <Fragment>
+          :
+          <TimeTag>
+            <Typography.Text>{countDown.seconds}s</Typography.Text>
+          </TimeTag>
+        </Fragment>
+      )}
     </Space>
   )
 })

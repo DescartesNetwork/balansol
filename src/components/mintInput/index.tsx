@@ -57,7 +57,7 @@ export default function MintInput({
   return (
     <Row gutter={[0, 10]} align="middle" className="card-swap-item">
       <Col span={24}>
-        <Row gutter={[10, 0]} wrap={false}>
+        <Row gutter={[10, 0]} wrap={false} align="middle">
           {/* Mint select */}
           <Col>
             {!mintSelection ? (

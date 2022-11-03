@@ -5,9 +5,9 @@ import { BN } from '@project-serum/anchor'
 import { AppState } from 'model'
 import { useCheques } from './useCheques'
 
-export const useParticipants = (launchpadAddress: string) => {
+export const useParticipants = (launchpadAddress: string, owner?: boolean) => {
   const cheques = useSelector((state: AppState) => state.cheques)
-  const filteredCheques = useCheques(launchpadAddress)
+  const filteredCheques = useCheques(launchpadAddress, owner)
 
   const participants = useMemo(() => {
     let totalUsers = 0
@@ -25,6 +25,7 @@ export const useParticipants = (launchpadAddress: string) => {
     return {
       totalUsers,
       totalBid,
+      totalAsk,
     }
   }, [cheques, filteredCheques])
 
