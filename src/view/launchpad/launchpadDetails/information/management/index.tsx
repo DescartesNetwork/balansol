@@ -100,7 +100,7 @@ const Management = ({ launchpadAddress }: ManagementProps) => {
           size="large"
           onClick={onWithdraw}
           loading={loading}
-          disabled={!completed}
+          disabled={!completed || assets[0].amount.isZero()}
         >
           Withdraw
         </Button>

@@ -12,7 +12,6 @@ export const useGetPriceInPool = () => {
       const numBalanceB = utilsBN.toNumber(balanceB)
       const priceA =
         (numWeightA * numBalanceB * priceB) / (numBalanceA * numWeightB)
-
       return priceA
     },
     [],

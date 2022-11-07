@@ -1,41 +1,58 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useDebounce } from 'react-use'
-import { useMintDecimals } from '@sentre/senhub'
+import { tokenProvider } from '@sentre/senhub'
 import { utilsBN } from '@sen-use/web3'
-import { BN } from '@project-serum/anchor'
 
 import { AppState } from 'model'
 import { useLaunchpadData } from './useLaunchpadData'
 import { useLaunchpadWeights } from './useLaunchpadWeights'
-import { calcOutGivenInSwap } from 'helper/oracles'
+import { useGetPriceInPool } from './useGetTokenInPoolPrice'
+import { useGetBalanceAtTime } from './useGetBalanceAtTime'
+import { useGetLaunchpadWeight } from './useGetLaunchpadWeight'
 
 export const useTokenPrice = (launchpadAddress: string) => {
   const [mintPrice, setMintPrice] = useState(0)
   const { launchpadData } = useLaunchpadData(launchpadAddress)
   const pools = useSelector((state: AppState) => state.pools)
-  const currentWeights = useLaunchpadWeights(launchpadAddress, 5000)
-  const decimals =
-    useMintDecimals({ mintAddress: launchpadData.mint.toBase58() }) || 0
+  const weights = useLaunchpadWeights(launchpadAddress, 5000)
+  const getTokenPrice = useGetPriceInPool()
+  const getBalanceAtTime = useGetBalanceAtTime()
+  const getLaunchpadWeights = useGetLaunchpadWeight()
 
   const getMintPrice = useCallback(async () => {
-    const { pool } = launchpadData
+    const { pool, endTime } = launchpadData
     const { reserves } = pools[pool.toBase58()]
-    const totalWeights = currentWeights[0] + currentWeights[1]
+    const stbPrice =
+      (await tokenProvider.getPrice(launchpadData.stableMint)) || 0
+    let balances = reserves
+    let currentWeights = weights
+    if (balances[0].isZero() || balances[1].isZero()) {
+      currentWeights = getLaunchpadWeights(
+        endTime.toNumber() * 1000,
+        launchpadAddress,
+      )
+      balances = getBalanceAtTime(launchpadAddress, endTime.toNumber() * 1000)
+    }
 
-    const weightA = currentWeights[0] / totalWeights
-    const weightB = currentWeights[1] / totalWeights
-
-    const price = calcOutGivenInSwap(
-      utilsBN.decimalize(1, decimals),
-      reserves[0],
-      reserves[1],
-      weightA,
-      weightB,
-      new BN(0),
+    const price = getTokenPrice(
+      utilsBN.decimalize(currentWeights[0], 9),
+      balances[0],
+      stbPrice,
+      balances[1],
+      utilsBN.decimalize(currentWeights[1], 9),
     )
-    return setMintPrice(1 / Number(utilsBN.undecimalize(price, decimals)))
-  }, [currentWeights, decimals, launchpadData, pools])
+
+    return setMintPrice(price)
+  }, [
+    launchpadData,
+    pools,
+    weights,
+    getTokenPrice,
+    getLaunchpadWeights,
+    launchpadAddress,
+    getBalanceAtTime,
+  ])
 
   useDebounce(getMintPrice, 500, [getMintPrice])
 

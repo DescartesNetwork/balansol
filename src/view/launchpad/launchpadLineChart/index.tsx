@@ -30,11 +30,12 @@ echarts.use([
 type LaunchpadLineChartProps = {
   launchpadAddress: string
 }
+const MILESTONES = 10
 
 const getTimes = (starTime: number, endTime: number) => {
   const result: number[] = []
-  const blockTime = (endTime - starTime) / 3
-  for (let i = 0; i < 4; i++) {
+  const blockTime = (endTime - starTime) / MILESTONES
+  for (let i = 0; i <= MILESTONES; i++) {
     if (i === 0) {
       result[i] = starTime
       continue
@@ -57,7 +58,14 @@ const buildOptions = (
       // Means disable default "show/hide rule".
       trigger: 'item',
       formatter: function (params: any) {
-        return 'Price: $' + util.numeric(params.value).format('0,0.[000]')
+        console.log(params, 'params')
+        return `<div style="min-width: 150px; font-weight: 400"><span style="display: flex; justify-content: space-between"><span style="font-size: 14px, font-weight: 400">Price:</span> <span style="font-size: 16px; font-weight: 700">$${util
+          .numeric(params.value)
+          .format(
+            '0,0.[000]',
+          )}</span></span> <span style="display: flex; justify-content: space-between;"><span style="font-size: 14px; font-weight: 400">Date:</span> <span style="font-size: 16px; font-weight: 700">${
+          params.name
+        }</span></span></div>`
       },
     },
     xAxis: {
@@ -131,10 +139,7 @@ const LaunchpadLineChart = ({ launchpadAddress }: LaunchpadLineChartProps) => {
 
   const currentValue = useMemo(() => {
     const result: number[] = []
-    if (!launchpadAddress) return result
-
     for (const time of durations) {
-      if (time > Date.now()) continue
       const weights = getLaunchpadWeight(time, launchpadAddress)
       const balances = getBalanceAtTime(launchpadAddress, time)
       const price = calcPriceInPool(

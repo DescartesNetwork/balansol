@@ -112,9 +112,6 @@ const LaunchpadChartInit = ({
     const startWeight = getWeight(startPrice, balanceA, stablePrice, balanceB)
     const endWeight = getWeight(endPrice, balanceA, stablePrice, balanceB)
 
-    console.log(endWeight, 'endWeight')
-    console.log(startWeight, 'startWeight')
-
     for (const time of durations) {
       const weights = getLaunchpadWeight(
         time,
@@ -125,7 +122,6 @@ const LaunchpadChartInit = ({
         endTime / 1000,
       )
 
-      console.log(weights, 'weights')
       const price = calcPriceInPool(
         utilsBN.decimalize(weights[0], 9),
         utilsBN.decimalize(balanceA, decimal),
@@ -152,8 +148,6 @@ const LaunchpadChartInit = ({
     startTime,
     stbDecimal,
   ])
-
-  console.log(defaultValue, 'defaultValue')
 
   useEffect(() => {
     ;(async () => {
