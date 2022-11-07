@@ -88,7 +88,7 @@ const View = () => {
                     component={LaunchpadDetails}
                   />
                   <Route
-                    path={extend('/launchpad/your-purchased')}
+                    path={extend('/launchpad-your-purchased')}
                     component={YourPurchased}
                   />
                   <Route path={extend('/farms')}>

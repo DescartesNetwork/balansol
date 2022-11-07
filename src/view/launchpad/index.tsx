@@ -7,6 +7,8 @@ import { PopupButton } from '@typeform/embed-react'
 import { LaunchpadSate } from 'constant'
 import { useAppRouter } from 'hooks/useAppRouter'
 
+import './index.less'
+
 const Launchpad = () => {
   const { pushHistory } = useAppRouter()
   return (
@@ -22,7 +24,7 @@ const Launchpad = () => {
                 <Tooltip title="View your purchased">
                   <Button
                     icon={<IonIcon name="bag-handle-outline" />}
-                    onClick={() => pushHistory('/launchpad/your-purchased')}
+                    onClick={() => pushHistory('/launchpad-your-purchased')}
                     ghost
                   />
                 </Tooltip>

@@ -5,6 +5,8 @@ import LaunchpadCard from './components/launchpadCard'
 import { useAppRouter } from 'hooks/useAppRouter'
 import { useYourPurchased } from 'hooks/launchpad/useYourPurchased'
 
+import './index.less'
+
 const YourPurchased = () => {
   const { pushHistory } = useAppRouter()
   const launchpads = useYourPurchased()
@@ -25,7 +27,7 @@ const YourPurchased = () => {
           <Col span={24}>
             <Space size={16} align="center">
               <Typography.Title level={2}>Your purchased</Typography.Title>
-              <Typography.Text className="amount-launchpad">
+              <Typography.Text type="success" className="amount-launchpad">
                 {launchpads.length}
               </Typography.Text>
             </Space>

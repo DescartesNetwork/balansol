@@ -6,8 +6,6 @@ import { LaunchpadSate } from 'constant'
 import { useAppRouter } from 'hooks/useAppRouter'
 import { useFilterLaunchpad } from 'hooks/launchpad/useFilterLaunchpad'
 
-import './index.less'
-
 type ListLaunchpadProps = {
   state: LaunchpadSate
 }
