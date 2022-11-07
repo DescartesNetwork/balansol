@@ -23,7 +23,7 @@ const Banner = () => {
         <Col span={24} />
         <Col span={24}>
           <Button
-            onClick={() => pushHistory('/init-launchpad')}
+            onClick={() => pushHistory('/launchpad-create')}
             size="large"
             type="primary"
             style={{

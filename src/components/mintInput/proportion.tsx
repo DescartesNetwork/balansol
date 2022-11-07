@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react'
 import { useTheme } from '@sentre/senhub'
-import { BN } from 'bn.js'
-import { useOracles } from 'hooks/useOracles'
+import { BN } from '@project-serum/anchor'
 
 import { Radio, Space, Typography } from 'antd'
 
 import { useWrapAccountBalance } from 'hooks/useWrapAccountBalance'
+import { useOracles } from 'hooks/useOracles'
 
 const PROPORTIONS = [50, 100]
 

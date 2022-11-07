@@ -117,44 +117,32 @@ const BuyToken = ({ launchpadAddress }: { launchpadAddress: string }) => {
         </Col>
 
         <Col span={24}>
-          <Space direction="vertical" style={{ width: '100%' }}>
-            {/* <Row align="middle">
-              <Col flex="auto">
-                <Typography.Text type="secondary">Price impact</Typography.Text>
-              </Col>
-              <Col>
-                <Typography.Text style={{ color: priceImpactColor(0.0012) }}>
-                  {1.2 > 0 ? util.numeric(0.0012).format('0.[0000]%') : '~ 0%'}
-                </Typography.Text>
-              </Col>
-            </Row> */}
-            <Row align="middle">
-              <Col flex="auto">
-                <Typography.Text type="secondary">Rate</Typography.Text>
-              </Col>
-              <Col>
-                <Typography.Text>
-                  <Space>
-                    <Typography.Text>1</Typography.Text>
-                    <MintSymbol mintAddress={launchpadData.mint} />
-                    <Typography.Text>=</Typography.Text>
-                    <MintAmount
-                      mintAddress={launchpadData.mint}
-                      amount={askAmount}
-                      formatter={(val) => {
-                        return util
-                          .numeric(
-                            !Number(val) ? 0 : Number(amount) / Number(val),
-                          )
-                          .format('0.[0000]')
-                      }}
-                    />
-                    <MintSymbol mintAddress={launchpadData.stableMint} />
-                  </Space>
-                </Typography.Text>
-              </Col>
-            </Row>
-          </Space>
+          <Row align="middle">
+            <Col flex="auto">
+              <Typography.Text type="secondary">Rate</Typography.Text>
+            </Col>
+            <Col>
+              <Typography.Text>
+                <Space>
+                  <Typography.Text>1</Typography.Text>
+                  <MintSymbol mintAddress={launchpadData.mint} />
+                  <Typography.Text>=</Typography.Text>
+                  <MintAmount
+                    mintAddress={launchpadData.mint}
+                    amount={askAmount}
+                    formatter={(val) => {
+                      return util
+                        .numeric(
+                          !Number(val) ? 0 : Number(amount) / Number(val),
+                        )
+                        .format('0.[0000]')
+                    }}
+                  />
+                  <MintSymbol mintAddress={launchpadData.stableMint} />
+                </Space>
+              </Typography.Text>
+            </Col>
+          </Row>
         </Col>
 
         <Col span={24}>

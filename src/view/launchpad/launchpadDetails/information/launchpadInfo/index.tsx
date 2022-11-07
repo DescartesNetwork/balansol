@@ -14,6 +14,7 @@ const LaunchpadInfo = ({ launchpadAddress }: LaunchpadCardProps) => {
   const theme = useTheme()
   const mintPrice = useTokenPrice(launchpadAddress)
   const avgPrice = useAVGPrice(launchpadAddress)
+
   return (
     <Row gutter={[16, 16]}>
       <Col span={24}>

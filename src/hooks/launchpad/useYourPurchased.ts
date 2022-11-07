@@ -2,10 +2,12 @@ import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 
 import { AppState } from 'model'
-import { useWalletAddress } from '@sentre/senhub/dist'
+import { useWalletAddress } from '@sentre/senhub'
 
 export const useYourPurchased = () => {
   const cheques = useSelector((state: AppState) => state.cheques)
+  const launchpads = useSelector((state: AppState) => state.launchpads)
+
   const walletAddress = useWalletAddress()
 
   const launchpadPurchased = useMemo(() => {
@@ -19,5 +21,10 @@ export const useYourPurchased = () => {
     return Object.keys(launchpads)
   }, [cheques, walletAddress])
 
-  return launchpadPurchased
+  const filteredLaunchpad = launchpadPurchased.sort(
+    (a, b) =>
+      launchpads[b].startTime.toNumber() - launchpads[a].startTime.toNumber(),
+  )
+
+  return filteredLaunchpad
 }

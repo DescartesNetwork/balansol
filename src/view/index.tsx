@@ -76,7 +76,7 @@ const View = () => {
                   <Route path={extend('/launchpad')}>
                     <Launchpad />
                   </Route>
-                  <Route path={extend('/init-launchpad')}>
+                  <Route path={extend('/launchpad-create')}>
                     <InitLaunchPad />
                   </Route>
                   <Route
@@ -88,7 +88,7 @@ const View = () => {
                     component={LaunchpadDetails}
                   />
                   <Route
-                    path={extend('/your-purchased')}
+                    path={extend('/launchpad/your-purchased')}
                     component={YourPurchased}
                   />
                   <Route path={extend('/farms')}>

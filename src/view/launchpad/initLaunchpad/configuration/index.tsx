@@ -4,11 +4,11 @@ import moment from 'moment'
 
 import { Button, Col, DatePicker, InputNumber } from 'antd'
 import { Row, Select, Space, Typography } from 'antd'
+import LaunchpadChartInit from 'view/launchpad/launchpadLineChart/launchpadChartInit'
 import { MintSelection } from '@sen-use/app'
 import CategoryTag from 'components/categoryTag'
 import SpaceVertical from '../projectInfo/spaceVertical'
 import IonIcon from '@sentre/antd-ionicon'
-import LaunchpadLineChart from 'view/launchpad/launchpadLineChart'
 
 import { CATEGORY, Launchpad, ProjectInfoData } from 'constant'
 import { DATE_FORMAT, InitLaunchpadStep } from 'constant'
@@ -281,11 +281,15 @@ const Configuration = ({ setStep }: ConfigurationProps) => {
             <Typography.Text>Preview</Typography.Text>
           </Col>
           <Col span={24}>
-            <LaunchpadLineChart
+            <LaunchpadChartInit
               startTime={startTime}
               endTime={endTime}
               startPrice={startPrice}
               endPrice={endPrice}
+              mint={mint}
+              baseMint={stableMint}
+              balanceA={amount}
+              balanceB={projectInfo.baseAmount}
             />
           </Col>
         </Row>

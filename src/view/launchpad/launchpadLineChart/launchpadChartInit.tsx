@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import moment from 'moment'
 import { utilsBN } from '@sen-use/web3'
 import ReactEChartsCore from 'echarts-for-react/lib/core'
@@ -11,12 +11,10 @@ import {
 } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
 import { LineChart } from 'echarts/charts'
-import { tokenProvider, util } from '@sentre/senhub'
+import { tokenProvider, useMintDecimals, util } from '@sentre/senhub'
 
-import { useLaunchpadData } from 'hooks/launchpad/useLaunchpadData'
 import { useGetPriceInPool } from 'hooks/launchpad/useGetTokenInPoolPrice'
 import { useGetLaunchpadWeight } from 'hooks/launchpad/useGetLaunchpadWeight'
-import { useGetBalanceAtTime } from 'hooks/launchpad/useGetBalanceAtTime'
 
 echarts.use([
   TitleComponent,
@@ -28,7 +26,14 @@ echarts.use([
 ])
 
 type LaunchpadLineChartProps = {
-  launchpadAddress: string
+  startPrice: number
+  endPrice: number
+  balanceA: number
+  balanceB: number
+  baseMint: string
+  startTime: number
+  endTime: number
+  mint: string
 }
 
 const getTimes = (starTime: number, endTime: number) => {
@@ -45,16 +50,10 @@ const getTimes = (starTime: number, endTime: number) => {
   return result
 }
 
-const buildOptions = (
-  defaultValue: number[],
-  currentValue: number[],
-  durations: number[],
-) => {
+const buildOptions = (defaultValue: number[], durations: number[]) => {
   const xAxis = durations.map((time) => moment(time).format('DD/MM HH:mm'))
-
   return {
     tooltip: {
-      // Means disable default "show/hide rule".
       trigger: 'item',
       formatter: function (params: any) {
         return 'Price: $' + util.numeric(params.value).format('0,0.[000]')
@@ -72,108 +71,107 @@ const buildOptions = (
         data: defaultValue,
         type: 'line',
         smooth: true,
-        lineStyle: {
-          normal: {
-            width: 2,
-            type: 'dashed',
-          },
-        },
-      },
-      {
-        data: currentValue,
-        type: 'line',
-        smooth: true,
       },
     ],
   }
 }
 
-const LaunchpadLineChart = ({ launchpadAddress }: LaunchpadLineChartProps) => {
+const LaunchpadChartInit = ({
+  startPrice,
+  endPrice,
+  balanceA,
+  balanceB,
+  baseMint,
+  startTime,
+  endTime,
+  mint,
+}: LaunchpadLineChartProps) => {
   const [stablePrice, setStablePrice] = useState(0)
-  const { launchpadData } = useLaunchpadData(launchpadAddress || '')
   const calcPriceInPool = useGetPriceInPool()
   const getLaunchpadWeight = useGetLaunchpadWeight()
-  const getBalanceAtTime = useGetBalanceAtTime()
+  const decimal = useMintDecimals({ mintAddress: mint }) || 0
+  const stbDecimal = useMintDecimals({ mintAddress: baseMint }) || 0
+
+  const getWeight = useCallback(
+    (priceA: number, balanceA: number, priceB: number, balanceB) => {
+      const total = priceA * balanceA + priceB * balanceB
+      const weightA = (priceA * balanceA) / total
+      const weightB = 1 - weightA
+      return [utilsBN.decimalize(weightA, 9), utilsBN.decimalize(weightB, 9)]
+    },
+    [],
+  )
 
   const durations = useMemo(() => {
-    const { startTime, endTime } = launchpadData
-    const times = getTimes(
-      startTime.toNumber() * 1000,
-      endTime.toNumber() * 1000,
-    )
+    const times = getTimes(startTime, endTime)
     return times
-  }, [launchpadData])
+  }, [endTime, startTime])
 
   const defaultValue = useMemo(() => {
     let prices: number[] = []
-    const { startReserves } = launchpadData
+    const startWeight = getWeight(startPrice, balanceA, stablePrice, balanceB)
+    const endWeight = getWeight(endPrice, balanceA, stablePrice, balanceB)
+
+    console.log(endWeight, 'endWeight')
+    console.log(startWeight, 'startWeight')
+
     for (const time of durations) {
-      const weights = getLaunchpadWeight(time, launchpadAddress)
+      const weights = getLaunchpadWeight(
+        time,
+        '',
+        startWeight,
+        endWeight,
+        startTime / 1000,
+        endTime / 1000,
+      )
+
+      console.log(weights, 'weights')
       const price = calcPriceInPool(
         utilsBN.decimalize(weights[0], 9),
-        startReserves[0],
+        utilsBN.decimalize(balanceA, decimal),
         stablePrice,
-        startReserves[1],
-        utilsBN.decimalize(weights[1], 9),
+        utilsBN.decimalize(balanceB, 9),
+        utilsBN.decimalize(weights[1], stbDecimal),
       )
       prices.push(price)
     }
 
     return prices
   }, [
+    balanceA,
+    balanceB,
     calcPriceInPool,
+    decimal,
     durations,
+    endPrice,
+    endTime,
     getLaunchpadWeight,
-    launchpadAddress,
-    launchpadData,
+    getWeight,
     stablePrice,
+    startPrice,
+    startTime,
+    stbDecimal,
   ])
 
-  const currentValue = useMemo(() => {
-    const result: number[] = []
-    if (!launchpadAddress) return result
-
-    for (const time of durations) {
-      if (time > Date.now()) continue
-      const weights = getLaunchpadWeight(time, launchpadAddress)
-      const balances = getBalanceAtTime(launchpadAddress, time)
-      const price = calcPriceInPool(
-        utilsBN.decimalize(weights[0], 9),
-        balances[0],
-        stablePrice,
-        balances[1],
-        utilsBN.decimalize(weights[1], 9),
-      )
-
-      result.push(price)
-    }
-    return result
-  }, [
-    calcPriceInPool,
-    durations,
-    getBalanceAtTime,
-    getLaunchpadWeight,
-    launchpadAddress,
-    stablePrice,
-  ])
+  console.log(defaultValue, 'defaultValue')
 
   useEffect(() => {
     ;(async () => {
-      if (stablePrice || !launchpadAddress) return
-      const price = await tokenProvider.getPrice(launchpadData.stableMint)
+      if (stablePrice) return
+      const price = await tokenProvider.getPrice(baseMint)
       if (!price) return setStablePrice(0)
       return setStablePrice(price)
     })()
-  }, [launchpadAddress, launchpadData.stableMint, stablePrice])
+  }, [baseMint, stablePrice])
 
   return (
     <ReactEChartsCore
       echarts={echarts}
-      option={buildOptions(defaultValue, currentValue, durations)}
+      option={buildOptions(defaultValue, durations)}
       notMerge={true}
       lazyUpdate={true}
     />
   )
 }
 
-export default LaunchpadLineChart
+export default LaunchpadChartInit
