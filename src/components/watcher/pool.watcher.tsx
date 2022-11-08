@@ -6,24 +6,32 @@ import {
   useState,
 } from 'react'
 import { useDispatch } from 'react-redux'
-import { tokenProvider } from '@sentre/senhub'
+import { web3 } from '@project-serum/anchor'
 
 import Loading from '../loading'
 
 import { getPools, upsetPool } from 'model/pools.controller'
 import { AppDispatch } from 'model'
+import Watcher from './watcher'
 
 // Watch id
-let watchId = 0
+const NAME = 'pool'
+const FILTER: web3.GetProgramAccountsFilter[] = []
 
 const PoolWatcher: FunctionComponent = (props) => {
   const dispatch = useDispatch<AppDispatch>()
   const [loading, setLoading] = useState(true)
 
+  // TODO: upset account data
+  const upset = useCallback(
+    (key: string, value: any) =>
+      dispatch(upsetPool({ address: key, data: value })),
+    [dispatch],
+  )
+
   // First-time fetching
   const fetchData = useCallback(async () => {
     try {
-      await tokenProvider.all()
       await dispatch(getPools()).unwrap()
       setLoading(false)
     } catch (er) {
@@ -34,31 +42,23 @@ const PoolWatcher: FunctionComponent = (props) => {
     }
   }, [dispatch])
 
-  // Watch account changes
-  const watchData = useCallback(async () => {
-    if (watchId) return console.warn('Already watched')
-    watchId = window.balansol.watch((er: string | null, re) => {
-      if (er) return console.error(er)
-      if (re) return dispatch(upsetPool({ address: re.address, data: re.data }))
-    }, [])
-  }, [dispatch])
-
   useEffect(() => {
     fetchData()
-    watchData()
-    // Unwatch (cancel socket)
-    return () => {
-      ;(async () => {
-        try {
-          await window.balansol.unwatch(watchId)
-        } catch (er) {}
-      })()
-      watchId = 0
-    }
-  }, [fetchData, watchData])
+  }, [fetchData])
 
   if (loading) return <Loading />
-  return <Fragment>{props.children}</Fragment>
+  return (
+    <Fragment>
+      <Watcher
+        program={window.balansol.program}
+        name={NAME}
+        filter={FILTER}
+        init={() => {}}
+        upset={upset}
+      />
+      {props.children}
+    </Fragment>
+  )
 }
 
 export default PoolWatcher

@@ -63,12 +63,12 @@ const LiquidityInfo = ({
         )
         if (wrapSolTx) txs.push(wrapSolTx)
 
-        const { transaction } = await window.balansol.initializeJoin(
+        const { transaction } = await window.balansol.initializeJoin({
           poolAddress,
-          mintAddress,
-          amount,
-          false,
-        )
+          mint: mintAddress,
+          amountIn: amount,
+          sendAndConfirm: false,
+        })
         txs.push(transaction)
       }
 

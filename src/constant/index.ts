@@ -68,4 +68,56 @@ export enum FilterPools {
   YourPools = 'your-pools',
 }
 
+// Launchpad
+export const DATE_FORMAT = 'MMM DD, YYYY HH:mm'
+export enum LaunchpadSate {
+  active = 'active',
+  upcoming = 'upcoming',
+  completed = 'completed',
+}
+export enum InitLaunchpadStep {
+  projectInfo,
+  projectPhoto,
+  configuration,
+}
+
+export type ProjectInfoData = {
+  projectName: string
+  description: string
+  website: string
+  github: string
+  whitepaper: string
+  vCs: { logo: string; link: string }[]
+  socials: string[]
+  coverPhoto: string
+  category: string[]
+  baseAmount: number
+}
+
+export type Launchpad = {
+  projectInfo: ProjectInfoData
+  mint: string
+  stableMint: string
+  amount: number
+  fee: number
+  startPrice: number
+  endPrice: number
+  startTime: number
+  endTime: number
+}
+
+export const CATEGORY = {
+  defi: [49, 100, 0],
+  gamefi: [4, 100, 253],
+  DAO: [114, 100, 7],
+  multisig: [248, 100, 176],
+  lending: [147, 100, 156],
+  portfolio: [72, 100, 5],
+  liquidity: [242, 100, 21],
+  AMM: [161, 100, 253],
+  privacy: [136, 100, 35],
+  payment: [108, 100, 145],
+  utility: [156, 100, 45],
+  NFT: [4, 100, 253],
+}
 export const SOL_DECIMALS = 9

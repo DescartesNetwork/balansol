@@ -14,6 +14,11 @@ import Navigation from './navigation'
 import PoolDetails from './poolDetails'
 import Swap from './swap'
 import Pools from './pools'
+import AllLaunchpad from './launchpad/allLaunchpad'
+import Launchpad from './launchpad'
+import InitLaunchPad from './launchpad/initLaunchpad'
+import LaunchpadDetails from './launchpad/launchpadDetails'
+import YourPurchased from './launchpad/yourPurchased'
 
 import configs from 'configs'
 import { AppWatcher } from 'components/watcher'
@@ -55,11 +60,11 @@ const View = () => {
         {/* Balansol provider context */}
         <BalansolPoolsProvider>
           <BalansolProvider>
-            <Row gutter={[24, 24]} style={{ paddingTop: 32 }}>
+            <Row gutter={[0, 24]} style={{ paddingTop: 32 }}>
               <Col span={24}>
                 <Navigation />
               </Col>
-              <Col span={24}>
+              <Col span={24} id="balansol-body">
                 <Switch>
                   <Route path={extend('/details')} component={PoolDetails} />
                   <Route path={extend('/swap')}>
@@ -68,6 +73,24 @@ const View = () => {
                   <Route path={extend('/pools')}>
                     <Pools />
                   </Route>
+                  <Route path={extend('/launchpad')}>
+                    <Launchpad />
+                  </Route>
+                  <Route path={extend('/launchpad-create')}>
+                    <InitLaunchPad />
+                  </Route>
+                  <Route
+                    path={extend('/launchpad-all')}
+                    component={AllLaunchpad}
+                  />
+                  <Route
+                    path={extend('/launchpad-details')}
+                    component={LaunchpadDetails}
+                  />
+                  <Route
+                    path={extend('/launchpad-your-purchased')}
+                    component={YourPurchased}
+                  />
                   <Route path={extend('/farms')}>
                     <Redirect to="/app/sen_farming_v2?autoInstall=true" />
                   </Route>

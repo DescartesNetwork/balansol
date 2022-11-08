@@ -16,6 +16,8 @@
 @body-background: @NEUTRAL100;
 @component-background: @NEUTRAL100;
 @disabled-bg: @NEUTRAL90;
+@background-color-base: @NEUTRAL80;
+@success-color: @PRIMARY;
 
 // Typography
 @font-family: 'Nunito', sans-serif;
@@ -63,6 +65,12 @@
 @btn-default-ghost-color: @primary-color;
 @btn-default-ghost-border: @primary-color;
 @btn-border-radius-base: 24px;
+@btn-text-hover-bg: transparent;
+/**
+*  button danger must be used with type="primary",
+*  prop danger only does not effect custom variable
+*/
+@btn-danger-color: @PRIMARY;
 
 // Input
 @input-placeholder-color: @NEUTRAL40;
@@ -76,6 +84,12 @@
 // Checkbox
 @checkbox-border-radius: @border-radius-base - 4;
 
+//Table
+@table-bg: @TRANSPARENT;
+
+// Processing
+@processing-color: @PRIMARY;
+
 // Patch
 .@{ant-prefix}-layout {
   background: unset;
@@ -88,6 +102,3 @@
     backdrop-filter: blur(4px);
   }
 }
-
-//Table
-@table-bg: @TRANSPARENT;

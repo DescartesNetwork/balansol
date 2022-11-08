@@ -15,7 +15,7 @@ const TransferOwner = ({ poolAddress }: { poolAddress: string }) => {
     if (!account.isAddress(newOwner)) return
     try {
       const { transferOwnership } = window.balansol
-      const { txId } = await transferOwnership(poolAddress, newOwner)
+      const { txId } = await transferOwnership({ poolAddress, newOwner })
       return notifySuccess('Update weights', txId)
     } catch (err) {
       notifyError(err)

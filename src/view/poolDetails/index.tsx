@@ -9,7 +9,7 @@ import PoolWeights from './poolWeights'
 import Volume24h from './volume24h'
 import Hero from './hero'
 import Header from './header'
-import PoolNotFound from './poolNotFound'
+import PageNotFound from '../../components/pageNotFound'
 
 import { useAppRouter } from 'hooks/useAppRouter'
 import { AppState } from 'model'
@@ -21,7 +21,8 @@ const PoolDetails = () => {
   const walletAddress = useWalletAddress()
   const infix = useInfix()
 
-  if (!poolData || !poolAddress) return <PoolNotFound />
+  if (!poolData || !poolAddress)
+    return <PageNotFound label="pool" redirect="/pools" />
 
   const isOwner = walletAddress === poolData.authority.toBase58()
   const isMobile = infix < Infix.md

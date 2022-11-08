@@ -1,5 +1,5 @@
 import { PublicKey } from '@solana/web3.js'
-import BN from 'bn.js'
+import { BN } from '@project-serum/anchor'
 
 // Bugfix performance
 // https://github.com/zalmoxisus/redux-devtools-extension/blob/master/docs/Troubleshooting.md#excessive-use-of-memory-and-cpu
