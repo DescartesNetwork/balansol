@@ -1,12 +1,12 @@
 import { useCallback, useState } from 'react'
 import { useDebounce } from 'react-use'
-import { useGetMintDecimals, useTheme, util } from '@sentre/senhub'
+import { useGetMintDecimals, util } from '@sentre/senhub'
 import { BN } from '@project-serum/anchor'
 import { utilsBN } from '@sen-use/web3'
 
 import { Button, Card, Col, Row, Space, Typography } from 'antd'
 import MintInput from 'components/mintInput'
-import { MintAmount, MintSelection, MintSymbol } from '@sen-use/app'
+import { MintAmount, MintAvatar, MintSymbol } from '@sen-use/app'
 
 import { useBuyToken } from 'hooks/launchpad/actions/useBuyToken'
 import { useWrapAccountBalance } from 'hooks/useWrapAccountBalance'
@@ -21,7 +21,6 @@ const BuyToken = ({ launchpadAddress }: { launchpadAddress: string }) => {
 
   const launchpadData = useLaunchpad(launchpadAddress)!
   const poolData = usePoolData(launchpadAddress)!
-  const theme = useTheme()
   const { onBuyToken, loading } = useBuyToken()
   const { balance } = useWrapAccountBalance(launchpadData.stableMint.toBase58())
   const currentWeights = useLaunchpadWeights(launchpadAddress, 5000)
@@ -78,13 +77,10 @@ const BuyToken = ({ launchpadAddress }: { launchpadAddress: string }) => {
                 selectedMint={launchpadData.stableMint.toBase58()}
                 onChangeAmount={(val) => setAmount(Number(val))}
                 mintSelection={
-                  <MintSelection
-                    value={launchpadData?.stableMint.toBase58()}
-                    style={{
-                      background: theme === 'dark' ? '#394360' : '#F2F4FA',
-                    }}
-                    disabled
-                  />
+                  <Space className="mint-display">
+                    <MintAvatar mintAddress={launchpadData.stableMint} />
+                    <MintSymbol mintAddress={launchpadData.stableMint} />
+                  </Space>
                 }
               />
             </Card>
@@ -96,13 +92,10 @@ const BuyToken = ({ launchpadAddress }: { launchpadAddress: string }) => {
             <Typography.Text type="secondary">You receive</Typography.Text>
             <Row align="middle">
               <Col flex="auto">
-                <MintSelection
-                  value={launchpadData.mint.toBase58()}
-                  style={{
-                    background: theme === 'dark' ? '#394360' : '#F2F4FA',
-                  }}
-                  disabled
-                />
+                <Space className="mint-display">
+                  <MintAvatar mintAddress={launchpadData.mint} />
+                  <MintSymbol mintAddress={launchpadData.mint} />
+                </Space>
               </Col>
               <Col>
                 <Typography.Title level={3}>

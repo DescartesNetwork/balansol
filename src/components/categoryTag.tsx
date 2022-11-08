@@ -23,7 +23,7 @@ const CategoryTag = ({ category, style }: CategoryTagProps) => {
   }, [categoryColor])
   return (
     <Tag
-      style={{ color: categoryColor(), ...style }}
+      style={{ color: categoryColor(), ...style, borderRadius: 8 }}
       color={categoryColor('0.1')}
     >
       {category}

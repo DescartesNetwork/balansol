@@ -27,6 +27,7 @@ export const useBuyToken = () => {
         const launchpadData = launchpads[launchpadAddress]
         const launchpad = new web3.PublicKey(launchpadAddress)
         const cheque = web3.Keypair.generate()
+        const trans = new web3.Transaction()
         const decimals =
           (await getMintDecimals({
             mintAddress: launchpadData.mint.toBase58(),
@@ -40,6 +41,8 @@ export const useBuyToken = () => {
           cheque,
         })
 
+        trans.add(txPrint.tx)
+
         const txBuy = await window.launchpad.buyLaunchpad({
           launchpad,
           bidAmount: bnAmount,
@@ -47,18 +50,11 @@ export const useBuyToken = () => {
           cheque: cheque.publicKey,
           sendAndConfirm: false,
         })
+        trans.add(txBuy.tx)
 
         const provider = getAnchorProvider()!
         provider.opts.skipPreflight = true
-        await provider.sendAll([
-          {
-            tx: txPrint.tx,
-            signers: txPrint.signers,
-          },
-          {
-            tx: txBuy.tx,
-          },
-        ])
+        await provider.sendAndConfirm(trans, txPrint.signers)
 
         return window.notify({
           type: 'success',

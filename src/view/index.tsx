@@ -60,7 +60,7 @@ const View = () => {
         {/* Balansol provider context */}
         <BalansolPoolsProvider>
           <BalansolProvider>
-            <Row gutter={[0, 24]} style={{ paddingTop: 32 }}>
+            <Row gutter={[0, 24]}>
               <Col span={24}>
                 <Navigation />
               </Col>

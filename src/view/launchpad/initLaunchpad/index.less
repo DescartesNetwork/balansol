@@ -44,6 +44,17 @@ input {
   }
 }
 
+.input-price {
+  position: relative;
+  &::after {
+    content: '$';
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+  }
+}
+
 .date-option {
   width: 100% !important;
   border: none !important;

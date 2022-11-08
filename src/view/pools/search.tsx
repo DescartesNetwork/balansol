@@ -8,6 +8,8 @@ import { FilterPools } from 'constant'
 import { AppDispatch, AppState } from 'model'
 import { setSearchInput, setFilterPool } from 'model/searchPools.controller'
 
+import './index.less'
+
 const Search = () => {
   const { searchInput, filterPool } = useSelector(
     (state: AppState) => state.searchPools,
@@ -42,6 +44,7 @@ const Search = () => {
       <Col flex={'1 0'}>
         <Input
           placeholder="Search"
+          className="search"
           value={searchInput}
           prefix={
             searchInput ? (
@@ -66,7 +69,10 @@ const Search = () => {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             onSearch(e.target.value)
           }}
-          style={{ borderRadius: '24px', height: '32px' }}
+          style={{
+            borderRadius: '24px',
+            height: '32px',
+          }}
         />
       </Col>
     </Row>

@@ -27,7 +27,8 @@ export const TRANS_HISTORY_COLUMN = [
         onClick={() =>
           window.open(util.explorer(authority.toBase58()), '_blank')
         }
-        style={{ cursor: 'pointer', color: '#63E0B3' }}
+        style={{ cursor: 'pointer' }}
+        type="success"
       >
         {util.shortenAddress(authority.toBase58())}
       </Typography.Text>

@@ -11,7 +11,7 @@ import {
 } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
 import { LineChart } from 'echarts/charts'
-import { tokenProvider, useMintDecimals, util } from '@sentre/senhub'
+import { tokenProvider, useMintDecimals, useTheme, util } from '@sentre/senhub'
 
 import { useGetPriceInPool } from 'hooks/launchpad/useGetTokenInPoolPrice'
 import { useGetLaunchpadWeight } from 'hooks/launchpad/useGetLaunchpadWeight'
@@ -50,7 +50,11 @@ const getTimes = (starTime: number, endTime: number) => {
   return result
 }
 
-const buildOptions = (defaultValue: number[], durations: number[]) => {
+const buildOptions = (
+  defaultValue: number[],
+  durations: number[],
+  style: { color: string; lineColor: string },
+) => {
   const xAxis = durations.map((time) => moment(time).format('DD/MM HH:mm'))
   return {
     tooltip: {
@@ -68,9 +72,25 @@ const buildOptions = (defaultValue: number[], durations: number[]) => {
     xAxis: {
       type: 'category',
       data: xAxis,
+      axisLine: {
+        lineStyle: {
+          color: style.color,
+        },
+      },
     },
     yAxis: {
       type: 'value',
+      axisLine: {
+        lineStyle: {
+          color: style.color,
+        },
+      },
+      splitLine: {
+        lineStyle: {
+          // Dark and light colors will be used in turns
+          color: [style.lineColor],
+        },
+      },
     },
     series: [
       {
@@ -82,6 +102,16 @@ const buildOptions = (defaultValue: number[], durations: number[]) => {
   }
 }
 
+const STYLE = {
+  light: {
+    color: '#081438',
+    lineColor: '#CED0D7',
+  },
+  dark: {
+    color: '#F3F3F5',
+    lineColor: '#394360',
+  },
+}
 const LaunchpadChartInit = ({
   startPrice,
   endPrice,
@@ -97,6 +127,7 @@ const LaunchpadChartInit = ({
   const getLaunchpadWeight = useGetLaunchpadWeight()
   const decimal = useMintDecimals({ mintAddress: mint }) || 0
   const stbDecimal = useMintDecimals({ mintAddress: baseMint }) || 0
+  const theme = useTheme()
 
   const getWeight = useCallback(
     (priceA: number, balanceA: number, priceB: number, balanceB) => {
@@ -167,7 +198,7 @@ const LaunchpadChartInit = ({
   return (
     <ReactEChartsCore
       echarts={echarts}
-      option={buildOptions(defaultValue, durations)}
+      option={buildOptions(defaultValue, durations, STYLE[theme])}
       notMerge={true}
       lazyUpdate={true}
     />

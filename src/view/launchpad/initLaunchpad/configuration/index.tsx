@@ -227,6 +227,7 @@ const Configuration = ({ setStep }: ConfigurationProps) => {
             placeholder="Input price"
             onChange={(val) => onChange('startPrice', val)}
             value={startPrice ? startPrice : undefined}
+            className="input-price"
           />
         </SpaceVertical>
       </Col>
@@ -236,6 +237,7 @@ const Configuration = ({ setStep }: ConfigurationProps) => {
             placeholder="Input price"
             onChange={(val) => onChange('endPrice', val)}
             value={endPrice ? endPrice : undefined}
+            className="input-price"
           />
         </SpaceVertical>
       </Col>
