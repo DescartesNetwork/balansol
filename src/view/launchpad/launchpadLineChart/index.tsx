@@ -58,7 +58,6 @@ const buildOptions = (
       // Means disable default "show/hide rule".
       trigger: 'item',
       formatter: function (params: any) {
-        console.log(params, 'params')
         return `<div style="min-width: 150px; font-weight: 400"><span style="display: flex; justify-content: space-between"><span style="font-size: 14px, font-weight: 400">Price:</span> <span style="font-size: 16px; font-weight: 700">$${util
           .numeric(params.value)
           .format(

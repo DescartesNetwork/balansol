@@ -56,7 +56,13 @@ const buildOptions = (defaultValue: number[], durations: number[]) => {
     tooltip: {
       trigger: 'item',
       formatter: function (params: any) {
-        return 'Price: $' + util.numeric(params.value).format('0,0.[000]')
+        return `<div style="min-width: 150px; font-weight: 400"><span style="display: flex; justify-content: space-between"><span style="font-size: 14px, font-weight: 400">Price:</span> <span style="font-size: 16px; font-weight: 700">$${util
+          .numeric(params.value)
+          .format(
+            '0,0.[000]',
+          )}</span></span> <span style="display: flex; justify-content: space-between;"><span style="font-size: 14px; font-weight: 400">Date:</span> <span style="font-size: 16px; font-weight: 700">${
+          params.name
+        }</span></span></div>`
       },
     },
     xAxis: {
