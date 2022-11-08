@@ -11,6 +11,7 @@ import './index.less'
 
 const Launchpad = () => {
   const { pushHistory } = useAppRouter()
+
   return (
     <Row justify="center">
       <Col xs={24} sm={24} md={20} lg={18}>

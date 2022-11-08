@@ -97,7 +97,7 @@ const buildOptions = (
 
 const LaunchpadLineChart = ({ launchpadAddress }: LaunchpadLineChartProps) => {
   const [stablePrice, setStablePrice] = useState(0)
-  const { launchpadData } = useLaunchpadData(launchpadAddress || '')
+  const { launchpadData } = useLaunchpadData(launchpadAddress)
   const calcPriceInPool = useGetPriceInPool()
   const getLaunchpadWeight = useGetLaunchpadWeight()
   const getBalanceAtTime = useGetBalanceAtTime()
