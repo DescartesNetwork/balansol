@@ -1,6 +1,18 @@
 .project-card {
   position: relative !important;
   cursor: pointer;
+  &::before {
+    display: none !important;
+    content: '';
+    width: calc(100% + 4px);
+    height: calc(100% - 18px);
+    border: 1px solid #63e0b3 !important;
+    border-radius: 24px !important;
+    position: absolute;
+    top: 20px;
+    left: -1px;
+  }
+
   &_header {
     .balansol-image {
       width: 100% !important;
@@ -21,6 +33,11 @@
       border-radius: 50%;
       font-size: 24px;
       color: #081438 !important;
+    }
+  }
+  &:hover {
+    &::before {
+      display: block !important;
     }
   }
 }

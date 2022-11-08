@@ -11,7 +11,7 @@ import {
 } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
 import { LineChart } from 'echarts/charts'
-import { tokenProvider, util } from '@sentre/senhub'
+import { tokenProvider, useTheme, util } from '@sentre/senhub'
 
 import { useLaunchpadData } from 'hooks/launchpad/useLaunchpadData'
 import { useGetPriceInPool } from 'hooks/launchpad/useGetTokenInPoolPrice'
@@ -50,6 +50,7 @@ const buildOptions = (
   defaultValue: number[],
   currentValue: number[],
   durations: number[],
+  style: { color: string; lineColor: string },
 ) => {
   const xAxis = durations.map((time) => moment(time).format('DD/MM HH:mm'))
 
@@ -70,9 +71,25 @@ const buildOptions = (
     xAxis: {
       type: 'category',
       data: xAxis,
+      axisLine: {
+        lineStyle: {
+          color: style.color,
+        },
+      },
     },
     yAxis: {
       type: 'value',
+      axisLine: {
+        lineStyle: {
+          color: style.color,
+        },
+      },
+      splitLine: {
+        lineStyle: {
+          // Dark and light colors will be used in turns
+          color: [style.lineColor],
+        },
+      },
     },
     series: [
       {
@@ -95,12 +112,24 @@ const buildOptions = (
   }
 }
 
+const STYLE = {
+  light: {
+    color: '#081438',
+    lineColor: '#CED0D7',
+  },
+  dark: {
+    color: '#F3F3F5',
+    lineColor: '#394360',
+  },
+}
+
 const LaunchpadLineChart = ({ launchpadAddress }: LaunchpadLineChartProps) => {
   const [stablePrice, setStablePrice] = useState(0)
   const { launchpadData } = useLaunchpadData(launchpadAddress)
   const calcPriceInPool = useGetPriceInPool()
   const getLaunchpadWeight = useGetLaunchpadWeight()
   const getBalanceAtTime = useGetBalanceAtTime()
+  const theme = useTheme()
 
   const durations = useMemo(() => {
     const { startTime, endTime } = launchpadData
@@ -173,7 +202,7 @@ const LaunchpadLineChart = ({ launchpadAddress }: LaunchpadLineChartProps) => {
   return (
     <ReactEChartsCore
       echarts={echarts}
-      option={buildOptions(defaultValue, currentValue, durations)}
+      option={buildOptions(defaultValue, currentValue, durations, STYLE[theme])}
       notMerge={true}
       lazyUpdate={true}
     />

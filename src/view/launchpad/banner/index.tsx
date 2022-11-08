@@ -10,9 +10,11 @@ const Banner = () => {
       <Row gutter={[12, 12]}>
         <Col span={24}>
           <Typography.Title style={{ color: '#F3F3F5' }}>
-            The Native{' '}
-            <span style={{ color: '#081438' }}>Decentralized Launchpad</span>{' '}
-            <br /> for projects building on Solana
+            The{' '}
+            <span style={{ color: '#081438' }}>
+              Liquidity Bootstrapping Launchpad
+            </span>
+            <br /> for new projects on Solana
           </Typography.Title>
         </Col>
         <Col span={24}>
@@ -26,11 +28,6 @@ const Banner = () => {
             onClick={() => pushHistory('/launchpad-create')}
             size="large"
             type="primary"
-            style={{
-              background: '#63E0B3',
-              borderColor: '#63E0B3',
-              color: '#081438',
-            }}
           >
             Create a launchpad
           </Button>

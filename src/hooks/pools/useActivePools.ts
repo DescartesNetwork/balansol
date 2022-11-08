@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { PoolState } from '@senswap/balancer'
+import { web3 } from '@project-serum/anchor'
 
 import { PoolsState } from 'model/pools.controller'
 import { AppState } from 'model'
@@ -17,6 +18,7 @@ export const useActivePools = () => {
     const activePools: PoolsState = {}
     for (const addr in pools) {
       const poolData = pools[addr]
+      if (!web3.PublicKey.isOnCurve(poolData.authority)) continue
       const state = poolData.state as PoolState
       if (!state['initialized']) continue
       if (poolData.reserves.map((val) => val.toString()).includes('0')) continue

@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 
-import { Button, Col, Row, Space, Table, Typography } from 'antd'
+import { Button, Col, Row, Table, Typography } from 'antd'
 
 import { TRANS_HISTORY_COLUMN } from './column'
 import { useCheques } from 'hooks/launchpad/useCheques'
@@ -30,12 +30,7 @@ const TransHistory = ({ launchpadAddress }: TransHistoryProps) => {
   return (
     <Row gutter={[0, 16]}>
       <Col span={24}>
-        <Space>
-          <Typography.Title level={5}>Recent transactions</Typography.Title>
-          <Typography.Text className="amount-trans">
-            {historyData.length}
-          </Typography.Text>
-        </Space>
+        <Typography.Title level={5}>Recent transactions</Typography.Title>
       </Col>
       <Col span={24}>
         <Table

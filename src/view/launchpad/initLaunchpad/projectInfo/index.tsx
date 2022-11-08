@@ -57,7 +57,7 @@ const ProjectInfo = ({ setStep }: ProjectInfoProp) => {
       !validURL(whitepaper) ||
       !github ||
       !validURL(github) ||
-      projectName.length > 20 ||
+      projectName.length > 32 ||
       description.length > 150
     )
   }, [description, github, projectName, socials, website, whitepaper])
@@ -74,7 +74,7 @@ const ProjectInfo = ({ setStep }: ProjectInfoProp) => {
               </Col>
               <Col>
                 <Typography.Text type="secondary">
-                  <span style={{ color: projectName.length > 20 ? 'red' : '' }}>
+                  <span style={{ color: projectName.length > 32 ? 'red' : '' }}>
                     {projectName.length}
                   </span>
                   /20 characters

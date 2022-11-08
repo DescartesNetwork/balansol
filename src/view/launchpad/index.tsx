@@ -1,8 +1,9 @@
 import { Button, Col, Row, Space, Tooltip, Typography } from 'antd'
+import { PopupButton } from '@typeform/embed-react'
+import IonIcon from '@sentre/antd-ionicon'
 import Banner from './banner'
 import ListLaunchpad from './components/listLaunchpad'
-import IonIcon from '@sentre/antd-ionicon'
-import { PopupButton } from '@typeform/embed-react'
+import FAQ from './components/faq'
 
 import { LaunchpadSate } from 'constant'
 import { useAppRouter } from 'hooks/useAppRouter'
@@ -41,6 +42,7 @@ const Launchpad = () => {
           <Col span={24}>
             <ListLaunchpad state={LaunchpadSate.completed} />
           </Col>
+          <Col span={24} /> {/** Safe place */}
           <Col span={24} style={{ textAlign: 'center' }}>
             <Space direction="vertical" size={24}>
               <Typography.Title>Ready to launch your project?</Typography.Title>
@@ -52,7 +54,11 @@ const Launchpad = () => {
               </PopupButton>
             </Space>
           </Col>
-          <Col span={24} />
+          <Col span={24} /> {/** Safe place */}
+          <Col span={24}>
+            <FAQ />
+          </Col>
+          <Col span={24} /> {/** Safe place */}
         </Row>
       </Col>
     </Row>

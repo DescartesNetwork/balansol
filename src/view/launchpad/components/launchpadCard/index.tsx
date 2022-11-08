@@ -1,6 +1,6 @@
 import { useWalletAddress } from '@sentre/senhub'
 
-import { Col, Row, Image, Card, Typography } from 'antd'
+import { Col, Row, Image, Card, Typography, Spin } from 'antd'
 import IonIcon from '@sentre/antd-ionicon'
 import EndIn from '../endIn'
 import Sold from '../sold'
@@ -33,11 +33,13 @@ const LaunchpadCard = ({ launchpadAddress }: LaunchpadCardProps) => {
       onClick={() => pushHistory('/launchpad-details', { launchpadAddress })}
     >
       <Col span={24} className="project-card_header">
-        <Image
-          style={{ aspectRatio: '16/9', objectFit: 'cover' }}
-          src={metadata?.coverPhoto}
-          preview={false}
-        />
+        <Spin spinning={!metadata}>
+          <Image
+            style={{ aspectRatio: '16/9', objectFit: 'cover' }}
+            src={metadata?.coverPhoto}
+            preview={false}
+          />
+        </Spin>
       </Col>
       <Col span={24}>
         <Card className="project-card_body">

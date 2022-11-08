@@ -32,7 +32,7 @@ const Navigation = () => {
   if (!visible) return <Fragment />
 
   return (
-    <Row gutter={[24, 24]} justify="center">
+    <Row gutter={[24, 24]} style={{ paddingTop: 32 }} justify="center">
       <Col>
         <Segmented
           className="navigation"
