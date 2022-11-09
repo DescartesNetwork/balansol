@@ -1,4 +1,5 @@
 import { useWalletAddress } from '@sentre/senhub'
+import { CSSProperties } from 'react'
 
 import { Col, Row, Image, Card, Typography, Spin } from 'antd'
 import IonIcon from '@sentre/antd-ionicon'
@@ -15,9 +16,10 @@ import './index.less'
 
 export type LaunchpadCardProps = {
   launchpadAddress: string
+  style?: CSSProperties
 }
 
-const LaunchpadCard = ({ launchpadAddress }: LaunchpadCardProps) => {
+const LaunchpadCard = ({ launchpadAddress, style }: LaunchpadCardProps) => {
   const {
     metadata,
     launchpadData: { authority },
@@ -42,7 +44,7 @@ const LaunchpadCard = ({ launchpadAddress }: LaunchpadCardProps) => {
         </Spin>
       </Col>
       <Col span={24}>
-        <Card className="project-card_body">
+        <Card className="project-card_body" style={{ ...style }}>
           <Row gutter={[16, 16]}>
             <Col span={24}>
               <Row gutter={[24, 24]} wrap={false} justify="space-between">

@@ -30,7 +30,20 @@ echarts.use([
 type LaunchpadLineChartProps = {
   launchpadAddress: string
 }
-const MILESTONES = 10
+const MILESTONES = 20
+
+const STYLE = {
+  light: {
+    color: '#081438',
+    lineColor: '#CED0D7',
+  },
+  dark: {
+    color: '#F3F3F5',
+    lineColor: '#394360',
+  },
+}
+
+type Price = null | number
 
 const getTimes = (starTime: number, endTime: number) => {
   const result: number[] = []
@@ -47,14 +60,19 @@ const getTimes = (starTime: number, endTime: number) => {
 }
 
 const buildOptions = (
-  defaultValue: number[],
-  currentValue: number[],
+  value: { currentResult: Price[]; estimateResult: Price[] },
   durations: number[],
   style: { color: string; lineColor: string },
 ) => {
   const xAxis = durations.map((time) => moment(time).format('DD/MM HH:mm'))
 
   return {
+    legend: {
+      data: ['Real price', 'Estimated price'],
+      textStyle: {
+        color: style.color,
+      },
+    },
     tooltip: {
       // Means disable default "show/hide rule".
       trigger: 'item',
@@ -93,7 +111,8 @@ const buildOptions = (
     },
     series: [
       {
-        data: defaultValue,
+        name: 'Estimated price',
+        data: value.estimateResult,
         type: 'line',
         smooth: true,
         lineStyle: {
@@ -104,23 +123,18 @@ const buildOptions = (
         },
       },
       {
-        data: currentValue,
+        name: 'Real price',
+        data: value.currentResult,
         type: 'line',
         smooth: true,
+        lineStyle: {
+          normal: {
+            width: 2,
+          },
+        },
       },
     ],
   }
-}
-
-const STYLE = {
-  light: {
-    color: '#081438',
-    lineColor: '#CED0D7',
-  },
-  dark: {
-    color: '#F3F3F5',
-    lineColor: '#394360',
-  },
 }
 
 const LaunchpadLineChart = ({ launchpadAddress }: LaunchpadLineChartProps) => {
@@ -140,33 +154,9 @@ const LaunchpadLineChart = ({ launchpadAddress }: LaunchpadLineChartProps) => {
     return times
   }, [launchpadData])
 
-  const defaultValue = useMemo(() => {
-    let prices: number[] = []
-    const { startReserves } = launchpadData
-    for (const time of durations) {
-      const weights = getLaunchpadWeight(time, launchpadAddress)
-      const price = calcPriceInPool(
-        utilsBN.decimalize(weights[0], 9),
-        startReserves[0],
-        stablePrice,
-        startReserves[1],
-        utilsBN.decimalize(weights[1], 9),
-      )
-      prices.push(price)
-    }
-
-    return prices
-  }, [
-    calcPriceInPool,
-    durations,
-    getLaunchpadWeight,
-    launchpadAddress,
-    launchpadData,
-    stablePrice,
-  ])
-
   const currentValue = useMemo(() => {
-    const result: number[] = []
+    const currentResult: Price[] = []
+    const estimateResult: Price[] = []
     for (const time of durations) {
       const weights = getLaunchpadWeight(time, launchpadAddress)
       const balances = getBalanceAtTime(launchpadAddress, time)
@@ -177,10 +167,29 @@ const LaunchpadLineChart = ({ launchpadAddress }: LaunchpadLineChartProps) => {
         balances[1],
         utilsBN.decimalize(weights[1], 9),
       )
-
-      result.push(price)
+      if (time >= Date.now()) {
+        estimateResult.push(price)
+        currentResult.push(null)
+      } else {
+        currentResult.push(price)
+        estimateResult.push(null)
+      }
     }
-    return result
+
+    //Format data
+    let lastVal = 0
+    for (let i = 0; i < currentResult.length; i++) {
+      if (currentResult[i]) continue
+      lastVal = currentResult[i - 1] || 0
+      break
+    }
+
+    for (let i = 0; i < estimateResult.length; i++) {
+      if (!estimateResult[i]) continue
+      estimateResult[i - 1] = lastVal
+      break
+    }
+    return { currentResult, estimateResult }
   }, [
     calcPriceInPool,
     durations,
@@ -202,7 +211,7 @@ const LaunchpadLineChart = ({ launchpadAddress }: LaunchpadLineChartProps) => {
   return (
     <ReactEChartsCore
       echarts={echarts}
-      option={buildOptions(defaultValue, currentValue, durations, STYLE[theme])}
+      option={buildOptions(currentValue, durations, STYLE[theme])}
       notMerge={true}
       lazyUpdate={true}
     />

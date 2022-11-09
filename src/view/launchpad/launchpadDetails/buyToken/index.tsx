@@ -65,7 +65,7 @@ const BuyToken = ({ launchpadAddress }: { launchpadAddress: string }) => {
       <Row gutter={[24, 24]}>
         {/* Ask amount */}
         <Col span={24}>
-          <Space direction="vertical">
+          <Space direction="vertical" style={{ width: '100%' }}>
             <Typography.Text type="secondary">You pay</Typography.Text>
             <Card
               bordered={false}

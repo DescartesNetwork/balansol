@@ -77,7 +77,7 @@ const ProjectInfo = ({ setStep }: ProjectInfoProp) => {
                   <span style={{ color: projectName.length > 32 ? 'red' : '' }}>
                     {projectName.length}
                   </span>
-                  /20 characters
+                  /32 characters
                 </Typography.Text>
               </Col>
             </Row>
