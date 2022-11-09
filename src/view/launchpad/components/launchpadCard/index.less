@@ -4,12 +4,12 @@
   &::before {
     display: none !important;
     content: '';
-    width: calc(100% + 4px);
-    height: calc(100% - 18px);
-    border: 1px solid #63e0b3 !important;
+    width: calc(100% + 2px);
+    height: calc(100% - 22px);
+    border: 1.5px solid #63e0b3 !important;
     border-radius: 24px !important;
     position: absolute;
-    top: 20px;
+    top: 23px;
     left: -1px;
   }
 
@@ -26,7 +26,6 @@
   }
   &_body {
     border-radius: 24px !important;
-    min-height: 400px !important;
     .owner {
       padding: 8px;
       background: rgba(8, 20, 56, 0.1);
@@ -60,6 +59,12 @@
 .active {
   .balansol-progress-inner {
     box-shadow: 0px 0px 12px #081438 !important;
+  }
+}
+
+.completed-card {
+  &:hover {
+    border: 1.5px solid #63e0b3 !important;
   }
 }
 

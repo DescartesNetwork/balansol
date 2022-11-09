@@ -14,6 +14,9 @@ const ListLaunchpad = ({ state }: ListLaunchpadProps) => {
   const launchpads = useFilterLaunchpad(state)
   const { pushHistory } = useAppRouter()
   const completed = state === LaunchpadSate.completed
+  const upcoming = state === LaunchpadSate.upcoming
+
+  const pageSize = completed ? 5 : 2
 
   return (
     <Row gutter={[0, 8]} id="launchpad">
@@ -47,12 +50,15 @@ const ListLaunchpad = ({ state }: ListLaunchpadProps) => {
       <Col span={24}>
         {launchpads.length ? (
           <Row gutter={[24, 24]}>
-            {launchpads.slice(0, 2).map((launchpadAddress) => (
+            {launchpads.slice(0, pageSize).map((launchpadAddress) => (
               <Col key={launchpadAddress} md={24} lg={completed ? 24 : 12}>
                 {completed ? (
                   <CompletedLaunchpad launchpadAddress={launchpadAddress} />
                 ) : (
-                  <LaunchpadCard launchpadAddress={launchpadAddress} />
+                  <LaunchpadCard
+                    style={{ minHeight: upcoming ? 344 : 404 }}
+                    launchpadAddress={launchpadAddress}
+                  />
                 )}
               </Col>
             ))}

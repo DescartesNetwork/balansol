@@ -20,6 +20,7 @@ const CompletedLaunchpad = ({ launchpadAddress }: LaunchpadCardProps) => {
       hoverable
       style={{ cursor: 'pointer' }}
       onClick={() => pushHistory('/launchpad-details', { launchpadAddress })}
+      className="completed-card"
     >
       <Row gutter={[8, 8]} align="middle">
         <Col sm={24} xs={24} md={24} lg={8}>

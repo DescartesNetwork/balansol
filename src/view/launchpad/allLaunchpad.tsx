@@ -12,6 +12,7 @@ const AllLaunchpad = () => {
   const launchpadState = (getQuery('state') || '') as LaunchpadSate
   const launchpads = useFilterLaunchpad(launchpadState)
   const completed = launchpadState === LaunchpadSate.completed
+  const upcoming = launchpadState === LaunchpadSate.upcoming
 
   return (
     <Row justify="center">
@@ -44,7 +45,10 @@ const AllLaunchpad = () => {
                   {completed ? (
                     <CompletedLaunchpad launchpadAddress={launchpadAddress} />
                   ) : (
-                    <LaunchpadCard launchpadAddress={launchpadAddress} />
+                    <LaunchpadCard
+                      style={{ minHeight: upcoming ? 344 : 404 }}
+                      launchpadAddress={launchpadAddress}
+                    />
                   )}
                 </Col>
               ))}

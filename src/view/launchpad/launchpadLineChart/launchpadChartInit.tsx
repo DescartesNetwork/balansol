@@ -57,6 +57,12 @@ const buildOptions = (
 ) => {
   const xAxis = durations.map((time) => moment(time).format('DD/MM HH:mm'))
   return {
+    legend: {
+      data: ['Estimated price'],
+      textStyle: {
+        color: style.color,
+      },
+    },
     tooltip: {
       trigger: 'item',
       formatter: function (params: any) {
@@ -87,16 +93,22 @@ const buildOptions = (
       },
       splitLine: {
         lineStyle: {
-          // Dark and light colors will be used in turns
           color: [style.lineColor],
         },
       },
     },
     series: [
       {
+        name: 'Estimated price',
         data: defaultValue,
         type: 'line',
         smooth: true,
+        lineStyle: {
+          normal: {
+            width: 2,
+            type: 'dashed',
+          },
+        },
       },
     ],
   }
