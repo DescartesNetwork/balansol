@@ -7,7 +7,7 @@ import { PoolsState } from 'model/pools.controller'
 import { AppState } from 'model'
 import { useTVL } from 'hooks/useTVL'
 
-const MIN_TVL = 1000
+const MIN_TVL = 100
 
 export const useActivePools = () => {
   const pools = useSelector((state: AppState) => state.pools)
