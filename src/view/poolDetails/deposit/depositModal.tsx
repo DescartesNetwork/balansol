@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { getAnchorProvider, useGetMintDecimals, util } from '@sentre/senhub'
-import { web3, BN } from '@project-serum/anchor'
+import { web3, BN } from '@coral-xyz/anchor'
 
 import { Button, Checkbox, Col, Row, Tooltip, Typography } from 'antd'
 import { MintSymbol } from '@sen-use/app'

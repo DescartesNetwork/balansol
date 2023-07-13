@@ -1,6 +1,6 @@
 import moment from 'moment'
 import { util } from '@sentre/senhub'
-import { BN, web3 } from '@project-serum/anchor'
+import { BN, web3 } from '@coral-xyz/anchor'
 
 import { Typography } from 'antd'
 import ColumnAmount from './columnAmount'

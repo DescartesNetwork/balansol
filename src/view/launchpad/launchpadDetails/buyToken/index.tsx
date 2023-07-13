@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react'
 import { useDebounce } from 'react-use'
 import { useGetMintDecimals, util } from '@sentre/senhub'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 import { utilsBN } from '@sen-use/web3'
 
 import { Button, Card, Col, Row, Space, Typography } from 'antd'

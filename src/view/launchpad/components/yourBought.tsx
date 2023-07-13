@@ -1,7 +1,7 @@
 import { MintAmount, MintSymbol } from '@sen-use/app'
 import { Button, Col, Row, Space, Tooltip, Typography } from 'antd'
 
-import { utils, web3 } from '@project-serum/anchor'
+import { utils, web3 } from '@coral-xyz/anchor'
 import { useCallback, useEffect, useState } from 'react'
 import { splt } from '@sentre/senhub'
 

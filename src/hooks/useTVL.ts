@@ -1,11 +1,11 @@
-import { useGetMintPrice } from '@sen-use/app'
 import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { PoolData } from '@senswap/balancer'
 
 import { useOracles } from './useOracles'
 
 import { AppState } from 'model'
-import { PoolData } from '@senswap/balancer'
+import { useGetMintPrice } from './useGetPrice'
 
 export const useTVL = (poolAddress = '') => {
   const poolData = useSelector((state: AppState) => state.pools[poolAddress])

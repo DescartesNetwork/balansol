@@ -1,6 +1,6 @@
 import moment from 'moment'
 import { util } from '@sentre/senhub'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 
 import { Avatar, Col, Divider, Row, Space, Typography } from 'antd'
 import { MintAmount, MintName, MintSymbol } from '@sen-use/app'

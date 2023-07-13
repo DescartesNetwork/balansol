@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 import { initTxCreateMultiTokenAccount } from '@sen-use/web3'
 import { useGetMintData, getAnchorProvider } from '@sentre/senhub'
 

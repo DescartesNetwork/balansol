@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { useDispatch } from 'react-redux'
-import { web3 } from '@project-serum/anchor'
+import { web3 } from '@coral-xyz/anchor'
 
 import Watcher from './watcher'
 import { initCheques, upsetCheque } from 'model/cheques.controller'
@@ -23,6 +23,7 @@ const LaunchpadWatcher = () => {
 
   return (
     <Watcher
+      // @ts-ignore
       program={window.launchpad.program}
       name={NAME}
       filter={FILTER}

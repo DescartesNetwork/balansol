@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useAccounts, useWalletAddress } from '@sentre/senhub'
-import { utils, web3 } from '@project-serum/anchor'
+import { utils, web3 } from '@coral-xyz/anchor'
 
 import { AppState } from 'model'
 import { PoolsState } from 'model/pools.controller'

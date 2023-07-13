@@ -1,11 +1,5 @@
 import { connection } from '@sentre/senhub'
-import {
-  ConfirmedSignatureInfo,
-  ConfirmedSignaturesForAddress2Options,
-  Connection,
-  ParsedConfirmedTransaction,
-  PublicKey,
-} from '@solana/web3.js'
+import { web3 } from '@coral-xyz/anchor'
 
 import { OptionsFetchSignature } from '../../constants/transaction'
 
@@ -13,17 +7,17 @@ const DEFAULT_LIMIT = 700
 const TRANSACTION_LIMIT = 200
 
 export class Solana {
-  private conn: Connection = connection
+  private conn: web3.Connection = connection
 
   //Search for all signatures from last Signature and earlier
   //So: If new collection (to now) -> last Signature = null
   private async fetchSignatures(
-    address: PublicKey,
+    address: web3.PublicKey,
     lastSignature?: string,
     limit: number = DEFAULT_LIMIT,
-  ): Promise<Array<ConfirmedSignatureInfo>> {
+  ): Promise<Array<web3.ConfirmedSignatureInfo>> {
     if (limit > DEFAULT_LIMIT) limit = DEFAULT_LIMIT
-    const options: ConfirmedSignaturesForAddress2Options = {
+    const options: web3.ConfirmedSignaturesForAddress2Options = {
       limit: limit,
       before: lastSignature,
     }
@@ -31,7 +25,7 @@ export class Solana {
   }
 
   private async fetchConfirmTransaction(signatures: string[]) {
-    let confirmedTransactions: ParsedConfirmedTransaction[] = []
+    let confirmedTransactions: web3.ParsedConfirmedTransaction[] = []
     let limit = TRANSACTION_LIMIT
 
     const promiseTransGroup = []
@@ -54,18 +48,18 @@ export class Solana {
   async fetchTransactions(
     programId: string,
     options: OptionsFetchSignature,
-  ): Promise<ParsedConfirmedTransaction[]> {
+  ): Promise<web3.ParsedConfirmedTransaction[]> {
     const currentTime = new Date().getTime() / 1000
     let { secondFrom, secondTo, lastSignature, limit } = options
     secondFrom = Math.floor(secondFrom || 0)
     secondTo = Math.floor(secondTo || currentTime)
 
-    const programPublicKey = new PublicKey(programId)
+    const programPublicKey = new web3.PublicKey(programId)
     let signatures: string[] = []
     let isStop = false
 
     while (!isStop) {
-      const confirmedSignatureInfos: ConfirmedSignatureInfo[] =
+      const confirmedSignatureInfos: web3.ConfirmedSignatureInfo[] =
         await this.fetchSignatures(programPublicKey, lastSignature, limit)
       if (!confirmedSignatureInfos?.length || isStop) break
       for (const info of confirmedSignatureInfos) {

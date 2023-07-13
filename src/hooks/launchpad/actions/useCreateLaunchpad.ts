@@ -4,7 +4,7 @@ import {
   tokenProvider,
   useGetMintDecimals,
 } from '@sentre/senhub'
-import { BN, web3 } from '@project-serum/anchor'
+import { BN, web3 } from '@coral-xyz/anchor'
 import { utilsBN } from '@sen-use/web3'
 
 import { MintActionStates, MintConfigs } from '@senswap/balancer'

@@ -1,11 +1,4 @@
-//@ts-ignore
-import {
-  ParsedConfirmedTransaction,
-  ParsedInstruction,
-  ParsedMessageAccount,
-  PartiallyDecodedInstruction,
-  TokenBalance,
-} from '@solana/web3.js'
+import type { web3 } from '@coral-xyz/anchor'
 import { account } from '@senswap/sen-js'
 
 import { ActionInfo, ActionTransfer, TransLog } from '../entities/trans-log'
@@ -19,7 +12,7 @@ import {
 import { DateHelper } from '../helpers/date'
 import { SOL_ADDRESS, SOL_DECIMALS } from '../constants/sol'
 
-type InstructionData = ParsedInstruction | PartiallyDecodedInstruction
+type InstructionData = web3.ParsedInstruction | web3.PartiallyDecodedInstruction
 
 export class TransLogService {
   protected parseAction = (transLog: TransLog) => {
@@ -38,7 +31,7 @@ export class TransLogService {
     let isStop = false
     let smartLimit = 200
     while (!isStop) {
-      const confirmedTrans: ParsedConfirmedTransaction[] =
+      const confirmedTrans: web3.ParsedConfirmedTransaction[] =
         await solana.fetchTransactions(programId, {
           ...configs,
           lastSignature: lastSignatureTmp,
@@ -69,7 +62,7 @@ export class TransLogService {
   }
 
   private parseTransLog(
-    confirmedTrans: ParsedConfirmedTransaction,
+    confirmedTrans: web3.ParsedConfirmedTransaction,
   ): TransLog | undefined {
     const { blockTime, meta, transaction } = confirmedTrans
     if (!blockTime || !meta) return
@@ -108,7 +101,7 @@ export class TransLogService {
     )
     transLog.programInfo = {
       programId: instructionData.programId.toString(),
-      data: (instructionData as PartiallyDecodedInstruction).data,
+      data: (instructionData as web3.PartiallyDecodedInstruction).data,
     }
 
     transLog.actionType = this.parseAction(transLog)
@@ -117,7 +110,7 @@ export class TransLogService {
   }
 
   private isParsedInstruction(instructionData: InstructionData) {
-    return (instructionData as ParsedInstruction).parsed !== undefined
+    return (instructionData as web3.ParsedInstruction).parsed !== undefined
   }
 
   private parseListActionTransfer(
@@ -128,7 +121,7 @@ export class TransLogService {
     for (const action of actions) {
       if (!this.isParsedInstruction(action)) continue
       const actionParsed: ParsedAction =
-        (action as ParsedInstruction).parsed || {}
+        (action as web3.ParsedInstruction).parsed || {}
       switch (actionParsed.type) {
         case ParsedType.Transfer:
           const info: ParsedInfoTransfer = actionParsed.info
@@ -164,9 +157,9 @@ export class TransLogService {
   }
 
   private parseAccountInfo(
-    accountKeys: Array<ParsedMessageAccount>,
-    postTokenBalances: Array<TokenBalance>,
-    preTokenBalances: Array<TokenBalance>,
+    accountKeys: Array<web3.ParsedMessageAccount>,
+    postTokenBalances: Array<web3.TokenBalance>,
+    preTokenBalances: Array<web3.TokenBalance>,
     postBalances: number[],
     preBalances: number[],
   ): Map<string, ActionInfo> {

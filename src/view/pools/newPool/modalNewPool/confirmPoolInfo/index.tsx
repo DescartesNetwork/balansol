@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { util, tokenProvider } from '@sentre/senhub'
-import { useGetMintPrice } from '@sen-use/app'
 
 import { Button, Card, Col, Row, Table, Typography } from 'antd'
 import { MintSetup } from '../index'
@@ -10,6 +9,7 @@ import { COLUMNS_CONFIG } from './columns'
 import { AppState } from 'model'
 import { useOracles } from 'hooks/useOracles'
 import { getMintInfo } from 'helper/oracles'
+import { useGetMintPrice } from 'hooks/useGetPrice'
 import './index.less'
 
 export type PoolInfo = {
