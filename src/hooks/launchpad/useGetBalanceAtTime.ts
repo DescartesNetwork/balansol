@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { useSelector } from 'react-redux'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 
 import { AppState } from 'model'
 

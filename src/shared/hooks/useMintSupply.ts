@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useGetMintData } from '@sentre/senhub'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 
 /**
  * Get token's total supply. This hook needs MintProvider for working.

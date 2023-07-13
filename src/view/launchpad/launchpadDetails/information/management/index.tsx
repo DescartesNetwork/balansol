@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { web3, BN } from '@project-serum/anchor'
+import { web3, BN } from '@coral-xyz/anchor'
 import { getAnchorProvider } from '@sentre/senhub'
 import { MintAmount, MintAvatar, MintSymbol, notifyError } from '@sen-use/app'
 

@@ -1,5 +1,5 @@
 import { PoolData } from '@senswap/balancer'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 import { util, PDB, TokenProvider } from '@sentre/senhub'
 
 import { TransLog } from 'stat/entities/trans-log'

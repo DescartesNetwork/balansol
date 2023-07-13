@@ -8,7 +8,7 @@ import {
 } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useDebounce } from 'react-use'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 import { net } from '@sentre/senhub'
 
 import { AppDispatch, AppState } from 'model'
@@ -88,16 +88,27 @@ const Provider = ({ children }: { children: ReactNode }) => {
     dispatch(setSwapState({ askAmount, loading: false }))
     return setPlatformSwap(platformSwap)
   }, [balansol, dispatch, isReverse, jupiter])
-  useDebounce(() => updateRouteFromBid(), 1000, [updateRouteFromBid])
+  useDebounce(() => updateRouteFromBid(), 500, [updateRouteFromBid])
 
   const updateRouteFromAsk = useCallback(() => {
     if (!isReverse) return
-    let bidAmount = balansol.bidAmount.toString()
-    const loading = balansol.loading
-    if (loading) bidAmount = ''
-    dispatch(setSwapState({ bidAmount, loading }))
-    return setPlatformSwap(balansol)
-  }, [balansol, dispatch, isReverse])
+    if (balansol.loading || (jupiter.loading && net === 'mainnet'))
+      return dispatch(setSwapState({ bidAmount: '0', loading: true }))
+
+    let bidAmountBalansol = balansol.bidAmount.toString()
+    let bidAmountJup = jupiter.bidAmount.toString()
+    // Select platform
+    let platformSwap = balansol
+    if (
+      Number(bidAmountJup) > 1.05 * Number(bidAmountBalansol) &&
+      net === 'mainnet'
+    )
+      platformSwap = jupiter
+    // Update platform
+    let bidAmount = platformSwap.bidAmount.toString()
+    dispatch(setSwapState({ bidAmount, loading: false }))
+    return setPlatformSwap(platformSwap)
+  }, [balansol, dispatch, isReverse, jupiter])
   useDebounce(() => updateRouteFromAsk(), 500, [updateRouteFromAsk])
 
   const provider = useMemo((): SwapProvider => {

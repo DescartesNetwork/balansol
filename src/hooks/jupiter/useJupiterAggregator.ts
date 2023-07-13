@@ -1,33 +1,27 @@
-import { useCallback, useMemo, useState } from 'react'
+import { connection, getAnchorWallet, useWalletAddress } from '@sentre/senhub'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { web3, BN } from '@project-serum/anchor'
-import { useJupiter } from '@jup-ag/react-hook'
-import { useWalletAddress, rpc } from '@sentre/senhub'
 import { useDebounce } from 'react-use'
+import axios from 'axios'
+import { BN, AnchorProvider, web3 } from '@coral-xyz/anchor'
 
 import { AppState } from 'model'
 
-import JupiterWalletWrapper from 'hooks/jupiter/jupiterWalletWrapper'
 import { SwapPlatform, RouteSwapInfo, SwapProvider } from 'hooks/useSwap'
 import { useOracles } from '../useOracles'
-import { utilsBN } from 'helper/utilsBN'
 
-const connection = new web3.Connection(rpc)
-
-interface UseJupiterProps {
-  amount: number
-  inputMint: web3.PublicKey | undefined
-  outputMint: web3.PublicKey | undefined
-  slippage: number
-  debounceTime?: number
-}
-
-const DEFAULT_JUPITER_PROPS = {
-  amount: 0,
-  inputMint: undefined,
-  outputMint: undefined,
-  slippage: 0,
-  debounceTime: 250,
+type JupRoute = {
+  inAmount: string
+  outAmount: string
+  priceImpactPct: number
+  marketInfos: {
+    id: string
+    inAmount: string
+    inputMint: string
+    outAmount: string
+    outputMint: string
+    priceImpactPct: number
+  }[]
 }
 
 const DEFAULT_EMPTY_ROUTE = {
@@ -40,27 +34,49 @@ const DEFAULT_EMPTY_ROUTE = {
 export const useJupiterAggregator = (): SwapProvider => {
   const [bestRouteInfo, setBestRouteInfo] =
     useState<RouteSwapInfo>(DEFAULT_EMPTY_ROUTE)
-  const [jupiterProps, setJupiterProps] = useState<UseJupiterProps>({
-    ...DEFAULT_JUPITER_PROPS,
-  })
-  const { bidMint, askMint, bidAmount, slippageTolerance, isReverse } =
-    useSelector((state: AppState) => state.swap)
+  const [rawJupRoute, setRawJupRoute] = useState<JupRoute>()
+  const [loading, setLoading] = useState(false)
+  const {
+    bidMint,
+    askMint,
+    bidAmount,
+    askAmount,
+    slippageTolerance,
+    isReverse,
+  } = useSelector((state: AppState) => state.swap)
   const walletAddress = useWalletAddress()
+
   const { decimalizeMintAmount, undecimalizeMintAmount } = useOracles()
-  const { exchange, routes, loading } = useJupiter(jupiterProps)
 
   const composeJupiterProps = useCallback(async () => {
-    if (!bidMint || !askMint || !Number(bidAmount) || isReverse)
-      return setJupiterProps({ ...DEFAULT_JUPITER_PROPS })
-    const bidAmountBN = await decimalizeMintAmount(bidAmount, bidMint)
-    setJupiterProps({
-      amount: utilsBN.toNumber(bidAmountBN),
-      inputMint: new web3.PublicKey(bidMint),
-      outputMint: new web3.PublicKey(askMint),
-      slippage: slippageTolerance,
-      debounceTime: 250,
-    })
+    try {
+      setLoading(true)
+      if (!bidMint || !askMint || (!Number(askAmount) && !Number(bidAmount)))
+        throw new Error('Invalid route input')
+      let amount = '0'
+      if (isReverse) {
+        amount = (await decimalizeMintAmount(askAmount, askMint)).toString()
+      } else {
+        amount = (await decimalizeMintAmount(bidAmount, bidMint)).toString()
+      }
+      const {
+        data: { data: jupRoutes },
+      } = await axios.get<{ data: JupRoute[] }>(
+        `https://quote-api.jup.ag/v4/quote?inputMint=${bidMint}&outputMint=${askMint}&amount=${amount}&slippageBps=${
+          slippageTolerance * 100
+        }&asLegacyTransaction=true&swapMode=${
+          isReverse ? 'ExactOut' : 'ExactIn'
+        }`,
+      )
+      const bestRoute = jupRoutes?.[0]
+      setRawJupRoute(bestRoute)
+    } catch (error) {
+      setRawJupRoute(undefined)
+    } finally {
+      setLoading(false)
+    }
   }, [
+    askAmount,
     askMint,
     bidAmount,
     bidMint,
@@ -68,68 +84,69 @@ export const useJupiterAggregator = (): SwapProvider => {
     isReverse,
     slippageTolerance,
   ])
-  useDebounce(() => composeJupiterProps(), 300, [composeJupiterProps])
+  useDebounce(() => composeJupiterProps(), 100, [composeJupiterProps])
 
-  const composeBestRoute = useCallback(async () => {
-    const bestJupiterRoute = routes?.[0]
-    if (
-      !bidMint ||
-      !askMint ||
-      !Number(bidAmount) ||
-      isReverse ||
-      !bestJupiterRoute
-    )
-      return setBestRouteInfo(DEFAULT_EMPTY_ROUTE)
-
-    const route = bestJupiterRoute.marketInfos.map((market) => {
-      return {
-        bidAmount: new BN(market.inAmount.toString()),
-        bidMint: market.inputMint.toBase58(),
-        askAmount: new BN(market.outAmount.toString()),
-        askMint: market.outputMint.toBase58(),
-        pool: '',
-        priceImpact: market.priceImpactPct,
-      }
-    })
-
-    const inAmount = await undecimalizeMintAmount(
-      new BN(bestJupiterRoute.inAmount.toString()),
-      bidMint,
-    )
-    const outAmount = await undecimalizeMintAmount(
-      new BN(bestJupiterRoute.outAmount.toString()),
-      askMint,
-    )
-
-    return setBestRouteInfo({
-      route,
-      bidAmount: Number(inAmount),
-      askAmount: Number(outAmount),
-      priceImpact: bestJupiterRoute.priceImpactPct,
-    })
-  }, [askMint, bidAmount, bidMint, isReverse, routes, undecimalizeMintAmount])
-  useDebounce(() => composeBestRoute(), 300, [composeBestRoute])
+  const syncRoute = useCallback(async () => {
+    try {
+      setLoading(true)
+      if (!rawJupRoute) return setBestRouteInfo(DEFAULT_EMPTY_ROUTE)
+      const inAmount = await undecimalizeMintAmount(
+        new BN(rawJupRoute.inAmount.toString()),
+        bidMint,
+      )
+      const outAmount = await undecimalizeMintAmount(
+        new BN(rawJupRoute.outAmount.toString()),
+        askMint,
+      )
+      return setBestRouteInfo({
+        route: rawJupRoute.marketInfos.map((e) => ({
+          bidAmount: new BN(e.inAmount),
+          bidMint: e.inputMint,
+          askAmount: new BN(e.outAmount),
+          askMint: e.outputMint,
+          pool: e.id,
+          priceImpact: e.priceImpactPct,
+        })),
+        bidAmount: Number(inAmount),
+        askAmount: Number(outAmount),
+        priceImpact: rawJupRoute.priceImpactPct,
+      })
+    } catch (error) {
+      setBestRouteInfo(DEFAULT_EMPTY_ROUTE)
+    } finally {
+      setLoading(false)
+    }
+  }, [askMint, bidMint, rawJupRoute, undecimalizeMintAmount])
+  useEffect(() => {
+    syncRoute()
+  }, [syncRoute])
 
   const swap = useCallback(async () => {
-    if (!routes?.length) throw new Error('No available route')
-    const wrappedWallet = new JupiterWalletWrapper(
-      walletAddress,
-      window.sentre.solana,
-    )
-    const result: any = await exchange({
-      wallet: wrappedWallet,
-      routeInfo: routes[0],
-      onTransaction: async (txid: string) => {
-        await connection.confirmTransaction(txid, 'confirmed')
-        return await connection.getTransaction(txid, {
-          commitment: 'confirmed',
-        })
-      },
+    if (!rawJupRoute) throw new Error('Invalid route input')
+    const {
+      data: { swapTransaction },
+    } = await axios.post('https://quote-api.jup.ag/v4/swap', {
+      // route from /quote api
+      route: rawJupRoute,
+      // user public key to be used for the swap
+      userPublicKey: walletAddress,
+      // auto wrap and unwrap SOL. default is true
+      wrapUnwrapSOL: true,
+      asLegacyTransaction: true,
     })
-    if (result.error) throw new Error(result.error?.message || 'Unknown Error')
-    const { txid, outputAddress } = result
-    return { txId: txid, dstAddress: outputAddress }
-  }, [exchange, routes, walletAddress])
+    const swapTransactionBuf = Buffer.from(swapTransaction, 'base64')
+    const tx = web3.Transaction.from(swapTransactionBuf)
+    const wallet = getAnchorWallet()!
+    // @ts-ignore
+    const provider = new AnchorProvider(connection, wallet, {
+      maxRetries: 2,
+    })
+    const txid = await provider.sendAndConfirm(tx)
+    return {
+      txId: txid,
+      dstAddress: rawJupRoute.marketInfos.at(-1)?.outputMint,
+    }
+  }, [rawJupRoute, walletAddress])
 
   return useMemo(() => {
     return {

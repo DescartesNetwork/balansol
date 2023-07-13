@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { Address, BN, web3 } from '@project-serum/anchor'
+import { Address, BN, web3 } from '@coral-xyz/anchor'
 import { useGetMintDecimals } from '@sentre/senhub'
 import util from '@senswap/sen-js/dist/utils'
 

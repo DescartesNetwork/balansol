@@ -39,13 +39,14 @@ const Configuration = ({ setStep }: ConfigurationProps) => {
   const theme = useTheme()
   const { pushHistory } = useAppRouter()
 
-  const onChange = (name: keyof Launchpad, value: string | number) =>
+  const onChange = (name: keyof Launchpad, value: string | number | null) =>
     setLaunchpadData({ ...launchpadData, [name]: value })
 
   const onChangeProjectInfo = (
     name: keyof ProjectInfoData,
-    value: string | number,
+    value: string | number | null,
   ) => {
+    if (value === null) value = ''
     const nextProjectInfo = { ...launchpadData.projectInfo, [name]: value }
     return setLaunchpadData({ ...launchpadData, projectInfo: nextProjectInfo })
   }

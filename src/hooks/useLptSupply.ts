@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Address, BN, web3 } from '@project-serum/anchor'
+import { Address, BN, web3 } from '@coral-xyz/anchor'
 import { useGetMintData } from '@sentre/senhub'
 
 export const useLptSupply = (mintLpt: Address) => {
