@@ -1,5 +1,5 @@
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
-import { Program, web3 } from '@project-serum/anchor'
+import { Program, web3 } from '@coral-xyz/anchor'
 import { createGlobalState } from 'react-use'
 import { encodeIxData, accountDiscriminator } from '@sen-use/web3'
 

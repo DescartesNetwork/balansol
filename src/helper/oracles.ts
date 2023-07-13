@@ -1,4 +1,4 @@
-import { Address, BN, web3 } from '@project-serum/anchor'
+import { Address, BN, web3 } from '@coral-xyz/anchor'
 import { PoolData } from '@senswap/balancer'
 import util from '@senswap/sen-js/dist/utils'
 

@@ -6,7 +6,7 @@ import {
   useState,
 } from 'react'
 import { useDispatch } from 'react-redux'
-import { web3 } from '@project-serum/anchor'
+import { web3 } from '@coral-xyz/anchor'
 
 import Loading from '../loading'
 
@@ -50,6 +50,7 @@ const PoolWatcher: FunctionComponent = (props) => {
   return (
     <Fragment>
       <Watcher
+        // @ts-ignore
         program={window.balansol.program}
         name={NAME}
         filter={FILTER}

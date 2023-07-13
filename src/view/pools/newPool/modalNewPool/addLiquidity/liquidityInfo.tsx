@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { getAnchorProvider, util } from '@sentre/senhub'
-import { MintPrice, MintSymbol, useGetMintPrice } from '@sen-use/app'
-import { web3 } from '@project-serum/anchor'
+import { MintPrice, MintSymbol } from '@sen-use/app'
+import { web3 } from '@coral-xyz/anchor'
 
 import { Button, Col, Row, Space, Typography } from 'antd'
 
@@ -13,6 +13,7 @@ import { useOracles } from 'hooks/useOracles'
 import { useMintBalance } from 'hooks/useMintBalance'
 import { removePool } from 'model/pools.controller'
 import { useWrapAndUnwrapSolIfNeed } from 'hooks/useWrapAndUnwrapSolIfNeed'
+import { useGetMintPrice } from 'hooks/useGetPrice'
 
 export type LiquidityInfoProps = {
   poolAddress: string

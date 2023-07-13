@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useSelector } from 'react-redux'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 import IonIcon from '@sentre/antd-ionicon'
 
 import { Col, Row, Typography, Button, Tooltip, Space } from 'antd'

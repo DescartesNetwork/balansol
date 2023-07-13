@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { PoolState } from '@senswap/balancer'
-import { web3 } from '@project-serum/anchor'
+import { web3 } from '@coral-xyz/anchor'
 
 import { PoolsState } from 'model/pools.controller'
 import { AppState } from 'model'

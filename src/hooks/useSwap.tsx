@@ -8,7 +8,7 @@ import {
 } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useDebounce } from 'react-use'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 import { net } from '@sentre/senhub'
 
 import { AppDispatch, AppState } from 'model'

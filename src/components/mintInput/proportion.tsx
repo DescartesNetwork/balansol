@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import { useTheme } from '@sentre/senhub'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 
 import { Radio, Space, Typography } from 'antd'
 

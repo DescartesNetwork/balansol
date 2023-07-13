@@ -1,5 +1,5 @@
 import { utilsBN } from '@sen-use/web3'
-import { BN, utils, web3 } from '@project-serum/anchor'
+import { BN, utils, web3 } from '@coral-xyz/anchor'
 import { useCallback } from 'react'
 import {
   useAccounts,
@@ -40,12 +40,12 @@ export const useMintBalance = () => {
       if (!util.isAddress(walletAddress) || !util.isAddress(addressToken))
         return buildResult()
       try {
-        const accountAddress = await utils.token
+        const accountAddress = utils.token
           .associatedAddress({
             mint: new web3.PublicKey(addressToken),
             owner: new web3.PublicKey(walletAddress),
           })
-          .then((r) => r.toBase58())
+          .toBase58()
 
         const isWsolAddress = addressToken === DEFAULT_WSOL
         const isSolAddress = accountAddress === walletAddress

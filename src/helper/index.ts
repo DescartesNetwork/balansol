@@ -1,4 +1,4 @@
-import { BN, web3 } from '@project-serum/anchor'
+import { BN, web3 } from '@coral-xyz/anchor'
 import { util } from '@sentre/senhub'
 import { utils } from '@senswap/sen-js'
 import { MintActionState } from '@senswap/balancer'

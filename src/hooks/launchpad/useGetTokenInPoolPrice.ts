@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 import { utilsBN } from '@sen-use/web3'
 
 export const useGetPriceInPool = () => {

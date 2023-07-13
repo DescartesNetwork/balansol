@@ -1,5 +1,5 @@
-import { PublicKey } from '@solana/web3.js'
-import { BN } from '@project-serum/anchor'
+import { web3 } from '@coral-xyz/anchor'
+import { BN } from '@coral-xyz/anchor'
 
 // Bugfix performance
 // https://github.com/zalmoxisus/redux-devtools-extension/blob/master/docs/Troubleshooting.md#excessive-use-of-memory-and-cpu
@@ -31,7 +31,7 @@ const isPlain = (val: any): boolean => {
     Array.isArray(val) ||
     isPlainObject(val) ||
     typeof val === 'bigint' ||
-    val instanceof PublicKey ||
+    val instanceof web3.PublicKey ||
     val instanceof BN ||
     Buffer.isBuffer(val)
   )

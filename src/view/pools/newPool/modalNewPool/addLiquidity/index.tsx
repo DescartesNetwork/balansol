@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useGetMintDecimals, util } from '@sentre/senhub'
-import { MintSymbol, useGetMintPrice } from '@sen-use/app'
+import { MintSymbol } from '@sen-use/app'
 
 import { Button, Col, Row, Tooltip, Typography } from 'antd'
 import LiquidityInfo from './liquidityInfo'
@@ -11,6 +11,7 @@ import { PoolCreatingStep } from 'constant'
 import { AppState } from 'model'
 import { useOracles } from 'hooks/useOracles'
 import { calcNormalizedWeight } from 'helper/oracles'
+import { useGetMintPrice } from 'hooks/useGetPrice'
 
 export type AddLiquidityProps = {
   setCurrentStep: (step: PoolCreatingStep) => void

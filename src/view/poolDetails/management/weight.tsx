@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 import { useTheme, util } from '@sentre/senhub'
 
 import { Button, Col, Row, Space, Typography } from 'antd'

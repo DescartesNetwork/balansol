@@ -1,5 +1,5 @@
 import { utilsBN } from '@sen-use/web3'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 import { useMemo } from 'react'
 
 import { useWalletBalance } from '@sentre/senhub'

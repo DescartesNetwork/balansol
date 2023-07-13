@@ -1,4 +1,4 @@
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 import { MintAvatar, MintSymbol, MintAmount } from '@sen-use/app'
 import { Col, Row, Space, Typography } from 'antd'
 

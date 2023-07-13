@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { getAnchorProvider, useGetMintDecimals } from '@sentre/senhub'
-import { web3, BN } from '@project-serum/anchor'
+import { web3, BN } from '@coral-xyz/anchor'
 import { utilsBN } from '@sen-use/web3'
 
 import { AppState } from 'model'

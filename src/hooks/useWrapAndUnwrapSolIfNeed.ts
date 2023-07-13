@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { web3 } from '@project-serum/anchor'
+import { web3 } from '@coral-xyz/anchor'
 import {
   NATIVE_MINT,
   getAssociatedTokenAddress,
@@ -24,7 +24,7 @@ export const useWrapAndUnwrapSolIfNeed = () => {
     ): Promise<web3.Transaction | undefined> => {
       const tx = new web3.Transaction()
       const { balance } = await getMintBalance(mint)
-      if (mint !== NATIVE_MINT.toBase58() || balance >= amount) return
+      if (mint !== NATIVE_MINT.toBase58() || balance >= Number(amount)) return
 
       const decimalizedAmount = utils.decimalize(amount, SOL_DECIMALS)
       const decimalizedBalance = utils.decimalize(balance, SOL_DECIMALS)
@@ -51,13 +51,14 @@ export const useWrapAndUnwrapSolIfNeed = () => {
     [accounts, getMintBalance, walletAddress],
   )
 
-  const createUnWrapSolTxIfNeed = async (
-    mint: string,
-  ): Promise<web3.Transaction | undefined> => {
-    if (mint !== NATIVE_MINT.toBase58()) return
-    const uwSolIx = await createUnWrapSolIx(new web3.PublicKey(walletAddress))
-    return new web3.Transaction().add(uwSolIx)
-  }
+  const createUnWrapSolTxIfNeed = useCallback(
+    async (mint: string) => {
+      if (mint !== NATIVE_MINT.toBase58()) return
+      const uwSolIx = await createUnWrapSolIx(new web3.PublicKey(walletAddress))
+      return new web3.Transaction().add(uwSolIx)
+    },
+    [walletAddress],
+  )
 
   return { createWrapSolTxIfNeed, createUnWrapSolTxIfNeed }
 }
