@@ -36,8 +36,14 @@ export const useJupiterAggregator = (): SwapProvider => {
     useState<RouteSwapInfo>(DEFAULT_EMPTY_ROUTE)
   const [rawJupRoute, setRawJupRoute] = useState<JupRoute>()
   const [loading, setLoading] = useState(false)
-  const { bidMint, askMint, bidAmount, slippageTolerance, isReverse } =
-    useSelector((state: AppState) => state.swap)
+  const {
+    bidMint,
+    askMint,
+    bidAmount,
+    askAmount,
+    slippageTolerance,
+    isReverse,
+  } = useSelector((state: AppState) => state.swap)
   const walletAddress = useWalletAddress()
 
   const { decimalizeMintAmount, undecimalizeMintAmount } = useOracles()
@@ -45,18 +51,24 @@ export const useJupiterAggregator = (): SwapProvider => {
   const composeJupiterProps = useCallback(async () => {
     try {
       setLoading(true)
-      if (!bidMint || !askMint || !Number(bidAmount) || isReverse)
+      if (!bidMint || !askMint || (!Number(askAmount) && !Number(bidAmount)))
         throw new Error('Invalid route input')
-
-      const bidAmountBN = await decimalizeMintAmount(bidAmount, bidMint)
+      let amount = '0'
+      if (isReverse) {
+        amount = (await decimalizeMintAmount(askAmount, askMint)).toString()
+      } else {
+        amount = (await decimalizeMintAmount(bidAmount, bidMint)).toString()
+      }
       const {
         data: { data: jupRoutes },
       } = await axios.get<{ data: JupRoute[] }>(
-        `https://quote-api.jup.ag/v4/quote?inputMint=${bidMint}&outputMint=${askMint}&amount=${bidAmountBN.toString()}&slippageBps=${
+        `https://quote-api.jup.ag/v4/quote?inputMint=${bidMint}&outputMint=${askMint}&amount=${amount}&slippageBps=${
           slippageTolerance * 100
-        }&asLegacyTransaction=true`,
+        }&asLegacyTransaction=true&swapMode=${
+          isReverse ? 'ExactOut' : 'ExactIn'
+        }`,
       )
-      const bestRoute = jupRoutes[0]
+      const bestRoute = jupRoutes?.[0]
       setRawJupRoute(bestRoute)
     } catch (error) {
       setRawJupRoute(undefined)
@@ -64,6 +76,7 @@ export const useJupiterAggregator = (): SwapProvider => {
       setLoading(false)
     }
   }, [
+    askAmount,
     askMint,
     bidAmount,
     bidMint,
