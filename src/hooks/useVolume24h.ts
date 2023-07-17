@@ -2,14 +2,17 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import moment from 'moment'
 
 import { VolumeData } from 'view/poolDetails/volume24h'
-import { useStat } from './useStat'
+import { useStatStore } from 'providers/stat.provider'
 
 export const useVolume24h = (poolAddress: string) => {
   const [chartData, setChartData] = useState<VolumeData[]>([])
-  const { dailyInfo, loading } = useStat(poolAddress)
+  const {
+    loading,
+    data: { [poolAddress]: dailyInfo },
+  } = useStatStore()
 
-  const fetchVolume = useCallback(async () => {
-    if (!poolAddress) return setChartData([])
+  const buildChartData = useCallback(async () => {
+    if (!poolAddress || !dailyInfo) return setChartData([])
     const chartData = Object.keys(dailyInfo).map((time) => {
       return {
         data: dailyInfo[time].volume,
@@ -19,8 +22,8 @@ export const useVolume24h = (poolAddress: string) => {
     return setChartData(chartData)
   }, [dailyInfo, poolAddress])
   useEffect(() => {
-    fetchVolume()
-  }, [fetchVolume])
+    buildChartData()
+  }, [buildChartData])
 
   const vol24h = useMemo(() => {
     const today = chartData[chartData.length - 1]?.data || 0

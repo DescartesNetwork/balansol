@@ -1,24 +1,11 @@
-import type { web3 } from '@coral-xyz/anchor'
-import { account } from '@senswap/sen-js'
+import { utils, web3 } from '@coral-xyz/anchor'
 
-import { ActionInfo, ActionTransfer, TransLog } from '../entities/trans-log'
+import { ParsedSplTransfer, TransLog } from '../entities/trans-log'
 import { Solana } from '../adapters/solana/client'
-import {
-  OptionsFetchSignature,
-  ParsedAction,
-  ParsedInfoTransfer,
-  ParsedType,
-} from '../constants/transaction'
+import { OptionsFetchSignature } from '../constants/transaction'
 import { DateHelper } from '../helpers/date'
-import { SOL_ADDRESS, SOL_DECIMALS } from '../constants/sol'
-
-type InstructionData = web3.ParsedInstruction | web3.PartiallyDecodedInstruction
 
 export class TransLogService {
-  protected parseAction = (transLog: TransLog) => {
-    return ''
-  }
-
   async collect(
     programId: string,
     configs: OptionsFetchSignature,
@@ -31,13 +18,11 @@ export class TransLogService {
     let isStop = false
     let smartLimit = 200
     while (!isStop) {
-      const confirmedTrans: web3.ParsedConfirmedTransaction[] =
-        await solana.fetchTransactions(programId, {
-          ...configs,
-          lastSignature: lastSignatureTmp,
-          limit: smartLimit,
-        })
-
+      const confirmedTrans = await solana.fetchTransactions(programId, {
+        ...configs,
+        lastSignature: lastSignatureTmp,
+        limit: smartLimit,
+      })
       for (const trans of confirmedTrans) {
         lastSignatureTmp = trans.transaction.signatures[0]
         const log = this.parseTransLog(trans)
@@ -62,142 +47,42 @@ export class TransLogService {
   }
 
   private parseTransLog(
-    confirmedTrans: web3.ParsedConfirmedTransaction,
+    confirmedTrans: web3.ParsedTransactionWithMeta,
   ): TransLog | undefined {
     const { blockTime, meta, transaction } = confirmedTrans
     if (!blockTime || !meta) return
-    const { postTokenBalances, preTokenBalances, postBalances, preBalances } =
-      meta
-    const { signatures, message } = transaction
 
-    const innerInstructionData = meta.innerInstructions?.[0]?.instructions || []
-    const instructionData = message.instructions[0] || []
+    const { signatures, message } = transaction
 
     const transLog = new TransLog()
     transLog.signature = signatures[0]
     transLog.blockTime = blockTime
     transLog.time = DateHelper.fromSeconds(blockTime).ymd()
-    transLog.programId = instructionData.programId.toString()
+    transLog.recentBlockhash = message.recentBlockhash
 
-    const mapAccount = this.parseAccountInfo(
-      message.accountKeys,
-      postTokenBalances || [],
-      preTokenBalances || [],
-      postBalances,
-      preBalances,
-    )
-    // system program transaction
-    if (this.isParsedInstruction(instructionData)) {
-      transLog.programTransfer = this.parseListActionTransfer(
-        [instructionData],
-        mapAccount,
-      )
-      return transLog
+    for (const innerInstruction of meta.innerInstructions || []) {
+      // @ts-ignore
+      const innerInstructionData: web3.ParsedInstruction[] =
+        innerInstruction.instructions
+      for (const ix of innerInstructionData) {
+        const parsed: ParsedSplTransfer = ix?.parsed
+        if (parsed?.type !== 'transfer') continue
+
+        meta.postTokenBalances?.forEach((e) => {
+          if (!e.owner) return
+          const tokenAccount = utils.token.associatedAddress({
+            mint: new web3.PublicKey(e.mint),
+            owner: new web3.PublicKey(e.owner),
+          })
+          const { source, destination } = parsed.info
+          if ([source, destination].includes(tokenAccount.toBase58())) {
+            parsed.info.decimals = e.uiTokenAmount.decimals
+            parsed.info.mint = e.mint
+          }
+        })
+        transLog.actionTransfers.push(parsed.info)
+      }
     }
-    // smart contract transaction
-    transLog.actionTransfers = this.parseListActionTransfer(
-      innerInstructionData,
-      mapAccount,
-    )
-    transLog.programInfo = {
-      programId: instructionData.programId.toString(),
-      data: (instructionData as web3.PartiallyDecodedInstruction).data,
-    }
-
-    transLog.actionType = this.parseAction(transLog)
-
     return transLog
-  }
-
-  private isParsedInstruction(instructionData: InstructionData) {
-    return (instructionData as web3.ParsedInstruction).parsed !== undefined
-  }
-
-  private parseListActionTransfer(
-    actions: InstructionData[],
-    mapAccount: Map<string, ActionInfo>,
-  ) {
-    const actionTransfer: ActionTransfer[] = []
-    for (const action of actions) {
-      if (!this.isParsedInstruction(action)) continue
-      const actionParsed: ParsedAction =
-        (action as web3.ParsedInstruction).parsed || {}
-      switch (actionParsed.type) {
-        case ParsedType.Transfer:
-          const info: ParsedInfoTransfer = actionParsed.info
-          const parsedAction = this.parseActionTransfer(info, mapAccount)
-          if (parsedAction) actionTransfer.push(parsedAction)
-          break
-        default:
-          break
-      }
-    }
-    return actionTransfer
-  }
-
-  private parseActionTransfer(
-    parsedTransfer: ParsedInfoTransfer,
-    mapAccount: Map<string, ActionInfo>,
-  ): ActionTransfer | undefined {
-    const { source, destination, amount, lamports } = parsedTransfer
-    const amountTransfer = amount || lamports.toString()
-
-    if (
-      !amountTransfer ||
-      !mapAccount.has(source) ||
-      !mapAccount.has(destination)
-    )
-      return
-
-    const actionTransfer = new ActionTransfer()
-    actionTransfer.source = mapAccount.get(source)
-    actionTransfer.destination = mapAccount.get(destination)
-    actionTransfer.amount = amountTransfer
-    return actionTransfer
-  }
-
-  private parseAccountInfo(
-    accountKeys: Array<web3.ParsedMessageAccount>,
-    postTokenBalances: Array<web3.TokenBalance>,
-    preTokenBalances: Array<web3.TokenBalance>,
-    postBalances: number[],
-    preBalances: number[],
-  ): Map<string, ActionInfo> {
-    const mapAccountInfo = new Map<string, ActionInfo>()
-
-    // Associated Address
-    for (const postBalance of postTokenBalances) {
-      const { accountIndex, mint, uiTokenAmount } = postBalance
-      const info = new ActionInfo()
-      info.address = accountKeys[accountIndex].pubkey.toString()
-      info.postBalance = uiTokenAmount.amount
-      info.mint = mint
-      info.decimals = uiTokenAmount.decimals
-      mapAccountInfo.set(info.address, info)
-    }
-
-    for (const preBalance of preTokenBalances) {
-      const { accountIndex, uiTokenAmount } = preBalance
-      const address = accountKeys[accountIndex].pubkey.toString()
-      const info = mapAccountInfo.get(address) || new ActionInfo()
-      info.preBalance = uiTokenAmount.amount
-      mapAccountInfo.set(info.address, info)
-    }
-
-    // Wallet address
-    accountKeys.forEach((accountData, idx) => {
-      const address = accountData.pubkey.toString()
-      if (!account.isAssociatedAddress(address)) {
-        const info = mapAccountInfo.get(address) || new ActionInfo()
-        info.address = address
-        info.mint = SOL_ADDRESS
-        info.postBalance = String(postBalances[idx] || 0) // lamports
-        info.preBalance = String(preBalances[idx] || 0) // lamports
-        info.decimals = SOL_DECIMALS
-        mapAccountInfo.set(info.address, info)
-      }
-    })
-
-    return mapAccountInfo
   }
 }
