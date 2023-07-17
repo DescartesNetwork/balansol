@@ -1,13 +1,29 @@
+export const LOG_VERSION = '0.0.1'
+
+export type ActionTransfer = {
+  amount: string
+  source: string
+  destination: string
+  authority: string
+  mint: string
+  decimals: number
+}
+
+export type ParsedSplTransfer = {
+  info: ActionTransfer
+  type: 'transfer'
+}
 export class TransLog {
+  _v = LOG_VERSION
   programId: string = ''
   programInfo: ProgramInfo | undefined
   signature: string = ''
+  recentBlockhash: string = ''
   blockTime: number = 0
   time: number = 0
   owner: string = ''
   actionType: string = ''
   actionTransfers: Array<ActionTransfer> = []
-  programTransfer: Array<ActionTransfer> = []
 }
 
 export class ActionInfo {
@@ -17,17 +33,7 @@ export class ActionInfo {
   preBalance: string = '0'
   postBalance: string = '0'
 }
-/**
- * Amount is not same postBalance - preBalance
- * @postBalance and @preBalance are balance after all action (transaction)
- * @postBalance = @preBalance +- all @amount (multi amount in transaction)
- * @amount is value in 1 action
- */
-export class ActionTransfer {
-  source: ActionInfo | undefined
-  destination: ActionInfo | undefined
-  amount: string = '0'
-}
+
 type ProgramInfo = {
   programId: string
   data: string

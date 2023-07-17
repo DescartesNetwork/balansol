@@ -1,22 +1,19 @@
 import { PoolData } from '@senswap/balancer'
 import { BN } from '@coral-xyz/anchor'
-import { util, PDB, TokenProvider } from '@sentre/senhub'
+import { PDB, TokenProvider } from '@sentre/senhub'
 
-import { TransLog } from 'stat/entities/trans-log'
+import { LOG_VERSION, TransLog } from 'stat/entities/trans-log'
 import { TotalSummary } from 'stat/constants/summary'
-import { DailyReport } from 'stat/entities/daily-report'
 import { DateHelper } from 'stat/helpers/date'
 import { utilsBN } from 'helper/utilsBN'
-import PoolTransLogService, { SwapActionType } from './poolTranslog'
-import DailyReportService from '../daily-report'
+import PoolTransLogService from './poolTranslog'
 
-const DATE_RANGE = 8
+import { getCgkPrice, getJupiterPrice } from 'hooks/useGetPrice'
 
 export default class PoolService {
   poolAddress: string
   poolData: PoolData | undefined
   poolTransLogService = new PoolTransLogService()
-  dailyReportService = new DailyReportService()
   tokenProvider = new TokenProvider()
 
   constructor(poolAddress: string) {
@@ -31,109 +28,90 @@ export default class PoolService {
     return this.poolData
   }
 
-  getUsd = async (mint: string, amountBigint: bigint) => {
-    const mintInfo = await this.tokenProvider.findByAddress(mint)
-    if (!mintInfo) return 0
-    const { decimals, extensions } = mintInfo
-    try {
-      const cgkData = await util.fetchCGK(extensions?.coingeckoId)
-      if (!cgkData?.price) return 0
-      const amount = utilsBN.undecimalize(
-        new BN(amountBigint.toString()),
-        decimals,
-      )
-      return Number(amount) * cgkData.price
-    } catch (error) {
-      return 0
-    }
+  getUsd = async (mint: string, amountBigint: string, decimals: number) => {
+    let price = await getJupiterPrice(mint, decimals)
+    if (!price) price = await getCgkPrice(mint)
+    const amount = utilsBN.undecimalize(new BN(amountBigint), decimals)
+    return Number(amount) * price
   }
 
-  fetchTransLog = async (timeFrom: number, timeTo: number) => {
+  fetchTransLog = async (
+    timeFrom: number,
+    timeTo: number,
+  ): Promise<TransLog[]> => {
     const db = new PDB(this.poolAddress).createInstance('stat')
     let cacheTransLog: TransLog[] = (await db.getItem('translogs')) || []
+    cacheTransLog = cacheTransLog.filter(
+      (e) =>
+        e._v === LOG_VERSION &&
+        e.blockTime >= timeFrom &&
+        e.blockTime <= timeTo,
+    )
     cacheTransLog = cacheTransLog.sort((a, b) => b.blockTime - a.blockTime)
-    const fistTransLog = cacheTransLog[0]
-    const lastTransLog = cacheTransLog[cacheTransLog.length - 1]
 
-    if (fistTransLog && lastTransLog) {
-      const [beginTransLogs] = await Promise.all([
-        this.poolTransLogService.collect(this.poolAddress, {
-          secondFrom: fistTransLog.blockTime,
-          secondTo: timeTo,
-        }),
-      ])
-      cacheTransLog = cacheTransLog.filter(
-        (trans) => trans.blockTime > timeFrom,
-      )
-      cacheTransLog = [...beginTransLogs, ...cacheTransLog]
-    } else {
-      cacheTransLog = await this.poolTransLogService.collect(this.poolAddress, {
-        secondFrom: timeFrom,
-        secondTo: timeTo,
-      })
+    const newLogs = await this.poolTransLogService.collect(this.poolAddress, {
+      secondFrom: cacheTransLog.at(-1)?.blockTime || timeFrom,
+      secondTo: timeTo,
+      lastSignature: cacheTransLog.at(-1)?.signature,
+    })
+    // Filter duplicated
+    const mapExist: { [x: string]: boolean } = {}
+    const filteredLogs: TransLog[] = []
+    for (const log of [...cacheTransLog, ...newLogs]) {
+      if (mapExist[log.signature] || log._v !== LOG_VERSION) continue
+      filteredLogs.push(log)
+      mapExist[log.signature] = true
     }
-    await db.setItem('translogs', cacheTransLog)
-    return cacheTransLog
+
+    await db.setItem('translogs', filteredLogs)
+    return filteredLogs
   }
 
-  getDailyInfo = async () => {
-    let timeTo = new DateHelper()
-    const timeFrom = new DateHelper().subtractDay(DATE_RANGE)
+  getDailyInfo = async (timeFrom: DateHelper, timeTo: DateHelper) => {
     const { fee, taxFee, treasuries } = await this.getPoolData()
-
+    const _treasuries = treasuries.map((e) => e.toBase58())
     // fetch transLog
     const transLogs = await this.fetchTransLog(
       timeFrom.seconds(),
       timeTo.seconds(),
     )
-    // parse daily + create map time
-    const dailyReports = this.dailyReportService.parserDailyReport(transLogs)
-    const mapTimeDailyReport: Record<number, DailyReport[]> = {}
-    for (const report of dailyReports) {
-      const { time, address } = report
-      // filter daily report
-      if (!treasuries.map((e) => e.toBase58().includes(address))) continue
-      if (!mapTimeDailyReport[time]) mapTimeDailyReport[time] = []
-      mapTimeDailyReport[time].push(report)
-    }
-    // parse summary
 
+    // Build result
     const mapTimeTotal: Record<string, TotalSummary> = {}
-    mapTimeTotal[timeTo.ymd()] = {
-      tvl: 0,
-      fee: 0,
-      volume: 0,
-    }
-
-    while (timeTo.ymd() > timeFrom.ymd()) {
-      const reports = mapTimeDailyReport[timeTo.ymd()] || []
-      const currentReport = mapTimeTotal[timeTo.ymd()]
-      const prevDate = timeTo.subtractDay(1)
-      if (!mapTimeTotal[prevDate.ymd()] && prevDate.ymd() >= timeFrom.ymd()) {
-        mapTimeTotal[prevDate.ymd()] = {
-          tvl: currentReport.tvl,
+    function getMapTimeTotal(ymd: number) {
+      if (!mapTimeTotal[ymd]) {
+        mapTimeTotal[ymd] = {
+          tvl: 0,
           fee: 0,
           volume: 0,
         }
       }
-      for (const report of reports) {
-        const amountOut = await this.getUsd(report.mint, report.amountOut)
-        const amountIn = await this.getUsd(report.mint, report.amountIn)
-        if (mapTimeTotal[prevDate.ymd()]) {
-          mapTimeTotal[prevDate.ymd()].tvl += amountOut - amountIn
-          if (mapTimeTotal[prevDate.ymd()].tvl < 0)
-            mapTimeTotal[prevDate.ymd()].tvl = 0
-        }
-        if (report.actionType === SwapActionType.Swap) {
-          mapTimeTotal[timeTo.ymd()].volume += amountIn + amountOut
-          const totalFee =
-            Number(utilsBN.undecimalize(fee.add(taxFee), 9)) * amountOut
-          mapTimeTotal[timeTo.ymd()].fee += totalFee
-        }
-      }
-      timeTo = timeTo.subtractDay(1)
+      return mapTimeTotal[ymd]
     }
 
+    for (const log of transLogs) {
+      for (const transfer of log.actionTransfers) {
+        const { source, destination, amount, mint, decimals } = transfer
+        let treasury = ''
+        if (_treasuries.includes(source)) treasury = source
+        if (_treasuries.includes(destination)) treasury = destination
+        if (!treasury) continue
+        const ymd = DateHelper.fromSeconds(log.blockTime).ymd()
+        const report = getMapTimeTotal(ymd)
+
+        const volume = await this.getUsd(mint, amount, decimals)
+        const totalFee =
+          Number(utilsBN.undecimalize(fee.add(taxFee), 9)) * volume
+
+        report.volume += volume
+        report.fee += totalFee
+      }
+    }
+
+    while (timeTo.ymd() > timeFrom.ymd()) {
+      getMapTimeTotal(timeTo.ymd())
+      timeTo = timeTo.subtractDay(1)
+    }
     return mapTimeTotal
   }
 }
