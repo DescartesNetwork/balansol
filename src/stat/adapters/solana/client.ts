@@ -1,4 +1,4 @@
-import { connection } from '@sentre/senhub'
+import { rpc } from '@sentre/senhub'
 import { web3 } from '@coral-xyz/anchor'
 
 import { OptionsFetchSignature } from '../../constants/transaction'
@@ -7,7 +7,7 @@ const DEFAULT_LIMIT = 700
 const TRANSACTION_LIMIT = 200
 
 export class Solana {
-  private conn: web3.Connection = connection
+  private conn: web3.Connection = new web3.Connection(rpc)
 
   //Search for all signatures from last Signature and earlier
   //So: If new collection (to now) -> last Signature = null
@@ -27,16 +27,16 @@ export class Solana {
   private async fetchConfirmTransaction(signatures: string[]) {
     let confirmedTransactions: web3.ParsedConfirmedTransaction[] = []
     let limit = TRANSACTION_LIMIT
-
     const promiseTransGroup = []
     for (let offset = 0; offset <= signatures.length / limit; offset++) {
       const skip = offset * limit
       const signaturesGroup = signatures.slice(skip, skip + limit)
       promiseTransGroup.push(
-        this.conn.getParsedConfirmedTransactions(signaturesGroup),
+        this.conn.getParsedTransactions(signaturesGroup, {
+          maxSupportedTransactionVersion: 0,
+        }),
       )
     }
-
     const transGroups = await Promise.all(promiseTransGroup)
     for (const transGroup of transGroups) {
       //@ts-ignore
@@ -63,18 +63,18 @@ export class Solana {
         await this.fetchSignatures(programPublicKey, lastSignature, limit)
       if (!confirmedSignatureInfos?.length || isStop) break
       for (const info of confirmedSignatureInfos) {
-        const blockTime = info.blockTime
-        if (!blockTime || blockTime > secondTo) continue
+        lastSignature = info.signature
+        const blockTime = info.blockTime || 0
+        if (!blockTime || blockTime > secondTo || info.err) continue
         if (blockTime < secondFrom) {
           isStop = true
           break
         }
-        lastSignature = info.signature
         signatures.push(info.signature)
       }
 
       if (limit && signatures.length >= limit) break
-      if (confirmedSignatureInfos?.length < DEFAULT_LIMIT) break
+      if (confirmedSignatureInfos?.length < (limit || DEFAULT_LIMIT)) break
     }
     const confirmedTransactions = await this.fetchConfirmTransaction(signatures)
     return confirmedTransactions

@@ -1,14 +1,19 @@
 import { useCallback } from 'react'
 import { tokenProvider, useGetMintDecimals, util } from '@sentre/senhub'
 import { Address, BN } from '@project-serum/anchor'
-import { utilsBN, DataLoader } from '@sen-use/web3'
+import { utilsBN } from '@sen-use/web3'
+
+import Memo from 'helper/memo'
 
 const USDC_ADDRESS = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
 
-const getJupiterPrice = async (mintAddress: string, decimals: number) => {
+export const getJupiterPrice = async (
+  mintAddress: string,
+  decimals: number,
+) => {
   try {
     const priceUrl = `https://quote-api.jup.ag/v4/quote?inputMint=${USDC_ADDRESS}&outputMint=${mintAddress}&amount=1000000&slippage=1`
-    const { data } = await DataLoader.load(
+    const { data } = await Memo.call(
       'getJupiterPrice' + mintAddress,
       async () => (await fetch(priceUrl)).json(),
     )
@@ -20,17 +25,14 @@ const getJupiterPrice = async (mintAddress: string, decimals: number) => {
   }
 }
 
-const getCgkPrice = async (mintAddress: string) => {
+export const getCgkPrice = async (mintAddress: string) => {
   try {
-    const price = await DataLoader.load(
-      'getCgkPrice' + mintAddress,
-      async () => {
-        const token = await tokenProvider.findByAddress(mintAddress)
-        const ticket = token?.extensions?.coingeckoId
-        const cgkData = await util.fetchCGK(ticket)
-        return cgkData.price as number
-      },
-    )
+    const price = await Memo.call('getCgkPrice' + mintAddress, async () => {
+      const token = await tokenProvider.findByAddress(mintAddress)
+      const ticket = token?.extensions?.coingeckoId
+      const cgkData = await util.fetchCGK(ticket)
+      return cgkData.price as number
+    })
     return price
   } catch (error) {
     return 0
