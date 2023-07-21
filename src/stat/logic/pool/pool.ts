@@ -52,7 +52,6 @@ export default class PoolService {
     const newLogs = await this.poolTransLogService.collect(this.poolAddress, {
       secondFrom: cacheTransLog.at(-1)?.blockTime || timeFrom,
       secondTo: timeTo,
-      lastSignature: cacheTransLog.at(-1)?.signature,
     })
     // Filter duplicated
     const mapExist: { [x: string]: boolean } = {}
