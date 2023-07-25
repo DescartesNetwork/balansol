@@ -18,7 +18,7 @@ export const useActivePools = () => {
     const activePools: PoolsState = {}
     for (const addr in pools) {
       const poolData = pools[addr]
-      if (!web3.PublicKey.isOnCurve(poolData.authority)) continue
+      // if (!web3.PublicKey.isOnCurve(poolData.authority)) continue
       const state = poolData.state as PoolState
       if (!state['initialized']) continue
       if (poolData.reserves.map((val) => val.toString()).includes('0')) continue

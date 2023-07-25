@@ -53,8 +53,8 @@ export const useFilterPools = () => {
         for (const reserve of pools[poolAddress].reserves) {
           if (reserve.isZero()) isValid = false
         }
-        if (isValid && web3.PublicKey.isOnCurve(pools[poolAddress].authority))
-          newPools[poolAddress] = pools[poolAddress]
+        // if (isValid && web3.PublicKey.isOnCurve(pools[poolAddress].authority))
+        if (isValid) newPools[poolAddress] = pools[poolAddress]
       }
       setPoolsFilter(newPools)
     },
